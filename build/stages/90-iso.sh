@@ -1,0 +1,86 @@
+#!/bin/bash
+# Pack the rootfs into squashfs and master a hybrid BIOS/UEFI ISO.
+. "$(dirname "$0")/../lib.sh"
+
+umount_chroot
+
+rm -rf "$ISODIR"
+mkdir -p "$ISODIR/live" "$ISODIR/boot/grub" "$OUT"
+
+kernel=$(ls "$ROOTFS"/boot/vmlinuz-* | sort -V | tail -1)
+initrd=$(ls "$ROOTFS"/boot/initrd.img-* | sort -V | tail -1)
+cp "$kernel" "$ISODIR/live/vmlinuz"
+cp "$initrd" "$ISODIR/live/initrd.img"
+touch "$ISODIR/.aurora-live"
+
+log "creating squashfs ($SQUASHFS_COMP)"
+mksquashfs "$ROOTFS" "$ISODIR/live/filesystem.squashfs" \
+    -comp "$SQUASHFS_COMP" -noappend -quiet -progress \
+    -e boot/vmlinuz-\* boot/initrd.img-\* .aurora-bootstrapped
+
+du -sx --block-size=1 "$ROOTFS" | cut -f1 > "$ISODIR/live/filesystem.size"
+
+log "writing grub.cfg"
+if [ -d "$SRC/branding/grub" ]; then
+    mkdir -p "$ISODIR/boot/grub/themes/aurora"
+    cp -r "$SRC/branding/grub/." "$ISODIR/boot/grub/themes/aurora/"
+fi
+
+BOOT="boot=live quiet splash"
+{
+    cat <<EOF
+set default=0
+set timeout=8
+
+insmod all_video
+insmod gfxterm
+insmod png
+loadfont unicode
+set gfxmode=auto
+terminal_output gfxterm
+if [ -f /boot/grub/themes/aurora/theme.txt ]; then
+    set theme=/boot/grub/themes/aurora/theme.txt
+fi
+
+search --no-floppy --file --set=root /.aurora-live
+
+menuentry "Try $AURORA_NAME $AURORA_VERSION" {
+    linux /live/vmlinuz $BOOT
+    initrd /live/initrd.img
+}
+menuentry "Try $AURORA_NAME (safe graphics)" {
+    linux /live/vmlinuz $BOOT nomodeset
+    initrd /live/initrd.img
+}
+submenu "Language / Lingua / Sprache / Langue / Idioma ..." {
+EOF
+    sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/locales.list" |
+    while IFS='|' read -r loc kbd _ name; do
+        loc=$(echo $loc); kbd=$(echo $kbd); name=$(echo $name)
+        cat <<EOF
+    menuentry "$name" {
+        linux /live/vmlinuz $BOOT aurora.lang=$loc aurora.kbd=$kbd
+        initrd /live/initrd.img
+    }
+EOF
+    done
+    cat <<EOF
+}
+menuentry "Boot from first hard disk" {
+    set root=(hd0)
+    chainloader +1
+}
+if [ "\$grub_platform" = "efi" ]; then
+    menuentry "UEFI firmware settings" {
+        fwsetup
+    }
+fi
+EOF
+} > "$ISODIR/boot/grub/grub.cfg"
+
+iso="$OUT/aurora-os-$AURORA_VERSION-$ARCH.iso"
+log "mastering $iso"
+grub-mkrescue -o "$iso" "$ISODIR" -- -volid "$ISO_LABEL" 2>&1 | grep -v '^xorriso : UPDATE' || true
+[ -s "$iso" ] || die "ISO was not created"
+( cd "$OUT" && sha256sum "$(basename "$iso")" > "$(basename "$iso").sha256" )
+log "done: $iso ($(du -h "$iso" | cut -f1))"

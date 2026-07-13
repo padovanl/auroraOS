@@ -1,0 +1,13 @@
+[Unit]
+Description=Aurora OS live session setup
+ConditionKernelCommandLine=boot=live
+After=local-fs.target systemd-sysusers.service
+Before=greetd.service systemd-user-sessions.service display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/aurora-live-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

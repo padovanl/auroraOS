@@ -1,0 +1,61 @@
+#!/bin/bash
+# Prepares the live session at boot: creates the live user, applies the
+# language/keyboard picked in the boot menu and enables autologin.
+# Does nothing on an installed system.
+set -eu
+
+grep -qw 'boot=live' /proc/cmdline || exit 0
+
+. /etc/aurora/live.conf
+
+lang="" kbd=""
+for arg in $(cat /proc/cmdline); do
+    case "$arg" in
+        aurora.lang=*) lang="${arg#aurora.lang=}" ;;
+        aurora.kbd=*) kbd="${arg#aurora.kbd=}" ;;
+    esac
+done
+
+if [ -n "$lang" ]; then
+    printf 'LANG=%s\n' "$lang" > /etc/default/locale
+fi
+
+if [ -n "$kbd" ]; then
+    # Multi-layout values like "us,ru" get a toggle shortcut.
+    options=""
+    case "$kbd" in *,*) options="grp:alt_shift_toggle" ;; esac
+    cat > /etc/default/keyboard <<EOF
+XKBMODEL="pc105"
+XKBLAYOUT="$kbd"
+XKBVARIANT=""
+XKBOPTIONS="$options"
+BACKSPACE="guess"
+EOF
+    setupcon --force 2>/dev/null || true
+fi
+
+if ! id "$LIVE_USER" >/dev/null 2>&1; then
+    groups=""
+    for g in sudo audio video render input netdev plugdev bluetooth users lpadmin; do
+        getent group "$g" >/dev/null && groups="$groups,$g"
+    done
+    useradd --create-home --shell /bin/bash --comment "Live User" \
+        --groups "${groups#,}" "$LIVE_USER"
+    passwd --delete "$LIVE_USER" >/dev/null
+    echo "$LIVE_USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/aurora-live
+    chmod 0440 /etc/sudoers.d/aurora-live
+fi
+
+# Log straight into the desktop on the first greetd session.
+cat > /etc/greetd/config.toml <<EOF
+[terminal]
+vt = 7
+
+[default_session]
+command = "/usr/libexec/aurora-greeter-launch"
+user = "_greetd"
+
+[initial_session]
+command = "/usr/bin/aurora-session"
+user = "$LIVE_USER"
+EOF
