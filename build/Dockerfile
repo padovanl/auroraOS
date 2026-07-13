@@ -14,6 +14,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         ca-certificates \
         gettext \
         python3 \
+        python3-cairo \
+        python3-pywayland \
+        python3-cffi-backend \
+        libwayland-dev \
+        pkgconf \
         make \
         rsync \
     && rm -rf /var/lib/apt/lists/*

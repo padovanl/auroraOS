@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+import ctypes.util
+import os
+import sys
+
+# gtk4-layer-shell must be loaded before libwayland-client; re-exec with it preloaded.
+if "gtk4-layer-shell" not in os.environ.get("LD_PRELOAD", ""):
+    lib = ctypes.util.find_library("gtk4-layer-shell")
+    if lib:
+        os.environ["LD_PRELOAD"] = (lib + " " + os.environ.get("LD_PRELOAD", "")).strip()
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+
+sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
+
+from aurora.shell.app import main  # noqa: E402
+
+sys.exit(main())

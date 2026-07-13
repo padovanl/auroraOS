@@ -1,0 +1,34 @@
+#!/bin/sh
+# Start an Aurora desktop session (used by greetd and wayland-sessions).
+
+# Language: system default, then the user's choice from Settings.
+[ -r /etc/default/locale ] && . /etc/default/locale
+[ -r "$HOME/.config/aurora/locale.conf" ] && . "$HOME/.config/aurora/locale.conf"
+export LANG LANGUAGE LC_TIME LC_NUMERIC LC_MONETARY LC_MEASUREMENT LC_PAPER
+
+# Keyboard: system default, then the user's choice from Settings.
+[ -r /etc/default/keyboard ] && . /etc/default/keyboard
+[ -r "$HOME/.config/aurora/keyboard.conf" ] && . "$HOME/.config/aurora/keyboard.conf"
+export XKB_DEFAULT_MODEL="${XKBMODEL:-pc105}"
+export XKB_DEFAULT_LAYOUT="${XKBLAYOUT:-us}"
+export XKB_DEFAULT_VARIANT="${XKBVARIANT:-}"
+export XKB_DEFAULT_OPTIONS="${XKBOPTIONS:-}"
+
+export XDG_CURRENT_DESKTOP="Aurora:wlroots"
+export XDG_SESSION_DESKTOP="aurora"
+export XDG_SESSION_TYPE="wayland"
+export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER="wayland,x11"
+export _JAVA_AWT_WM_NONREPARENTING=1
+export GTK_USE_PORTAL=1
+
+# Seed the user's compositor config the first time, so it can be edited.
+cfg="$HOME/.config/labwc"
+if [ ! -f "$cfg/rc.xml" ]; then
+    mkdir -p "$cfg"
+    cp -n /usr/share/aurora/labwc/* "$cfg/" 2>/dev/null
+fi
+[ -f "$cfg/rc.xml" ] || cfg=/usr/share/aurora/labwc
+
+exec labwc -C "$cfg"

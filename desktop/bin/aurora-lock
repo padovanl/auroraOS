@@ -1,0 +1,16 @@
+#!/bin/sh
+# Lock the screen with Aurora colors.
+pgrep -x swaylock >/dev/null && exit 0
+
+wallpaper=$(gsettings get org.aurora.desktop wallpaper 2>/dev/null | tr -d "'")
+[ -f "$wallpaper" ] || wallpaper=/usr/share/backgrounds/aurora/aurora-dawn.png
+
+exec swaylock --daemonize \
+    --image "$wallpaper" --scaling fill \
+    --font Inter --indicator-radius 90 --indicator-thickness 8 \
+    --inside-color 14101ecc --ring-color a970ffff --key-hl-color ff6f91ff \
+    --bs-hl-color ffa45cff --line-color 00000000 --separator-color 00000000 \
+    --text-color f2eefaff --inside-clear-color 14101ecc --ring-clear-color ffa45cff \
+    --inside-ver-color 14101ecc --ring-ver-color a970ffff \
+    --inside-wrong-color 14101ecc --ring-wrong-color ff6f91ff \
+    --show-failed-attempts "$@"

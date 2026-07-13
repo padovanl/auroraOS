@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="aurora">
+  <schema id="org.aurora.desktop" path="/org/aurora/desktop/">
+    <key name="wallpaper" type="s">
+      <default>'/usr/share/backgrounds/aurora/aurora-dawn.png'</default>
+      <summary>Background image path</summary>
+    </key>
+    <key name="dock-favorites" type="as">
+      <default>['firefox-esr.desktop', 'org.aurora.Files.desktop', 'foot.desktop', 'org.gnome.TextEditor.desktop', 'org.aurora.Settings.desktop']</default>
+      <summary>Applications pinned to the dock</summary>
+    </key>
+    <key name="clock-format" type="s">
+      <choices><choice value="24h"/><choice value="12h"/></choices>
+      <default>'24h'</default>
+      <summary>Clock format</summary>
+    </key>
+    <key name="clock-show-seconds" type="b">
+      <default>false</default>
+      <summary>Show seconds in the panel clock</summary>
+    </key>
+    <key name="do-not-disturb" type="b">
+      <default>false</default>
+      <summary>Hide notification popups</summary>
+    </key>
+    <key name="night-light" type="b">
+      <default>false</default>
+      <summary>Warm screen colors</summary>
+    </key>
+    <key name="night-light-temperature" type="i">
+      <range min="2500" max="6000"/>
+      <default>4000</default>
+      <summary>Night light color temperature in Kelvin</summary>
+    </key>
+    <key name="idle-dim-minutes" type="i">
+      <range min="0" max="120"/>
+      <default>5</default>
+      <summary>Minutes of inactivity before the screen turns off (0 = never)</summary>
+    </key>
+    <key name="idle-lock" type="b">
+      <default>true</default>
+      <summary>Lock the screen when it turns off</summary>
+    </key>
+  </schema>
+</schemalist>

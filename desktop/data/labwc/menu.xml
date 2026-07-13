@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The desktop itself has Aurora's own menu (right-click the background);
+     this is only the per-window menu. -->
+<openbox_menu>
+  <menu id="client-menu">
+    <item label="Minimize"><action name="Iconify" /></item>
+    <item label="Maximize"><action name="ToggleMaximize" /></item>
+    <item label="Fullscreen"><action name="ToggleFullscreen" /></item>
+    <item label="Always on Top"><action name="ToggleAlwaysOnTop" /></item>
+    <menu id="client-send-to-menu" label="Move to Workspace" />
+    <separator />
+    <item label="Close"><action name="Close" /></item>
+  </menu>
+  <menu id="root-menu">
+    <item label="Terminal"><action name="Execute" command="x-terminal-emulator" /></item>
+    <item label="Settings"><action name="Execute" command="aurora-settings" /></item>
+  </menu>
+</openbox_menu>

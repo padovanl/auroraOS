@@ -1,0 +1,22 @@
+#!/bin/sh
+# Screen blanking and locking on inactivity, driven by org.aurora.desktop.
+# Restarted by the shell when the settings change.
+
+minutes=$(gsettings get org.aurora.desktop idle-dim-minutes 2>/dev/null | awk '{print $NF}')
+lock=$(gsettings get org.aurora.desktop idle-lock 2>/dev/null)
+minutes=${minutes:-5}
+# The live user has no password; locking would only get in the way.
+grep -qw boot=live /proc/cmdline && lock=false
+
+set -- swayidle -w
+if [ "$lock" = "true" ]; then
+    set -- "$@" before-sleep "aurora-lock"
+fi
+if [ "$minutes" -gt 0 ]; then
+    secs=$((minutes * 60))
+    if [ "$lock" = "true" ]; then
+        set -- "$@" timeout "$secs" "aurora-lock"
+    fi
+    set -- "$@" timeout "$((secs + 15))" "wlopm --off '*'" resume "wlopm --on '*'"
+fi
+exec "$@"

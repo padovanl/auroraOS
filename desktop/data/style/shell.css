@@ -1,0 +1,200 @@
+/* Aurora Shell stylesheet. Layered on top of libadwaita. */
+
+@define-color aurora_violet #a970ff;
+@define-color aurora_rose #ff6f91;
+@define-color aurora_amber #ffa45c;
+@define-color shell_bg rgba(20, 16, 30, 0.86);
+@define-color shell_fg #f2eefa;
+@define-color shell_border rgba(255, 255, 255, 0.08);
+@define-color shell_hover rgba(255, 255, 255, 0.09);
+@define-color shell_active rgba(255, 255, 255, 0.16);
+
+window.aurora-layer {
+  background: transparent;
+  color: @shell_fg;
+}
+
+/* ---- Panel ---- */
+
+.aurora-panel .panel-bar {
+  background-color: @shell_bg;
+  border-bottom: 1px solid @shell_border;
+  padding: 0 6px;
+  font-weight: 600;
+  font-size: 10.5pt;
+}
+
+.panel-button {
+  min-height: 24px;
+  padding: 2px 12px;
+  margin: 4px 0;
+  border-radius: 999px;
+  color: @shell_fg;
+}
+
+.panel-button:hover { background-color: @shell_hover; }
+.panel-button:checked,
+.panel-button:active { background-color: @shell_active; }
+
+.panel-logo image {
+  color: @aurora_amber;
+  -gtk-icon-shadow: 0 0 6px alpha(@aurora_rose, 0.6);
+}
+
+.panel-title {
+  color: alpha(@shell_fg, 0.7);
+  font-weight: 500;
+}
+
+.panel-battery-label { font-size: 9.5pt; }
+
+/* ---- Popovers from the shell ---- */
+
+.aurora-quicksettings > contents,
+.aurora-calendar > contents {
+  border-radius: 18px;
+  padding: 0;
+}
+
+.qs-toggle {
+  border-radius: 999px;
+  padding: 10px 14px;
+  min-height: 24px;
+}
+
+.qs-toggle:checked {
+  background-image: linear-gradient(120deg, @aurora_violet, @aurora_rose);
+  color: white;
+}
+
+.linked .qs-toggle { border-radius: 999px 0 0 999px; }
+.qs-expand { border-radius: 0 999px 999px 0; padding: 0 10px; }
+
+.qs-slider scale trough highlight {
+  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+}
+
+.qs-wifi-row { border-radius: 10px; padding: 6px 10px; }
+
+/* ---- Dock ---- */
+
+.aurora-dock .dock-box {
+  background-color: @shell_bg;
+  border: 1px solid @shell_border;
+  border-radius: 22px;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.dock-item {
+  padding: 5px;
+  border-radius: 14px;
+  min-width: 0;
+  min-height: 0;
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.dock-item:hover { background-color: @shell_hover; }
+.dock-item.focused { background-color: @shell_active; }
+.dock-item.launching image { opacity: 0.55; }
+.dock-apps image { -gtk-icon-size: 28px; padding: 8px; color: @shell_fg; }
+
+.dock-dots { margin-bottom: -4px; }
+
+.dock-dot {
+  min-width: 5px;
+  min-height: 5px;
+  border-radius: 999px;
+  background-color: alpha(@shell_fg, 0.55);
+}
+
+.dock-item.focused .dock-dot {
+  min-width: 12px;
+  background-color: @aurora_amber;
+}
+
+.dock-separator {
+  margin: 8px 4px;
+  background-color: @shell_border;
+  min-width: 1px;
+}
+
+/* ---- Launcher ---- */
+
+.aurora-launcher .launcher-backdrop {
+  background-color: rgba(10, 6, 18, 0.72);
+}
+
+.launcher-search {
+  min-height: 48px;
+  font-size: 14pt;
+  border-radius: 999px;
+  padding: 0 18px;
+  background-color: rgba(255, 255, 255, 0.10);
+  color: @shell_fg;
+  box-shadow: 0 0 0 1px @shell_border;
+}
+
+.launcher-search:focus-within {
+  box-shadow: 0 0 0 2px alpha(@aurora_violet, 0.8);
+}
+
+.launcher-tile {
+  padding: 14px 6px;
+  border-radius: 18px;
+  color: @shell_fg;
+}
+
+.launcher-tile:hover,
+.launcher-tile:focus { background-color: @shell_hover; }
+
+.launcher-results {
+  background: transparent;
+  color: @shell_fg;
+}
+
+.launcher-result {
+  border-radius: 14px;
+  margin: 2px 0;
+}
+
+.launcher-result:selected {
+  background-color: alpha(@aurora_violet, 0.35);
+}
+
+.result-title { font-weight: 600; font-size: 11.5pt; }
+
+/* ---- Notifications ---- */
+
+.notification {
+  background-color: @shell_bg;
+  border: 1px solid @shell_border;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  color: @shell_fg;
+}
+
+.notification.critical { border-color: @aurora_rose; }
+
+.notification-history .notification {
+  box-shadow: none;
+  background-color: alpha(currentColor, 0.05);
+  color: inherit;
+}
+
+/* ---- OSD ---- */
+
+.aurora-osd .osd-box {
+  background-color: @shell_bg;
+  border: 1px solid @shell_border;
+  border-radius: 999px;
+  padding: 12px 20px;
+}
+
+.aurora-osd levelbar block.filled {
+  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+  border-radius: 999px;
+}
+
+.aurora-osd levelbar block.empty { border-radius: 999px; }

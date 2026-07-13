@@ -1,0 +1,17 @@
+# Aurora session autostart (run by labwc with sh).
+
+dbus-update-activation-environment --systemd \
+    WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP \
+    LANG LANGUAGE XKB_DEFAULT_LAYOUT XKB_DEFAULT_VARIANT XKB_DEFAULT_OPTIONS \
+    QT_QPA_PLATFORM MOZ_ENABLE_WAYLAND >/dev/null 2>&1
+
+xdg-user-dirs-update >/dev/null 2>&1
+
+# Display layout saved by Settings.
+[ -r "$HOME/.config/aurora/displays.sh" ] && sh "$HOME/.config/aurora/displays.sh"
+
+aurora-shell >"${XDG_RUNTIME_DIR:-/tmp}/aurora-shell.log" 2>&1 &
+aurora-idle >/dev/null 2>&1 &
+
+# Run the welcome app once per user.
+[ -f "$HOME/.config/aurora/welcome-done" ] || aurora-welcome >/dev/null 2>&1 &
