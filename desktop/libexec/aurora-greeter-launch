@@ -1,0 +1,16 @@
+#!/bin/sh
+# greetd default_session: run the Aurora greeter in a locked-down labwc.
+# Falls back to the text greeter if the graphical one cannot start.
+
+[ -r /etc/default/locale ] && . /etc/default/locale && export LANG
+if [ -r /etc/default/keyboard ]; then
+    . /etc/default/keyboard
+    export XKB_DEFAULT_LAYOUT="$XKBLAYOUT" XKB_DEFAULT_VARIANT="$XKBVARIANT" \
+        XKB_DEFAULT_OPTIONS="$XKBOPTIONS"
+fi
+export XDG_CURRENT_DESKTOP=Aurora:wlroots
+export HOME=/var/lib/aurora-greeter
+mkdir -p "$HOME" 2>/dev/null
+
+labwc -C /usr/share/aurora/greeter -s aurora-greeter && exit 0
+exec agreety --cmd aurora-session

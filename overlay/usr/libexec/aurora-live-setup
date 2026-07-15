@@ -46,6 +46,16 @@ if ! id "$LIVE_USER" >/dev/null 2>&1; then
     chmod 0440 /etc/sudoers.d/aurora-live
 fi
 
+# The live user may do any administrative action without a password prompt.
+mkdir -p /etc/polkit-1/rules.d
+cat > /etc/polkit-1/rules.d/49-aurora-live.rules <<EOF
+polkit.addRule(function(action, subject) {
+    if (subject.user == "$LIVE_USER") {
+        return polkit.Result.YES;
+    }
+});
+EOF
+
 # Log straight into the desktop on the first greetd session.
 cat > /etc/greetd/config.toml <<EOF
 [terminal]

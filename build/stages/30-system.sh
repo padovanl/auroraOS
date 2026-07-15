@@ -46,6 +46,9 @@ cat > "$ROOTFS/etc/hosts" <<EOF
 ::1		localhost ip6-localhost ip6-loopback
 EOF
 
+# Writable home for the login screen (runs as greetd's system user).
+in_chroot install -d -o _greetd -g _greetd -m 700 /var/lib/aurora-greeter
+
 log "enabling services"
 in_chroot systemctl enable NetworkManager greetd aurora-live-setup
 in_chroot systemctl set-default graphical.target
