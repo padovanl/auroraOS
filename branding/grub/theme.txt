@@ -1,0 +1,33 @@
+# Aurora OS GRUB theme
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#0d0a14"
+terminal-font: "DejaVu Sans Regular 16"
+terminal-box: "terminal_box_*.png"
+
++ boot_menu {
+    left = 30%
+    top = 42%
+    width = 40%
+    height = 40%
+    item_font = "DejaVu Sans Regular 16"
+    selected_item_font = "DejaVu Sans Bold 16"
+    item_color = "#cfc7dd"
+    selected_item_color = "#ffffff"
+    item_height = 36
+    item_padding = 12
+    item_spacing = 6
+    selected_item_pixmap_style = "select_*.png"
+    scrollbar = false
+}
+
++ label {
+    left = 0
+    top = 92%
+    width = 100%
+    align = "center"
+    id = "__timeout__"
+    text = "Booting in %d seconds"
+    color = "#8d869c"
+    font = "DejaVu Sans Regular 12"
+}

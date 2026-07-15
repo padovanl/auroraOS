@@ -21,9 +21,9 @@ mksquashfs "$ROOTFS" "$ISODIR/live/filesystem.squashfs" \
 du -sx --block-size=1 "$ROOTFS" | cut -f1 > "$ISODIR/live/filesystem.size"
 
 log "writing grub.cfg"
-if [ -d "$SRC/branding/grub" ]; then
+if [ -f "$WORK/branding/grub/theme.txt" ]; then
     mkdir -p "$ISODIR/boot/grub/themes/aurora"
-    cp -r "$SRC/branding/grub/." "$ISODIR/boot/grub/themes/aurora/"
+    cp -r "$WORK/branding/grub/." "$ISODIR/boot/grub/themes/aurora/"
 fi
 
 BOOT="boot=live quiet splash"
@@ -39,6 +39,9 @@ loadfont unicode
 set gfxmode=auto
 terminal_output gfxterm
 if [ -f /boot/grub/themes/aurora/theme.txt ]; then
+    loadfont /boot/grub/themes/aurora/DejaVuSans-12.pf2
+    loadfont /boot/grub/themes/aurora/DejaVuSans-16.pf2
+    loadfont /boot/grub/themes/aurora/DejaVuSans-Bold-16.pf2
     set theme=/boot/grub/themes/aurora/theme.txt
 fi
 
