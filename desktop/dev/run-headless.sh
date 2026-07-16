@@ -13,7 +13,8 @@ docker build -q -t aurora-os-dev "$repo/desktop/dev" >/dev/null
 args=(--rm -v "$repo:/src:ro" -v "$out:/out" -v "$repo/work/dev-cache:/cache")
 inner_scenario=""
 if [ -n "$scenario" ]; then
-    args+=(-v "$(realpath "$scenario"):/scenario.sh:ro")
-    inner_scenario=/scenario.sh
+    # Copy next to the output: the docker daemon may not see private tmp dirs.
+    cp "$scenario" "$out/scenario.sh"
+    inner_scenario=/out/scenario.sh
 fi
 docker run "${args[@]}" aurora-os-dev bash /src/desktop/dev/session.sh "$inner_scenario" /out

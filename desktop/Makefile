@@ -33,6 +33,8 @@ install: protocols translations wallpapers
 	install -d $(SHAREDIR)/wayland-sessions $(SHAREDIR)/applications
 	install -m 644 data/wayland-sessions/*.desktop $(SHAREDIR)/wayland-sessions/
 	install -m 644 data/applications/*.desktop $(SHAREDIR)/applications/
+	install -d $(SHAREDIR)/xdg-desktop-portal
+	install -m 644 data/portals/*.conf $(SHAREDIR)/xdg-desktop-portal/
 	install -d $(SHAREDIR)/glib-2.0/schemas
 	install -m 644 data/schemas/* $(SHAREDIR)/glib-2.0/schemas/
 	install -d $(SHAREDIR)/icons/hicolor/scalable/apps $(SHAREDIR)/icons/hicolor/symbolic/apps

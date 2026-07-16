@@ -33,8 +33,10 @@ class LayerWindow(Gtk.Window):
             LS.set_margin(self, EDGES[name], px)
         if monitor is not None:
             LS.set_monitor(self, monitor)
-        if exclusive:
+        if exclusive is True:
             LS.auto_exclusive_zone_enable(self)
+        elif exclusive is not False:
+            LS.set_exclusive_zone(self, exclusive)
         LS.set_keyboard_mode(self, keyboard)
 
     def set_keyboard(self, mode):

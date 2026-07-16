@@ -23,7 +23,8 @@ def current_wallpaper():
 class Wallpaper(LayerWindow):
     def __init__(self, app, monitor):
         super().__init__(app, "aurora-wallpaper", layer=Layer.BACKGROUND,
-                         anchors=("top", "bottom", "left", "right"), monitor=monitor)
+                         anchors=("top", "bottom", "left", "right"), monitor=monitor,
+                         exclusive=-1)  # cover the whole output, ignore panels
         self.add_css_class("aurora-wallpaper")
         self._picture = Gtk.Picture(content_fit=Gtk.ContentFit.COVER,
                                     can_shrink=True, hexpand=True, vexpand=True)

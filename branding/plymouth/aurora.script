@@ -1,29 +1,36 @@
-// Aurora OS boot splash: logo with a pulsing row of dots underneath.
+// Aurora OS boot splash: the logo draws itself in (intro), then shimmers in
+// a loop until boot finishes. Frames are rendered by branding/logo.py.
 
 Window.SetBackgroundTopColor(0.05, 0.03, 0.10);
-Window.SetBackgroundBottomColor(0.10, 0.05, 0.15);
+Window.SetBackgroundBottomColor(0.05, 0.03, 0.10);
 
-logo.image = Image("logo.png");
-logo.sprite = Sprite(logo.image);
-logo.x = Window.GetX() + Window.GetWidth() / 2 - logo.image.GetWidth() / 2;
-logo.y = Window.GetY() + Window.GetHeight() / 2 - logo.image.GetHeight() / 2 - 40;
-logo.sprite.SetPosition(logo.x, logo.y, 1);
+INTRO_FRAMES = 36;
+LOOP_FRAMES = 48;
 
-NUM_DOTS = 5;
-dot_image = Image("dot.png");
-for (i = 0; i < NUM_DOTS; i++) {
-    dots[i] = Sprite(dot_image);
-    dots[i].SetPosition(Window.GetX() + Window.GetWidth() / 2 + (i - (NUM_DOTS - 1) / 2) * 22 - dot_image.GetWidth() / 2,
-                        logo.y + logo.image.GetHeight() + 48, 2);
-    dots[i].SetOpacity(0.2);
+fun frame_name(prefix, i) {
+    if (i < 10) return prefix + "-0" + i + ".png";
+    return prefix + "-" + i + ".png";
 }
 
-frame = 0;
+for (i = 0; i < INTRO_FRAMES; i++) intro[i] = Image(frame_name("intro", i));
+for (i = 0; i < LOOP_FRAMES; i++) loop[i] = Image(frame_name("loop", i));
+
+logo.sprite = Sprite(intro[0]);
+logo.w = intro[0].GetWidth();
+logo.h = intro[0].GetHeight();
+logo.x = Window.GetX() + Window.GetWidth() / 2 - logo.w / 2;
+logo.y = Window.GetY() + Window.GetHeight() / 2 - logo.h / 2;
+logo.sprite.SetPosition(logo.x, logo.y, 1);
+
+// Plymouth refreshes at ~50 Hz; the animation is drawn for 30 fps.
+tick = 0;
 fun refresh_callback() {
-    frame++;
-    for (i = 0; i < NUM_DOTS; i++) {
-        phase = Math.Sin((frame / 8) - i * 0.7);
-        dots[i].SetOpacity(0.25 + 0.75 * Math.Max(phase, 0));
+    tick++;
+    f = Math.Int(tick * 0.6);
+    if (f < INTRO_FRAMES) {
+        logo.sprite.SetImage(intro[f]);
+    } else {
+        logo.sprite.SetImage(loop[(f - INTRO_FRAMES) % LOOP_FRAMES]);
     }
 }
 Plymouth.SetRefreshFunction(refresh_callback);
@@ -35,12 +42,14 @@ bullets_sprite = Sprite();
 fun display_password_callback(prompt, bullets) {
     prompt_sprite.SetImage(Image.Text(prompt, 0.95, 0.93, 0.98));
     prompt_sprite.SetPosition(Window.GetX() + Window.GetWidth() / 2 - prompt_sprite.GetImage().GetWidth() / 2,
-                              logo.y + logo.image.GetHeight() + 90, 3);
+                              logo.y + logo.h + 30, 3);
+    prompt_sprite.SetOpacity(1);
     text = "";
     for (i = 0; i < bullets; i++) text += "•";
     bullets_sprite.SetImage(Image.Text(text, 0.95, 0.93, 0.98));
     bullets_sprite.SetPosition(Window.GetX() + Window.GetWidth() / 2 - bullets_sprite.GetImage().GetWidth() / 2,
-                               logo.y + logo.image.GetHeight() + 120, 3);
+                               logo.y + logo.h + 60, 3);
+    bullets_sprite.SetOpacity(1);
 }
 
 fun display_normal_callback() {
