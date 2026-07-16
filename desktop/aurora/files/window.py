@@ -151,6 +151,7 @@ class FilesWindow(Adw.ApplicationWindow):
         sorted_ = Gtk.SortListModel(model=filtered, sorter=self.sorter)
         self.selection = Gtk.MultiSelection(model=sorted_)
         self.model = sorted_
+        sorted_.connect("items-changed", lambda *a: self._update_empty())
 
         self._build_ui()
         self._build_actions()
@@ -439,7 +440,7 @@ class FilesWindow(Adw.ApplicationWindow):
             self.pathbar.append(btn)
         last = self.pathbar.get_last_child()
         if last:
-            last.add_css_class("suggested-action")
+            last.add_css_class("heading")
 
     def edit_location(self):
         self.path_entry.set_text(self.current.get_path() or self.current.get_uri())
@@ -510,6 +511,8 @@ class FilesWindow(Adw.ApplicationWindow):
         self._update_empty()
 
     def _update_empty(self):
+        if not hasattr(self, "view_stack"):
+            return
         name = getattr(self, "_view_name", "grid")
         if not self.dirlist.get_loading() and self.model.get_n_items() == 0:
             self.empty.set_title(_("No Results Found") if self.search_text

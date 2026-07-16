@@ -12,10 +12,12 @@ mkdir -p "$theme"
 cp "$SRC"/branding/plymouth/aurora.plymouth "$SRC"/branding/plymouth/aurora.script "$theme/"
 cp "$OUTB"/plymouth/*.png "$theme/"
 
-# GRUB fonts from the image's DejaVu (used by the theme and 90-iso).
-cp "$SRC/branding/grub/theme.txt" "$OUTB/grub/"
-dejavu="$ROOTFS/usr/share/fonts/truetype/dejavu"
-for spec in "DejaVuSans.ttf:12" "DejaVuSans.ttf:16" "DejaVuSans-Bold.ttf:16"; do
-    ttf=${spec%%:*} size=${spec##*:}
-    grub-mkfont -s "$size" -o "$OUTB/grub/${ttf%.ttf}-$size.pf2" "$dejavu/$ttf"
+# GRUB theme and fonts. Only Latin glyphs: bigger fonts overflow GRUB's heap on BIOS.
+sed "s/@AURORA_TITLE@/$AURORA_NAME $AURORA_VERSION/" "$SRC/branding/grub/theme.txt" > "$OUTB/grub/theme.txt"
+inter="$ROOTFS/usr/share/fonts/opentype/inter"
+for spec in "Inter-Regular:16" "Inter-Regular:18" "Inter-Regular:20" \
+            "Inter-SemiBold:28"; do
+    name=${spec%%:*} size=${spec##*:}
+    grub-mkfont -s "$size" -r 0x20-0x7E,0xA0-0x17F,0x2010-0x2027 \
+        -o "$OUTB/grub/$name-$size.pf2" "$inter/$name.otf"
 done

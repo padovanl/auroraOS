@@ -36,26 +36,24 @@ insmod all_video
 insmod gfxterm
 insmod png
 loadfont unicode
-set gfxmode=auto
+set gfxmode=1920x1080,1600x900,1280x720,1024x768,auto
 terminal_output gfxterm
 if [ -f /boot/grub/themes/aurora/theme.txt ]; then
-    loadfont /boot/grub/themes/aurora/DejaVuSans-12.pf2
-    loadfont /boot/grub/themes/aurora/DejaVuSans-16.pf2
-    loadfont /boot/grub/themes/aurora/DejaVuSans-Bold-16.pf2
+$(for f in "$WORK"/branding/grub/*.pf2; do echo "    loadfont /boot/grub/themes/aurora/$(basename "$f")"; done)
     set theme=/boot/grub/themes/aurora/theme.txt
 fi
 
 search --no-floppy --file --set=root /.aurora-live
 
-menuentry "Try $AURORA_NAME $AURORA_VERSION" {
+menuentry "Start $AURORA_NAME" {
     linux /live/vmlinuz $BOOT
     initrd /live/initrd.img
 }
-menuentry "Try $AURORA_NAME (safe graphics)" {
+menuentry "Start $AURORA_NAME (safe graphics)" {
     linux /live/vmlinuz $BOOT nomodeset
     initrd /live/initrd.img
 }
-submenu "Language / Lingua / Sprache / Langue / Idioma ..." {
+submenu "Language  ·  Lingua  ·  Sprache  ·  Idioma" {
 EOF
     sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/locales.list" |
     while IFS='|' read -r loc kbd _ name; do
@@ -69,7 +67,7 @@ EOF
     done
     cat <<EOF
 }
-menuentry "Boot from first hard disk" {
+menuentry "Boot from hard disk" {
     set root=(hd0)
     chainloader +1
 }
