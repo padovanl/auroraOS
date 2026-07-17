@@ -12,13 +12,13 @@ import libcalamares
 SOURCES = """Types: deb
 URIs: http://deb.debian.org/debian
 Suites: trixie trixie-updates trixie-backports
-Components: main contrib non-free-firmware
+Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 Types: deb
 URIs: http://security.debian.org/debian-security
 Suites: trixie-security
-Components: main contrib non-free-firmware
+Components: main contrib non-free non-free-firmware
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 """
 

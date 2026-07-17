@@ -1,0 +1,44 @@
+# Aurora OS interactive shell defaults (sourced from /etc/bash.bashrc).
+# Override anything in ~/.bashrc.
+
+case $- in *i*) ;; *) return ;; esac
+
+# Debian ships some tools under different names.
+command -v batcat >/dev/null && alias bat='batcat'
+command -v fdfind >/dev/null && alias fd='fdfind'
+
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias grep='grep --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias g='git'
+alias lg='lazygit'
+alias dc='docker compose'
+
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="${VISUAL:-nvim}"
+export MANPAGER="${MANPAGER:-sh -c 'col -bx | batcat -l man -p'}"
+
+# User-local tools (pipx, npm --prefix ~/.local, cargo, go).
+for d in "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin"; do
+    case ":$PATH:" in *":$d:"*) ;; *) [ -d "$d" ] && PATH="$d:$PATH" ;; esac
+done
+export PATH
+
+HISTSIZE=50000
+HISTFILESIZE=100000
+HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
+
+# fzf key bindings: Ctrl-R history search, Ctrl-T file picker.
+[ -r /usr/share/doc/fzf/examples/key-bindings.bash ] && . /usr/share/doc/fzf/examples/key-bindings.bash
+
+command -v direnv >/dev/null && eval "$(direnv hook bash)"
+
+# Prompt: starship with Aurora's config unless the user has their own.
+if command -v starship >/dev/null; then
+    [ -f "$HOME/.config/starship.toml" ] || export STARSHIP_CONFIG=/etc/aurora/starship.toml
+    eval "$(starship init bash)"
+fi

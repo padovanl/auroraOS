@@ -40,6 +40,23 @@ in_chroot() {
     LANG=C.UTF-8 DEBIAN_FRONTEND=noninteractive chroot "$ROOTFS" "$@"
 }
 
+write_sources() {
+    cat > "$ROOTFS/etc/apt/sources.list.d/debian.sources" <<EOF
+Types: deb
+URIs: $DEBIAN_MIRROR
+Suites: $DEBIAN_SUITE $DEBIAN_SUITE-updates
+Components: $DEBIAN_COMPONENTS
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: $DEBIAN_SECURITY_MIRROR
+Suites: $DEBIAN_SUITE-security
+Components: $DEBIAN_COMPONENTS
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+    rm -f "$ROOTFS/etc/apt/sources.list"
+}
+
 apt_install() {
     in_chroot apt-get install -y --no-install-recommends "$@"
 }

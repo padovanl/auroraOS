@@ -1,0 +1,64 @@
+# Aurora OS default prompt. Copy to ~/.config/starship.toml to customise.
+add_newline = true
+
+format = """
+$os$username$hostname$directory$git_branch$git_status$python$nodejs$rust$golang$docker_context$cmd_duration
+$character"""
+
+[os]
+disabled = false
+style = "bold #ffa45c"
+format = "[⏺ ]($style)"
+
+[username]
+style_user = "bold #a970ff"
+format = "[$user]($style) "
+show_always = false
+
+[hostname]
+ssh_only = true
+style = "bold #ff6f91"
+format = "[@$hostname]($style) "
+
+[directory]
+style = "bold #f2eefa"
+truncation_length = 4
+truncate_to_repo = true
+read_only = " 󰌾"
+
+[git_branch]
+symbol = " "
+style = "bold #a970ff"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "#ff6f91"
+format = "([$all_status$ahead_behind]($style) )"
+
+[python]
+symbol = "py "
+style = "#ffa45c"
+format = "[$symbol$version( \\($virtualenv\\))]($style) "
+
+[nodejs]
+symbol = "node "
+style = "#8bd5a0"
+format = "[$symbol$version]($style) "
+
+[rust]
+format = "[rs $version]($style) "
+
+[golang]
+format = "[go $version]($style) "
+
+[docker_context]
+format = "[🐳 $context]($style) "
+
+[cmd_duration]
+min_time = 2000
+style = "#8d869c"
+format = "[took $duration]($style)"
+
+[character]
+success_symbol = "[❯](bold #a970ff)"
+error_symbol = "[❯](bold #ff6f91)"
