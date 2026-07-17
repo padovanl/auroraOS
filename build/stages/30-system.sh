@@ -12,6 +12,16 @@ for f in /usr/lib/os-release /etc/issue /etc/issue.net; do
     fi
 done
 
+# Hide Calamares' own launchers ("Install Debian", "Install System"); Aurora
+# ships aurora-installer.desktop instead.
+for f in /usr/share/applications/calamares-install-debian.desktop \
+         /usr/share/applications/calamares.desktop \
+         /etc/xdg/autostart/calamares-desktop-icon.desktop; do
+    if [ -e "$ROOTFS$f" ] && ! in_chroot dpkg-divert --list "$f" | grep -q aurora; then
+        in_chroot dpkg-divert --package aurora-base --divert "$f.aurora-hidden" --rename --add "$f"
+    fi
+done
+
 cat > "$ROOTFS/usr/lib/os-release" <<EOF
 PRETTY_NAME="$AURORA_NAME $AURORA_VERSION ($AURORA_CODENAME)"
 NAME="$AURORA_NAME"

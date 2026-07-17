@@ -21,6 +21,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         python3-cffi-backend \
         libwayland-dev \
         pkgconf \
+        apt-utils \
         make \
         rsync \
     && rm -rf /var/lib/apt/lists/*

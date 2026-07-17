@@ -9,7 +9,9 @@ the sun glows).
 Usage:
   logo.py frames OUT_DIR [SIZE]   -> OUT_DIR/intro-NN.png, loop-NN.png
   logo.py gif OUT.gif [SIZE]      -> animated GIF (needs Pillow)
-  logo.py png OUT.png [SIZE]      -> static logo with wordmark
+  logo.py png OUT.png [SIZE]      -> static logo with wordmark on a dark tile
+  logo.py static OUT.png [SIZE]   -> static logo with wordmark, transparent
+  logo.py mark OUT.png [SIZE]     -> the mark alone, transparent
 """
 
 import math
@@ -198,6 +200,12 @@ def main():
         write_gif(out, size)
     elif cmd == "png":
         frame(size, "static", 0, background=True).write_to_png(out)
+    elif cmd == "static":
+        frame(size, "static", 0).write_to_png(out)
+    elif cmd == "mark":
+        surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, size, size)
+        draw_mark(cairo.Context(surf), size, glow=0.5)
+        surf.write_to_png(out)
     else:
         sys.exit(__doc__)
 

@@ -10,7 +10,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, Gtk  # noqa: E402
 
-from aurora import config_path, settings  # noqa: E402
+from aurora import apps, config_path, settings  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 
 SHORTCUTS = [
@@ -111,10 +111,10 @@ class Welcome(Adw.ApplicationWindow):
 
     def _page_done(self):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, halign=Gtk.Align.CENTER)
-        if is_live() and Gio.DesktopAppInfo.new("org.aurora.Installer.desktop"):
+        if is_live() and apps.app_by_id("aurora-installer.desktop"):
             install = Gtk.Button(label=_("Install Aurora OS…"),
                                  css_classes=["suggested-action", "pill"])
-            install.connect("clicked", lambda *_: (subprocess.Popen(["aurora-installer"]),
+            install.connect("clicked", lambda *_: (apps.launch(apps.app_by_id("aurora-installer.desktop")),
                                                    self._finish()))
             box.append(install)
         settings_btn = Gtk.Button(label=_("Open Settings"), css_classes=["pill"])

@@ -13,5 +13,10 @@ xdg-user-dirs-update >/dev/null 2>&1
 aurora-shell >"${XDG_RUNTIME_DIR:-/tmp}/aurora-shell.log" 2>&1 &
 aurora-idle >/dev/null 2>&1 &
 
-# Run the welcome app once per user.
-[ -f "$HOME/.config/aurora/welcome-done" ] || aurora-welcome >/dev/null 2>&1 &
+# "Install Aurora OS" boot entry: go straight to the installer.
+# Otherwise run the welcome app once per user.
+if grep -qw aurora.install /proc/cmdline; then
+    aurora-installer >/dev/null 2>&1 &
+elif [ ! -f "$HOME/.config/aurora/welcome-done" ]; then
+    aurora-welcome >/dev/null 2>&1 &
+fi

@@ -21,3 +21,11 @@ for spec in "Inter-Regular:16" "Inter-Regular:18" "Inter-Regular:20" \
     grub-mkfont -s "$size" -r 0x20-0x7E,0xA0-0x17F,0x2010-0x2027 \
         -o "$OUTB/grub/$name-$size.pf2" "$inter/$name.otf"
 done
+
+# Installer branding.
+cal="$ROOTFS/etc/calamares/branding/aurora"
+mkdir -p "$cal"
+sed "s/@VERSION@/$AURORA_VERSION/g" "$SRC/branding/calamares/branding.desc" > "$cal/branding.desc"
+cp "$SRC/branding/calamares/show.qml" "$SRC/branding/calamares/stylesheet.qss" "$cal/"
+python3 "$SRC/branding/logo.py" mark "$cal/logo.png" 128
+python3 "$SRC/branding/logo.py" static "$cal/welcome.png" 360

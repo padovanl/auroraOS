@@ -1,0 +1,20 @@
+#!/bin/sh
+# Start the Calamares installer as root on the current Wayland session.
+# Only meaningful in the live session, where the live user has sudo without
+# a password.
+
+if ! grep -qw 'boot=live' /proc/cmdline; then
+    echo "aurora-installer: only available when running from the live USB" >&2
+    exit 1
+fi
+
+pgrep -x calamares >/dev/null && exit 0
+
+exec sudo -n env \
+    WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+    XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+    XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
+    QT_QPA_PLATFORM=wayland \
+    QT_WAYLAND_DISABLE_WINDOWDECORATION=0 \
+    LANG="${LANG:-en_US.UTF-8}" \
+    calamares "$@"

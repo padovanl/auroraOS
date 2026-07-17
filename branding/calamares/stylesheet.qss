@@ -1,0 +1,57 @@
+/* Aurora look for the Qt-based installer. */
+
+QWidget {
+    font-family: "Inter";
+    font-size: 11pt;
+}
+
+#mainApp, #mainApp QWidget {
+    background-color: #1a1625;
+    color: #f2eefa;
+}
+
+#sidebarApp, #sidebarApp QWidget {
+    background-color: #14101e;
+}
+
+QPushButton {
+    background-color: #2a2438;
+    border: 1px solid #3a3150;
+    border-radius: 8px;
+    padding: 6px 16px;
+    color: #f2eefa;
+}
+
+QPushButton:hover { background-color: #332a45; }
+
+QPushButton:default, #view-button-next {
+    background-color: #a970ff;
+    border-color: #a970ff;
+    color: #ffffff;
+}
+
+QLineEdit, QComboBox, QSpinBox, QListView, QTreeView, QTextBrowser {
+    background-color: #221d30;
+    border: 1px solid #3a3150;
+    border-radius: 6px;
+    color: #f2eefa;
+    selection-background-color: #a970ff;
+    padding: 4px;
+}
+
+QLineEdit:focus, QComboBox:focus { border-color: #a970ff; }
+
+QRadioButton, QCheckBox, QLabel { color: #f2eefa; background: transparent; }
+
+QProgressBar {
+    border: none;
+    border-radius: 6px;
+    background-color: #2a2438;
+    text-align: center;
+    color: #ffffff;
+}
+
+QProgressBar::chunk {
+    border-radius: 6px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #a970ff, stop:1 #ff6f91);
+}

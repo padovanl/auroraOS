@@ -20,6 +20,21 @@ mksquashfs "$ROOTFS" "$ISODIR/live/filesystem.squashfs" \
 
 du -sx --block-size=1 "$ROOTFS" | cut -f1 > "$ISODIR/live/filesystem.size"
 
+# Offline apt repository used by the installer (see stages/70-pool.sh).
+if [ -d "$WORK/pool" ]; then
+    log "writing package pool"
+    mkdir -p "$ISODIR/pool/main" "$ISODIR/dists/$DEBIAN_SUITE/main/binary-$ARCH"
+    cp "$WORK"/pool/*.deb "$ISODIR/pool/main/"
+    (cd "$ISODIR" && apt-ftparchive packages pool/main > "dists/$DEBIAN_SUITE/main/binary-$ARCH/Packages")
+    gzip -k9 "$ISODIR/dists/$DEBIAN_SUITE/main/binary-$ARCH/Packages"
+    apt-ftparchive -o APT::FTPArchive::Release::Suite="$DEBIAN_SUITE" \
+        -o APT::FTPArchive::Release::Codename="$DEBIAN_SUITE" \
+        -o APT::FTPArchive::Release::Components=main \
+        -o APT::FTPArchive::Release::Architectures="$ARCH" \
+        release "$ISODIR/dists/$DEBIAN_SUITE" > "$WORK/Release"
+    mv "$WORK/Release" "$ISODIR/dists/$DEBIAN_SUITE/Release"
+fi
+
 log "writing grub.cfg"
 if [ -f "$WORK/branding/grub/theme.txt" ]; then
     mkdir -p "$ISODIR/boot/grub/themes/aurora"
@@ -45,11 +60,15 @@ fi
 
 search --no-floppy --file --set=root /.aurora-live
 
-menuentry "Start $AURORA_NAME" {
+menuentry "Try $AURORA_NAME" {
     linux /live/vmlinuz $BOOT
     initrd /live/initrd.img
 }
-menuentry "Start $AURORA_NAME (safe graphics)" {
+menuentry "Install $AURORA_NAME" {
+    linux /live/vmlinuz $BOOT aurora.install
+    initrd /live/initrd.img
+}
+menuentry "Try $AURORA_NAME (safe graphics)" {
     linux /live/vmlinuz $BOOT nomodeset
     initrd /live/initrd.img
 }

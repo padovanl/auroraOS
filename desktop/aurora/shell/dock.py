@@ -9,6 +9,17 @@ from aurora.shell.layer import Layer, LayerWindow
 ICON_SIZE = 44
 
 
+def _is_live():
+    try:
+        with open("/proc/cmdline") as f:
+            return "boot=live" in f.read().split()
+    except OSError:
+        return False
+
+
+LIVE = _is_live()
+
+
 class DockItem(Gtk.Button):
     def __init__(self, dock, key, app, pinned):
         super().__init__(css_classes=["flat", "dock-item"])
@@ -121,10 +132,12 @@ class Dock(LayerWindow):
 
     def favorites(self):
         s = settings.get()
-        if s:
-            return list(s.get_strv("dock-favorites"))
-        return ["firefox-esr.desktop", "org.aurora.Files.desktop", "foot.desktop",
-                "org.aurora.Settings.desktop"]
+        favs = list(s.get_strv("dock-favorites")) if s else [
+            "firefox-esr.desktop", "org.aurora.Files.desktop", "foot.desktop",
+            "org.aurora.Settings.desktop"]
+        if LIVE and "aurora-installer.desktop" not in favs:
+            favs.insert(0, "aurora-installer.desktop")
+        return favs
 
     def pin(self, key):
         s = settings.get()

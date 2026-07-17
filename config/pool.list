@@ -1,0 +1,7 @@
+# Packages shipped as an apt repository on the ISO (/pool, /dists). The
+# installer installs the right boot loader and disk-encryption tools from it,
+# so installing works offline. Groups are downloaded separately because some
+# conflict with each other (grub-pc vs grub-efi-amd64).
+grub-pc
+grub-efi grub-efi-amd64 grub-efi-amd64-signed shim-signed
+cryptsetup-initramfs keyutils
