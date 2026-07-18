@@ -11,6 +11,12 @@ xdg-user-dirs-update >/dev/null 2>&1
 [ -r "$HOME/.config/aurora/displays.sh" ] && sh "$HOME/.config/aurora/displays.sh"
 
 aurora-shell >"${XDG_RUNTIME_DIR:-/tmp}/aurora-shell.log" 2>&1 &
+
+# Password prompts for administrative actions.
+/usr/libexec/polkit-mate-authentication-agent-1 >/dev/null 2>&1 &
+
+# Apps the user (or packages) registered in XDG autostart.
+aurora-autostart >/dev/null 2>&1 &
 aurora-idle >/dev/null 2>&1 &
 
 # "Install Aurora OS" boot entry: go straight to the installer.

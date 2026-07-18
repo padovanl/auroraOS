@@ -1,0 +1,83 @@
+#!/usr/bin/python3
+"""Start XDG autostart entries (labwc does not do this itself).
+
+Reads ~/.config/autostart and $XDG_CONFIG_DIRS/autostart; a user file
+overrides a system one with the same name. Honors Hidden, OnlyShowIn,
+NotShowIn and TryExec.
+"""
+
+import os
+import shutil
+
+import gi
+
+gi.require_version("Gio", "2.0")
+from gi.repository import Gio, GLib  # noqa: E402
+
+# Entries we replace with our own implementation.
+SKIP = {"blueman.desktop", "nm-applet.desktop", "polkit-mate-authentication-agent-1.desktop",
+        "calamares-desktop-icon.desktop", "xdg-user-dirs.desktop", "at-spi-dbus-bus.desktop"}
+
+
+def desktops():
+    return [d.lower() for d in os.environ.get("XDG_CURRENT_DESKTOP", "").split(":") if d]
+
+
+def entries():
+    dirs = [os.path.join(GLib.get_user_config_dir(), "autostart")]
+    dirs += [os.path.join(d, "autostart") for d in GLib.get_system_config_dirs()]
+    seen = {}
+    for d in dirs:
+        if not os.path.isdir(d):
+            continue
+        for name in sorted(os.listdir(d)):
+            if name.endswith(".desktop") and name not in seen:
+                seen[name] = os.path.join(d, name)
+    return seen
+
+
+def wanted(path, current):
+    kf = GLib.KeyFile()
+    try:
+        kf.load_from_file(path, GLib.KeyFileFlags.NONE)
+    except GLib.Error:
+        return False
+
+    def get(key):
+        try:
+            return kf.get_string("Desktop Entry", key)
+        except GLib.Error:
+            return None
+
+    if (get("Hidden") or "").lower() == "true":
+        return False
+    if (get("X-GNOME-Autostart-enabled") or "true").lower() == "false":
+        return False
+    only = [d.lower() for d in (get("OnlyShowIn") or "").split(";") if d]
+    if only and not set(only) & set(current):
+        return False
+    never = [d.lower() for d in (get("NotShowIn") or "").split(";") if d]
+    if set(never) & set(current):
+        return False
+    tryexec = get("TryExec")
+    if tryexec and not shutil.which(tryexec):
+        return False
+    return True
+
+
+def main():
+    current = desktops()
+    for name, path in entries().items():
+        if name in SKIP or not wanted(path, current):
+            continue
+        app = Gio.DesktopAppInfo.new_from_filename(path)
+        if app is None:
+            continue
+        try:
+            app.launch([], None)
+        except GLib.Error as err:
+            print(f"aurora-autostart: {name}: {err.message}")
+
+
+if __name__ == "__main__":
+    main()

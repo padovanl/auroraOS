@@ -7,52 +7,22 @@ after any change to the org.aurora.desktop window-* keys.
 """
 
 import os
-import subprocess
-import xml.etree.ElementTree as ET
 
-from aurora import data_path, settings
+from aurora import data_path, labwcconf, settings
 
 GTK_MARK = "/* Managed by Aurora Settings: edit below the imports, not above. */"
 
 
-def _labwc_dir():
-    return os.path.expanduser("~/.config/labwc")
-
-
-def _child(parent, tag):
-    node = parent.find(tag)
-    if node is None:
-        node = ET.SubElement(parent, tag)
-    return node
-
-
 def apply_labwc(s):
-    path = os.path.join(_labwc_dir(), "rc.xml")
-    if not os.path.exists(path):
-        src = data_path("labwc", "rc.xml")
-        if not os.path.exists(src):
-            return
-        os.makedirs(_labwc_dir(), exist_ok=True)
-        with open(src) as f, open(path, "w") as g:
-            g.write(f.read())
-
-    parser = ET.XMLParser(target=ET.TreeBuilder(insert_comments=True))
-    tree = ET.parse(path, parser)
-    root = tree.getroot()
-
-    theme = _child(root, "theme")
+    cfg = labwcconf.Config()
     traffic = s.get_string("window-button-style") == "traffic"
-    _child(theme, "name").text = "Aurora" if traffic else "Aurora-Symbolic"
-    _child(theme, "cornerRadius").text = str(s.get_int("window-corner-radius"))
-    titlebar = _child(theme, "titlebar")
-    if s.get_string("window-buttons") == "left":
-        _child(titlebar, "layout").text = "close,iconify,max:"
-    else:
-        _child(titlebar, "layout").text = "icon:iconify,max,close"
-    _child(_child(root, "core"), "gap").text = str(s.get_int("window-gaps"))
-
-    tree.write(path, encoding="unicode", xml_declaration=True)
-    subprocess.run(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL, check=False)
+    cfg.set("theme", "name", value="Aurora" if traffic else "Aurora-Symbolic")
+    cfg.set("theme", "cornerRadius", value=s.get_int("window-corner-radius"))
+    left = s.get_string("window-buttons") == "left"
+    cfg.set("theme", "titlebar", "layout",
+            value="close,iconify,max:" if left else "icon:iconify,max,close")
+    cfg.set("core", "gap", value=s.get_int("window-gaps"))
+    cfg.save()
 
 
 def _write_gtk_css(version, imports):

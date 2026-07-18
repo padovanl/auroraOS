@@ -26,3 +26,6 @@ if ! grep -q aurora/bashrc "$ROOTFS/etc/bash.bashrc"; then
     printf '\n# Aurora OS shell setup\n[ -r /etc/aurora/bashrc ] && . /etc/aurora/bashrc\n' \
         >> "$ROOTFS/etc/bash.bashrc"
 fi
+
+# SSH server is installed but off; Settings → Sharing turns it on.
+in_chroot systemctl disable ssh.service ssh.socket 2>/dev/null || true
