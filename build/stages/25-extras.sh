@@ -19,5 +19,8 @@ while IFS='|' read -r name version url sums; do
     cp "$dir/$file" "$ROOTFS/tmp/extras/"
 done
 
-apt_install /tmp/extras/*.deb
+# Paths as seen from inside the chroot.
+debs=$(cd "$ROOTFS" && ls tmp/extras/*.deb | sed 's|^|/|')
+# shellcheck disable=SC2086
+apt_install $debs
 rm -rf "$ROOTFS/tmp/extras"

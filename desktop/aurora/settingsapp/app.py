@@ -10,6 +10,10 @@ from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 
 from aurora.i18n import _  # noqa: E402
 from aurora.settingsapp.about import About  # noqa: E402
+from aurora.settingsapp.applications import Accessibility, Applications, Notifications  # noqa: E402
+from aurora.settingsapp.devices import Bluetooth, Printers  # noqa: E402
+from aurora.settingsapp.inputs import Keyboard, Mouse, Multitasking  # noqa: E402
+from aurora.settingsapp.system import Privacy, Sharing, Updates, Users  # noqa: E402
 from aurora.settingsapp.appearance import Appearance  # noqa: E402
 from aurora.settingsapp.desktop import Desktop  # noqa: E402
 from aurora.settingsapp.display import Displays  # noqa: E402
@@ -19,7 +23,16 @@ from aurora.settingsapp.power import Power  # noqa: E402
 from aurora.settingsapp.sound import Sound  # noqa: E402
 from aurora.settingsapp.timedate import DateTime  # noqa: E402
 
-PAGES = [Network, Appearance, Desktop, Displays, Sound, Power, Language, DateTime, About]
+# Sidebar sections, like Ubuntu's Settings: connectivity, look & feel,
+# devices and input, security, system.
+SECTIONS = [
+    [Network, Bluetooth, Displays, Sound, Power],
+    [Appearance, Desktop, Multitasking, Notifications, Applications],
+    [Mouse, Keyboard, Printers, Accessibility],
+    [Privacy, Sharing],
+    [Users, Language, DateTime, Updates, About],
+]
+PAGES = [p for section in SECTIONS for p in section]
 
 
 class SettingsWindow(Adw.ApplicationWindow):
@@ -31,6 +44,10 @@ class SettingsWindow(Adw.ApplicationWindow):
 
         self.sidebar = Gtk.ListBox(css_classes=["navigation-sidebar"])
         self.sidebar.connect("row-selected", self._on_row)
+        firsts = {section[0] for section in SECTIONS[1:]}
+        self.sidebar.set_header_func(
+            lambda row, before: row.set_header(Gtk.Separator(margin_top=6, margin_bottom=6))
+            if before is not None and row.page_cls in firsts else row.set_header(None))
         for cls in PAGES:
             row = Gtk.ListBoxRow()
             box = Gtk.Box(spacing=12, margin_top=6, margin_bottom=6,

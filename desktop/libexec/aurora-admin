@@ -1,0 +1,61 @@
+#!/bin/bash
+# Privileged actions for Aurora Settings, run through pkexec
+# (policy: org.aurora.admin). Only these fixed operations are allowed.
+set -euo pipefail
+
+cmd="${1:-}"; shift || true
+
+valid_user() { [[ "$1" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]]; }
+
+case "$cmd" in
+    firewall)
+        case "${1:-}" in
+            on) ufw --force enable ;;
+            off) ufw disable ;;
+            *) exit 2 ;;
+        esac ;;
+    ssh)
+        case "${1:-}" in
+            on) systemctl enable --now ssh.service ;;
+            off) systemctl disable --now ssh.service ssh.socket ;;
+            *) exit 2 ;;
+        esac ;;
+    auto-updates)
+        v=0; [ "${1:-}" = on ] && v=1
+        cat > /etc/apt/apt.conf.d/20auto-upgrades <<EOF
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "$v";
+APT::Periodic::AutocleanInterval "7";
+EOF
+        ;;
+    autologin)
+        user="${1:-}"
+        conf=/etc/greetd/config.toml
+        # Drop any existing [initial_session] block, then add one if asked.
+        awk 'BEGIN{skip=0} /^\[initial_session\]/{skip=1; next} /^\[/{skip=0} !skip' "$conf" > "$conf.new"
+        if [ "$user" != "off" ]; then
+            valid_user "$user" && id "$user" >/dev/null || exit 2
+            printf '\n[initial_session]\ncommand = "/usr/bin/aurora-session"\nuser = "%s"\n' "$user" >> "$conf.new"
+        fi
+        mv "$conf.new" "$conf" ;;
+    add-user)
+        user="${1:-}"; name="${2:-}"; admin="${3:-no}"
+        valid_user "$user" || exit 2
+        groups="audio,video,render,input,plugdev,netdev,lpadmin,scanner,bluetooth,users"
+        [ "$admin" = yes ] && groups="$groups,sudo,docker"
+        useradd --create-home --shell /bin/bash --comment "$name" --groups "$groups" "$user"
+        # Password arrives on stdin, never on the command line.
+        IFS= read -r password
+        printf '%s:%s\n' "$user" "$password" | chpasswd ;;
+    delete-user)
+        user="${1:-}"
+        valid_user "$user" || exit 2
+        [ "$(id -u "$user")" -ge 1000 ] || exit 2
+        userdel --remove "$user" ;;
+    set-admin)
+        user="${1:-}"; valid_user "$user" || exit 2
+        if [ "${2:-}" = yes ]; then usermod -aG sudo "$user"; else gpasswd -d "$user" sudo; fi ;;
+    *)
+        echo "usage: aurora-admin firewall|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
+        exit 2 ;;
+esac
