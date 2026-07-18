@@ -6,6 +6,8 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Gtk4LayerShell", "1.0")
 from gi.repository import Gtk, Gtk4LayerShell as LS  # noqa: E402
 
+__all__ = ["LS", "Layer", "Edge", "Keyboard", "EDGES", "LayerWindow", "supported"]
+
 Layer = LS.Layer
 Edge = LS.Edge
 Keyboard = LS.KeyboardMode

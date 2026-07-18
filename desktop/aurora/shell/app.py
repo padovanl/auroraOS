@@ -3,7 +3,7 @@
 Running `aurora-shell` starts the shell. Running it again with a command
 forwards the command to the running instance, e.g.:
 
-    aurora-shell launcher
+    aurora-shell launcher [spotlight|grid]
     aurora-shell volume up|down|mute
     aurora-shell brightness up|down
     aurora-shell screenshot [area]
@@ -54,6 +54,14 @@ class Shell(Adw.Application):
             ("open-files", lambda *_: self._open_files(), None),
             ("settings", lambda _a, p: self.open_settings(p.get_string()), "s"),
             ("launcher", lambda *_: self.launcher.toggle(), None),
+            ("software", lambda *_: apps.spawn(["gnome-software"]), None),
+            ("devhub", lambda *_: apps.spawn(["aurora-devhub"]), None),
+            ("force-quit", lambda *_: apps.spawn(["gnome-system-monitor", "-p"]), None),
+            ("suspend", lambda *_: self.power.suspend(), None),
+            ("reboot", lambda *_: self.power.reboot(), None),
+            ("poweroff", lambda *_: self.power.poweroff(), None),
+            ("lock", lambda *_: self.power.lock(), None),
+            ("logout", lambda *_: self.power.logout(), None),
         ):
             action = Gio.SimpleAction.new(name, GLib.VariantType(ptype) if ptype else None)
             action.connect("activate", cb)
@@ -82,7 +90,40 @@ class Shell(Adw.Application):
         s = settings.get()
         if s:
             s.connect("changed::night-light", lambda *a: self._sync_night_light())
+            for key in ("panel-position", "clock-position"):
+                s.connect(f"changed::{key}", lambda *a: self._later(self.panels.rebuild))
+            for key in ("dock-position", "dock-style", "dock-icon-size", "dock-magnification",
+                        "dock-autohide", "dock-show-trash"):
+                s.connect(f"changed::{key}", lambda *a: self._later(self.docks.rebuild))
+            s.connect("changed::panel-opacity", lambda *a: self._update_dynamic_css())
         self._sync_night_light()
+        self._update_dynamic_css()
+
+    def _later(self, fn):
+        """Coalesce bursts of setting changes (layout presets change several keys)."""
+        pending = getattr(self, "_pending", {})
+        self._pending = pending
+        if fn in pending.values():
+            return
+        key = id(fn)
+
+        def run():
+            pending.pop(key, None)
+            fn()
+            return GLib.SOURCE_REMOVE
+        pending[key] = fn
+        GLib.timeout_add(150, run)
+
+    def _update_dynamic_css(self):
+        s = settings.get()
+        opacity = s.get_double("panel-opacity") if s else 0.78
+        css = f".aurora-panel .panel-bar {{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}"
+        if not hasattr(self, "_dyn_css"):
+            self._dyn_css = Gtk.CssProvider()
+            Gtk.StyleContext.add_provider_for_display(
+                Gdk.Display.get_default(), self._dyn_css,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
+        self._dyn_css.load_from_string(css)
 
     def _load_css(self):
         provider = Gtk.CssProvider()
@@ -111,7 +152,7 @@ class Shell(Adw.Application):
         cmd, rest = args[0], args[1:]
         arg = rest[0] if rest else ""
         if cmd == "launcher":
-            self.launcher.toggle()
+            self.launcher.toggle(arg or None)
         elif cmd == "volume":
             if arg == "mute":
                 self.audio.toggle_mute()

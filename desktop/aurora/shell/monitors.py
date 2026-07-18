@@ -24,6 +24,13 @@ class PerMonitor:
                 self._windows[mon] = win
                 win.present()
 
+    def rebuild(self):
+        """Recreate every window, e.g. after a layout setting changed."""
+        for win in self._windows.values():
+            win.destroy()
+        self._windows = {}
+        self._sync()
+
     def windows(self):
         return list(self._windows.values())
 

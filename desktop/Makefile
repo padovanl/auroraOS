@@ -24,12 +24,13 @@ install: protocols translations wallpapers
 	install -m 755 bin/* $(BINDIR)/
 	install -d $(DESTDIR)$(PREFIX)/libexec
 	install -m 755 libexec/* $(DESTDIR)$(PREFIX)/libexec/
-	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/style
+	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/style $(DATADIR)/gtk
+	install -m 644 data/gtk/* $(DATADIR)/gtk/
 	install -m 644 data/labwc/* $(DATADIR)/labwc/
 	install -m 644 data/greeter/* $(DATADIR)/greeter/
 	install -m 644 data/style/* $(DATADIR)/style/
 	install -d $(SHAREDIR)/themes
-	cp -r data/themes/. $(SHAREDIR)/themes/
+	$(PYTHON) data/themes/generate.py $(SHAREDIR)/themes
 	install -d $(SHAREDIR)/wayland-sessions $(SHAREDIR)/applications
 	install -m 644 data/wayland-sessions/*.desktop $(SHAREDIR)/wayland-sessions/
 	install -m 644 data/applications/*.desktop $(SHAREDIR)/applications/

@@ -1,14 +1,16 @@
-"""Top bar: launcher button, focused window, clock, status indicators."""
+"""Top bar: Aurora menu, focused app, status indicators, clock."""
 
-from gi.repository import GLib, Gtk
+from gi.repository import Gio, GLib, Gtk
 
-from aurora import settings
+from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 from aurora.shell.quicksettings import QuickSettings
 
 
 class Clock(Gtk.MenuButton):
+    """Clock; opens the calendar and notification center."""
+
     def __init__(self, shell):
         super().__init__(css_classes=["flat", "panel-button", "panel-clock"])
         self.shell = shell
@@ -65,17 +67,19 @@ class Clock(Gtk.MenuButton):
 
 
 class StatusArea(Gtk.MenuButton):
-    """Network / volume / battery icons; opens quick settings."""
+    """Network / volume / battery icons; opens the control center."""
 
     def __init__(self, shell):
-        super().__init__(css_classes=["flat", "panel-button", "panel-status"])
+        super().__init__(css_classes=["flat", "panel-button", "panel-status"],
+                         tooltip_text=_("Control Center"))
         self.shell = shell
-        box = Gtk.Box(spacing=8)
+        box = Gtk.Box(spacing=10)
         self.net_icon = Gtk.Image()
         self.vol_icon = Gtk.Image()
         self.bat_icon = Gtk.Image()
         self.bat_label = Gtk.Label(css_classes=["panel-battery-label"])
-        for w in (self.net_icon, self.vol_icon, self.bat_icon, self.bat_label):
+        self.cc_icon = Gtk.Image(icon_name="view-more-horizontal-symbolic")
+        for w in (self.bat_label, self.bat_icon, self.net_icon, self.vol_icon, self.cc_icon):
             box.append(w)
         self.set_child(box)
         self.set_popover(QuickSettings(shell))
@@ -99,48 +103,82 @@ class StatusArea(Gtk.MenuButton):
             self.bat_label.set_label(f"{bat.percentage:.0f}%")
 
 
+class AuroraMenu(Gtk.MenuButton):
+    """The logo menu: system-wide actions, like the menu in the corner of a Mac."""
+
+    def __init__(self, shell):
+        super().__init__(css_classes=["flat", "panel-button", "panel-logo"],
+                         tooltip_text=_("Aurora Menu"))
+        self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16))
+        menu = Gio.Menu()
+        for section in (
+            [(_("About This Computer"), "app.settings::about")],
+            [(_("System Settings…"), "app.settings::"),
+             (_("App Center…"), "app.software"),
+             (_("Dev Hub…"), "app.devhub")],
+            [(_("Force Quit…"), "app.force-quit")],
+            [(_("Sleep"), "app.suspend"), (_("Restart…"), "app.reboot"),
+             (_("Shut Down…"), "app.poweroff")],
+            [(_("Lock Screen"), "app.lock"), (_("Log Out"), "app.logout")],
+        ):
+            sec = Gio.Menu()
+            for label, action in section:
+                sec.append(label, action)
+            menu.append_section(None, sec)
+        self.set_menu_model(menu)
+
+
 class Panel(LayerWindow):
-    HEIGHT = 34
+    HEIGHT = 30
 
     def __init__(self, shell, monitor):
+        s = settings.get()
+        edge = s.get_string("panel-position") if s else "top"
         super().__init__(shell, "aurora-panel", layer=Layer.TOP,
-                         anchors=("top", "left", "right"), monitor=monitor,
+                         anchors=(edge, "left", "right"), monitor=monitor,
                          exclusive=True, keyboard=Keyboard.ON_DEMAND)
         self.add_css_class("aurora-panel")
+        self.add_css_class(f"panel-{edge}")
         self.shell = shell
         self.set_default_size(-1, self.HEIGHT)
 
         bar = Gtk.CenterBox(css_classes=["panel-bar"])
         bar.set_size_request(-1, self.HEIGHT)
 
-        left = Gtk.Box(spacing=4)
-        launcher_btn = Gtk.Button(css_classes=["flat", "panel-button", "panel-logo"],
-                                  tooltip_text=_("Applications"))
-        logo = Gtk.Box(spacing=6)
-        logo.append(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=18))
-        logo.append(Gtk.Label(label=_("Apps")))
-        launcher_btn.set_child(logo)
-        launcher_btn.connect("clicked", lambda *_: shell.launcher.toggle())
-        left.append(launcher_btn)
-        self.window_title = Gtk.Label(css_classes=["panel-title"], ellipsize=3,
-                                      max_width_chars=48, margin_start=8)
-        left.append(self.window_title)
+        left = Gtk.Box(spacing=2)
+        left.append(AuroraMenu(shell))
+        self.app_name = Gtk.Label(css_classes=["panel-app-name"], ellipsize=3,
+                                  max_width_chars=40, margin_start=6)
+        left.append(self.app_name)
         bar.set_start_widget(left)
 
-        bar.set_center_widget(Clock(shell))
-
-        right = Gtk.Box(spacing=4)
+        right = Gtk.Box(spacing=2)
+        search = Gtk.Button(icon_name="system-search-symbolic", tooltip_text=_("Search"),
+                            css_classes=["flat", "panel-button"])
+        search.connect("clicked", lambda *_: shell.launcher.toggle("spotlight"))
+        right.append(search)
         self.status = StatusArea(shell)
         right.append(self.status)
+        clock = Clock(shell)
+        if s and s.get_string("clock-position") == "center":
+            bar.set_center_widget(clock)
+        else:
+            right.append(clock)
         bar.set_end_widget(right)
 
         self.set_child(bar)
-        shell.toplevels.connect("changed", lambda *a: self._update_title())
-        self._update_title()
+        shell.toplevels.connect("changed", lambda *a: self._update_app())
+        self._update_app()
 
-    def _update_title(self):
+    def _update_app(self):
         active = self.shell.toplevels.active()
-        self.window_title.set_label(active.title if active else "")
+        if active is None:
+            self.app_name.set_label(_("Desktop"))
+            return
+        app = apps.find_app(active.app_id)
+        self.app_name.set_label(app.get_display_name() if app else
+                                (active.app_id or active.title or ""))
+        self.app_name.set_tooltip_text(active.title)
 
     def open_quick_settings(self):
         self.status.popup()

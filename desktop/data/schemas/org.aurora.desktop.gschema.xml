@@ -31,6 +31,83 @@
       <default>4000</default>
       <summary>Night light color temperature in Kelvin</summary>
     </key>
+    <key name="layout" type="s">
+      <choices>
+        <choice value="aurora"/><choice value="classic"/><choice value="studio"/>
+        <choice value="minimal"/><choice value="custom"/>
+      </choices>
+      <default>'aurora'</default>
+      <summary>Desktop layout preset</summary>
+    </key>
+    <key name="panel-position" type="s">
+      <choices><choice value="top"/><choice value="bottom"/></choices>
+      <default>'top'</default>
+      <summary>Where the top bar sits</summary>
+    </key>
+    <key name="panel-opacity" type="d">
+      <range min="0.3" max="1.0"/>
+      <default>0.78</default>
+      <summary>Top bar opacity</summary>
+    </key>
+    <key name="clock-position" type="s">
+      <choices><choice value="center"/><choice value="right"/></choices>
+      <default>'right'</default>
+      <summary>Where the clock is shown in the top bar</summary>
+    </key>
+    <key name="dock-position" type="s">
+      <choices>
+        <choice value="bottom"/><choice value="left"/><choice value="right"/><choice value="hidden"/>
+      </choices>
+      <default>'bottom'</default>
+      <summary>Dock position</summary>
+    </key>
+    <key name="dock-style" type="s">
+      <choices><choice value="floating"/><choice value="panel"/></choices>
+      <default>'floating'</default>
+      <summary>Floating dock, or a full-width taskbar</summary>
+    </key>
+    <key name="dock-icon-size" type="i">
+      <range min="24" max="80"/>
+      <default>48</default>
+      <summary>Dock icon size in pixels</summary>
+    </key>
+    <key name="dock-magnification" type="b">
+      <default>true</default>
+      <summary>Magnify dock icons under the pointer</summary>
+    </key>
+    <key name="dock-autohide" type="b">
+      <default>false</default>
+      <summary>Hide the dock until the pointer reaches the screen edge</summary>
+    </key>
+    <key name="dock-show-trash" type="b">
+      <default>true</default>
+      <summary>Show the Trash at the end of the dock</summary>
+    </key>
+    <key name="window-buttons" type="s">
+      <choices><choice value="left"/><choice value="right"/></choices>
+      <default>'left'</default>
+      <summary>Side of the title bar with the window buttons</summary>
+    </key>
+    <key name="window-button-style" type="s">
+      <choices><choice value="traffic"/><choice value="symbolic"/></choices>
+      <default>'traffic'</default>
+      <summary>Colored round buttons, or monochrome icons</summary>
+    </key>
+    <key name="window-corner-radius" type="i">
+      <range min="0" max="18"/>
+      <default>12</default>
+      <summary>Window corner radius</summary>
+    </key>
+    <key name="window-gaps" type="i">
+      <range min="0" max="24"/>
+      <default>6</default>
+      <summary>Gap between snapped windows and screen edges</summary>
+    </key>
+    <key name="launcher-style" type="s">
+      <choices><choice value="spotlight"/><choice value="grid"/></choices>
+      <default>'spotlight'</default>
+      <summary>What the Super key opens: a search bar or the full app grid</summary>
+    </key>
     <key name="idle-dim-minutes" type="i">
       <range min="0" max="120"/>
       <default>5</default>

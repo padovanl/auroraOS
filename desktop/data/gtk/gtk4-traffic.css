@@ -1,0 +1,32 @@
+/* Aurora: round colored window buttons for GTK 4 / libadwaita apps. */
+
+windowcontrols > button {
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  margin: 0 1px;
+  background: none;
+  box-shadow: none;
+}
+
+windowcontrols > button > image {
+  min-width: 13px;
+  min-height: 13px;
+  padding: 0;
+  border-radius: 999px;
+  -gtk-icon-size: 9px;
+  color: transparent;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: color 120ms ease;
+}
+
+windowcontrols > button.close > image { background-color: #ff6b6b; }
+windowcontrols > button.minimize > image { background-color: #ffc24b; }
+windowcontrols > button.maximize > image { background-color: #3ccb5a; }
+
+windowcontrols:hover > button > image { color: rgba(61, 34, 48, 0.85); }
+windowcontrols > button:active > image { filter: brightness(0.85); }
+
+window:backdrop windowcontrols:not(:hover) > button > image {
+  background-color: alpha(currentColor, 0.18);
+}

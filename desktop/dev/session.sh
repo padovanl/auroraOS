@@ -26,7 +26,7 @@ export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p -m 700 $XDG_RUNTIME_DIR
 export WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LIBINPUT_NO_DEVICES=1 WLR_HEADLESS_OUTPUTS=1
 export GSK_RENDERER=cairo
 export XDG_CURRENT_DESKTOP=Aurora:wlroots
-cp -r /opt/aurora/share/themes/Aurora /usr/share/themes/ 2>/dev/null || true
+cp -r /opt/aurora/share/themes/* /usr/share/themes/ 2>/dev/null || true
 
 cat > /tmp/inner.sh <<EOF
 set -x

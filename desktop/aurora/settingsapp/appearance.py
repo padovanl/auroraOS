@@ -3,7 +3,7 @@
 import os
 import shutil
 
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import N_, _
@@ -17,8 +17,39 @@ ACCENTS = [
     ("slate", "#6f8396", N_("Slate")),
 ]
 
-ICON_THEMES = [("Papirus-Dark", "Papirus Dark"), ("Papirus", "Papirus"),
-               ("Adwaita", "Adwaita")]
+ICON_DIRS = ["/usr/share/icons", os.path.expanduser("~/.local/share/icons"),
+             os.path.expanduser("~/.icons")]
+
+
+def _theme_name(path):
+    try:
+        with open(os.path.join(path, "index.theme")) as f:
+            for line in f:
+                if line.startswith("Name="):
+                    return line.split("=", 1)[1].strip()
+    except OSError:
+        pass
+    return os.path.basename(path)
+
+
+def installed_themes(kind):
+    """kind='icons' → icon themes, kind='cursors' → cursor themes: [(id, name)]."""
+    found = {}
+    for base in ICON_DIRS:
+        if not os.path.isdir(base):
+            continue
+        for d in sorted(os.listdir(base)):
+            path = os.path.join(base, d)
+            if not os.path.isfile(os.path.join(path, "index.theme")) and kind == "icons":
+                continue
+            has_cursors = os.path.isdir(os.path.join(path, "cursors"))
+            if kind == "cursors" and has_cursors:
+                found[d] = _theme_name(path)
+            elif kind == "icons" and d not in ("hicolor", "default", "locolor") and \
+                    any(os.path.isdir(os.path.join(path, sub)) for sub in
+                        ("scalable", "48x48", "symbolic", "apps", "places")) :
+                found[d] = _theme_name(path)
+    return sorted(found.items(), key=lambda kv: kv[1].lower())
 
 WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
@@ -69,17 +100,57 @@ class Appearance(Page):
         style.add(accent_row)
         self._install_swatch_css()
 
-        icon_ids = [t[0] for t in ICON_THEMES]
+        icons = installed_themes("icons") or [("Adwaita", "Adwaita")]
+        icon_ids = [t[0] for t in icons]
         cur_icons = iface.get_string("icon-theme") if iface else "Papirus-Dark"
-        style.add(combo_row(_("Icons"), [t[1] for t in ICON_THEMES],
+        style.add(combo_row(_("Icons"), [t[1] for t in icons],
                             icon_ids.index(cur_icons) if cur_icons in icon_ids else 0,
                             on_change=lambda i: iface and iface.set_string(
                                 "icon-theme", icon_ids[i])))
 
-        large = iface is not None and iface.get_double("text-scaling-factor") > 1.0
-        style.add(switch_row(_("Large text"), large,
-                             lambda v: iface and iface.set_double(
-                                 "text-scaling-factor", 1.25 if v else 1.0)))
+        cursors = installed_themes("cursors") or [("Adwaita", "Adwaita")]
+        cursor_ids = [t[0] for t in cursors]
+        cur_cursor = iface.get_string("cursor-theme") if iface else "Adwaita"
+        style.add(combo_row(_("Pointer"), [t[1] for t in cursors],
+                            cursor_ids.index(cur_cursor) if cur_cursor in cursor_ids else 0,
+                            on_change=lambda i: iface and iface.set_string(
+                                "cursor-theme", cursor_ids[i])))
+        sizes = [24, 32, 48, 64]
+        cur_size = iface.get_int("cursor-size") if iface else 24
+        style.add(combo_row(_("Pointer size"), [str(x) for x in sizes],
+                            sizes.index(cur_size) if cur_size in sizes else 0,
+                            on_change=lambda i: iface and iface.set_int("cursor-size", sizes[i])))
+        if iface:
+            style.add(switch_row(_("Animations"), iface.get_boolean("enable-animations"),
+                                 lambda v: iface.set_boolean("enable-animations", v)))
+
+        fonts = self.group(_("Fonts"))
+        if iface:
+            for key, title in (("font-name", _("Interface")), ("document-font-name", _("Documents")),
+                               ("monospace-font-name", _("Monospace"))):
+                fonts.add(self._font_row(iface, key, title))
+            row = Adw.ActionRow(title=_("Scaling"))
+            scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0.8, 2.0, 0.05)
+            scale.set_value(iface.get_double("text-scaling-factor"))
+            scale.set_size_request(240, -1)
+            scale.set_valign(Gtk.Align.CENTER)
+            scale.set_digits(2)
+            scale.set_value_pos(Gtk.PositionType.LEFT)
+            scale.connect("value-changed", lambda sc: iface.set_double(
+                "text-scaling-factor", round(sc.get_value(), 2)))
+            row.add_suffix(scale)
+            fonts.add(row)
+            aa = ["grayscale", "rgba", "none"]
+            fonts.add(combo_row(_("Anti-aliasing"), [_("Standard (grayscale)"),
+                                                     _("Subpixel (for LCD screens)"), _("None")],
+                                aa.index(iface.get_string("font-antialiasing"))
+                                if iface.get_string("font-antialiasing") in aa else 0,
+                                on_change=lambda i: iface.set_string("font-antialiasing", aa[i])))
+            hint = ["slight", "none", "medium", "full"]
+            fonts.add(combo_row(_("Hinting"), [_("Slight"), _("None"), _("Medium"), _("Full")],
+                                hint.index(iface.get_string("font-hinting"))
+                                if iface.get_string("font-hinting") in hint else 0,
+                                on_change=lambda i: iface.set_string("font-hinting", hint[i])))
 
         bg = self.group(_("Background"))
         add_btn = Gtk.Button(icon_name="list-add-symbolic", css_classes=["flat"],
@@ -93,13 +164,32 @@ class Appearance(Page):
         bg.add(self.flow)
         self._load_wallpapers()
 
-        clock = self.group(_("Top bar"))
         if aurora:
-            clock.add(switch_row(_("24-hour clock"), aurora.get_string("clock-format") == "24h",
-                                 lambda v: aurora.set_string("clock-format",
-                                                             "24h" if v else "12h")))
-            clock.add(switch_row(_("Show seconds"), aurora.get_boolean("clock-show-seconds"),
-                                 lambda v: aurora.set_boolean("clock-show-seconds", v)))
+            night = self.group(_("Night Light"), _("Warmer colors are easier on the eyes at night."))
+            night.add(switch_row(_("Night Light"), aurora.get_boolean("night-light"),
+                                 lambda v: aurora.set_boolean("night-light", v)))
+            row = Adw.ActionRow(title=_("Color temperature"))
+            scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 2500, 6000, 100)
+            scale.set_value(aurora.get_int("night-light-temperature"))
+            scale.set_inverted(True)
+            scale.set_size_request(240, -1)
+            scale.set_valign(Gtk.Align.CENTER)
+            scale.set_draw_value(False)
+            scale.connect("value-changed", lambda sc: aurora.set_int(
+                "night-light-temperature", int(sc.get_value())))
+            row.add_suffix(scale)
+            night.add(row)
+
+    def _font_row(self, iface, key, title):
+        row = Adw.ActionRow(title=title)
+        dialog = Gtk.FontDialog(title=title)
+        button = Gtk.FontDialogButton(dialog=dialog, valign=Gtk.Align.CENTER,
+                                      use_font=True, level=Gtk.FontLevel.FONT)
+        button.set_font_desc(Pango.FontDescription.from_string(iface.get_string(key)))
+        button.connect("notify::font-desc", lambda b, _p: iface.set_string(
+            key, b.get_font_desc().to_string()))
+        row.add_suffix(button)
+        return row
 
     def _install_swatch_css(self):
         css = "".join(

@@ -16,6 +16,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         python3 \
         python3-cairo \
         python3-pil \
+        python3-numpy \
         fonts-inter \
         python3-pywayland \
         python3-cffi-backend \

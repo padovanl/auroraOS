@@ -1,8 +1,8 @@
-"""Full-screen application launcher with unified search."""
+"""App launcher: Spotlight-style search bar and Launchpad-style app grid."""
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
-from aurora import apps
+from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell import search
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
@@ -51,6 +51,8 @@ class ResultRow(Gtk.ListBoxRow):
 
 
 class Launcher(LayerWindow):
+    """Two faces: "spotlight" (a search bar) and "grid" (Launchpad, all apps)."""
+
     def __init__(self, shell):
         super().__init__(shell, "aurora-launcher", layer=Layer.OVERLAY,
                          anchors=("top", "bottom", "left", "right"),
@@ -58,12 +60,14 @@ class Launcher(LayerWindow):
         self.add_css_class("aurora-launcher")
         self.shell = shell
 
-        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24,
+        self.mode = "grid"
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18,
                        halign=Gtk.Align.CENTER, margin_top=64, margin_bottom=48,
                        css_classes=["launcher-root"])
         root.set_size_request(760, -1)
+        self.root = root
 
-        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, settings, files, or type a calculation…"),
+        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, settings, files, math, or > command"),
                                      css_classes=["launcher-search"], hexpand=True)
         self.entry.connect("search-changed", self._on_search)
         self.entry.connect("activate", self._on_activate)
@@ -74,7 +78,7 @@ class Launcher(LayerWindow):
                                vexpand=True)
 
         self.grid = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
-                                max_children_per_line=6, min_children_per_line=3,
+                                max_children_per_line=7, min_children_per_line=3,
                                 row_spacing=12, column_spacing=12, valign=Gtk.Align.START,
                                 activate_on_single_click=True)
         self.grid.connect("child-activated", self._on_tile)
@@ -88,8 +92,11 @@ class Launcher(LayerWindow):
                                    valign=Gtk.Align.START)
         self.results.connect("row-activated", self._on_row)
         self.stack.add_named(Gtk.ScrolledWindow(child=self.results,
-                                                hscrollbar_policy=Gtk.PolicyType.NEVER),
+                                                hscrollbar_policy=Gtk.PolicyType.NEVER,
+                                                propagate_natural_height=True,
+                                                max_content_height=520),
                              "results")
+        self.stack.add_named(Gtk.Box(), "empty")
         root.append(self.stack)
 
         # Click on the dimmed backdrop (outside root) closes the launcher.
@@ -119,7 +126,7 @@ class Launcher(LayerWindow):
     def _on_search(self, entry):
         text = entry.get_text()
         if not text.strip():
-            self.stack.set_visible_child_name("grid")
+            self.stack.set_visible_child_name("grid" if self.mode == "grid" else "empty")
             return
         self.results.remove_all()
         for r in search.search(text, self.shell.open_settings):
@@ -171,15 +178,29 @@ class Launcher(LayerWindow):
 
     # --- visibility ---
 
-    def toggle(self):
-        if self.get_visible():
+    def toggle(self, mode=None):
+        if mode is None:
+            s = settings.get()
+            mode = s.get_string("launcher-style") if s else "spotlight"
+        if self.get_visible() and self.mode == mode:
             self.hide_launcher()
         else:
-            self.show_launcher()
+            self.show_launcher(mode)
 
-    def show_launcher(self):
+    def show_launcher(self, mode="spotlight"):
+        self.mode = mode
+        spotlight = mode == "spotlight"
+        for cls, on in (("mode-spotlight", spotlight), ("mode-grid", not spotlight)):
+            (self.add_css_class if on else self.remove_css_class)(cls)
+        monitor_h = 900
+        surface_monitor = self.get_display().get_monitors().get_item(0)
+        if surface_monitor is not None:
+            monitor_h = surface_monitor.get_geometry().height
+        self.root.set_margin_top(int(monitor_h * 0.2) if spotlight else 64)
+        self.root.set_size_request(680 if spotlight else 900, -1)
+        self.stack.set_vexpand(not spotlight)
         self.entry.set_text("")
-        self.stack.set_visible_child_name("grid")
+        self.stack.set_visible_child_name("empty" if spotlight else "grid")
         self.present()
         self.entry.grab_focus()
 

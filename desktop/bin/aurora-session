@@ -31,4 +31,7 @@ if [ ! -f "$cfg/rc.xml" ]; then
 fi
 [ -f "$cfg/rc.xml" ] || cfg=/usr/share/aurora/labwc
 
+# First login: write the GTK stylesheet imports for the chosen window style.
+[ -f "$HOME/.config/gtk-4.0/gtk.css" ] || aurora-look >/dev/null 2>&1
+
 exec labwc -C "$cfg"

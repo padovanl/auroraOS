@@ -1,0 +1,25 @@
+/* Aurora: round colored window buttons for GTK 3 apps. */
+
+headerbar button.titlebutton,
+.titlebar button.titlebutton {
+  min-width: 14px;
+  min-height: 14px;
+  padding: 0;
+  margin: 0 3px;
+  border-radius: 999px;
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  background-image: none;
+  color: transparent;
+  -gtk-icon-shadow: none;
+}
+
+headerbar button.titlebutton.close, .titlebar button.titlebutton.close { background-color: #ff6b6b; }
+headerbar button.titlebutton.minimize, .titlebar button.titlebutton.minimize { background-color: #ffc24b; }
+headerbar button.titlebutton.maximize, .titlebar button.titlebutton.maximize { background-color: #3ccb5a; }
+
+headerbar button.titlebutton:hover, .titlebar button.titlebutton:hover { color: rgba(61, 34, 48, 0.85); }
+
+headerbar:backdrop button.titlebutton, .titlebar:backdrop button.titlebutton {
+  background-color: rgba(128, 128, 128, 0.35);
+}

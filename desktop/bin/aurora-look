@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+# Re-apply Aurora's window decoration settings to labwc and GTK apps.
+import os
+import sys
+
+sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
+
+from aurora.look import apply  # noqa: E402
+
+apply()

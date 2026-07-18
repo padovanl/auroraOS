@@ -14,21 +14,23 @@ window.aurora-layer {
   color: @shell_fg;
 }
 
-/* ---- Panel ---- */
+/* ---- Panel (menu bar) ---- */
 
 .aurora-panel .panel-bar {
-  background-color: @shell_bg;
-  border-bottom: 1px solid @shell_border;
-  padding: 0 6px;
-  font-weight: 600;
-  font-size: 10.5pt;
+  background-color: rgba(20, 16, 30, 0.78);
+  padding: 0 8px;
+  font-size: 10pt;
+  font-weight: 500;
 }
 
+.aurora-panel.panel-top .panel-bar { border-bottom: 1px solid @shell_border; }
+.aurora-panel.panel-bottom .panel-bar { border-top: 1px solid @shell_border; }
+
 .panel-button {
-  min-height: 24px;
-  padding: 2px 12px;
-  margin: 4px 0;
-  border-radius: 999px;
+  min-height: 22px;
+  padding: 1px 9px;
+  margin: 3px 0;
+  border-radius: 7px;
   color: @shell_fg;
 }
 
@@ -41,9 +43,9 @@ window.aurora-layer {
   -gtk-icon-shadow: 0 0 6px alpha(@aurora_rose, 0.6);
 }
 
-.panel-title {
-  color: alpha(@shell_fg, 0.7);
-  font-weight: 500;
+.panel-app-name {
+  font-weight: 700;
+  color: @shell_fg;
 }
 
 .panel-battery-label { font-size: 9.5pt; }
@@ -79,64 +81,80 @@ window.aurora-layer {
 /* ---- Dock ---- */
 
 .aurora-dock .dock-box {
-  background-color: @shell_bg;
-  border: 1px solid @shell_border;
-  border-radius: 22px;
-  padding: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  background-color: rgba(34, 28, 48, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+.aurora-dock.dock-floating .dock-box { border-radius: 22px; }
+.aurora-dock.dock-panel .dock-box { border-radius: 0; box-shadow: none; }
+.aurora-dock.dock-panel.dock-bottom .dock-box { border-width: 1px 0 0 0; }
+.aurora-dock.dock-panel.dock-left .dock-box { border-width: 0 1px 0 0; }
+.aurora-dock.dock-panel.dock-right .dock-box { border-width: 0 0 0 1px; }
+
+.dock-row { margin: 6px; }
+
 .dock-item {
-  padding: 5px;
+  padding: 4px 5px 1px 5px;
   border-radius: 14px;
   min-width: 0;
   min-height: 0;
-  transition: background-color 150ms ease, transform 150ms ease;
+  background: none;
+  transition: background-color 150ms ease;
 }
 
-.dock-item:hover { background-color: @shell_hover; }
-.dock-item.focused { background-color: @shell_active; }
+.dock-item:hover { background: none; }
+.aurora-dock.dock-panel .dock-item:hover { background-color: @shell_hover; }
 .dock-item.launching image { opacity: 0.55; }
-.dock-apps image { -gtk-icon-size: 28px; padding: 8px; color: @shell_fg; }
-
-.dock-dots { margin-bottom: 0; }
+.dock-launchpad image { color: @shell_fg; }
 
 .dock-dot {
-  min-width: 5px;
-  min-height: 5px;
+  min-width: 4px;
+  min-height: 4px;
   border-radius: 999px;
-  background-color: alpha(@shell_fg, 0.55);
+  background-color: alpha(@shell_fg, 0.75);
 }
 
-.dock-item.focused .dock-dot {
-  min-width: 12px;
-  background-color: @aurora_amber;
-}
+.dock-item.focused .dock-dot { background-color: @aurora_amber; }
+.dock-bottom .dock-dots { min-height: 4px; }
+.dock-left .dock-dots, .dock-right .dock-dots { min-width: 4px; }
 
 .dock-separator {
-  margin: 8px 4px;
-  background-color: @shell_border;
+  margin: 10px 4px;
+  background-color: rgba(255, 255, 255, 0.18);
   min-width: 1px;
+  min-height: 1px;
 }
 
-/* ---- Launcher ---- */
+/* ---- Launcher: Spotlight and Launchpad ---- */
 
-.aurora-launcher .launcher-backdrop {
-  background-color: rgba(10, 6, 18, 0.72);
+.aurora-launcher.mode-grid .launcher-backdrop { background-color: rgba(10, 6, 18, 0.78); }
+.aurora-launcher.mode-spotlight .launcher-backdrop { background-color: rgba(0, 0, 0, 0.18); }
+
+.aurora-launcher.mode-spotlight .launcher-root {
+  background-color: rgba(30, 25, 42, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
 .launcher-search {
-  min-height: 48px;
-  font-size: 14pt;
-  border-radius: 999px;
-  padding: 0 18px;
-  background-color: rgba(255, 255, 255, 0.10);
+  min-height: 46px;
+  font-size: 15pt;
+  border-radius: 12px;
+  padding: 0 14px;
+  background-color: transparent;
   color: @shell_fg;
-  box-shadow: 0 0 0 1px @shell_border;
+  box-shadow: none;
 }
 
-.launcher-search:focus-within {
-  box-shadow: 0 0 0 2px alpha(@aurora_violet, 0.8);
+.aurora-launcher.mode-grid .launcher-search {
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 0 0 1px @shell_border;
+  font-size: 13pt;
+  min-height: 40px;
 }
 
 .launcher-tile {
@@ -154,15 +172,15 @@ window.aurora-layer {
 }
 
 .launcher-result {
-  border-radius: 14px;
-  margin: 2px 0;
+  border-radius: 10px;
+  margin: 1px 0;
 }
 
 .launcher-result:selected {
-  background-color: alpha(@aurora_violet, 0.35);
+  background-color: alpha(@aurora_violet, 0.55);
 }
 
-.result-title { font-weight: 600; font-size: 11.5pt; }
+.result-title { font-weight: 600; font-size: 11pt; }
 
 /* ---- Notifications ---- */
 
