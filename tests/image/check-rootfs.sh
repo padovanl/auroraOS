@@ -21,7 +21,7 @@ echo "== required programs"
 for bin in labwc greetd aurora-shell aurora-session aurora-settings aurora-files aurora-devhub \
            aurora-installer calamares portop git docker podman python3 node firefox-esr foot \
            nmcli ufw flatpak gnome-software timeshift; do
-    expect "$bin" test -x "$(chroot "$ROOTFS" sh -c "command -v $bin")"
+    expect "$bin" chroot "$ROOTFS" sh -c "command -v $bin"
 done
 
 echo "== services"
@@ -37,7 +37,7 @@ expect "aurora schema installed" test -f "$ROOTFS/usr/share/glib-2.0/schemas/org
 expect "wayland bindings generated" test -d "$ROOTFS/usr/lib/aurora/aurora/protocols/wlr_foreign_toplevel_management_unstable_v1"
 expect "window themes" test -f "$ROOTFS/usr/share/themes/Aurora/openbox-3/close-active.svg"
 expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"
-expect "shell imports" chroot "$ROOTFS" python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
+expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
 
 echo "== installer"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"
@@ -61,10 +61,17 @@ for f in /live/vmlinuz /live/initrd.img /live/filesystem.squashfs /boot/grub/gru
          "/dists/$DEBIAN_SUITE/main/binary-$ARCH/Packages"; do
     expect "iso contains $f" grep -q "'$f'" <<<"$listing"
 done
-cfg=$(xorriso -indev "$iso" -osirrox on -extract /boot/grub/grub.cfg /dev/stdout 2>/dev/null)
+extract() {  # extract ISO_PATH → prints the file
+    local tmp; tmp=$(mktemp)
+    rm -f "$tmp"
+    xorriso -indev "$iso" -osirrox on -extract "$1" "$tmp" >/dev/null 2>&1
+    cat "$tmp" 2>/dev/null
+    rm -f "$tmp"
+}
+cfg=$(extract /boot/grub/grub.cfg)
 expect "grub Try entry" grep -q 'menuentry "Try ' <<<"$cfg"
 expect "grub Install entry" grep -q 'aurora.install' <<<"$cfg"
-pkgs=$(xorriso -indev "$iso" -osirrox on -extract "/dists/$DEBIAN_SUITE/main/binary-$ARCH/Packages" /dev/stdout 2>/dev/null)
+pkgs=$(extract "/dists/$DEBIAN_SUITE/main/binary-$ARCH/Packages")
 for p in grub-pc grub-efi-amd64 shim-signed cryptsetup-initramfs; do
     expect "pool has $p" grep -qx "Package: $p" <<<"$pkgs"
 done
