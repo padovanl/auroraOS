@@ -12,6 +12,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         fonts-inter fonts-noto-core fonts-noto-color-emoji \
         gnome-calculator gnome-text-editor mousepad libnotify-bin \
         gettext make rsync locales wlrctl \
+        python3-pytest python3-yaml desktop-file-utils libxml2-utils shellcheck \
     && sed -i 's/^# *\(en_US.UTF-8\|it_IT.UTF-8\)/\1/' /etc/locale.gen && locale-gen \
     && rm -rf /var/lib/apt/lists/*
 

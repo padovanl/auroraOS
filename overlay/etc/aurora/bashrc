@@ -22,7 +22,8 @@ export VISUAL="${VISUAL:-nvim}"
 export MANPAGER="${MANPAGER:-sh -c 'col -bx | batcat -l man -p'}"
 
 # User-local tools (pipx, npm --prefix ~/.local, cargo, go).
-for d in "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin"; do
+for d in "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/go/bin" /usr/local/go/bin \
+         "$HOME/.bun/bin" "$HOME/.deno/bin" "$HOME/.local/share/fnm"; do
     case ":$PATH:" in *":$d:"*) ;; *) [ -d "$d" ] && PATH="$d:$PATH" ;; esac
 done
 export PATH
@@ -36,6 +37,7 @@ shopt -s histappend
 [ -r /usr/share/doc/fzf/examples/key-bindings.bash ] && . /usr/share/doc/fzf/examples/key-bindings.bash
 
 command -v direnv >/dev/null && eval "$(direnv hook bash)"
+command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --shell bash)"
 
 # Prompt: starship with Aurora's config unless the user has their own.
 if command -v starship >/dev/null; then
