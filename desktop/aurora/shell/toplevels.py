@@ -129,7 +129,9 @@ class ToplevelTracker(GObject.Object):
             print(f"aurora: cannot open Wayland connection: {err}")
             self._display = None
             return
-        registry = self._display.get_registry()
+        # Must stay referenced: pywayland finds the display for new objects
+        # (every new window) through live registries only.
+        self._registry = registry = self._display.get_registry()
         registry.dispatcher["global"] = self._on_global
         self._display.roundtrip()
         self._display.roundtrip()
