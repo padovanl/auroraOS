@@ -115,6 +115,7 @@ class ToplevelTracker(GObject.Object):
     def __init__(self):
         super().__init__()
         self.toplevels = []
+        self._alive = set()
         self.seat = None
         self.manager = None
         self._serial = 0
@@ -149,7 +150,10 @@ class ToplevelTracker(GObject.Object):
             self.seat = registry.bind(name, WlSeat, 1)
 
     def _on_toplevel(self, _manager, handle):
-        Toplevel(self, handle)
+        # Keep a strong reference until "closed": before its first "done" the
+        # Toplevel is only reachable through a reference cycle, and if the
+        # garbage collector freed it, pywayland would fail on its next event.
+        self._alive.add(Toplevel(self, handle))
 
     def _on_io(self, _fd, cond):
         if cond & GLib.IOCondition.HUP:
@@ -169,6 +173,7 @@ class ToplevelTracker(GObject.Object):
         self.toplevels.append(toplevel)
 
     def removed(self, toplevel):
+        self._alive.discard(toplevel)
         if toplevel in self.toplevels:
             self.toplevels.remove(toplevel)
         self.emit("changed")

@@ -175,6 +175,12 @@ def main():
             for desc, command in CHECKS:
                 code, out = agent.run(command)
                 results.append((desc, code == 0, out.strip()[:200]))
+            # Keep logs as test artifacts.
+            for name, command in (("shell", "cat /run/user/$(id -u aurora)/aurora-shell.log"),
+                                  ("journal", "journalctl -b -p warning --no-pager | tail -300")):
+                _code, out = agent.run(command)
+                with open(os.path.join(args.out, f"{name}-{args.firmware}.log"), "w") as f:
+                    f.write(out)
         img = screenshot(mon, os.path.join(args.out, f"desktop-{args.firmware}.png"))
         results.append(("desktop visible on screen", desktop_visible(img), ""))
     finally:
