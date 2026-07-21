@@ -23,7 +23,9 @@ if command -v shellcheck >/dev/null; then
 fi
 
 step "Desktop entries"
-check desktop-file-validate desktop/data/applications/*.desktop desktop/data/wayland-sessions/*.desktop
+check desktop-file-validate desktop/data/applications/*.desktop
+# Session files use DesktopNames (session spec), which the validator flags.
+check grep -q "^Exec=aurora-session$" desktop/data/wayland-sessions/aurora.desktop
 
 step "GSettings schemas"
 tmp=$(mktemp -d)

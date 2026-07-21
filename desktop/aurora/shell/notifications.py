@@ -4,7 +4,10 @@ import html
 import re
 import time
 
-from gi.repository import Gio, GLib, Gtk, Pango
+import gi
+
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gio, GLib, Gtk, Pango  # noqa: E402
 
 from aurora import VERSION, apps, settings
 from aurora.i18n import _
