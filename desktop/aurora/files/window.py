@@ -504,7 +504,7 @@ class FilesWindow(Adw.ApplicationWindow):
         self._update_empty()
 
     def _on_loading(self, *_a):
-        if not self.dirlist.get_loading():
+        if not self.dirlist.is_loading():
             err = self.dirlist.get_error()
             if err:
                 self.toast(err.message)
@@ -514,7 +514,7 @@ class FilesWindow(Adw.ApplicationWindow):
         if not hasattr(self, "view_stack"):
             return
         name = getattr(self, "_view_name", "grid")
-        if not self.dirlist.get_loading() and self.model.get_n_items() == 0:
+        if not self.dirlist.is_loading() and self.model.get_n_items() == 0:
             self.empty.set_title(_("No Results Found") if self.search_text
                                  else _("Trash is Empty") if self.in_trash()
                                  else _("Folder is Empty"))

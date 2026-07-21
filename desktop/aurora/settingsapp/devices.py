@@ -17,9 +17,9 @@ class Bluetooth(Page):
     icon_name = "bluetooth-active-symbolic"
 
     def build(self):
-        self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
         self.manager = None
         try:
+            self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
             self.manager = Gio.DBusObjectManagerClient.new_for_bus_sync(
                 Gio.BusType.SYSTEM, Gio.DBusObjectManagerClientFlags.NONE, BLUEZ, "/",
                 None, None, None)

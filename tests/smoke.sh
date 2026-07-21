@@ -29,7 +29,8 @@ launch settings aurora-settings
 for page in network bluetooth display sound power appearance desktop multitasking \
             notifications apps mouse keyboard printers accessibility privacy sharing \
             users language datetime updates about; do
-    aurora-settings --page "$page" >>"$out/smoke/settings.log" 2>&1
+    timeout 15 aurora-settings --page "$page" >>"$out/smoke/settings.log" 2>&1 ||
+        echo "timeout or error opening page $page" >>"$out/smoke/settings.log"
     sleep 1.5
     grim "$out/smoke/settings-$page.png"
 done
@@ -40,7 +41,7 @@ else
     echo "ok: settings pages"
 fi
 
-aurora-shell launcher spotlight; sleep 1; grim "$out/smoke/spotlight.png"
+timeout 10 aurora-shell launcher spotlight; sleep 1; grim "$out/smoke/spotlight.png"
 aurora-shell launcher spotlight
 aurora-shell launcher grid; sleep 1; grim "$out/smoke/launchpad.png"
 aurora-shell launcher grid

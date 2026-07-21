@@ -85,7 +85,14 @@ class SettingsWindow(Adw.ApplicationWindow):
             return
         cls = row.page_cls
         if cls.page_id not in self._pages:
-            page = cls()
+            try:
+                page = cls()
+            except Exception as err:  # noqa: BLE001 - one broken page must not take down Settings
+                import traceback
+                traceback.print_exc()
+                page = Adw.StatusPage(icon_name="dialog-warning-symbolic",
+                                      title=_("This page could not be loaded"),
+                                      description=str(err))
             self._pages[cls.page_id] = page
             self.content_stack.add_named(page, cls.page_id)
         self.content_stack.set_visible_child_name(cls.page_id)

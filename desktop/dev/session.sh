@@ -41,5 +41,5 @@ EOF
 
 # Same compositor config as the real session, minus its autostart.
 rm -rf /tmp/labwc && cp -r /opt/aurora/share/aurora/labwc /tmp/labwc && rm -f /tmp/labwc/autostart
-dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
+timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
 echo "screenshot: $out/screen.png"
