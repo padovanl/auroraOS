@@ -62,3 +62,13 @@ in_chroot install -d -o _greetd -g _greetd -m 700 /var/lib/aurora-greeter
 log "enabling services"
 in_chroot systemctl enable NetworkManager greetd aurora-live-setup
 in_chroot systemctl set-default graphical.target
+
+# Hide helper/terminal-only launchers (config/hidden-apps.list) with
+# NoDisplay overrides in /usr/local/share, which XDG searches first.
+mkdir -p "$ROOTFS/usr/local/share/applications"
+sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/hidden-apps.list" | while read -r id; do
+    src="$ROOTFS/usr/share/applications/$id"
+    [ -f "$src" ] || continue
+    sed '/^NoDisplay=/d; /^\[Desktop Entry\]/a NoDisplay=true' "$src" \
+        > "$ROOTFS/usr/local/share/applications/$id"
+done

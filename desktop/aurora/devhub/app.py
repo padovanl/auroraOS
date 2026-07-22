@@ -45,12 +45,12 @@ class Card(Gtk.Box):
                          css_classes=["card", "devhub-card"])
         self.win = win
         self.recipe = recipe
-        self.set_size_request(250, -1)
+        self.set_size_request(240, 190)
         self.append(Gtk.Image(icon_name=icon_for(recipe), pixel_size=48, halign=Gtk.Align.START))
         self.append(Gtk.Label(label=_(recipe["name"]), xalign=0, css_classes=["title-4"]))
         self.append(Gtk.Label(label=_(recipe["desc"]), xalign=0, wrap=True, lines=3,
                               ellipsize=3, css_classes=["dim-label"], vexpand=True,
-                              valign=Gtk.Align.START))
+                              valign=Gtk.Align.START, max_width_chars=28, width_chars=28))
         self.button = Gtk.Button(halign=Gtk.Align.END, css_classes=["pill"])
         self.button.connect("clicked", lambda *_: win.install(self))
         self.append(self.button)
@@ -91,7 +91,7 @@ class DevHub(Adw.ApplicationWindow):
         for cat, title in CATEGORIES:
             label = Gtk.Label(label=_(title), xalign=0, css_classes=["title-3"])
             flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
-                               max_children_per_line=4, min_children_per_line=1,
+                               max_children_per_line=4, min_children_per_line=2,
                                column_spacing=14, row_spacing=14)
             for r in [r for r in RECIPES if r["cat"] == cat]:
                 card = Card(self, r)

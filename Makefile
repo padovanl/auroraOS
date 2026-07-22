@@ -10,7 +10,7 @@ DOCKER_RUN = docker run --rm --privileged \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot dev-image
+	test test-static test-unit test-smoke test-image test-boot dev-image screenshots site
 
 all: iso
 
@@ -60,6 +60,12 @@ test-unit: dev-image
 test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
+
+# Regenerate docs/screenshots from a scripted headless session.
+screenshots: dev-image
+	desktop/dev/run-headless.sh tests/showcase.sh $(CURDIR)/work/showcase-out
+	mkdir -p docs/screenshots
+	cp work/showcase-out/showcase/*.png docs/screenshots/
 
 test-image: builder
 	$(DOCKER_RUN) bash /src/tests/image/check-rootfs.sh

@@ -74,8 +74,9 @@ class Launcher(LayerWindow):
         self.entry.connect("stop-search", lambda *_: self.hide_launcher())
         root.append(self.entry)
 
+        # Not homogeneous: Spotlight must shrink to its results, not the app grid.
         self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
-                               vexpand=True)
+                               vexpand=True, vhomogeneous=False, interpolate_size=True)
 
         self.grid = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
                                 max_children_per_line=7, min_children_per_line=3,
