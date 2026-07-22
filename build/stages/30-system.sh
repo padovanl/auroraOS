@@ -72,3 +72,16 @@ sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/hidden-apps.list" | while r
     sed '/^NoDisplay=/d; /^\[Desktop Entry\]/a NoDisplay=true' "$src" \
         > "$ROOTFS/usr/local/share/applications/$id"
 done
+
+# Friendlier names for some upstream launchers (config/renamed-apps.list).
+sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/renamed-apps.list" |
+while IFS='|' read -r id name icon; do
+    id=$(echo $id); name=$(echo $name); icon=$(echo $icon)
+    src="$ROOTFS/usr/share/applications/$id"
+    [ -f "$src" ] || die "renamed-apps.list: $id is not installed"
+    # Replace the untranslated Name only; translations (Name[xx]) stay as they are.
+    sed -e "s|^Name=.*|Name=$name|" "$src" > "$ROOTFS/usr/local/share/applications/$id"
+    if [ "$icon" != "-" ]; then
+        sed -i "s|^Icon=.*|Icon=$icon|" "$ROOTFS/usr/local/share/applications/$id"
+    fi
+done

@@ -78,8 +78,12 @@ class StatusArea(Gtk.MenuButton):
         self.vol_icon = Gtk.Image()
         self.bat_icon = Gtk.Image()
         self.bat_label = Gtk.Label(css_classes=["panel-battery-label"])
+        self.bt_icon = Gtk.Image(icon_name="bluetooth-active-symbolic")
+        self.rec_icon = Gtk.Image(icon_name="media-record-symbolic", css_classes=["panel-recording"],
+                                  tooltip_text=_("Recording the screen"))
         self.cc_icon = Gtk.Image(icon_name="view-more-horizontal-symbolic")
-        for w in (self.bat_label, self.bat_icon, self.net_icon, self.vol_icon, self.cc_icon):
+        for w in (self.rec_icon, self.bat_label, self.bat_icon, self.bt_icon, self.net_icon,
+                  self.vol_icon, self.cc_icon):
             box.append(w)
         self.set_child(box)
         self.set_popover(QuickSettings(shell))
@@ -87,6 +91,8 @@ class StatusArea(Gtk.MenuButton):
         shell.network.connect("changed", lambda *a: self._update())
         shell.audio.connect("changed", lambda *a: self._update())
         shell.battery.connect("changed", lambda *a: self._update())
+        shell.bluetooth.connect("changed", lambda *a: self._update())
+        shell.recorder.connect("changed", lambda *a: self._update())
         self._update()
 
     def _update(self):
@@ -95,6 +101,8 @@ class StatusArea(Gtk.MenuButton):
         self.net_icon.set_tooltip_text(name or _("Not connected"))
         self.vol_icon.set_from_icon_name(self.shell.audio.icon_name)
         self.vol_icon.set_visible(self.shell.audio.available)
+        self.bt_icon.set_visible(self.shell.bluetooth.powered)
+        self.rec_icon.set_visible(self.shell.recorder.recording)
         bat = self.shell.battery
         self.bat_icon.set_visible(bat.present)
         self.bat_label.set_visible(bat.present)

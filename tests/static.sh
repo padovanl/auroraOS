@@ -65,6 +65,18 @@ check python3 desktop/data/themes/generate.py "$tmp"
 test -f "$tmp/Aurora/openbox-3/close-active.svg" || { echo "FAILED: traffic buttons"; fail=1; }
 rm -rf "$tmp"
 
+step "App manifest is consistent"
+check python3 - <<'PY'
+import re
+rows = [l.split("|") for l in open("config/apps.manifest") if l.strip() and not l.startswith("#")]
+ids = [r[2].strip() for r in rows]
+assert all(len(r) == 4 and r[3].strip() in ("yes", "no") for r in rows), "bad manifest row"
+assert len(ids) == len(set(ids)), "duplicate ids in manifest"
+hidden = {l.strip() for l in open("config/hidden-apps.list") if l.strip() and not l.startswith("#")}
+assert not hidden & set(ids), f"manifest apps are hidden: {hidden & set(ids)}"
+print(f"{len(ids)} default apps")
+PY
+
 step "Package lists have no duplicates"
 dups=$(sed -e 's/#.*//' -e '/^\s*$/d' config/packages/*.list | sort | uniq -d)
 if [ -n "$dups" ]; then echo "FAILED: duplicated packages: $dups"; fail=1; else echo "ok"; fi

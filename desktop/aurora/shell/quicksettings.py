@@ -1,40 +1,85 @@
-"""Quick settings popover: volume, brightness, toggles, Wi-Fi, power."""
+"""Control Center: the quick settings popover in the top bar.
 
-from gi.repository import Gtk, GLib
+Mirrors what Ubuntu's quick settings offer: sliders for output volume (with
+device choice), microphone and brightness; toggles for Wi-Fi, Bluetooth,
+power mode, night light, dark style, do not disturb, airplane mode and
+screen recording (with detail lists where it makes sense); media controls;
+battery, screenshot, settings, lock and the power menu.
+"""
+
+from gi.repository import GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import _
+from aurora.shell.services import audio_nodes, set_default_audio
+
+PROFILE_LABELS = {"performance": _("Performance"), "balanced": _("Balanced"),
+                  "power-saver": _("Power Saver")}
+PROFILE_ICONS = {"performance": "power-profile-performance-symbolic",
+                 "balanced": "power-profile-balanced-symbolic",
+                 "power-saver": "power-profile-power-saver-symbolic"}
 
 
-class Toggle(Gtk.ToggleButton):
-    def __init__(self, icon, label, active, on_toggled):
-        box = Gtk.Box(spacing=10)
-        box.append(Gtk.Image(icon_name=icon))
-        box.append(Gtk.Label(label=label, xalign=0, hexpand=True,
-                             ellipsize=3))  # Pango.EllipsizeMode.END
-        super().__init__(child=box, active=active, hexpand=True)
-        self.add_css_class("qs-toggle")
-        self._handler = self.connect("toggled", lambda b: on_toggled(b.get_active()))
-
-    def set_state(self, active):
-        self.handler_block(self._handler)
-        self.set_active(active)
-        self.handler_unblock(self._handler)
+def _signal_icon(strength):
+    level = ("excellent" if strength > 75 else "good" if strength > 50
+             else "ok" if strength > 25 else "weak")
+    return f"network-wireless-signal-{level}-symbolic"
 
 
-class SliderRow(Gtk.Box):
-    def __init__(self, icon, on_change, on_icon_click=None):
-        super().__init__(spacing=8)
-        self.add_css_class("qs-slider")
+class Toggle(Gtk.Box):
+    """A pill toggle with a subtitle, optionally with an arrow that opens details."""
+
+    def __init__(self, icon, label, on_toggled, on_expand=None):
+        super().__init__(css_classes=["linked", "qs-toggle-box"], hexpand=True)
+        inner = Gtk.Box(spacing=10)
+        self.image = Gtk.Image(icon_name=icon)
+        inner.append(self.image)
+        text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        text.append(Gtk.Label(label=label, xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                              css_classes=["qs-toggle-title"]))
+        self.subtitle = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                                  css_classes=["qs-toggle-subtitle"], visible=False)
+        text.append(self.subtitle)
+        inner.append(text)
+        self.button = Gtk.ToggleButton(child=inner, hexpand=True, css_classes=["qs-toggle"])
+        self._handler = self.button.connect("toggled", lambda b: on_toggled(b.get_active()))
+        self.append(self.button)
+        self.arrow = None
+        if on_expand:
+            self.button.add_css_class("has-arrow")
+            self.arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["qs-expand"])
+            self.arrow.connect("clicked", lambda *_: on_expand())
+            self.append(self.arrow)
+
+    def set_state(self, active, subtitle=None, icon=None):
+        self.button.handler_block(self._handler)
+        self.button.set_active(active)
+        self.button.handler_unblock(self._handler)
+        for w in (self.button, self.arrow):
+            if w is not None:
+                (w.add_css_class if active else w.remove_css_class)("active")
+        self.subtitle.set_visible(bool(subtitle))
+        self.subtitle.set_label(subtitle or "")
+        if icon:
+            self.image.set_from_icon_name(icon)
+
+
+class Slider(Gtk.Box):
+    def __init__(self, icon, on_change, on_icon=None, on_expand=None):
+        super().__init__(spacing=6, css_classes=["qs-slider"])
         self.icon = Gtk.Button(icon_name=icon, css_classes=["flat", "circular"])
-        if on_icon_click:
-            self.icon.connect("clicked", lambda *_: on_icon_click())
+        if on_icon:
+            self.icon.connect("clicked", lambda *_: on_icon())
         self.scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 1, 0.01)
         self.scale.set_hexpand(True)
         self.scale.set_draw_value(False)
         self._handler = self.scale.connect("value-changed", lambda s: on_change(s.get_value()))
         self.append(self.icon)
         self.append(self.scale)
+        if on_expand:
+            arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["flat", "circular"])
+            arrow.connect("clicked", lambda *_: on_expand())
+            self.append(arrow)
 
     def set_value(self, value, icon=None):
         self.scale.handler_block(self._handler)
@@ -44,69 +89,53 @@ class SliderRow(Gtk.Box):
             self.icon.set_icon_name(icon)
 
 
-class WifiList(Gtk.Box):
-    """Expandable list of Wi-Fi networks with inline password entry."""
+class DetailList(Gtk.Box):
+    """The list shown under the toggles when an arrow is clicked."""
 
-    def __init__(self, network):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        self.add_css_class("qs-wifi-list")
-        self.network = network
-        self._pending = None
+    def __init__(self, title):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=2,
+                         css_classes=["qs-detail"])
+        header = Gtk.Label(label=title, xalign=0, css_classes=["heading"], margin_bottom=4)
+        self.append(header)
+        self.rows = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        self.append(Gtk.ScrolledWindow(child=self.rows, max_content_height=240,
+                                       propagate_natural_height=True,
+                                       hscrollbar_policy=Gtk.PolicyType.NEVER))
+        self.footer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.append(self.footer)
 
-    def refresh(self):
-        while (child := self.get_first_child()) is not None:
-            self.remove(child)
-        entries = self.network.access_points()
-        if not entries:
-            self.append(Gtk.Label(label=_("No networks found"), css_classes=["dim-label"],
-                                  margin_top=6, margin_bottom=6))
-            return
-        for entry in entries[:12]:
-            self.append(self._row(entry))
+    def clear(self):
+        while (c := self.rows.get_first_child()) is not None:
+            self.rows.remove(c)
 
-    def _row(self, entry):
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        btn = Gtk.Button(css_classes=["flat", "qs-wifi-row"])
-        row = Gtk.Box(spacing=8)
-        level = ("excellent" if entry["strength"] > 75 else "good" if entry["strength"] > 50
-                 else "ok" if entry["strength"] > 25 else "weak")
-        row.append(Gtk.Image(icon_name=f"network-wireless-signal-{level}-symbolic"))
-        row.append(Gtk.Label(label=entry["ssid"], xalign=0, hexpand=True, ellipsize=3))
-        if entry["active"]:
-            row.append(Gtk.Image(icon_name="object-select-symbolic"))
-        elif entry["secure"]:
-            row.append(Gtk.Image(icon_name="network-wireless-encrypted-symbolic",
-                                 css_classes=["dim-label"]))
-        btn.set_child(row)
-        box.append(btn)
+    def add_row(self, icon, label, on_click=None, checked=False, dim=False, widget=None):
+        btn = Gtk.Button(css_classes=["flat", "qs-row"])
+        box = Gtk.Box(spacing=10)
+        box.append(Gtk.Image(icon_name=icon))
+        box.append(Gtk.Label(label=label, xalign=0, hexpand=True,
+                             ellipsize=Pango.EllipsizeMode.END,
+                             css_classes=["dim-label"] if dim else []))
+        if checked:
+            box.append(Gtk.Image(icon_name="object-select-symbolic"))
+        btn.set_child(box)
+        if on_click:
+            btn.connect("clicked", lambda *_: on_click())
+        wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        wrapper.append(btn)
+        if widget is not None:
+            wrapper.append(widget)
+        self.rows.append(wrapper)
+        return btn
 
-        revealer = Gtk.Revealer()
-        pw_box = Gtk.Box(spacing=6, margin_start=8, margin_end=8, margin_bottom=6)
-        pw = Gtk.PasswordEntry(show_peek_icon=True, hexpand=True,
-                               placeholder_text=_("Password"))
-        go = Gtk.Button(label=_("Connect"), css_classes=["suggested-action"])
-        pw_box.append(pw)
-        pw_box.append(go)
-        revealer.set_child(pw_box)
-        box.append(revealer)
+    def add_empty(self, text):
+        self.rows.append(Gtk.Label(label=text, css_classes=["dim-label"], margin_top=6,
+                                   margin_bottom=6))
 
-        def connect_with_password(*_a):
-            self.network.connect_to(entry, pw.get_text())
-            revealer.set_reveal_child(False)
-
-        def clicked(*_a):
-            if entry["active"]:
-                return
-            if entry["secure"] and self.network.known_connection(entry["ssid"]) is None:
-                revealer.set_reveal_child(not revealer.get_reveal_child())
-                pw.grab_focus()
-            else:
-                self.network.connect_to(entry)
-
-        btn.connect("clicked", clicked)
-        go.connect("clicked", connect_with_password)
-        pw.connect("activate", connect_with_password)
-        return box
+    def add_link(self, label, on_click):
+        b = Gtk.Button(label=label, css_classes=["flat"], margin_top=4)
+        b.get_child().set_xalign(0)
+        b.connect("clicked", lambda *_: on_click())
+        self.footer.append(b)
 
 
 class QuickSettings(Gtk.Popover):
@@ -114,61 +143,98 @@ class QuickSettings(Gtk.Popover):
         super().__init__(has_arrow=False)
         self.add_css_class("aurora-quicksettings")
         self.shell = shell
+        self._detail = None
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
-                      margin_top=12, margin_bottom=12, margin_start=12, margin_end=12)
-        box.set_size_request(340, -1)
+                      margin_top=14, margin_bottom=14, margin_start=14, margin_end=14)
+        box.set_size_request(380, -1)
         self.set_child(box)
 
-        # Sliders
-        audio, bright = shell.audio, shell.brightness
-        self.volume = SliderRow("audio-volume-high-symbolic", audio.set_volume,
-                                audio.toggle_mute)
-        box.append(self.volume)
-        self.brightness = SliderRow("display-brightness-symbolic", bright.set_level)
-        box.append(self.brightness)
+        # --- sliders ---
+        self.volume = Slider("audio-volume-high-symbolic", shell.audio.set_volume,
+                             shell.audio.toggle_mute, lambda: self._show_detail("output"))
+        self.mic = Slider("audio-input-microphone-symbolic", shell.microphone.set_volume,
+                          shell.microphone.toggle_mute, lambda: self._show_detail("input"))
+        self.brightness = Slider("display-brightness-symbolic", shell.brightness.set_level)
+        for w in (self.volume, self.mic, self.brightness):
+            box.append(w)
 
-        # Toggles
-        grid = Gtk.Grid(column_spacing=8, row_spacing=8, column_homogeneous=True)
-        net = shell.network
-        self.wifi = Toggle("network-wireless-symbolic", _("Wi-Fi"), net.wifi_enabled,
-                           net.set_wifi_enabled)
-        self.wifi_expand = Gtk.Button(icon_name="go-next-symbolic",
-                                      css_classes=["flat", "qs-expand"])
-        wifi_box = Gtk.Box(css_classes=["linked"])
-        wifi_box.append(self.wifi)
-        wifi_box.append(self.wifi_expand)
-        grid.attach(wifi_box, 0, 0, 1, 1)
-
-        iface = settings.interface()
-        dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
-        self.dark = Toggle("weather-clear-night-symbolic", _("Dark Style"), dark,
-                           self._set_dark)
-        grid.attach(self.dark, 1, 0, 1, 1)
-
+        # --- toggles ---
         s = settings.get()
-        dnd = s is not None and s.get_boolean("do-not-disturb")
-        self.dnd = Toggle("notifications-disabled-symbolic", _("Do Not Disturb"), dnd,
-                          lambda v: s and s.set_boolean("do-not-disturb", v))
-        grid.attach(self.dnd, 0, 1, 1, 1)
+        iface = settings.interface()
+        self.t_wifi = Toggle("network-wireless-symbolic", _("Wi-Fi"),
+                             shell.network.set_wifi_enabled, lambda: self._show_detail("wifi"))
+        self.t_wired = Toggle("network-wired-symbolic", _("Wired"),
+                              lambda v: self._open("network"))
+        self.t_bt = Toggle("bluetooth-active-symbolic", _("Bluetooth"),
+                           shell.bluetooth.set_powered, lambda: self._show_detail("bluetooth"))
+        self.t_power = Toggle("power-profile-balanced-symbolic", _("Power Mode"),
+                              lambda v: self._show_detail("power"),
+                              lambda: self._show_detail("power"))
+        self.t_night = Toggle("night-light-symbolic", _("Night Light"),
+                              lambda v: s and s.set_boolean("night-light", v))
+        self.t_dark = Toggle("weather-clear-night-symbolic", _("Dark Style"),
+                             lambda v: iface and iface.set_string(
+                                 "color-scheme", "prefer-dark" if v else "default"))
+        self.t_dnd = Toggle("notifications-disabled-symbolic", _("Do Not Disturb"),
+                            lambda v: s and s.set_boolean("do-not-disturb", v))
+        self.t_air = Toggle("airplane-mode-symbolic", _("Airplane Mode"), self._set_airplane)
+        self.t_rec = Toggle("media-record-symbolic", _("Screen Recording"),
+                            lambda v: self._record())
+        self.grid = Gtk.Grid(column_spacing=8, row_spacing=8, column_homogeneous=True)
+        box.append(self.grid)
 
-        self.night = Toggle("night-light-symbolic", _("Night Light"),
-                            s is not None and s.get_boolean("night-light"),
-                            lambda v: s and s.set_boolean("night-light", v))
-        grid.attach(self.night, 1, 1, 1, 1)
-        box.append(grid)
+        # --- detail area ---
+        self.detail_stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
+                                      vhomogeneous=False)
+        self.details = {}
+        for key, title in (("wifi", _("Wi-Fi Networks")), ("bluetooth", _("Bluetooth Devices")),
+                           ("power", _("Power Mode")), ("output", _("Sound Output")),
+                           ("input", _("Sound Input"))):
+            d = DetailList(title)
+            self.details[key] = d
+            self.detail_stack.add_named(d, key)
+        self.details["wifi"].add_link(_("Network Settings"),
+                                      lambda: self._open("network"))
+        self.details["bluetooth"].add_link(_("Bluetooth Settings"),
+                                           lambda: self._open("bluetooth"))
+        self.details["power"].add_link(_("Power Settings"), lambda: self._open("power"))
+        self.details["output"].add_link(_("Sound Settings"), lambda: self._open("sound"))
+        self.details["input"].add_link(_("Sound Settings"), lambda: self._open("sound"))
+        self.detail_revealer = Gtk.Revealer(child=self.detail_stack)
+        box.append(self.detail_revealer)
 
-        self.wifi_list = WifiList(net)
-        self.wifi_revealer = Gtk.Revealer(child=Gtk.ScrolledWindow(
-            child=self.wifi_list, max_content_height=260, propagate_natural_height=True,
-            hscrollbar_policy=Gtk.PolicyType.NEVER))
-        box.append(self.wifi_revealer)
-        self.wifi_expand.connect("clicked", self._toggle_wifi_list)
+        # --- media ---
+        self.media_box = Gtk.Box(spacing=10, css_classes=["qs-media"], visible=False)
+        self.media_icon = Gtk.Image(icon_name="audio-x-generic-symbolic", pixel_size=32)
+        meta = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True,
+                       valign=Gtk.Align.CENTER)
+        self.media_title = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                                     css_classes=["heading"])
+        self.media_artist = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                                      css_classes=["dim-label"])
+        meta.append(self.media_title)
+        meta.append(self.media_artist)
+        self.media_box.append(self.media_icon)
+        self.media_box.append(meta)
+        for icon, cmd in (("media-skip-backward-symbolic", "previous"),
+                          ("media-playback-start-symbolic", "play_pause"),
+                          ("media-skip-forward-symbolic", "next")):
+            b = Gtk.Button(icon_name=icon, css_classes=["flat", "circular"],
+                           valign=Gtk.Align.CENTER)
+            b.connect("clicked", lambda _b, c=cmd: shell.media.command(c))
+            if cmd == "play_pause":
+                self.play_button = b
+            self.media_box.append(b)
+        box.append(self.media_box)
 
-        # Footer: battery + actions
+        # --- footer ---
         footer = Gtk.Box(spacing=6)
-        self.battery_label = Gtk.Label(xalign=0, hexpand=True, css_classes=["dim-label"])
+        self.battery_label = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END,
+                                       css_classes=["dim-label"])
         footer.append(self.battery_label)
         for icon, tip, cb in (
+            ("applets-screenshooter-symbolic", _("Screenshot"),
+             lambda: GLib.timeout_add(300, lambda: shell.screenshot(area=True) and False)),
             ("emblem-system-symbolic", _("Settings"), lambda: shell.open_settings("")),
             ("system-lock-screen-symbolic", _("Lock"), shell.power.lock),
         ):
@@ -182,7 +248,31 @@ class QuickSettings(Gtk.Popover):
         footer.append(power)
         box.append(footer)
 
-        self.connect("show", lambda *_: self.refresh())
+        for svc in (shell.network, shell.bluetooth, shell.audio, shell.microphone,
+                    shell.power_profiles, shell.recorder, shell.media, shell.battery):
+            svc.connect("changed", lambda *a: self.get_visible() and self.refresh())
+        self.connect("show", lambda *_: self._on_show())
+
+    # --- actions ---
+
+    def _open(self, page):
+        self.popdown()
+        self.shell.open_settings(page)
+
+    def _record(self):
+        self.popdown()
+        # Give the popover time to close so it isn't in the recording.
+        GLib.timeout_add(400, lambda: self.shell.recorder.toggle() and False)
+
+    def _airplane_on(self):
+        net, bt = self.shell.network, self.shell.bluetooth
+        wifi_off = net.wifi_device() is None or not net.wifi_enabled
+        bt_off = not bt.available or not bt.powered
+        return wifi_off and bt_off and (net.wifi_device() is not None or bt.available)
+
+    def _set_airplane(self, on):
+        self.shell.network.set_wifi_enabled(not on)
+        self.shell.bluetooth.set_powered(not on)
 
     def _power_menu(self):
         pop = Gtk.Popover()
@@ -197,34 +287,153 @@ class QuickSettings(Gtk.Popover):
         pop.set_child(box)
         return pop
 
-    def _toggle_wifi_list(self, *_a):
-        reveal = not self.wifi_revealer.get_reveal_child()
-        if reveal:
+    def _show_detail(self, key):
+        if self._detail == key and self.detail_revealer.get_reveal_child():
+            self.detail_revealer.set_reveal_child(False)
+            self._detail = None
+            return
+        self._detail = key
+        if key == "wifi":
             self.shell.network.scan()
-            self.wifi_list.refresh()
-        self.wifi_revealer.set_reveal_child(reveal)
-        self.wifi_expand.set_icon_name("go-down-symbolic" if reveal else "go-next-symbolic")
+        self._fill_detail(key)
+        self.detail_stack.set_visible_child_name(key)
+        self.detail_revealer.set_reveal_child(True)
 
-    def _set_dark(self, active):
-        iface = settings.interface()
-        if iface is not None:
-            iface.set_string("color-scheme", "prefer-dark" if active else "default")
+    # --- detail lists ---
+
+    def _fill_detail(self, key):
+        d = self.details[key]
+        d.clear()
+        sh = self.shell
+        if key == "wifi":
+            entries = sh.network.access_points() if sh.network.wifi_enabled else []
+            if not entries:
+                d.add_empty(_("No networks found") if sh.network.wifi_enabled
+                            else _("Wi-Fi is off"))
+            for entry in entries[:15]:
+                self._wifi_row(d, entry)
+        elif key == "bluetooth":
+            devices = sh.bluetooth.devices() if sh.bluetooth.powered else []
+            if not devices:
+                d.add_empty(_("No paired devices") if sh.bluetooth.powered
+                            else _("Bluetooth is off"))
+            for dev in devices:
+                d.add_row(dev["icon"], dev["name"], lambda dev=dev: sh.bluetooth.toggle_device(dev),
+                          checked=dev["connected"])
+        elif key == "power":
+            for profile in sh.power_profiles.choices():
+                d.add_row(PROFILE_ICONS[profile], PROFILE_LABELS[profile],
+                          lambda p=profile: (sh.power_profiles.set(p), self._fill_detail("power")),
+                          checked=profile == sh.power_profiles.current)
+        elif key in ("output", "input"):
+            sinks, sources, dsink, dsource = audio_nodes()
+            nodes, default = (sinks, dsink) if key == "output" else (sources, dsource)
+            icon = "audio-speakers-symbolic" if key == "output" else "audio-input-microphone-symbolic"
+            if not nodes:
+                d.add_empty(_("No devices found"))
+            for n in nodes:
+                d.add_row(icon, n["label"],
+                          lambda n=n: (set_default_audio(n["id"]), sh.audio.refresh(),
+                                       sh.microphone.refresh(), self._fill_detail(key)),
+                          checked=n["name"] == default)
+
+    def _wifi_row(self, d, entry):
+        net = self.shell.network
+        pw_box = Gtk.Box(spacing=6, margin_start=8, margin_end=8, margin_bottom=6)
+        pw = Gtk.PasswordEntry(show_peek_icon=True, hexpand=True, placeholder_text=_("Password"))
+        go = Gtk.Button(label=_("Connect"), css_classes=["suggested-action"])
+        pw_box.append(pw)
+        pw_box.append(go)
+        revealer = Gtk.Revealer(child=pw_box)
+
+        def with_password(*_a):
+            net.connect_to(entry, pw.get_text())
+            revealer.set_reveal_child(False)
+
+        def clicked():
+            if entry["active"]:
+                return
+            if entry["secure"] and net.known_connection(entry["ssid"]) is None:
+                revealer.set_reveal_child(not revealer.get_reveal_child())
+                pw.grab_focus()
+            else:
+                net.connect_to(entry)
+        go.connect("clicked", with_password)
+        pw.connect("activate", with_password)
+        label = entry["ssid"] + ("  🔒" if entry["secure"] and not entry["active"] else "")
+        d.add_row(_signal_icon(entry["strength"]), label, clicked, checked=entry["active"],
+                  widget=revealer)
+
+    # --- state ---
+
+    def _on_show(self):
+        self.shell.audio.refresh()
+        self.shell.microphone.refresh()
+        self.shell.brightness.refresh()
+        self.shell.power_profiles.refresh()
+        self.refresh()
 
     def refresh(self):
         sh = self.shell
-        sh.audio.refresh()
-        sh.brightness.refresh()
+        s = settings.get()
+        iface = settings.interface()
+
         self.volume.set_value(0 if sh.audio.muted else sh.audio.volume, sh.audio.icon_name)
         self.volume.set_visible(sh.audio.available)
+        self.mic.set_value(0 if sh.microphone.muted else sh.microphone.volume,
+                           "microphone-sensitivity-muted-symbolic" if sh.microphone.muted
+                           else "audio-input-microphone-symbolic")
+        self.mic.set_visible(sh.microphone.available)
         self.brightness.set_value(sh.brightness.level)
         self.brightness.set_visible(sh.brightness.available)
-        self.wifi.set_state(sh.network.wifi_enabled)
-        self.wifi.get_parent().set_visible(sh.network.wifi_device() is not None)
-        if sh.battery.present:
-            state = _("charging") if sh.battery.charging else _("on battery")
-            self.battery_label.set_label(f"{sh.battery.percentage:.0f}% · {state}")
-        else:
-            self.battery_label.set_label(GLib.get_host_name())
-        if self.wifi_revealer.get_reveal_child():
-            self.wifi_list.refresh()
 
+        # Toggles that apply to this machine, laid out two per row.
+        net = sh.network
+        toggles = []
+        if net.wifi_device() is not None:
+            _icon, name = net.status()
+            ap_name = name if net.wifi_enabled and name else None
+            self.t_wifi.set_state(net.wifi_enabled, ap_name)
+            toggles.append(self.t_wifi)
+        wired = net.wired_connection() if hasattr(net, "wired_connection") else None
+        if wired is not None:
+            self.t_wired.set_state(True, wired)
+            toggles.append(self.t_wired)
+        if sh.bluetooth.available:
+            connected = [d["name"] for d in sh.bluetooth.devices() if d["connected"]]
+            self.t_bt.set_state(sh.bluetooth.powered, connected[0] if connected else None)
+            toggles.append(self.t_bt)
+        if sh.power_profiles.available:
+            cur = sh.power_profiles.current
+            self.t_power.set_state(cur != "balanced", PROFILE_LABELS[cur], PROFILE_ICONS[cur])
+            toggles.append(self.t_power)
+        self.t_night.set_state(s is not None and s.get_boolean("night-light"))
+        self.t_dark.set_state(iface is not None and iface.get_string("color-scheme") == "prefer-dark")
+        self.t_dnd.set_state(s is not None and s.get_boolean("do-not-disturb"))
+        toggles += [self.t_night, self.t_dark, self.t_dnd]
+        if net.wifi_device() is not None or sh.bluetooth.available:
+            self.t_air.set_state(self._airplane_on())
+            toggles.append(self.t_air)
+        if sh.recorder.available:
+            self.t_rec.set_state(sh.recorder.recording,
+                                 _("Recording…") if sh.recorder.recording else None)
+            toggles.append(self.t_rec)
+        while (c := self.grid.get_first_child()) is not None:
+            self.grid.remove(c)
+        for i, t in enumerate(toggles):
+            self.grid.attach(t, i % 2, i // 2, 1, 1)
+
+        if self._detail and self.detail_revealer.get_reveal_child():
+            self._fill_detail(self._detail)
+
+        info = sh.media.info()
+        self.media_box.set_visible(info is not None)
+        if info:
+            title, artist, playing = info
+            self.media_title.set_label(title)
+            self.media_artist.set_label(artist)
+            self.play_button.set_icon_name("media-playback-pause-symbolic" if playing
+                                           else "media-playback-start-symbolic")
+
+        bat = sh.battery
+        self.battery_label.set_label(bat.describe() if bat.present else "")

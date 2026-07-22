@@ -1,49 +1,10 @@
 """Sound: output/input devices and volumes via PipeWire (pw-dump + wpctl)."""
 
-import json
-import re
-
 from gi.repository import Adw, GLib, Gtk
 
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, run
-
-
-def audio_nodes():
-    """Return (sinks, sources, default_sink_name, default_source_name)."""
-    try:
-        data = json.loads(run(["pw-dump"]) or "[]")
-    except json.JSONDecodeError:
-        data = []
-    sinks, sources = [], []
-    default_sink = default_source = None
-    for obj in data:
-        if obj.get("type") == "PipeWire:Interface:Metadata":
-            for entry in obj.get("metadata", []) or []:
-                val = entry.get("value")
-                if isinstance(val, dict):
-                    if entry.get("key") == "default.audio.sink":
-                        default_sink = val.get("name")
-                    elif entry.get("key") == "default.audio.source":
-                        default_source = val.get("name")
-        if obj.get("type") != "PipeWire:Interface:Node":
-            continue
-        props = (obj.get("info") or {}).get("props") or {}
-        cls = props.get("media.class")
-        node = {"id": obj["id"], "name": props.get("node.name", ""),
-                "label": props.get("node.description") or props.get("node.nick")
-                or props.get("node.name", "?")}
-        if cls == "Audio/Sink":
-            sinks.append(node)
-        elif cls == "Audio/Source":
-            sources.append(node)
-    return sinks, sources, default_sink, default_source
-
-
-def get_volume(target):
-    out = run(["wpctl", "get-volume", target])
-    m = re.search(r"Volume:\s*([\d.]+)", out)
-    return (float(m.group(1)) if m else 0.0), "[MUTED]" in out
+from aurora.shell.services import audio_nodes, get_volume
 
 
 class Sound(Page):

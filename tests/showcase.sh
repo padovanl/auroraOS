@@ -20,11 +20,8 @@ notify-send -a "Aurora" -i software-update-available "Updates installed" \
 shot desktop 2
 
 # Spotlight: apps and settings, then math.
-aurora-shell launcher spotlight; sleep 1
-key "disp"; shot spotlight-search
-aurora-shell launcher spotlight; sleep 0.5
-aurora-shell launcher spotlight; sleep 1
-key "12*(3+4)/2"; shot spotlight-math
+aurora-shell search "disp"; shot spotlight-search
+aurora-shell search "12*(3+4)/2"; shot spotlight-math
 aurora-shell launcher spotlight
 
 # Launchpad.

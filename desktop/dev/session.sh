@@ -26,6 +26,23 @@ export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p -m 700 $XDG_RUNTIME_DIR
 export WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LIBINPUT_NO_DEVICES=1 WLR_HEADLESS_OUTPUTS=1
 export GSK_RENDERER=cairo
 export XDG_CURRENT_DESKTOP=Aurora:wlroots
+# No portal service in the container: tell libadwaita the scheme directly.
+export ADW_DEBUG_COLOR_SCHEME=prefer-dark ADW_DEBUG_ACCENT_COLOR=purple
+# Hide the same helper launchers as the image does.
+mkdir -p ~/.local/share/applications
+sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /src/config/hidden-apps.list | while read -r id; do
+    for d in /usr/share/applications /opt/aurora/share/applications; do
+        [ -f "$d/$id" ] && sed '/^\[Desktop Entry\]/a NoDisplay=true' "$d/$id" > ~/.local/share/applications/$id
+    done
+done
+printf '[Desktop Entry]\nType=Application\nName=x\nNoDisplay=true\n' > ~/.local/share/applications/mousepad-settings.desktop
+# ...and rename the same launchers.
+sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /src/config/renamed-apps.list | while IFS='|' read -r id name icon; do
+    id=$(echo $id); name=$(echo $name); icon=$(echo $icon)
+    [ -f "/usr/share/applications/$id" ] || continue
+    sed -e "s|^Name=.*|Name=$name|" "/usr/share/applications/$id" > ~/.local/share/applications/$id
+    [ "$icon" != "-" ] && sed -i "s|^Icon=.*|Icon=$icon|" ~/.local/share/applications/$id
+done
 cp -r /opt/aurora/share/themes/* /usr/share/themes/ 2>/dev/null || true
 
 cat > /tmp/inner.sh <<EOF

@@ -110,10 +110,15 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   neovim, tmux, ripgrep, fd, fzf, bat, btop, jq, httpie, direnv, tldr, starship, zsh,
   JetBrains Mono and Fira Code, and **[portop](https://github.com/padovanl/portop)** (see
   which process holds a port and stop it with one key).
-- **Everyday:** Firefox, LibreOffice (Writer, Calc, Impress), text editor, image viewer,
-  PDF viewer, calculator, video player with codecs, archive manager, disk utility, system
-  monitor, clocks, fonts, password and keys manager, App Center (GNOME Software with
-  Flatpak).
+- **Everyday** (the same set of apps Ubuntu ships): Firefox, Thunderbird, LibreOffice
+  (Writer, Calc, Impress), Calendar, Contacts, Weather, Maps, Clocks, Calculator, Text
+  Editor, Image Viewer, Document Viewer (PDF), Music (Rhythmbox), Videos (Celluloid, with
+  codecs), Camera, Sound Recorder, Document Scanner, Backups (Déjà Dup), Remote Desktop
+  (Remmina), Transmission, Archive Manager, Disks, Disk Usage, System Monitor, Logs,
+  Characters, Fonts, Power Statistics, Firmware, Passwords and Keys, App Center (GNOME
+  Software with Flatpak).
+- **Anything else** is one click away in App Center, which covers the whole Debian archive
+  (tens of thousands of packages) and Flathub. Nothing is installed without you asking.
 
 ### Hardware
 - Firmware for Intel, AMD, Realtek, Atheros, Broadcom and MediaTek Wi-Fi and Bluetooth,

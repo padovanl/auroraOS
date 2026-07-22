@@ -39,6 +39,23 @@ expect "window themes" test -f "$ROOTFS/usr/share/themes/Aurora/openbox-3/close-
 expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"
 expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
 
+echo "== default apps (config/apps.manifest)"
+while IFS='|' read -r cat name id launch; do
+    id=$(echo $id); name=$(echo $name)
+    local_f="$ROOTFS/usr/local/share/applications/$id"
+    f="$ROOTFS/usr/share/applications/$id"
+    [ -f "$local_f" ] && f="$local_f"
+    if [ ! -f "$f" ]; then bad "$name: $id not installed"; continue; fi
+    if grep -q '^NoDisplay=true' "$f"; then bad "$name: $id is hidden"; continue; fi
+    exe=$(sed -n 's/^Exec=//p' "$f" | head -1 | sed 's/^env [^ ]* //' | awk '{print $1}')
+    if chroot "$ROOTFS" sh -c "command -v '$exe'" >/dev/null 2>&1; then
+        ok "$name"
+    else
+        bad "$name: '$exe' not found"
+    fi
+done < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/apps.manifest")
+expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/share/applications/foot.desktop"
+
 echo "== installer"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"
 expect "branding logo rendered" test -s "$ROOTFS/etc/calamares/branding/aurora/logo.png"

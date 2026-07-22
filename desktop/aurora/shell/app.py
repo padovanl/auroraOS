@@ -4,6 +4,7 @@ Running `aurora-shell` starts the shell. Running it again with a command
 forwards the command to the running instance, e.g.:
 
     aurora-shell launcher [spotlight|grid]
+    aurora-shell search TEXT
     aurora-shell volume up|down|mute
     aurora-shell brightness up|down
     aurora-shell screenshot [area]
@@ -29,7 +30,10 @@ from aurora.shell.monitors import PerMonitor  # noqa: E402
 from aurora.shell.notifications import NotificationServer  # noqa: E402
 from aurora.shell.osd import OSD  # noqa: E402
 from aurora.shell.panel import Panel  # noqa: E402
-from aurora.shell.services import Audio, Battery, Brightness, Network, Power  # noqa: E402
+from aurora.shell.services import (  # noqa: E402
+    Audio, Battery, Bluetooth, Brightness, Media, Microphone, Network, Power, PowerProfiles,
+    Recorder,
+)
 from aurora.shell.toplevels import ToplevelTracker  # noqa: E402
 from aurora.shell.wallpaper import Wallpaper  # noqa: E402
 
@@ -79,6 +83,12 @@ class Shell(Adw.Application):
         self.battery = Battery()
         self.network = Network()
         self.power = Power()
+        self.microphone = Microphone()
+        self.bluetooth = Bluetooth()
+        self.power_profiles = PowerProfiles()
+        self.recorder = Recorder()
+        self.recorder.connect("saved", self._on_recording_saved)
+        self.media = Media()
         self.toplevels = ToplevelTracker()
         self.notifications = NotificationServer(self)
         self.launcher = Launcher(self)
@@ -153,6 +163,8 @@ class Shell(Adw.Application):
         arg = rest[0] if rest else ""
         if cmd == "launcher":
             self.launcher.toggle(arg or None)
+        elif cmd == "search":
+            self.launcher.search_for(" ".join(rest))
         elif cmd == "volume":
             if arg == "mute":
                 self.audio.toggle_mute()
@@ -165,6 +177,8 @@ class Shell(Adw.Application):
             self.osd.show_level("display-brightness-symbolic", self.brightness.level)
         elif cmd == "screenshot":
             self.screenshot(area=(arg == "area"))
+        elif cmd == "record":
+            self.recorder.toggle()
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
                 panel.open_quick_settings()
@@ -209,6 +223,13 @@ class Shell(Adw.Application):
             _("Saved to {path} and copied to the clipboard.").format(
                 path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
             [], {"transient": False}, -1)
+
+    def _on_recording_saved(self, _rec, path):
+        self.notifications.notify(
+            _("Screen Recording"), 0, "media-record", _("Screen recording saved"),
+            _("Saved to {path}.").format(
+                path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
+            [], {"desktop-entry": "org.aurora.Files"}, -1)
 
     def _sync_night_light(self):
         s = settings.get()

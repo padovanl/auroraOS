@@ -285,15 +285,26 @@ class NotificationServer:
         header = Gtk.Box()
         header.append(Gtk.Label(label=_("Notifications"), xalign=0, hexpand=True,
                                 css_classes=["heading"]))
-        clear = Gtk.Button(label=_("Clear"), css_classes=["flat"])
-        clear.connect("clicked", lambda *_: self.clear_history())
-        header.append(clear)
         outer.append(header)
         self._history_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         scroller = Gtk.ScrolledWindow(child=self._history_box, vexpand=True,
                                       hscrollbar_policy=Gtk.PolicyType.NEVER,
                                       min_content_height=300)
         outer.append(scroller)
+
+        # Like Ubuntu: Do Not Disturb and Clear under the list.
+        bottom = Gtk.Box(spacing=8)
+        bottom.append(Gtk.Label(label=_("Do Not Disturb"), xalign=0))
+        dnd = Gtk.Switch(valign=Gtk.Align.CENTER)
+        s = settings.get()
+        if s:
+            s.bind("do-not-disturb", dnd, "active", 0)
+        bottom.append(dnd)
+        bottom.append(Gtk.Box(hexpand=True))
+        clear = Gtk.Button(label=_("Clear"), css_classes=["pill"])
+        clear.connect("clicked", lambda *_: self.clear_history())
+        bottom.append(clear)
+        outer.append(bottom)
         self._refresh_history()
         return outer
 

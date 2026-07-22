@@ -1,0 +1,57 @@
+# Default apps: what a fresh Aurora OS must offer out of the box.
+# Columns (|-separated): category | name shown to users | desktop file id | launch-test
+# launch-test: "yes" = the boot test starts the app and checks it keeps running.
+# The image test checks every entry is installed, visible and executable.
+
+Internet | Web Browser (Firefox)     | firefox-esr.desktop                        | yes
+Internet | Mail (Thunderbird)        | thunderbird.desktop                        | yes
+Internet | Torrents (Transmission)   | transmission-gtk.desktop                   | yes
+Internet | Remote Desktop (Remmina)  | org.remmina.Remmina.desktop                | yes
+
+Office   | Writer                    | libreoffice-writer.desktop                 | yes
+Office   | Calc                      | libreoffice-calc.desktop                   | no
+Office   | Impress                   | libreoffice-impress.desktop                | no
+Office   | Document Viewer           | org.gnome.Evince.desktop                   | yes
+Office   | Text Editor               | org.gnome.TextEditor.desktop               | yes
+Office   | Document Scanner          | simple-scan.desktop                        | yes
+
+Personal | Calendar                  | org.gnome.Calendar.desktop                 | yes
+Personal | Contacts                  | org.gnome.Contacts.desktop                 | yes
+Personal | Weather                   | org.gnome.Weather.desktop                  | yes
+Personal | Maps                      | org.gnome.Maps.desktop                     | yes
+Personal | Clocks                    | org.gnome.clocks.desktop                   | yes
+Personal | Calculator                | org.gnome.Calculator.desktop               | yes
+
+Media    | Image Viewer              | org.gnome.Loupe.desktop                    | yes
+Media    | Music (Rhythmbox)         | org.gnome.Rhythmbox3.desktop               | yes
+Media    | Videos (Celluloid)        | io.github.celluloid_player.Celluloid.desktop | yes
+Media    | Camera                    | org.gnome.Snapshot.desktop                 | yes
+Media    | Sound Recorder            | org.gnome.SoundRecorder.desktop            | yes
+
+System   | Files                     | org.aurora.Files.desktop                   | yes
+System   | Settings                  | org.aurora.Settings.desktop                | yes
+System   | Terminal                  | foot.desktop                               | yes
+System   | App Center                | org.gnome.Software.desktop                 | yes
+System   | Dev Hub                   | org.aurora.DevHub.desktop                  | yes
+System   | Screenshot                | aurora-screenshot.desktop                  | no
+System   | Disks                     | org.gnome.DiskUtility.desktop              | yes
+System   | Disk Usage                | org.gnome.baobab.desktop                   | yes
+System   | System Monitor            | org.gnome.SystemMonitor.desktop            | yes
+System   | Logs                      | org.gnome.Logs.desktop                     | yes
+System   | Backups                   | org.gnome.DejaDup.desktop                  | yes
+System   | System Snapshots          | timeshift-gtk.desktop                      | no
+System   | Passwords and Keys        | org.gnome.seahorse.Application.desktop     | yes
+System   | Characters                | org.gnome.Characters.desktop               | yes
+System   | Fonts                     | org.gnome.font-viewer.desktop              | yes
+System   | Archive Manager           | org.gnome.FileRoller.desktop               | yes
+System   | Power Statistics          | org.gnome.PowerStats.desktop               | yes
+System   | Firmware                  | org.gnome.Firmware.desktop                 | yes
+System   | Printers                  | system-config-printer.desktop              | yes
+System   | Bluetooth                 | blueman-manager.desktop                    | yes
+System   | Welcome                   | org.aurora.Welcome.desktop                 | yes
+System   | Port Monitor (portop)     | portop.desktop                             | no
+
+Games    | Solitaire                 | sol.desktop                                | yes
+Games    | Mines                     | org.gnome.Mines.desktop                    | yes
+Games    | Sudoku                    | org.gnome.Sudoku.desktop                   | yes
+Games    | Mahjongg                  | org.gnome.Mahjongg.desktop                 | yes

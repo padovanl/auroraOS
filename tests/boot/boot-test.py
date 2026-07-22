@@ -87,6 +87,40 @@ class Agent:
         return 124, "timeout"
 
 
+MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
+                        "config", "apps.manifest")
+
+USER_ENV = ("uid=$(id -u aurora); runuser -u aurora -- env XDG_RUNTIME_DIR=/run/user/$uid "
+            "WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus "
+            "XDG_CURRENT_DESKTOP=Aurora:wlroots ")
+
+
+def manifest_apps():
+    apps = []
+    with open(MANIFEST) as f:
+        for line in f:
+            line = line.split("#", 1)[0].strip()
+            if not line:
+                continue
+            _cat, name, desktop_id, launch = [c.strip() for c in line.split("|")]
+            if launch == "yes":
+                apps.append((name, desktop_id))
+    return apps
+
+
+def launch_check(agent, name, desktop_id):
+    """Start an app as the live user; pass if its process is alive a few seconds later."""
+    path = (f"$(for d in /usr/local/share/applications /usr/share/applications; do "
+            f"[ -f $d/{desktop_id} ] && echo $d/{desktop_id} && break; done)")
+    exe = (f"$(sed -n 's/^Exec=//p' {path} | head -1 | awk '{{print $1}}' | xargs basename)")
+    script = (f"p={path}; e={exe}; "
+              f"{USER_ENV} gio launch \"$p\" >/dev/null 2>&1 & "
+              f"sleep 8; pgrep -u aurora -f \"$e\" >/dev/null; r=$?; "
+              f"pkill -u aurora -f \"$e\"; sleep 1; exit $r")
+    code, out = agent.run(script, timeout=40)
+    return code == 0, out.strip()[:200]
+
+
 def monitor(path, command):
     s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     s.connect(path)
@@ -126,6 +160,8 @@ def main():
     ap.add_argument("--firmware", choices=["bios", "uefi"], default="bios")
     ap.add_argument("--out", default="boot-test-out")
     ap.add_argument("--timeout", type=int, default=240)
+    ap.add_argument("--no-apps", action="store_true",
+                    help="skip starting every default app from config/apps.manifest")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
@@ -183,6 +219,10 @@ def main():
                     f.write(out)
         img = screenshot(mon, os.path.join(args.out, f"desktop-{args.firmware}.png"))
         results.append(("desktop visible on screen", desktop_visible(img), ""))
+        if up and not args.no_apps:
+            for name, desktop_id in manifest_apps():
+                ok, detail = launch_check(agent, name, desktop_id)
+                results.append((f"app starts: {name}", ok, detail))
     finally:
         qemu.terminate()
         try:

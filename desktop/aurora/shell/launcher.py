@@ -188,6 +188,12 @@ class Launcher(LayerWindow):
         else:
             self.show_launcher(mode)
 
+    def search_for(self, text):
+        """Open Spotlight with a query already typed."""
+        self.show_launcher("spotlight")
+        self.entry.set_text(text)
+        self.entry.set_position(-1)
+
     def show_launcher(self, mode="spotlight"):
         self.mode = mode
         spotlight = mode == "spotlight"
@@ -198,6 +204,7 @@ class Launcher(LayerWindow):
         if surface_monitor is not None:
             monitor_h = surface_monitor.get_geometry().height
         self.root.set_margin_top(int(monitor_h * 0.2) if spotlight else 64)
+        self.root.set_valign(Gtk.Align.START if spotlight else Gtk.Align.FILL)
         self.root.set_size_request(680 if spotlight else 900, -1)
         self.stack.set_vexpand(not spotlight)
         self.entry.set_text("")

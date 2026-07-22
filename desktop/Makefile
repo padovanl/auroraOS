@@ -61,10 +61,13 @@ translations:
 	done
 	mkdir -p build/locale
 
-wallpapers:
-	@if [ ! -f build/wallpapers/aurora-dawn.png ]; then \
-		$(PYTHON) $(BRANDING)/wallpapers/generate.py build/wallpapers $(WALLPAPER_SIZE); \
-	fi
+# Rendered once and cached; re-rendered whenever the generator changes.
+wallpapers: build/wallpapers/.stamp
+
+build/wallpapers/.stamp: $(BRANDING)/wallpapers/generate.py
+	rm -rf build/wallpapers
+	$(PYTHON) $(BRANDING)/wallpapers/generate.py build/wallpapers $(WALLPAPER_SIZE)
+	touch $@
 
 # Regenerate the translation template from the sources.
 pot:

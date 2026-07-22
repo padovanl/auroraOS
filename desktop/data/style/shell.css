@@ -58,25 +58,46 @@ window.aurora-layer {
   padding: 0;
 }
 
+.qs-toggle-box { border-radius: 999px; }
+
 .qs-toggle {
   border-radius: 999px;
-  padding: 10px 14px;
-  min-height: 24px;
+  padding: 8px 14px;
+  min-height: 34px;
 }
 
-.qs-toggle:checked {
+.qs-toggle.has-arrow { border-radius: 999px 0 0 999px; }
+
+.qs-toggle.active,
+.qs-expand.active {
   background-image: linear-gradient(120deg, @aurora_violet, @aurora_rose);
   color: white;
 }
 
-.linked .qs-toggle { border-radius: 999px 0 0 999px; }
-.qs-expand { border-radius: 0 999px 999px 0; padding: 0 10px; }
+.qs-expand { border-radius: 0 999px 999px 0; padding: 0 10px; min-width: 0; }
+.qs-toggle-title { font-weight: 600; }
+.qs-toggle-subtitle { font-size: 9pt; opacity: 0.8; }
 
 .qs-slider scale trough highlight {
   background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
 }
 
-.qs-wifi-row { border-radius: 10px; padding: 6px 10px; }
+.qs-detail {
+  background-color: alpha(currentColor, 0.05);
+  border-radius: 16px;
+  padding: 10px;
+}
+
+.qs-row { border-radius: 10px; padding: 6px 8px; }
+
+.qs-media {
+  background-color: alpha(currentColor, 0.06);
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.panel-recording { color: #ff4d6a; }
+
 
 /* ---- Dock ---- */
 
