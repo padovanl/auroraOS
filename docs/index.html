@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aurora OS: the Linux desktop developers deserve</title>
+  <meta name="description" content="Aurora OS is a beautiful, macOS-inspired Linux distribution built on Debian, with developer tools ready on day one. Free and open source.">
+  <meta property="og:title" content="Aurora OS">
+  <meta property="og:description" content="A beautiful Linux desktop built on Debian, with your developer tools ready on day one.">
+  <meta property="og:image" content="screenshots/desktop.png">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="28" height="28"> Aurora OS</a>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="#developers">Developers</a>
+    <a href="#apps">Apps</a>
+    <a href="#install">Install</a>
+    <a href="#faq">FAQ</a>
+    <a class="repo-link" data-repo-link href="#">GitHub</a>
+  </nav>
+  <a class="btn btn-small" href="#download">Download</a>
+</header>
+
+<main id="top">
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <img class="hero-logo" src="aurora-boot.gif" alt="Aurora OS logo animation" width="140" height="140">
+    <h1>The Linux desktop<br><span class="gradient-text">developers deserve.</span></h1>
+    <p class="lead">Aurora OS is a beautiful, macOS‑inspired desktop on the rock‑solid Debian base,
+      with your tools ready on day one. Free, open source, and yours to shape.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#download">Download Aurora OS</a>
+      <a class="btn btn-ghost" href="#features">See it in action ↓</a>
+    </div>
+    <p class="meta">Version <span data-version>0.1</span> · 64-bit PC · Free forever</p>
+  </div>
+  <figure class="hero-shot reveal">
+    <img src="screenshots/desktop.png" alt="The Aurora OS desktop with the menu bar, dock and Files app" data-zoom>
+  </figure>
+</section>
+
+<!-- Quick facts -->
+<section class="facts">
+  <div><strong>Debian 13</strong><span>stable base &amp; security</span></div>
+  <div><strong>Linux 6.12</strong><span>long-term kernel</span></div>
+  <div><strong>47 apps</strong><span>ready out of the box</span></div>
+  <div><strong>20 languages</strong><span>from the boot menu</span></div>
+  <div><strong>BIOS &amp; UEFI</strong><span>laptops, desktops, VMs</span></div>
+</section>
+
+<!-- Features -->
+<section id="features" class="section">
+  <div class="section-head">
+    <p class="eyebrow">Beautiful by default</p>
+    <h2>Everything where your hands expect it.</h2>
+    <p>A menu bar on top, a dock at the bottom, and one key to find anything. Aurora's desktop is
+      written from scratch and designed down to the last pixel.</p>
+  </div>
+
+  <div class="feature reveal">
+    <div class="feature-text">
+      <h3>Spotlight, for everything</h3>
+      <p>Tap <kbd>Super</kbd> and start typing. Apps, settings, recent files, a calculator,
+        terminal commands (<code>&gt; htop</code>) and web search all live in one box. Enter opens
+        the top result.</p>
+      <ul class="ticks">
+        <li>Finds settings by what they do: type “wifi”, “dark”, “keyboard”</li>
+        <li>Does math as you type, and <kbd>Enter</kbd> copies the result</li>
+        <li>Remembers nothing about you, and sends nothing anywhere</li>
+      </ul>
+    </div>
+    <div class="feature-media stack">
+      <img src="screenshots/spotlight-search.png" alt="Spotlight search showing apps and settings" data-zoom>
+      <img src="screenshots/spotlight-math.png" alt="Spotlight calculating 12*(3+4)/2" data-zoom>
+    </div>
+  </div>
+
+  <div class="feature reverse reveal">
+    <div class="feature-text">
+      <h3>A dock you'll want to touch</h3>
+      <p>Pinned and running apps, a smooth magnification effect, Launchpad and the Trash. Right-click an
+        icon for its windows and quick actions, or drag the pointer across it and watch it breathe.</p>
+      <ul class="ticks">
+        <li>Launchpad shows every app in a full-screen grid</li>
+        <li>Put it at the bottom or on either side, floating or full width</li>
+        <li>Auto-hide, icon size and magnification are yours to set</li>
+      </ul>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/launchpad.png" alt="Launchpad with every installed app" data-zoom>
+    </div>
+  </div>
+
+  <div class="feature reveal">
+    <div class="feature-text">
+      <h3>Control Center</h3>
+      <p>Everything you reach for, one click away: volume and output device, microphone, brightness,
+        Wi-Fi and Bluetooth with their device lists, power mode, night light, dark style, Do Not
+        Disturb, airplane mode, screen recording and media controls.</p>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/control-center.png" alt="The Control Center with toggles and sliders" data-zoom>
+    </div>
+  </div>
+</section>
+
+<!-- Layouts -->
+<section class="section layouts">
+  <div class="section-head">
+    <p class="eyebrow">Make it yours</p>
+    <h2>Four layouts. One click. Endless tweaks.</h2>
+    <p>Start from a preset, then change anything: bar and dock position, icon size, window buttons,
+      corner radius, fonts, pointer, icons and accent color.</p>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-layout="desktop">Aurora</button>
+    <button class="tab" data-layout="layout-classic">Classic</button>
+    <button class="tab" data-layout="layout-studio">Studio</button>
+    <button class="tab" data-layout="layout-minimal">Minimal</button>
+  </div>
+  <p class="tab-caption" data-caption>Menu bar on top, a floating dock with magnification, round colored window buttons.</p>
+  <figure class="layout-shot reveal">
+    <img id="layout-img" src="screenshots/desktop.png" alt="Aurora layout" data-zoom>
+  </figure>
+  <div class="grid-2">
+    <figure class="reveal"><img src="screenshots/settings-desktop.png" alt="Desktop & Dock settings with layout presets" data-zoom>
+      <figcaption>Settings → Desktop &amp; Dock</figcaption></figure>
+    <figure class="reveal"><img src="screenshots/settings-appearance.png" alt="Appearance settings: style, accent color, fonts" data-zoom>
+      <figcaption>Settings → Appearance</figcaption></figure>
+  </div>
+</section>
+
+<!-- Developers -->
+<section id="developers" class="section dev">
+  <div class="section-head">
+    <p class="eyebrow">Built for developers</p>
+    <h2>Open the terminal. Start working.</h2>
+    <p>No afternoon of setup. The essentials are already installed and configured, and heavier
+      toolchains are one click away, always at their latest version.</p>
+  </div>
+
+  <div class="dev-grid">
+    <div class="terminal reveal" aria-label="Example terminal session">
+      <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
+<pre><span class="p">~/code/api</span> <span class="b"> main</span> <span class="y">py 3.13</span>
+<span class="c">❯</span> git pull &amp;&amp; docker compose up -d
+<span class="d">✔ Container api-db-1   Started</span>
+<span class="d">✔ Container api-web-1  Started</span>
+<span class="p">~/code/api</span> <span class="b"> main</span> <span class="d">took 3s</span>
+<span class="c">❯</span> portop
+<span class="h"> PORT   PROTO  PROCESS      SERVICE / CONTAINER</span>
+ 5432   tcp    postgres     api-db-1
+ 8000   tcp    uvicorn      api-web-1
+ 3000   tcp    node         —
+<span class="d"> [k] kill  [o] open  [f] filter  [,] settings</span></pre>
+    </div>
+    <div class="dev-text reveal">
+      <h3>Preinstalled and configured</h3>
+      <div class="chips">
+        <span>git</span><span>lazygit</span><span>delta</span><span>build-essential</span><span>gdb</span><span>cmake</span>
+        <span>Python 3 + pip, venv, pipx</span><span>Node.js + npm</span><span>Docker + Compose</span>
+        <span>Podman</span><span>distrobox</span><span>neovim</span><span>tmux</span><span>ripgrep</span>
+        <span>fd</span><span>fzf</span><span>bat</span><span>btop</span><span>jq</span><span>httpie</span>
+        <span>direnv</span><span>starship</span><span>shellcheck</span><span>portop</span>
+        <span>JetBrains Mono</span><span>Fira Code</span>
+      </div>
+      <p>A fast Wayland terminal with a gorgeous palette, an informative prompt (git status, language
+        versions, command duration), <kbd>Ctrl</kbd>+<kbd>R</kbd> fuzzy history and sensible aliases.
+        Docker starts on first use, so it costs nothing at boot.</p>
+      <p><strong>portop</strong> shows what's using every port (process, systemd service or
+        Docker container) and stops it with one key.</p>
+    </div>
+  </div>
+
+  <div class="feature reveal">
+    <div class="feature-text">
+      <h3>Dev Hub: your toolbox in one click</h3>
+      <p>VS Code, VSCodium, Zed, IntelliJ, PyCharm, Android Studio, Rust, Go, Java, uv, Bun, Deno,
+        GitHub CLI, kubectl, Terraform, AWS CLI, PostgreSQL, MariaDB, Redis, MongoDB, DBeaver and
+        Postman. Each one installs from its <em>official</em> source, so you always get the newest
+        release, and you see every step in a terminal.</p>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/devhub.png" alt="Dev Hub with one-click installers" data-zoom>
+    </div>
+  </div>
+</section>
+
+<!-- Apps -->
+<section id="apps" class="section">
+  <div class="section-head">
+    <p class="eyebrow">Ready to use</p>
+    <h2>Everything you need, nothing you don't.</h2>
+    <p>Aurora comes with the everyday apps you'd expect from a complete desktop, and App Center
+      opens the whole Debian archive and Flathub when you want more.</p>
+  </div>
+  <div class="app-groups">
+    <div class="card reveal"><h4>🌐 Internet</h4><p>Firefox · Thunderbird · Transmission · Remmina remote desktop</p></div>
+    <div class="card reveal"><h4>📄 Office</h4><p>LibreOffice Writer, Calc, Impress · Document viewer · Text editor · Scanner</p></div>
+    <div class="card reveal"><h4>🗓️ Personal</h4><p>Calendar · Contacts · Weather · Maps · Clocks · Calculator</p></div>
+    <div class="card reveal"><h4>🎵 Media</h4><p>Music · Videos with codecs · Image viewer · Camera · Sound recorder · Screen recording</p></div>
+    <div class="card reveal"><h4>🛠️ System</h4><p>Files · Settings · Terminal · App Center · Disks · Backups · Snapshots · System monitor · Logs</p></div>
+    <div class="card reveal"><h4>🎮 Games</h4><p>Solitaire · Mines · Sudoku · Mahjongg</p></div>
+  </div>
+
+  <div class="app-groups three">
+    <div class="card reveal"><h4>🔒 Secure by default</h4><p>Firewall on, automatic security updates, full-disk encryption in the installer, Secure Boot on installed UEFI systems, no telemetry.</p></div>
+    <div class="card reveal"><h4>💻 Runs on your hardware</h4><p>Firmware for Intel, AMD, Realtek, Broadcom and MediaTek; Wi-Fi, Bluetooth, fingerprint readers, touchpads; guest tools for QEMU, VMware and Hyper-V.</p></div>
+    <div class="card reveal"><h4>♻️ Safe to experiment</h4><p>System snapshots with Timeshift, backups with Déjà Dup, compressed RAM swap, and Flatpak apps that never touch the system.</p></div>
+  </div>
+</section>
+
+<!-- Download -->
+<section id="download" class="section download">
+  <div class="section-head">
+    <p class="eyebrow">Download</p>
+    <h2>Get Aurora OS <span data-version>0.1</span></h2>
+  </div>
+  <div class="download-card reveal">
+    <div>
+      <h3>Aurora OS <span data-version>0.1</span> “dawn”</h3>
+      <p>64-bit PC (x86-64) · about 2.5 GB · Try it live, then install</p>
+      <a class="btn btn-primary" data-download href="#">Download ISO</a>
+      <a class="btn btn-ghost" data-checksum href="#">SHA-256 checksum</a>
+    </div>
+    <div class="req">
+      <h4>What you need</h4>
+      <ul>
+        <li>64-bit Intel or AMD processor</li>
+        <li>4 GB RAM (2 GB minimum)</li>
+        <li>20 GB of disk space to install</li>
+        <li>A USB stick of 4 GB or more</li>
+      </ul>
+    </div>
+  </div>
+  <details class="verify">
+    <summary>Verify your download (recommended)</summary>
+    <p>In the folder where you saved both files, run:</p>
+    <div class="code"><code>sha256sum -c aurora-os-<span data-version>0.1</span>-amd64.iso.sha256</code><button class="copy" data-copy="sha256sum -c aurora-os-0.1-amd64.iso.sha256">Copy</button></div>
+    <p>On macOS use <code>shasum -a 256 -c …</code>; on Windows, <code>certutil -hashfile aurora-os-0.1-amd64.iso SHA256</code> and compare.</p>
+  </details>
+</section>
+
+<!-- Install guide -->
+<section id="install" class="section">
+  <div class="section-head">
+    <p class="eyebrow">Install guide</p>
+    <h2>From download to desktop in five steps.</h2>
+  </div>
+
+  <ol class="steps">
+    <li class="reveal">
+      <h3>Write the ISO to a USB stick</h3>
+      <div class="tabs small" role="tablist">
+        <button class="tab active" data-os="any">Windows / macOS</button>
+        <button class="tab" data-os="linux">Linux</button>
+      </div>
+      <div class="os-panel" data-panel="any">
+        <p>Install <a href="https://etcher.balena.io/" rel="noopener">balenaEtcher</a>, choose the
+          Aurora ISO, choose your USB stick and click <em>Flash</em>. (Rufus in DD mode and Ventoy work
+          too.)</p>
+      </div>
+      <div class="os-panel" data-panel="linux" hidden>
+        <p>Use GNOME Disks → <em>Restore Disk Image</em>, or a terminal. Replace <code>sdX</code> with
+          your stick. This erases it, so double-check the name with <code>lsblk</code>:</p>
+        <div class="code"><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
+      </div>
+    </li>
+    <li class="reveal">
+      <h3>Boot from the stick</h3>
+      <p>Restart and press the boot-menu key while the logo appears (usually <kbd>F12</kbd>,
+        <kbd>F10</kbd>, <kbd>F9</kbd>, <kbd>Esc</kbd> or <kbd>Del</kbd>), then pick the USB stick.
+        Both UEFI and legacy BIOS work. <em>If your PC uses Secure Boot, switch it off to start the
+        live USB</em>; you can switch it back on after installing.</p>
+    </li>
+    <li class="reveal">
+      <h3>Try or Install</h3>
+      <p>The Aurora menu offers <strong>Try Aurora OS</strong> (runs from the stick, touches nothing),
+        <strong>Install Aurora OS</strong> (opens the installer right away) and a <strong>Language</strong>
+        menu with 20 languages. From the live desktop you can install any time from the dock.</p>
+    </li>
+    <li class="reveal">
+      <h3>Follow the installer</h3>
+      <p>Pick your language, your location on the map and your keyboard. Then choose how to use the
+        disk: <em>erase</em> it, install <em>alongside</em> Windows or another Linux, or
+        <em>partition manually</em>, with optional encryption. Finally create your user and
+        choose whether to <em>log in automatically</em>. Installation takes a few minutes and works
+        offline.</p>
+    </li>
+    <li class="reveal">
+      <h3>Restart and enjoy</h3>
+      <p>Remove the stick when asked. The Welcome app greets you on first login. Open
+        <strong>Dev Hub</strong> to add your favorite tools, or <strong>App Center</strong> for
+        everything else.</p>
+    </li>
+  </ol>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section faq">
+  <div class="section-head">
+    <p class="eyebrow">FAQ</p>
+    <h2>Questions, answered.</h2>
+  </div>
+  <details class="reveal"><summary>Is Aurora OS free?</summary>
+    <p>Yes, free as in beer and as in freedom. Aurora's own code is GPL-3.0-or-later, and everything
+      else is open source from Debian and upstream projects.</p></details>
+  <details class="reveal"><summary>Is it based on Ubuntu?</summary>
+    <p>No, on <strong>Debian 13 "trixie"</strong>, the same base Ubuntu itself comes from. You get
+      Debian's packages and security updates, with no snaps. Almost every guide for Debian or Ubuntu
+      applies.</p></details>
+  <details class="reveal"><summary>How do updates work?</summary>
+    <p>Security updates install automatically in the background, and App Center shows the rest. The
+      kernel is the 6.12 long-term release with regular fixes. Newer kernels for brand-new hardware
+      are available from Debian backports.</p></details>
+  <details class="reveal"><summary>Can I install apps from Flathub, or .deb files?</summary>
+    <p>Both. Flathub is enabled in App Center out of the box, and you can install any Debian package
+      or a vendor's <code>.deb</code> with a double-click or <code>apt</code>.</p></details>
+  <details class="reveal"><summary>Will it run next to Windows?</summary>
+    <p>Yes. Choose <em>Install alongside</em> in the installer and drag the divider to share the disk.
+      A boot menu lets you pick the system at startup.</p></details>
+  <details class="reveal"><summary>What about NVIDIA graphics?</summary>
+    <p>The open-source driver works out of the box. For NVIDIA's own driver, install
+      <code>nvidia-driver</code> from App Center or <code>apt</code>; Aurora ships the
+      <code>nvidia-detect</code> tool to tell you which one fits your card.</p></details>
+  <details class="reveal"><summary>Why must Secure Boot be off to start the USB?</summary>
+    <p>The live USB's boot loader isn't signed yet. Once installed, Aurora on UEFI uses Debian's
+      signed boot chain, so you can turn Secure Boot back on. A signed live USB is on the
+      roadmap.</p></details>
+  <details class="reveal"><summary>Does it look like a Mac? Is that allowed?</summary>
+    <p>Aurora is <em>inspired</em> by macOS's layout. Every icon, font, wallpaper and line of code is
+      our own or comes from open-source projects. Aurora isn't affiliated with Apple.</p></details>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div>
+    <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="24" height="24"> Aurora OS</a>
+    <p>Built on Debian. Made with care for people who build things.</p>
+  </div>
+  <div class="footer-links">
+    <a data-repo-link href="#">Source code</a>
+    <a data-repo-link data-path="/issues" href="#">Report a bug</a>
+    <a data-repo-link data-path="/releases" href="#">Releases</a>
+    <a data-repo-link data-path="/blob/main/README.md" href="#">Documentation</a>
+  </div>
+  <p class="fine">Aurora OS is free software under the GNU GPL v3 or later. Debian is a registered
+    trademark of Software in the Public Interest, Inc. macOS is a trademark of Apple Inc.; Aurora OS
+    is not affiliated with Apple.</p>
+</footer>
+
+<div class="lightbox" hidden><img alt=""></div>
+<script src="assets/site.js"></script>
+</body>
+</html>
