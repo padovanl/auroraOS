@@ -112,6 +112,9 @@ class Desktop(Page):
         self._scale(win, _("Corner radius"), "window-corner-radius", 0, 18, 1)
         self._scale(win, _("Gaps around snapped windows"), "window-gaps", 0, 24, 1)
 
+        desk = self.group(_("Desktop"))
+        self._switch(desk, _("Show files from the Desktop folder"), "desktop-icons")
+
         search = self.group(_("Super Key"))
         self._combo(search, _("Super opens"), "launcher-style",
                     [("spotlight", _("Spotlight search")), ("grid", _("Launchpad (all apps)"))])
@@ -123,7 +126,7 @@ class Desktop(Page):
     def _changed(self, key):
         if key in LOOK_KEYS:
             look.apply()
-        if not self._syncing and key != "clock-show-seconds":
+        if not self._syncing and key not in ("clock-show-seconds", "desktop-icons"):
             self.s.set_string("layout", "custom")
             self._sync_presets()
 

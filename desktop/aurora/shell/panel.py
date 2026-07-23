@@ -6,6 +6,7 @@ from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 from aurora.shell.quicksettings import QuickSettings
+from aurora.shell.tray import Tray
 
 
 class Clock(Gtk.MenuButton):
@@ -161,6 +162,7 @@ class Panel(LayerWindow):
         bar.set_start_widget(left)
 
         right = Gtk.Box(spacing=2)
+        right.append(Tray())
         search = Gtk.Button(icon_name="system-search-symbolic", tooltip_text=_("Search"),
                             css_classes=["flat", "panel-button"])
         search.connect("clicked", lambda *_: shell.launcher.toggle("spotlight"))

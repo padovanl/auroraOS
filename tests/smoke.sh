@@ -9,6 +9,13 @@ fail=0
 
 aurora-look >/dev/null 2>&1
 
+# A tray app and a file on the desktop, to exercise the tray and desktop icons.
+python3 /src/tests/fake-tray-item.py > "$out/smoke/tray.log" 2>&1 &
+mkdir -p ~/Desktop && echo hello > ~/Desktop/notes.txt
+sleep 2
+grim "$out/smoke/tray.png"
+grep -q registered "$out/smoke/tray.log" || { echo "FAILED: tray item did not register"; fail=1; }
+
 launch() {  # launch NAME COMMAND...
     local name=$1; shift
     "$@" >"$out/smoke/$name.log" 2>&1 &

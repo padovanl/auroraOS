@@ -389,6 +389,12 @@ class Updates(Page):
         open_sw.connect("activated", lambda *_: apps.spawn(["gnome-software", "--mode=updates"]))
         g.add(open_sw)
 
+        drivers = self.group(_("Additional Drivers"),
+                             _("Proprietary drivers for hardware that needs them."))
+        self.driver_row = Adw.ActionRow(title=_("Graphics"), subtitle=_("Checking…"))
+        drivers.add(self.driver_row)
+        GLib.idle_add(self._check_drivers)
+
         snaps = self.group(_("System Snapshots"),
                            _("Take a snapshot before big changes and roll back if something breaks."))
         ts = Adw.ButtonRow(title=_("Open Timeshift…"))
@@ -402,6 +408,29 @@ class Updates(Page):
         self.status.set_subtitle(_("Your system is up to date") if n == 0 else
                                  _("{n} updates available").format(n=n))
         return GLib.SOURCE_REMOVE
+
+    def _check_drivers(self):
+        out = run(["nvidia-detect"]) if shutil.which("nvidia-detect") else ""
+        m = re.search(r"install the\s+(\S+)\s+package", out)
+        if m:
+            pkg = m.group(1)
+            self.driver_row.set_subtitle(_("NVIDIA card found. Recommended driver: {pkg}").format(pkg=pkg))
+            btn = Gtk.Button(label=_("Install"), valign=Gtk.Align.CENTER,
+                             css_classes=["suggested-action"])
+            btn.connect("clicked", lambda *_: self._install_driver(pkg))
+            self.driver_row.add_suffix(btn)
+        elif "No NVIDIA GPU detected" in out or not out:
+            self.driver_row.set_subtitle(_("Your graphics use open-source drivers that are already installed."))
+        else:
+            self.driver_row.set_subtitle(out.strip().splitlines()[-1] if out.strip() else "")
+        return GLib.SOURCE_REMOVE
+
+    def _install_driver(self, pkg):
+        script = (f"sudo apt-get update && sudo apt-get install -y {pkg} "
+                  "linux-headers-amd64 firmware-misc-nonfree && "
+                  "echo && echo 'Driver installed. Restart the computer to use it.'; "
+                  "read -rp 'Press Enter to close…' _")
+        apps.spawn(["foot", "--title", _("Installing graphics driver"), "bash", "-c", script])
 
     def _set_auto(self, on):
         ok, err = admin("auto-updates", "on" if on else "off")

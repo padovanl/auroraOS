@@ -30,6 +30,10 @@ class Wallpaper(LayerWindow):
                                     can_shrink=True, hexpand=True, vexpand=True)
         overlay = Gtk.Overlay(child=self._picture)
         self.set_child(overlay)
+        # Files from ~/Desktop, on the primary monitor only.
+        if monitor == app.get_primary_monitor():
+            from aurora.shell.desktopicons import DesktopIcons
+            overlay.add_overlay(DesktopIcons())
         self._menu = self._build_menu(overlay)
 
         click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)

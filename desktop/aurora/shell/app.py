@@ -187,6 +187,10 @@ class Shell(Adw.Application):
 
     # --- helpers used by components ---
 
+    def get_primary_monitor(self):
+        model = Gdk.Display.get_default().get_monitors()
+        return model.get_item(0) if model.get_n_items() else None
+
     def open_settings(self, page=""):
         argv = ["aurora-settings"]
         if page:

@@ -2,6 +2,7 @@
 
 from gi.repository import Adw, GLib, Gtk
 
+from aurora import apps
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, switch_row, toast
 from aurora.shell.services import Network as NetworkService
@@ -15,6 +16,12 @@ class Network(Page):
     def build(self):
         self.net = NetworkService()
         self.status_group = self.group(_("Status"))
+        advanced = self.group(_("VPN and Advanced"),
+                              _("VPNs (WireGuard, OpenVPN, OpenConnect), static IP addresses, "
+                                "proxies, hotspots and every other connection option."))
+        editor = Adw.ButtonRow(title=_("Open Connection Editor…"))
+        editor.connect("activated", lambda *_: apps.spawn(["nm-connection-editor"]))
+        advanced.add(editor)
         self.wifi_group = self.group(_("Wi-Fi"))
         self._status_rows = []
         self._wifi_rows = []
