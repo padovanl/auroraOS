@@ -30,7 +30,9 @@ tb_l10n=$(awk -F'|' '{gsub(/ /,"",$3); if ($3 != "-") print "thunderbird-l10n-" 
 
 # Translation packages don't exist for every language: keep the ones that do.
 available() {
-    for p in "$@"; do in_chroot apt-cache show "$p" >/dev/null 2>&1 && echo "$p"; done
+    for p in "$@"; do
+        if in_chroot apt-cache show "$p" >/dev/null 2>&1; then echo "$p"; fi
+    done
 }
 # shellcheck disable=SC2086
 l10n=$(available $firefox_l10n $lo_l10n $tb_l10n)
