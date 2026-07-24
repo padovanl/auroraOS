@@ -6,7 +6,11 @@ talk to) and draws each item with its icon; left click activates the app,
 right click shows its menu (com.canonical.dbusmenu).
 """
 
-from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk
+import gi
+
+gi.require_version("Gdk", "4.0")
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gdk, GdkPixbuf, Gio, GLib, Gtk  # noqa: E402
 
 WATCHER_XML = """
 <node>
@@ -31,7 +35,6 @@ class Watcher:
 
     def __init__(self, on_added, on_removed):
         self.items = {}           # key "busname/path" → (bus_name, path)
-        self._watches = {}
         self._on_added, self._on_removed = on_added, on_removed
         self.conn = None
         node = Gio.DBusNodeInfo.new_for_xml(WATCHER_XML)
@@ -44,6 +47,16 @@ class Watcher:
         self.conn = conn
         conn.register_object("/StatusNotifierWatcher", self._iface, self._on_call,
                              self._on_get, None)
+        # Drop items whose app leaves the bus. (Gio.bus_watch_name_on_connection
+        # reports spurious "vanished" events through PyGObject, so listen directly.)
+        conn.signal_subscribe("org.freedesktop.DBus", "org.freedesktop.DBus", "NameOwnerChanged",
+                              "/org/freedesktop/DBus", None, Gio.DBusSignalFlags.NONE,
+                              self._on_owner_changed)
+
+    def _on_owner_changed(self, _conn, _sender, _path, _iface, _signal, params):
+        name, _old, new = params.unpack()
+        if not new:
+            self._vanished(name)
 
     def _on_get(self, _conn, _sender, _path, _iface, prop):
         if prop == "RegisteredStatusNotifierItems":
@@ -65,18 +78,10 @@ class Watcher:
             key = bus_name + path
             if key not in self.items:
                 self.items[key] = (bus_name, path)
-                self._watch(bus_name)
                 conn.emit_signal(None, "/StatusNotifierWatcher", "org.kde.StatusNotifierWatcher",
                                  "StatusNotifierItemRegistered", GLib.Variant("(s)", (key,)))
                 self._on_added(key, bus_name, path)
         invocation.return_value(None)
-
-    def _watch(self, bus_name):
-        if bus_name in self._watches:
-            return
-        self._watches[bus_name] = Gio.bus_watch_name_on_connection(
-            self.conn, bus_name, Gio.BusNameWatcherFlags.NONE, None,
-            lambda _c, name: self._vanished(name))
 
     def _vanished(self, bus_name):
         for key, (b, _p) in list(self.items.items()):
@@ -86,9 +91,6 @@ class Watcher:
                                       "org.kde.StatusNotifierWatcher",
                                       "StatusNotifierItemUnregistered", GLib.Variant("(s)", (key,)))
                 self._on_removed(key)
-        watch = self._watches.pop(bus_name, None)
-        if watch:
-            Gio.bus_unwatch_name(watch)
 
 
 def _pixmap_texture(pixmaps, size=22):
@@ -134,11 +136,16 @@ class TrayItem(Gtk.Button):
         self.conn.call(self.bus_name, path or self.path, iface, method, params, None,
                        Gio.DBusCallFlags.NONE, 3000, None, callback)
 
-    def refresh(self, *_a):
+    def refresh(self, *_a, attempt=0):
         def done(conn, res):
             try:
                 self.props_ = conn.call_finish(res).unpack()[0]
-            except GLib.Error:
+            except GLib.Error as err:
+                # Some apps register before they finish exporting the item: retry briefly.
+                if attempt < 5:
+                    GLib.timeout_add(500, lambda: self.refresh(attempt=attempt + 1) and False)
+                else:
+                    print(f"aurora: tray item {self.bus_name}: {err.message}")
                 return
             self._render()
         self.conn.call(self.bus_name, self.path, "org.freedesktop.DBus.Properties", "GetAll",
@@ -275,3 +282,4 @@ class Tray(Gtk.Box):
         item = TrayItem(Tray._watcher.conn, bus_name, path)
         self.items[key] = item
         self.append(item)
+        print(f"aurora: tray item {key}")

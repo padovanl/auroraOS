@@ -114,6 +114,8 @@ class Desktop(Page):
 
         desk = self.group(_("Desktop"))
         self._switch(desk, _("Show files from the Desktop folder"), "desktop-icons")
+        self._combo(desk, _("Icon position"), "desktop-icons-position",
+                    [("left", _("Top left")), ("right", _("Top right"))])
 
         search = self.group(_("Super Key"))
         self._combo(search, _("Super opens"), "launcher-style",
@@ -126,7 +128,8 @@ class Desktop(Page):
     def _changed(self, key):
         if key in LOOK_KEYS:
             look.apply()
-        if not self._syncing and key not in ("clock-show-seconds", "desktop-icons"):
+        if not self._syncing and key not in ("clock-show-seconds", "desktop-icons",
+                                                    "desktop-icons-position"):
             self.s.set_string("layout", "custom")
             self._sync_presets()
 

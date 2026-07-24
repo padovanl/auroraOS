@@ -32,7 +32,9 @@ export ADW_DEBUG_COLOR_SCHEME=prefer-dark ADW_DEBUG_ACCENT_COLOR=purple
 mkdir -p ~/.local/share/applications
 sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /src/config/hidden-apps.list | while read -r id; do
     for d in /usr/share/applications /opt/aurora/share/applications; do
-        [ -f "$d/$id" ] && sed '/^\[Desktop Entry\]/a NoDisplay=true' "$d/$id" > ~/.local/share/applications/$id
+        if [ -f "$d/$id" ]; then
+            sed '/^\[Desktop Entry\]/a NoDisplay=true' "$d/$id" > ~/.local/share/applications/$id
+        fi
     done
 done
 printf '[Desktop Entry]\nType=Application\nName=x\nNoDisplay=true\n' > ~/.local/share/applications/mousepad-settings.desktop
@@ -41,7 +43,7 @@ sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /src/config/renamed-apps.list | while IF
     id=$(echo $id); name=$(echo $name); icon=$(echo $icon)
     [ -f "/usr/share/applications/$id" ] || continue
     sed -e "s|^Name=.*|Name=$name|" "/usr/share/applications/$id" > ~/.local/share/applications/$id
-    [ "$icon" != "-" ] && sed -i "s|^Icon=.*|Icon=$icon|" ~/.local/share/applications/$id
+    if [ "$icon" != "-" ]; then sed -i "s|^Icon=.*|Icon=$icon|" ~/.local/share/applications/$id; fi
 done
 cp -r /opt/aurora/share/themes/* /usr/share/themes/ 2>/dev/null || true
 

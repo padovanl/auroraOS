@@ -41,11 +41,11 @@ def acquired(conn, name):
     conn.call_sync("org.kde.StatusNotifierWatcher", "/StatusNotifierWatcher",
                    "org.kde.StatusNotifierWatcher", "RegisterStatusNotifierItem",
                    GLib.Variant("(s)", (name,)), None, Gio.DBusCallFlags.NONE, -1, None)
-    print("registered")
+    print("registered", flush=True)
 
 
 Gio.bus_own_name(Gio.BusType.SESSION, "org.kde.StatusNotifierItem-4242-1",
-                 Gio.BusNameOwnerFlags.NONE, acquired, None, None)
+                 Gio.BusNameOwnerFlags.NONE, None, acquired, None)
 GLib.timeout_add_seconds(30, lambda: loop.quit())
 loop = GLib.MainLoop()
 loop.run()

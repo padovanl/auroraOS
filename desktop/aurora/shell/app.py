@@ -249,4 +249,6 @@ class Shell(Adw.Application):
 
 
 def main():
+    # Logs go to a file; write them line by line so nothing is lost on logout.
+    sys.stdout.reconfigure(line_buffering=True)
     return Shell().run(sys.argv)

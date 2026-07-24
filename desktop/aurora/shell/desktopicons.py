@@ -1,4 +1,5 @@
-"""Files from ~/Desktop shown on the background, in a column at the top right."""
+"""Files from ~/Desktop shown on the background, in columns from the top left
+(or top right, per the desktop-icons-position setting)."""
 
 import os
 
@@ -47,10 +48,9 @@ class DesktopIcons(Gtk.FlowBox):
     def __init__(self):
         super().__init__(selection_mode=Gtk.SelectionMode.NONE,
                          orientation=Gtk.Orientation.VERTICAL,
-                         halign=Gtk.Align.END, valign=Gtk.Align.START,
-                         margin_top=16, margin_end=16, row_spacing=6, column_spacing=6,
+                         valign=Gtk.Align.START, margin_top=46, margin_start=16, margin_end=16,
+                         margin_bottom=100, row_spacing=6, column_spacing=6,
                          max_children_per_line=7, css_classes=["desktop-icons"])
-        self.set_direction(Gtk.TextDirection.RTL)  # fill columns from the right edge
         self._dir = Gio.File.new_for_path(desktop_dir())
         self._monitor = None
         try:
@@ -61,11 +61,14 @@ class DesktopIcons(Gtk.FlowBox):
         s = settings.get()
         if s:
             s.connect("changed::desktop-icons", lambda *a: self.reload())
+            s.connect("changed::desktop-icons-position", lambda *a: self.reload())
         self.reload()
 
     def reload(self):
         self.remove_all()
         s = settings.get()
+        right = s is not None and s.get_string("desktop-icons-position") == "right"
+        self.set_halign(Gtk.Align.END if right else Gtk.Align.START)
         if s is not None and not s.get_boolean("desktop-icons"):
             self.set_visible(False)
             return GLib.SOURCE_REMOVE
@@ -81,7 +84,6 @@ class DesktopIcons(Gtk.FlowBox):
                                   i.get_display_name().lower()))
         for info in infos[:MAX_ITEMS]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
-            icon.set_direction(Gtk.TextDirection.LTR)
             self.append(icon)
         self.set_visible(bool(infos))
         return GLib.SOURCE_REMOVE
