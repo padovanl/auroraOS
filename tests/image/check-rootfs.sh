@@ -48,7 +48,7 @@ while IFS='|' read -r cat name id launch; do
     if [ ! -f "$f" ]; then bad "$name: $id not installed"; continue; fi
     if grep -q '^NoDisplay=true' "$f"; then bad "$name: $id is hidden"; continue; fi
     exe=$(sed -n 's/^Exec=//p' "$f" | head -1 | sed 's/^env [^ ]* //' | awk '{print $1}')
-    if chroot "$ROOTFS" sh -c "command -v '$exe'" >/dev/null 2>&1; then
+    if chroot "$ROOTFS" env PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/usr/games sh -c "command -v '$exe'" >/dev/null 2>&1; then
         ok "$name"
     else
         bad "$name: '$exe' not found"
