@@ -90,9 +90,10 @@ class Agent:
 MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
                         "config", "apps.manifest")
 
-USER_ENV = ("uid=$(id -u aurora); runuser -u aurora -- env XDG_RUNTIME_DIR=/run/user/$uid "
-            "WAYLAND_DISPLAY=wayland-0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus "
-            "XDG_CURRENT_DESKTOP=Aurora:wlroots ")
+# Run as the live user with the exact environment of the running compositor,
+# so apps start the way they would from the dock or Launchpad.
+USER_ENV = ("runuser -u aurora -- bash -c 'while IFS= read -r -d \"\" kv; do export \"$kv\"; "
+            "done < /proc/$(pgrep -u aurora -x labwc)/environ; exec \"$@\"' _ ")
 
 
 def manifest_apps():
