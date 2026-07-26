@@ -108,6 +108,12 @@ class Shell(Adw.Application):
             s.connect("changed::panel-opacity", lambda *a: self._update_dynamic_css())
         self._sync_night_light()
         self._update_dynamic_css()
+        iface = settings.interface()
+        if iface is not None:
+            from aurora import look
+            for key in ("color-scheme", "accent-color"):
+                iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
+            look.apply()
 
     def _later(self, fn):
         """Coalesce bursts of setting changes (layout presets change several keys)."""

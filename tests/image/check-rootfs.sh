@@ -36,6 +36,10 @@ expect "gsettings schema compiled" test -f "$ROOTFS/usr/share/glib-2.0/schemas/g
 expect "aurora schema installed" test -f "$ROOTFS/usr/share/glib-2.0/schemas/org.aurora.desktop.gschema.xml"
 expect "wayland bindings generated" test -d "$ROOTFS/usr/lib/aurora/aurora/protocols/wlr_foreign_toplevel_management_unstable_v1"
 expect "window themes" test -f "$ROOTFS/usr/share/themes/Aurora/openbox-3/close-active.svg"
+expect "light window theme" test -f "$ROOTFS/usr/share/themes/Aurora-Light/openbox-3/themerc"
+expect "GTK3 theme (adw-gtk3)" test -f "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-3.0/gtk.css"
+expect "Qt follows GNOME settings" chroot "$ROOTFS" dpkg -s qgnomeplatform-qt6
+expect "plymouth hand-over for greetd" test -f "$ROOTFS/etc/systemd/system/greetd.service.d/aurora-plymouth.conf"
 expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"
 expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
 

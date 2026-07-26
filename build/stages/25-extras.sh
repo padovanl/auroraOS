@@ -24,3 +24,15 @@ debs=$(cd "$ROOTFS" && ls tmp/extras/*.deb | sed 's|^|/|')
 # shellcheck disable=SC2086
 apt_install $debs
 rm -rf "$ROOTFS/tmp/extras"
+
+# Pinned archives (config/extra-archives.list).
+sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/extra-archives.list" |
+while IFS='|' read -r name version url sha dest; do
+    name=$(echo $name); url=$(echo $url); sha=$(echo $sha); dest=$(echo $dest)
+    file="$dir/$(basename "$url")"
+    log "extra archive: $name $version"
+    [ -f "$file" ] || curl -fsSL -o "$file" "$url"
+    echo "$sha  $file" | sha256sum -c --quiet - || die "checksum mismatch for $name"
+    mkdir -p "$ROOTFS$dest"
+    tar -xf "$file" -C "$ROOTFS$dest"
+done
