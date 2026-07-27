@@ -86,11 +86,14 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Dock** | Pinned and running apps, running indicators, right-click menus (windows, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Magnification, autohide, bottom/left/right, floating or full-width. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, a calculator (`12*(3+4)`), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
-| **Control Center** | Volume, brightness, Wi-Fi (with network list and password entry), dark style, Do Not Disturb, night light, battery, lock and power. |
-| **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover, Do Not Disturb. |
+| **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
+| **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
+| **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
+| **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right). |
 | **Windows** | labwc compositor: snapping to halves, 4 to 9 workspaces, window switcher, round colored buttons (or monochrome), server-side and GTK decorations styled alike. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
+| **One look everywhere** | libadwaita apps, GTK 3 apps (adw-gtk3), plain GTK 4 apps, Qt apps (QGnomePlatform), window decorations and icons all follow the light/dark style and accent color you pick. |
 
 ### Apps written for Aurora
 - **Settings**: Network, Bluetooth, Displays, Sound, Power, Appearance, Desktop & Dock,
@@ -117,6 +120,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   (Remmina), Transmission, Archive Manager, Disks, Disk Usage, System Monitor, Logs,
   Characters, Fonts, Power Statistics, Firmware, Passwords and Keys, App Center (GNOME
   Software with Flatpak).
+- The full list, with what the tests check for each app, is in
+  [`config/apps.manifest`](config/apps.manifest).
 - **Anything else** is one click away in App Center, which covers the whole Debian archive
   (tens of thousands of packages) and Flathub. Nothing is installed without you asking.
 
@@ -128,6 +133,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   (fwupd), backlight and battery.
 - VMs: QEMU/KVM guest agent and SPICE, VMware tools, Hyper-V daemons.
 - Printing (CUPS, driverless IPP) and scanning, Bluetooth manager.
+- **Additional Drivers** (Settings → Software Updates) detects NVIDIA cards and installs the
+  recommended proprietary driver.
+- **VPNs:** WireGuard, OpenVPN and OpenConnect through NetworkManager's connection editor
+  (Settings → Network → VPN and Advanced).
 
 ### Installer
 The installer is Calamares with Aurora's branding. It walks you through language,
@@ -259,7 +268,7 @@ reuse the root filesystem and the apt cache and take a few minutes.
 |---|---|
 | `10-bootstrap` | `debootstrap` creates a minimal Debian trixie root filesystem (skipped if one exists). |
 | `20-packages` | Writes apt sources, installs every list in `config/packages/`, Firefox and LibreOffice translations, and generates the locales in `config/locales.list`. |
-| `25-extras` | Downloads third-party `.deb`s from `config/extra-debs.list` (portop) and verifies them against the publisher's SHA-256 checksums. |
+| `25-extras` | Downloads third-party `.deb`s from `config/extra-debs.list` (portop), verified against the publisher's SHA-256 checksums, and archives from `config/extra-archives.list` (the adw-gtk3 theme), pinned by SHA-256. |
 | `30-system` | Copies `overlay/` into the image, writes the Aurora identity (`os-release`, `issue`, `lsb-release`), hides upstream installer launchers and enables services. |
 | `35-defaults` | Firewall on, automatic security updates, Flathub, Docker socket activation, shell setup, SSH off. |
 | `40-desktop` | `make -C desktop install`: the Aurora desktop, generated Wayland bindings, themes, wallpapers, schemas, icons, translations. |
@@ -401,8 +410,8 @@ major release.
 | `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol. |
 | `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
 | `make test` | Docker | All three above. |
-| `make test-image` | a built ISO | Identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. |
-| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, then takes a screenshot and checks that the desktop is visible. Logs and screenshots are kept in `work/boot-test/`. |
+| `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. |
+| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
 
 Run `make test && make iso && make test-image && make test-boot` before every release. The
 future GitHub release workflow will run the same targets.
@@ -454,7 +463,7 @@ screenshots, features, download and the install guide.
 
 | Path | Contents |
 |---|---|
-| `config/` | Build settings (`aurora.conf`), package lists, languages, third-party `.deb`s, offline pool list. |
+| `config/` | Build settings (`aurora.conf`), package lists, languages, third-party `.deb`s and archives, offline pool list, default-apps manifest, hidden and renamed launchers. |
 | `build/` | Builder container, build stages, QEMU runner. |
 | `overlay/` | Files copied verbatim into the image: live setup, installer configuration and modules, polkit policy, shell and terminal defaults. |
 | `desktop/aurora/shell/` | Aurora Shell: panel, dock, launcher, search, notifications, control center, OSD, wallpaper, window tracking, system services. |
