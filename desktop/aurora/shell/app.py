@@ -91,6 +91,8 @@ class Shell(Adw.Application):
         self.media = Media()
         self.toplevels = ToplevelTracker()
         self.notifications = NotificationServer(self)
+        from aurora.shell.sysnotify import SystemNotifications
+        self.sysnotify = SystemNotifications(self)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))

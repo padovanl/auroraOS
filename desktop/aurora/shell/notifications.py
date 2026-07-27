@@ -273,6 +273,9 @@ class NotificationServer:
                 windows[0].activate()
         else:
             self._emit("ActionInvoked", GLib.Variant("(us)", (nid, key)))
+            # Notifications the shell sent itself handle their actions here.
+            if getattr(self.shell, "sysnotify", None) is not None:
+                self.shell.sysnotify.invoke(nid, key)
         if not note.hints.get("resident"):
             self.close(nid, REASON_DISMISSED)
 
