@@ -10,7 +10,7 @@ DOCKER_RUN = docker run --rm --privileged \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot dev-image screenshots site
+	test test-static test-unit test-smoke test-image test-boot dev-image screenshots site vm-screenshots
 
 all: iso
 
@@ -60,6 +60,10 @@ test-unit: dev-image
 test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
+
+# Screenshots for the website/README from the real ISO in QEMU.
+vm-screenshots:
+	python3 tools/vm-screenshots.py $(ISO) --out docs/screenshots
 
 # Regenerate the website's technical page from README.md.
 site:

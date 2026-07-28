@@ -769,7 +769,11 @@ screenshots, features, download and the install guide.
 - Preview it locally: `tools/serve-site.py --open` (then http://127.0.0.1:8000).
 - Set the repository URL and version once in `docs/assets/site.js` (`REPO`, `VERSION`);
   download buttons point to `<REPO>/releases/latest/download/aurora-os-<VERSION>-amd64.iso`.
-- Refresh the screenshots with `make screenshots` (headless session) or from a VM.
+- Refresh the screenshots from the real ISO with `make vm-screenshots` (boots it in QEMU
+  at 1920×1080 and drives the session through the guest agent), or quickly from the
+  headless development session with `make screenshots`.
+- After editing the README's "Under the hood" section, run `make site` (the static tests
+  fail if you forget).
 
 ## Repository layout
 
