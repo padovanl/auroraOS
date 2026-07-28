@@ -61,6 +61,10 @@ test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
 
+# Regenerate the website's technical page from README.md.
+site:
+	python3 tools/build-site.py
+
 # Regenerate docs/screenshots from a scripted headless session.
 screenshots: dev-image
 	desktop/dev/run-headless.sh tests/showcase.sh $(CURDIR)/work/showcase-out

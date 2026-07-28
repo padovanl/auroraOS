@@ -229,3 +229,23 @@ details p { color: #d8d0e8; }
   .feature-media.stack img:last-child { position: static; width: 100%; margin-top: 16px; }
   .feature-media.stack { padding-bottom: 0; }
 }
+
+/* --- documentation pages (technical.html) --- */
+.doc { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 0;
+  display: grid; grid-template-columns: 240px 1fr; gap: 48px; }
+.doc-toc { position: sticky; top: 90px; align-self: start; display: flex; flex-direction: column; gap: 8px; }
+.doc-toc a { color: var(--muted); text-decoration: none; font-size: .95rem; }
+.doc-toc a:hover { color: var(--text); }
+.doc-body { min-width: 0; }
+.doc-body h1 { font-size: clamp(2rem, 4vw, 3rem); }
+.doc-body h2 { font-size: 1.8rem; margin-top: 64px; padding-top: 12px; border-top: 1px solid var(--card-border); }
+.doc-body h3 { font-size: 1.2rem; margin-top: 36px; color: #e6dcff; }
+.doc-body p, .doc-body li { color: #d8d0e8; font-size: 1.02rem; }
+.doc-body li { margin: 6px 0; }
+.doc-body strong { color: var(--text); }
+.table-wrap { overflow-x: auto; margin: 20px 0; border: 1px solid var(--card-border); border-radius: 14px; }
+.doc-body table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.doc-body th, .doc-body td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--card-border); }
+.doc-body th { background: rgba(255,255,255,0.05); font-weight: 600; }
+.doc-body tr:last-child td { border-bottom: none; }
+@media (max-width: 900px) { .doc { grid-template-columns: 1fr; } .doc-toc { position: static; } }
