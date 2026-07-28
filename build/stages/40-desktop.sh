@@ -14,5 +14,5 @@ in_chroot glib-compile-schemas /usr/share/glib-2.0/schemas
 in_chroot gtk-update-icon-cache -f -t /usr/share/icons/hicolor || true
 in_chroot update-desktop-database -q /usr/share/applications || true
 
-# Make foot the default terminal.
-in_chroot update-alternatives --set x-terminal-emulator /usr/bin/foot || true
+# Ptyxis is the default terminal (foot stays for scripted terminal windows).
+in_chroot update-alternatives --set x-terminal-emulator /usr/bin/ptyxis || true

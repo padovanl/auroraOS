@@ -814,8 +814,10 @@ class FilesWindow(Adw.ApplicationWindow):
     def terminal_here(self):
         path = self.current.get_path()
         if path:
+            argv = (["ptyxis", "--new-window", f"--working-directory={path}"]
+                    if GLib.find_program_in_path("ptyxis") else ["x-terminal-emulator"])
             try:
-                GLib.spawn_async(["x-terminal-emulator"], working_directory=path,
+                GLib.spawn_async(argv, working_directory=path,
                                  flags=GLib.SpawnFlags.SEARCH_PATH)
             except GLib.Error as err:
                 self.toast(err.message)

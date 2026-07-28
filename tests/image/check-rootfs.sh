@@ -20,7 +20,7 @@ expect "plymouth theme aurora" grep -q 'Theme=aurora' "$ROOTFS/etc/plymouth/plym
 echo "== required programs"
 for bin in labwc greetd aurora-shell aurora-session aurora-settings aurora-files aurora-devhub \
            aurora-installer calamares portop git docker podman python3 node firefox-esr foot \
-           nmcli ufw flatpak gnome-software timeshift; do
+           nmcli ufw flatpak gnome-software timeshift ptyxis gtklock; do
     expect "$bin" chroot "$ROOTFS" sh -c "command -v $bin"
 done
 
@@ -58,7 +58,7 @@ while IFS='|' read -r cat name id launch; do
         bad "$name: '$exe' not found"
     fi
 done < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/apps.manifest")
-expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/share/applications/foot.desktop"
+expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/share/applications/org.gnome.Ptyxis.desktop"
 
 echo "== installer"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"

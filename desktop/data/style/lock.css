@@ -1,0 +1,57 @@
+/* Aurora lock screen (gtklock, GTK 3). */
+
+window {
+  background-size: cover;
+  background-position: center;
+  color: #f2eefa;
+}
+
+#window-box {
+  padding: 48px 56px;
+  border-radius: 28px;
+  background-color: rgba(20, 16, 30, 0.72);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+#clock-label {
+  font-family: Inter;
+  font-size: 72pt;
+  font-weight: 300;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+#date-label {
+  font-family: Inter;
+  font-size: 16pt;
+  color: rgba(242, 238, 250, 0.85);
+  margin-bottom: 24px;
+}
+
+#input-field {
+  min-width: 300px;
+  min-height: 40px;
+  border-radius: 999px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: rgba(255, 255, 255, 0.10);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#input-field:focus {
+  border-color: #a970ff;
+  box-shadow: 0 0 0 2px rgba(169, 112, 255, 0.45);
+}
+
+#unlock-button {
+  border-radius: 999px;
+  border: none;
+  background-image: linear-gradient(120deg, #a970ff, #ff6f91);
+  color: #ffffff;
+  padding: 0 18px;
+}
+
+#warning-label, #error-label {
+  color: #ff8fab;
+}

@@ -306,7 +306,7 @@ class Dock(LayerWindow):
     def favorites(self):
         s = settings.get()
         favs = list(s.get_strv("dock-favorites")) if s else [
-            "firefox-esr.desktop", "org.aurora.Files.desktop", "foot.desktop",
+            "firefox-esr.desktop", "org.aurora.Files.desktop", "org.gnome.Ptyxis.desktop",
             "org.aurora.Settings.desktop"]
         if LIVE and "aurora-installer.desktop" not in favs:
             favs.insert(0, "aurora-installer.desktop")

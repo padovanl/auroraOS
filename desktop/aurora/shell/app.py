@@ -54,7 +54,7 @@ class Shell(Adw.Application):
         Adw.Application.do_startup(self)
         self._load_css()
         for name, cb, ptype in (
-            ("open-terminal", lambda *_: apps.spawn(["x-terminal-emulator"]), None),
+            ("open-terminal", lambda *_: apps.spawn(["ptyxis", "--new-window"]), None),
             ("open-files", lambda *_: self._open_files(), None),
             ("settings", lambda _a, p: self.open_settings(p.get_string()), "s"),
             ("launcher", lambda *_: self.launcher.toggle(), None),
