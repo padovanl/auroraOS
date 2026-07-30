@@ -33,6 +33,8 @@ CHECKS = [
     ("aurora shell running", "pgrep -f /usr/bin/aurora-shell"),
     ("no shell exceptions",
      "! grep -q Traceback /run/user/$(id -u aurora)/aurora-shell.log"),
+    ("no theme CSS errors",
+     "! grep -q 'Theme parser error' /run/user/$(id -u aurora)/aurora-shell.log"),
     ("NetworkManager up", "nmcli -t -f RUNNING general | grep -q running"),
     ("network connected", "nmcli -t -f STATE general | grep -q connected"),
     ("firewall active", "ufw status | grep -q 'Status: active'"),
@@ -90,10 +92,11 @@ class Agent:
 MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
                         "config", "apps.manifest")
 
-# Run as the live user with the exact environment of the running compositor,
+# Run as the live user with the exact environment of the running shell (a child
+# of the compositor, so it has WAYLAND_DISPLAY and DISPLAY),
 # so apps start the way they would from the dock or Launchpad.
 USER_ENV = ("runuser -u aurora -- bash -c 'while IFS= read -r -d \"\" kv; do export \"$kv\"; "
-            "done < /proc/$(pgrep -u aurora -x labwc)/environ; exec \"$@\"' _ ")
+            "done < /proc/$(pgrep -o -u aurora -f /usr/bin/aurora-shell)/environ; exec \"$@\"' _ ")
 
 
 def manifest_apps():

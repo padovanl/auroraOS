@@ -113,7 +113,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   neovim, tmux, ripgrep, fd, fzf, bat, btop, jq, httpie, direnv, tldr, starship, zsh,
   JetBrains Mono and Fira Code, and **[portop](https://github.com/padovanl/portop)** (see
   which process holds a port and stop it with one key).
-- **Everyday** (the same set of apps Ubuntu ships): Firefox, Thunderbird, LibreOffice
+- **Everyday** (the same set of apps Ubuntu ships): Firefox, Geary Mail, LibreOffice
   (Writer, Calc, Impress), Calendar, Contacts, Weather, Maps, Clocks, Calculator, Text
   Editor, Image Viewer, Document Viewer (PDF), Music (Rhythmbox), Videos (Celluloid, with
   codecs), Camera, Sound Recorder, Document Scanner, Backups (Déjà Dup), Remote Desktop
@@ -605,7 +605,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 | Terminal | **Ptyxis** (+ foot for scripted windows) | GNOME Console, Kitty, Alacritty, WezTerm, Ghostty | Tabs, profiles, theme-aware, and **container integration**: it opens shells inside distrobox, toolbox and podman containers. It is GNOME's new terminal and Ubuntu's future default. foot stays for Dev Hub's install windows (tiny and scriptable). |
 | Text editor | **GNOME Text Editor** + **neovim** | gedit, Kate | Modern GTK 4, fast. neovim for the terminal. |
 | Web | **Firefox ESR** | Chromium, rapid-release Firefox (Mozilla's apt repo) | Debian's security team maintains it, and the ESR stays stable. Chromium and rapid Firefox are available too. |
-| Mail | **Thunderbird** | Evolution, Geary | The most capable free mail client, available in every language we ship. |
+| Mail | **Geary** (shown as "Mail") | Thunderbird, Evolution, Betterbird, KMail, Mailspring | The closest thing to Apple Mail: conversation threads, fast full-text search, a clean single-window design that follows the system theme, and online accounts (Gmail, Outlook.com, IMAP) set up in a minute. Thunderbird is more powerful (OpenPGP, calendar, add-ons, Exchange via EWS) but heavy and styled on its own, so it doesn't inherit the system theme. It is one command away: `sudo apt install thunderbird` or from Flathub. Evolution is the choice for Exchange servers. |
 | Office | **LibreOffice** (Writer, Calc, Impress) | OnlyOffice | Fully free software, packaged by Debian, with translations. |
 | PDF | **Papers** | Evince | GNOME 48's GTK 4/libadwaita successor to Evince. |
 | Images | **Loupe** | Eye of GNOME, gThumb | Fast, GPU-accelerated, GTK 4. |
@@ -645,7 +645,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 
 ### Internationalization
 - **gettext** for all Aurora strings (template in `desktop/po/aurora.pot`, complete Italian
-  translation). There are 20 locales, with Firefox, Thunderbird and LibreOffice language
+  translation). There are 20 locales, with Firefox and LibreOffice language
   packs and Noto fonts for every script. The boot menu sets language and keyboard for the
   live session, and Settings changes them per user.
 

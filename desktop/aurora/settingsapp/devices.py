@@ -21,7 +21,7 @@ class Bluetooth(Page):
         try:
             self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
             self.manager = Gio.DBusObjectManagerClient.new_for_bus_sync(
-                Gio.BusType.SYSTEM, Gio.DBusObjectManagerClientFlags.NONE, BLUEZ, "/",
+                Gio.BusType.SYSTEM, Gio.DBusObjectManagerClientFlags.DO_NOT_AUTO_START, BLUEZ, "/",
                 None, None, None)
         except GLib.Error:
             pass

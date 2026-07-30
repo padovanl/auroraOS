@@ -36,3 +36,8 @@ while IFS='|' read -r name version url sha dest; do
     mkdir -p "$ROOTFS$dest"
     tar -xf "$file" -C "$ROOTFS$dest"
 done
+
+# adw-gtk3 is for GTK 3 apps. Its gtk-4.0 folder targets a newer GTK than
+# Debian's 4.18 (hundreds of "Unknown @ rule" errors in every GTK 4 app), and
+# libadwaita apps already look right without it.
+rm -rf "$ROOTFS"/usr/share/themes/adw-gtk3*/gtk-4.0

@@ -418,13 +418,23 @@ class Bluetooth(GObject.Object):
         self.bus = None
         try:
             self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
-            self.manager = Gio.DBusObjectManagerClient.new_for_bus_sync(
-                Gio.BusType.SYSTEM, Gio.DBusObjectManagerClientFlags.NONE, self.BLUEZ, "/",
-                None, None, None)
+        except GLib.Error:
+            return
+        # Async and without auto-start: on a machine with no adapter, activating
+        # bluetoothd blocks for dbus's 25 s service timeout. The manager follows
+        # the name owner, so objects appear if bluetoothd starts later.
+        Gio.DBusObjectManagerClient.new_for_bus(
+            Gio.BusType.SYSTEM, Gio.DBusObjectManagerClientFlags.DO_NOT_AUTO_START,
+            self.BLUEZ, "/", None, None, None, None, self._on_manager)
+
+    def _on_manager(self, _source, result):
+        try:
+            self.manager = Gio.DBusObjectManagerClient.new_for_bus_finish(result)
         except GLib.Error:
             return
         for sig in ("object-added", "object-removed", "interface-proxy-properties-changed"):
             self.manager.connect(sig, lambda *a: self.emit("changed"))
+        self.emit("changed")
 
     def _objects(self, iface):
         if self.manager is None:

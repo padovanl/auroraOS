@@ -38,6 +38,7 @@ expect "wayland bindings generated" test -d "$ROOTFS/usr/lib/aurora/aurora/proto
 expect "window themes" test -f "$ROOTFS/usr/share/themes/Aurora/openbox-3/close-active.svg"
 expect "light window theme" test -f "$ROOTFS/usr/share/themes/Aurora-Light/openbox-3/themerc"
 expect "GTK3 theme (adw-gtk3)" test -f "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-3.0/gtk.css"
+expect "no adw-gtk3 GTK 4 CSS" test ! -e "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-4.0"
 expect "Qt follows GNOME settings" chroot "$ROOTFS" dpkg -s qgnomeplatform-qt6
 expect "plymouth hand-over for greetd" test -f "$ROOTFS/etc/systemd/system/greetd.service.d/aurora-plymouth.conf"
 expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"

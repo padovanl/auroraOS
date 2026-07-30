@@ -26,8 +26,6 @@ firefox_l10n=$(awk -F'|' '{gsub(/ /,"",$3); if ($3 != "-") print "firefox-esr-l1
 lo_l10n=$(awk -F'|' '{gsub(/ /,"",$3); if ($3 != "-") print $3}' <<<"$LOCALES" |
     sed -e 's/^es-es$/es/' -e 's/^sv-se$/sv/' -e 's/^hi-in$/hi/' -e 's/^pt-pt$/pt/' | sed 's/^/libreoffice-l10n-/')
 
-tb_l10n=$(awk -F'|' '{gsub(/ /,"",$3); if ($3 != "-") print "thunderbird-l10n-" $3}' <<<"$LOCALES")
-
 # Translation packages don't exist for every language: keep the ones that do.
 available() {
     for p in "$@"; do
@@ -35,7 +33,7 @@ available() {
     done
 }
 # shellcheck disable=SC2086
-l10n=$(available $firefox_l10n $lo_l10n $tb_l10n)
+l10n=$(available $firefox_l10n $lo_l10n)
 
 log "installing package lists"
 # shellcheck disable=SC2046,SC2086
