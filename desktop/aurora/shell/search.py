@@ -129,6 +129,198 @@ def search_calculator(query):
                    "accessories-calculator-symbolic", copy, 200)]
 
 
+# --- Conversions: units and currencies ------------------------------------
+
+_rates_fetching = False
+
+
+def search_convert(query, refresh=None):
+    from aurora import convert
+    parsed = convert.parse(query)
+    if parsed is None:
+        return []
+    value, frm, to = parsed
+    if convert.is_currency(frm, to):
+        rates = convert.cached_rates()
+        if rates is None:
+            _fetch_rates(refresh)
+            return [Result(_("Getting today’s exchange rates…"), _("European Central Bank"),
+                           "network-transmit-receive-symbolic", score=200)]
+        result = convert.convert_currency(value, frm, to, rates)
+        source = _("Exchange rate: European Central Bank")
+    else:
+        result = convert.convert_units(value, frm, to)
+        source = _("Unit conversion")
+    if result is None:
+        return []
+    text = convert.format_number(result)
+    return [Result(f"{convert.format_number(value)} {frm} = {text} {to}",
+                   source + " · " + _("Press Enter to copy the result"),
+                   "accessories-calculator-symbolic", lambda: _copy(text), 200)]
+
+
+def _fetch_rates(refresh):
+    global _rates_fetching
+    if _rates_fetching:
+        return
+    _rates_fetching = True
+    import threading
+    from gi.repository import GLib
+
+    def work():
+        global _rates_fetching
+        from aurora import convert
+        try:
+            convert.fetch_rates()
+        except Exception as e:  # noqa: BLE001 - offline is normal
+            print(f"aurora: exchange rates unavailable: {e}")
+        _rates_fetching = False
+        if refresh:
+            GLib.idle_add(lambda: (refresh(), False)[1])
+    threading.Thread(target=work, daemon=True).start()
+
+
+def _copy(text):
+    Gdk.Display.get_default().get_clipboard().set(text)
+
+
+# --- Emoji (":" prefix) ----------------------------------------------------
+
+_EMOJI = None
+_EMOJI_RANGES = [(0x1F300, 0x1F5FF), (0x1F600, 0x1F64F), (0x1F680, 0x1F6FF),
+                 (0x1F900, 0x1F9FF), (0x1FA70, 0x1FAFF), (0x2600, 0x26FF), (0x2700, 0x27BF)]
+
+
+def _emoji_table():
+    """(character, lower-case name) for every emoji Python's Unicode data knows."""
+    global _EMOJI
+    if _EMOJI is None:
+        import unicodedata
+        _EMOJI = []
+        for lo, hi in _EMOJI_RANGES:
+            for cp in range(lo, hi + 1):
+                name = unicodedata.name(chr(cp), "")
+                if name:
+                    _EMOJI.append((chr(cp), name.lower()))
+    return _EMOJI
+
+
+def search_emoji(query):
+    q = query[1:].strip().lower()
+    if not q:
+        return []
+    out = []
+    for char, name in _emoji_table():
+        words = name.split()
+        if q in name:
+            score = 150 if q in words else 140 if any(w.startswith(q) for w in words) else 120
+            out.append(Result(f"{char}  {name.title()}", _("Emoji · Press Enter to copy"),
+                              "face-smile-symbolic", lambda c=char: _copy(c), score))
+    out.sort(key=lambda r: -r.score)
+    return out[:24]
+
+
+# --- Clipboard history ("clip:" prefix, Super+V) ---------------------------
+
+CLIPBOARD_PREFIX = "clip:"
+
+
+def search_clipboard(query):
+    from aurora import clipboard
+    q = query[len(CLIPBOARD_PREFIX):].strip().lower()
+    out = []
+    for i, text in enumerate(clipboard.load()):
+        if q and q not in text.lower():
+            continue
+        one_line = " ".join(text.split())
+        lines = text.count("\n") + 1
+        subtitle = (_("Clipboard · {n} lines").format(n=lines) if lines > 1
+                    else _("Clipboard"))
+        out.append(Result(one_line[:120], subtitle, "edit-paste-symbolic",
+                          lambda t=text: _copy(t), 500 - i))
+    if not out:
+        out.append(Result(_("Clipboard history is empty") if not q else _("No matches"),
+                          _("Copied text shows up here. Turn it off in Settings → Privacy."),
+                          "edit-paste-symbolic", score=0))
+    return out
+
+
+# --- Projects (git repositories) -------------------------------------------
+
+PROJECT_DIRS = ("~/Projects", "~/projects", "~/src", "~/code", "~/Code", "~/git", "~/dev",
+                "~/work", "~/repos", "~/Development")
+_projects_cache = (0.0, [])
+
+
+def find_projects():
+    """Git repositories up to two levels below the usual project folders."""
+    import time
+    global _projects_cache
+    stamp, cached = _projects_cache
+    if time.time() - stamp < 60:
+        return cached
+    found = []
+    seen = set()
+    for base in PROJECT_DIRS:
+        base = os.path.expanduser(base)
+        if not os.path.isdir(base) or os.path.realpath(base) in seen:
+            continue
+        seen.add(os.path.realpath(base))
+        for depth1 in _subdirs(base):
+            if os.path.isdir(os.path.join(depth1, ".git")):
+                found.append(depth1)
+                continue
+            for depth2 in _subdirs(depth1):
+                if os.path.isdir(os.path.join(depth2, ".git")):
+                    found.append(depth2)
+    _projects_cache = (time.time(), found)
+    return found
+
+
+def _subdirs(path):
+    try:
+        return [e.path for e in os.scandir(path) if e.is_dir() and not e.name.startswith(".")]
+    except OSError:
+        return []
+
+
+def _branch(repo):
+    try:
+        with open(os.path.join(repo, ".git", "HEAD")) as f:
+            head = f.read().strip()
+        return head.rsplit("/", 1)[-1] if head.startswith("ref:") else head[:8]
+    except OSError:
+        return ""
+
+
+def open_project(path):
+    """Open a project in the installed code editor, or a terminal there."""
+    import shutil
+    for editor in ("code", "codium", "zed", "subl"):
+        if shutil.which(editor):
+            apps.spawn([editor, path])
+            return
+    apps.spawn(["ptyxis", "--new-window", "--working-directory", path])
+
+
+def search_projects(query):
+    q = query.lower().strip()
+    if len(q) < 2:
+        return []
+    out = []
+    home = os.path.expanduser("~")
+    for repo in find_projects():
+        name = os.path.basename(repo).lower()
+        if not (name.startswith(q) or q in name):
+            continue
+        branch = _branch(repo)
+        where = repo.replace(home, "~", 1) + (f" · {branch}" if branch else "")
+        out.append(Result(os.path.basename(repo), _("Project · {where}").format(where=where),
+                          "folder-code-symbolic" if name.startswith(q) else "folder-symbolic",
+                          lambda r=repo: open_project(r), 75 if name.startswith(q) else 45))
+    return out[:6]
+
+
 # --- Settings panels -------------------------------------------------------
 
 SETTINGS_PAGES = [
@@ -202,10 +394,16 @@ def fallback_results(query):
     return out
 
 
-def search(query, open_settings):
-    if query.strip().startswith(">"):
+def search(query, open_settings, refresh=None):
+    stripped = query.strip()
+    if stripped.startswith(">"):
         return fallback_results(query)
-    results = (search_calculator(query) + search_apps(query)
-               + search_settings(query, open_settings) + search_recent(query))
+    if stripped.lower().startswith(CLIPBOARD_PREFIX):
+        return search_clipboard(stripped)
+    if stripped.startswith(":") and len(stripped) > 1:
+        return search_emoji(stripped)
+    results = (search_calculator(query) + search_convert(query, refresh) + search_apps(query)
+               + search_settings(query, open_settings) + search_projects(query)
+               + search_recent(query))
     results.sort(key=lambda r: -r.score)
     return results[:30] + fallback_results(query)

@@ -172,9 +172,7 @@ class QuickSettings(Gtk.Popover):
                               lambda: self._show_detail("power"))
         self.t_night = Toggle("night-light-symbolic", _("Night Light"),
                               lambda v: s and s.set_boolean("night-light", v))
-        self.t_dark = Toggle("weather-clear-night-symbolic", _("Dark Style"),
-                             lambda v: iface and iface.set_string(
-                                 "color-scheme", "prefer-dark" if v else "default"))
+        self.t_dark = Toggle("weather-clear-night-symbolic", _("Dark Style"), self._set_dark)
         self.t_dnd = Toggle("notifications-disabled-symbolic", _("Do Not Disturb"),
                             lambda v: s and s.set_boolean("do-not-disturb", v))
         self.t_air = Toggle("airplane-mode-symbolic", _("Airplane Mode"), self._set_airplane)
@@ -269,6 +267,14 @@ class QuickSettings(Gtk.Popover):
         wifi_off = net.wifi_device() is None or not net.wifi_enabled
         bt_off = not bt.available or not bt.powered
         return wifi_off and bt_off and (net.wifi_device() is not None or bt.available)
+
+    def _set_dark(self, value):
+        # Choosing a style by hand stops the automatic sunset/sunrise switch.
+        s, iface = settings.get(), settings.interface()
+        if s is not None:
+            s.set_boolean("color-scheme-auto", False)
+        if iface is not None:
+            iface.set_string("color-scheme", "prefer-dark" if value else "default")
 
     def _set_airplane(self, on):
         self.shell.network.set_wifi_enabled(not on)

@@ -61,6 +61,24 @@ class Privacy(Page):
         clear.connect("activated", lambda *_: self._clear_history())
         history.add(clear)
 
+        clip = self.group(_("Clipboard History"),
+                          _("Copied text is kept on this computer only, for Spotlight "
+                            "(Super+V). Passwords copied from password managers are skipped."))
+        if aurora:
+            clip.add(switch_row(_("Remember copied text"), aurora.get_boolean("clipboard-history"),
+                                lambda v: aurora.set_boolean("clipboard-history", v)))
+        clear_clip = Adw.ButtonRow(title=_("Clear Clipboard History"))
+        clear_clip.connect("activated", lambda *_: self._clear_clipboard())
+        clip.add(clear_clip)
+
+        online = self.group(_("Online Services"))
+        if aurora:
+            online.add(switch_row(
+                _("Weather next to the calendar"), aurora.get_boolean("weather-widget"),
+                lambda v: aurora.set_boolean("weather-widget", v),
+                subtitle=_("Asks Open-Meteo for the weather of your time zone’s main city. "
+                           "No account, no exact location.")))
+
         fw = self.group(_("Firewall"),
                         _("Blocks unrequested incoming connections. Outgoing traffic is not affected."))
         status = run(["systemctl", "is-enabled", "ufw"]).strip() == "enabled"
@@ -83,6 +101,11 @@ class Privacy(Page):
         Gtk.RecentManager.get_default().purge_items()
         toast(self, _("History cleared"))
 
+    def _clear_clipboard(self):
+        from aurora import clipboard
+        clipboard.clear()
+        toast(self, _("Clipboard history cleared"))
+
     def _set_firewall(self, on):
         ok, err = admin("firewall", "on" if on else "off")
         toast(self, (_("Firewall enabled") if on else _("Firewall disabled")) if ok else err)
@@ -96,6 +119,7 @@ class Sharing(Page):
     icon_name = "preferences-system-sharing-symbolic"
 
     def build(self):
+        self._phone_group()
         g = self.group(_("Remote Login"),
                        _("Allow connecting to this computer with SSH."))
         installed = shutil.which("sshd") or os.path.exists("/usr/sbin/sshd")
@@ -110,6 +134,30 @@ class Sharing(Page):
         g.add(Adw.ActionRow(title=_("Connect with"),
                             subtitle=f"ssh {user}@{addr or host + '.local'}",
                             subtitle_selectable=True))
+
+    def _phone_group(self):
+        g = self.group(_("Phone"),
+                       _("Connect your Android phone or iPhone with KDE Connect: see phone "
+                         "notifications here, send files both ways, share the clipboard and "
+                         "use the phone as a touchpad. Install the KDE Connect app on the "
+                         "phone and keep both on the same network."))
+        if not shutil.which("kdeconnect-app") and not shutil.which("kdeconnectd") \
+                and not os.path.exists("/usr/lib/x86_64-linux-gnu/libexec/kdeconnectd"):
+            g.add(Adw.ActionRow(title=_("KDE Connect is not installed")))
+            return
+        allowed = os.path.exists("/etc/aurora/phone-allowed")
+        g.add(switch_row(_("Allow phones to connect"), allowed, self._set_phone,
+                         subtitle=_("Opens the KDE Connect ports (1714–1764) in the firewall")))
+        row = Adw.ActionRow(title=_("Paired devices"), activatable=True,
+                            subtitle=_("Pair, browse the phone’s files, ring it, send files"))
+        row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
+        row.connect("activated", lambda *_: subprocess.Popen(["kdeconnect-app"]))
+        g.add(row)
+
+    def _set_phone(self, on):
+        ok, err = admin("phone", "on" if on else "off")
+        toast(self, (_("Phones can connect") if on else _("Phone connections blocked"))
+              if ok else err)
 
     def _address(self):
         try:
@@ -169,6 +217,17 @@ def change_password(old, new):
     return ok, (lines[-1] if lines else "")
 
 
+class _GroupRecorder:
+    """Adds rows to a preferences group and remembers them for removal."""
+
+    def __init__(self, group):
+        self.group, self.rows = group, []
+
+    def add(self, row):
+        self.group.add(row)
+        self.rows.append(row)
+
+
 class Users(Page):
     page_id = "users"
     title = _("Users")
@@ -200,6 +259,10 @@ class Users(Page):
         pw = Adw.ButtonRow(title=_("Change Password…"))
         pw.connect("activated", lambda *_: self._password_dialog())
         you.add(pw)
+        self._fp_group = you
+        self._fp_rows = []
+        self._refresh_fingerprint = lambda: GLib.idle_add(self._fill_fingerprint)
+        self._fill_fingerprint()
 
         login = self.group(_("Login"))
         autologin = self._current_autologin()
@@ -214,6 +277,15 @@ class Users(Page):
         self.others.set_header_suffix(add)
         self._rows = []
         self._fill_users()
+
+    def _fill_fingerprint(self):
+        from aurora.settingsapp import fingerprint
+        for row in self._fp_rows:
+            self._fp_group.remove(row)
+        proxy = _GroupRecorder(self._fp_group)
+        fingerprint.add_rows(proxy, self.me.pw_name, self._refresh_fingerprint)
+        self._fp_rows = proxy.rows
+        return False
 
     # --- AccountsService ---
 
@@ -395,12 +467,41 @@ class Updates(Page):
         drivers.add(self.driver_row)
         GLib.idle_add(self._check_drivers)
 
+        btrfs = run(["findmnt", "-no", "FSTYPE", "/"]).strip() == "btrfs"
+        managed = btrfs and os.path.exists("/etc/timeshift/timeshift.json")
         snaps = self.group(_("System Snapshots"),
-                           _("Take a snapshot before big changes and roll back if something breaks."))
+                           _("Aurora takes a snapshot of the system before every update. If "
+                             "something breaks, pick “Aurora OS snapshots” in the boot menu to "
+                             "start yesterday’s system, then restore it in Timeshift. Your "
+                             "files in Home are never rolled back.") if managed else
+                           _("Automatic snapshots need the btrfs file system (the installer’s "
+                             "default). On this system, Timeshift can still make copies."))
+        if managed:
+            snaps.add(switch_row(_("Snapshot before every update"),
+                                 not os.path.exists("/etc/aurora/snapshots-disabled"),
+                                 self._set_snapshots,
+                                 subtitle=_("Keeps the last 10, plus daily and weekly ones")))
+            now = Adw.ButtonRow(title=_("Take a Snapshot Now"))
+            now.connect("activated", lambda *_: self._snapshot_now())
+            snaps.add(now)
         ts = Adw.ButtonRow(title=_("Open Timeshift…"))
         ts.connect("activated", lambda *_: apps.spawn(["timeshift-launcher"]))
         snaps.add(ts)
         GLib.idle_add(self._check)
+
+    def _set_snapshots(self, on):
+        ok, err = admin("snapshots", "on" if on else "off")
+        if not ok:
+            toast(self, err)
+
+    def _snapshot_now(self):
+        import threading
+        toast(self, _("Taking a snapshot…"))
+
+        def work():
+            ok, err = admin("snapshot-now")
+            GLib.idle_add(lambda: toast(self, _("Snapshot saved") if ok else err) and False)
+        threading.Thread(target=work, daemon=True).start()
 
     def _check(self):
         out = run(["apt", "list", "--upgradable"])

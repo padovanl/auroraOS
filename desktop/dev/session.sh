@@ -11,9 +11,10 @@ mkdir -p "$out"
 # Install into a private prefix from a writable copy of the sources.
 rsync -a --exclude /desktop/build /src/desktop /src/branding /tmp/src/
 mkdir -p /tmp/src/desktop/build
-[ -d /cache/wallpapers ] && cp -r /cache/wallpapers /tmp/src/desktop/build/
+# -p keeps timestamps, so make re-renders when the generator is newer.
+[ -d /cache/wallpapers ] && cp -rp /cache/wallpapers /tmp/src/desktop/build/
 make -s -C /tmp/src/desktop install DESTDIR=/ PREFIX=/opt/aurora WALLPAPER_SIZE="1920 1080" >/dev/null
-mkdir -p /cache && cp -r /tmp/src/desktop/build/wallpapers /cache/ 2>/dev/null || true
+mkdir -p /cache && rm -rf /cache/wallpapers && cp -rp /tmp/src/desktop/build/wallpapers /cache/ 2>/dev/null || true
 ln -sfn /opt/aurora/share/backgrounds/aurora /usr/share/backgrounds/aurora 2>/dev/null || {
     mkdir -p /usr/share/backgrounds && ln -sfn /opt/aurora/share/backgrounds/aurora /usr/share/backgrounds/aurora; }
 glib-compile-schemas /opt/aurora/share/glib-2.0/schemas

@@ -77,9 +77,11 @@ class Appearance(Page):
 
         style = self.group(_("Style"))
         dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
-        style.add(combo_row(_("Color scheme"), [_("Light"), _("Dark")], int(dark),
-                            on_change=lambda i: iface and iface.set_string(
-                                "color-scheme", "prefer-dark" if i == 1 else "default")))
+        auto = aurora is not None and aurora.get_boolean("color-scheme-auto")
+        style.add(combo_row(_("Color scheme"), [_("Light"), _("Dark"), _("Auto")],
+                            2 if auto else int(dark),
+                            subtitle=_("Auto switches to dark at sunset and back at sunrise"),
+                            on_change=self._set_scheme))
 
         accent_row = Adw.ActionRow(title=_("Accent color"))
         accent_box = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
@@ -168,6 +170,21 @@ class Appearance(Page):
             night = self.group(_("Night Light"), _("Warmer colors are easier on the eyes at night."))
             night.add(switch_row(_("Night Light"), aurora.get_boolean("night-light"),
                                  lambda v: aurora.set_boolean("night-light", v)))
+            schedules = ["sunset", "manual", "always"]
+            current = aurora.get_string("night-light-schedule")
+            night.add(combo_row(_("Schedule"), [_("Sunset to Sunrise"), _("Manual"),
+                                                _("All the Time")],
+                                schedules.index(current) if current in schedules else 0,
+                                subtitle=_("Sunset and sunrise follow your time zone"),
+                                on_change=lambda i: self._set_schedule(schedules[i])))
+            self._hours = []
+            for key, title in (("night-light-from", _("From")), ("night-light-to", _("To"))):
+                row = Adw.EntryRow(title=title, text=aurora.get_string(key),
+                                   show_apply_button=True)
+                row.connect("apply", lambda r, k=key: self._set_hour(r, k))
+                night.add(row)
+                self._hours.append(row)
+            self._sync_hours()
             row = Adw.ActionRow(title=_("Color temperature"))
             scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 2500, 6000, 100)
             scale.set_value(aurora.get_int("night-light-temperature"))
@@ -179,6 +196,35 @@ class Appearance(Page):
                 "night-light-temperature", int(sc.get_value())))
             row.add_suffix(scale)
             night.add(row)
+
+    def _set_scheme(self, index):
+        aurora, iface = settings.get(), settings.interface()
+        if aurora is not None:
+            aurora.set_boolean("color-scheme-auto", index == 2)
+        if iface is not None and index < 2:
+            iface.set_string("color-scheme", "prefer-dark" if index == 1 else "default")
+
+    def _set_schedule(self, value):
+        settings.get().set_string("night-light-schedule", value)
+        self._sync_hours()
+
+    def _sync_hours(self):
+        manual = settings.get().get_string("night-light-schedule") == "manual"
+        for row in self._hours:
+            row.set_visible(manual)
+
+    def _set_hour(self, row, key):
+        text = row.get_text().strip()
+        try:
+            h, m = (int(x) for x in text.split(":"))
+            if not (0 <= h < 24 and 0 <= m < 60):
+                raise ValueError
+        except ValueError:
+            row.add_css_class("error")
+            return
+        row.remove_css_class("error")
+        row.set_text(f"{h:02d}:{m:02d}")
+        settings.get().set_string(key, f"{h:02d}:{m:02d}")
 
     def _font_row(self, iface, key, title):
         row = Adw.ActionRow(title=title)
@@ -207,7 +253,26 @@ class Appearance(Page):
         self.flow.remove_all()
         aurora = settings.get()
         current = aurora.get_string("wallpaper") if aurora else ""
+        dynamic = aurora is not None and aurora.get_boolean("wallpaper-dynamic")
+        preview = "/usr/share/backgrounds/aurora/aurora-dynamic-dusk.png"
+        if os.path.exists(preview):
+            pic = Gtk.Picture(file=Gio.File.new_for_path(preview),
+                              content_fit=Gtk.ContentFit.COVER, can_shrink=True)
+            pic.set_size_request(160, 90)
+            badge = Gtk.Label(label=_("Dynamic"), css_classes=["osd", "caption-heading"],
+                              halign=Gtk.Align.START, valign=Gtk.Align.END,
+                              margin_start=6, margin_bottom=6)
+            over = Gtk.Overlay(child=pic)
+            over.add_overlay(badge)
+            child = Gtk.FlowBoxChild(child=Gtk.Frame(child=over, css_classes=["wallpaper-thumb"]))
+            child.path = None
+            child.set_tooltip_text(_("Changes with the time of day: dawn, day, dusk and night"))
+            self.flow.append(child)
+            if dynamic:
+                self.flow.select_child(child)
         for path in find_wallpapers():
+            if os.path.basename(path).startswith("aurora-dynamic-"):
+                continue
             pic = Gtk.Picture(file=Gio.File.new_for_path(path),
                               content_fit=Gtk.ContentFit.COVER, can_shrink=True)
             pic.set_size_request(160, 90)
@@ -216,13 +281,15 @@ class Appearance(Page):
             child.path = path
             child.set_tooltip_text(os.path.basename(path))
             self.flow.append(child)
-            if path == current:
+            if path == current and not dynamic:
                 self.flow.select_child(child)
 
     def _on_wallpaper(self, _flow, child):
         aurora = settings.get()
         if aurora:
-            aurora.set_string("wallpaper", child.path)
+            aurora.set_boolean("wallpaper-dynamic", child.path is None)
+            if child.path:
+                aurora.set_string("wallpaper", child.path)
 
     def _add_picture(self, *_a):
         dialog = Gtk.FileDialog(title=_("Choose a Background"))
@@ -243,6 +310,7 @@ class Appearance(Page):
             shutil.copyfile(f.get_path(), dest)
             aurora = settings.get()
             if aurora:
+                aurora.set_boolean("wallpaper-dynamic", False)
                 aurora.set_string("wallpaper", dest)
             self._load_wallpapers()
 

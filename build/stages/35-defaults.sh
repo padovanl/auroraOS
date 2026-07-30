@@ -6,6 +6,9 @@ log "firewall on (deny incoming, allow outgoing)"
 sed -i 's/^ENABLED=.*/ENABLED=yes/' "$ROOTFS/etc/ufw/ufw.conf"
 in_chroot systemctl enable ufw
 
+log "fingerprint for sudo and admin prompts (not the login or lock screen)"
+in_chroot pam-auth-update --package --enable aurora-fingerprint
+
 log "automatic security updates"
 cat > "$ROOTFS/etc/apt/apt.conf.d/20auto-upgrades" <<EOF
 APT::Periodic::Update-Package-Lists "1";

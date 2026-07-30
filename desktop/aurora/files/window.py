@@ -241,6 +241,11 @@ class FilesWindow(Adw.ApplicationWindow):
             click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
             click.connect("pressed", self._on_context_click, view)
             view.add_controller(click)
+            # Space previews the selection (Quick Look), before the view sees it.
+            keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+            keys.connect("key-pressed", self._on_view_key)
+            view.add_controller(keys)
+        self.quicklook = None
         self.context_menu = Gtk.PopoverMenu(has_arrow=False, halign=Gtk.Align.START)
         self.context_menu.set_parent(self.view_stack)
 
@@ -367,6 +372,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("properties", self.properties, ["<Alt>Return"])
         add("select-all", lambda: self.selection.select_all(), ["<Ctrl>a"])
         add("terminal-here", self.terminal_here)
+        add("quick-look", self.quick_look)
         add("reload", self.reload, ["F5", "<Ctrl>r"])
         add("show-hidden", self.set_show_hidden, ["<Ctrl>h"], state=False)
         add("list-view", self.set_list_view, ["<Ctrl>1"], state=False)
@@ -570,6 +576,33 @@ class FilesWindow(Adw.ApplicationWindow):
                     self.toast(err.message)
         launcher.launch(self, None, done)
 
+    def _on_view_key(self, _ctrl, keyval, _code, state):
+        if keyval == Gdk.KEY_space and not state & Gdk.ModifierType.CONTROL_MASK:
+            self.quick_look()
+            return True
+        return False
+
+    def quick_look(self):
+        """Preview the selected file; arrows in the preview move the selection."""
+        from aurora.quicklook import QuickLook
+        n = self.model.get_n_items()
+        files = [file_of(self.model.get_item(i)) for i in range(n)]
+        selected = [i for i in range(n) if self.selection.is_selected(i)]
+        if not selected:
+            return
+        if self.quicklook is not None:
+            self.quicklook.close()
+            return
+
+        def moved(i):
+            self.selection.select_item(i, True)
+            view = self.list if self.view_stack.get_visible_child_name() == "list" else self.grid
+            view.scroll_to(i, Gtk.ListScrollFlags.FOCUS, None)
+
+        self.quicklook = QuickLook(files, selected[0], parent=self, on_move=moved)
+        self.quicklook.connect("close-request", lambda *_: setattr(self, "quicklook", None))
+        self.quicklook.present()
+
     def open_with(self):
         files = self.selected_files()
         if files:
@@ -601,6 +634,7 @@ class FilesWindow(Adw.ApplicationWindow):
             else:
                 s.append(_("Open"), "win.open")
                 s.append(_("Open With…"), "win.open-with")
+                s.append(_("Quick Look"), "win.quick-look")
             menu.append_section(None, s)
             if not trash:
                 s = Gio.Menu()

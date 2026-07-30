@@ -1,10 +1,16 @@
 """Sound: output/input devices and volumes via PipeWire (pw-dump + wpctl)."""
 
+import subprocess
+
 from gi.repository import Adw, GLib, Gtk
 
+from aurora import settings
 from aurora.i18n import _
-from aurora.settingsapp.util import Page, run
+from aurora.settingsapp.util import Page, run, switch_row
 from aurora.shell.services import audio_nodes, get_volume
+
+
+SOUNDS = "/usr/share/sounds/aurora"
 
 
 class Sound(Page):
@@ -17,6 +23,25 @@ class Sound(Page):
         self.in_group = self.group(_("Input"))
         self._rows = []
         self.refresh()
+
+        aurora = settings.get()
+        if aurora is not None:
+            alerts = self.group(_("System Sounds"))
+            row = switch_row(_("Startup and shutdown sounds"), aurora.get_boolean("session-sounds"),
+                             lambda v: aurora.set_boolean("session-sounds", v),
+                             subtitle=_("The Aurora sound when you log in, shut down, restart "
+                                        "or log out"))
+            alerts.add(row)
+            for name, title in (("startup", _("Startup sound")),
+                                ("shutdown", _("Shutdown sound"))):
+                preview = Adw.ActionRow(title=title)
+                play = Gtk.Button(icon_name="media-playback-start-symbolic",
+                                  tooltip_text=_("Play"), valign=Gtk.Align.CENTER,
+                                  css_classes=["flat"])
+                play.connect("clicked", lambda _b, n=name: subprocess.Popen(
+                    ["pw-play", f"{SOUNDS}/{n}.wav"]))
+                preview.add_suffix(play)
+                alerts.add(preview)
 
     def refresh(self):
         for group, row in self._rows:

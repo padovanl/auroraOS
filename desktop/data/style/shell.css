@@ -256,3 +256,38 @@ window.aurora-layer {
 /* ---- Tray ---- */
 
 .tray-item { padding: 1px 6px; }
+
+/* ---- Overview (Super+W) ---- */
+window.aurora-overview { background: rgba(0, 0, 0, 0.3); }
+.aurora-overview .overview-dim { background-color: rgba(10, 8, 18, 0.55); }
+.aurora-overview .overview-search {
+  min-height: 38px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.aurora-overview .overview-desktop { color: #fff; background-color: rgba(255, 255, 255, 0.12); }
+.overview-card {
+  min-width: 220px;
+  border-radius: 20px;
+  background-color: rgba(30, 26, 44, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  color: #f2eefa;
+  transition: all 150ms ease;
+}
+.overview-card:hover, .overview-card:selected, .overview-card:focus {
+  background-color: rgba(60, 50, 90, 0.82);
+  border-color: alpha(@accent_color, 0.8);
+}
+.overview-card.current { border-color: alpha(@accent_color, 0.55); }
+.overview-card.minimized { opacity: 0.6; }
+.overview-card .overview-title { font-weight: 600; }
+.overview-card .overview-close { opacity: 0; min-width: 24px; min-height: 24px; padding: 0; }
+.overview-card:hover .overview-close { opacity: 1; }
+
+/* ---- Hot corners: invisible ---- */
+.aurora-hotcorner, .aurora-hotcorner > * { background: transparent; min-width: 0; min-height: 0; }
+
+/* ---- Weather in the calendar popover ---- */
+.weather-widget { padding: 10px 12px; border-radius: 14px; background-color: alpha(currentColor, 0.06); }

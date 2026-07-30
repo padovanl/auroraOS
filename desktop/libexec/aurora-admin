@@ -14,6 +14,22 @@ case "$cmd" in
             off) ufw disable ;;
             *) exit 2 ;;
         esac ;;
+    phone)
+        # KDE Connect talks over ports 1714-1764 on the local network.
+        case "${1:-}" in
+            # The marker lets Settings show the state (ufw's rules are root-only).
+            on) ufw allow "KDE Connect" && mkdir -p /etc/aurora && touch /etc/aurora/phone-allowed ;;
+            off) ufw delete allow "KDE Connect"; rm -f /etc/aurora/phone-allowed ;;
+            *) exit 2 ;;
+        esac ;;
+    snapshots)
+        case "${1:-}" in
+            on) rm -f /etc/aurora/snapshots-disabled ;;
+            off) mkdir -p /etc/aurora && touch /etc/aurora/snapshots-disabled ;;
+            *) exit 2 ;;
+        esac ;;
+    snapshot-now)
+        /usr/libexec/aurora-snapshot now ;;
     ssh)
         case "${1:-}" in
             on) systemctl enable --now ssh.service ;;
@@ -56,6 +72,6 @@ EOF
         user="${1:-}"; valid_user "$user" || exit 2
         if [ "${2:-}" = yes ]; then usermod -aG sudo "$user"; else gpasswd -d "$user" sudo; fi ;;
     *)
-        echo "usage: aurora-admin firewall|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
+        echo "usage: aurora-admin firewall|phone|snapshots|snapshot-now|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
         exit 2 ;;
 esac

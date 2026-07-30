@@ -9,6 +9,77 @@ from aurora.shell.quicksettings import QuickSettings
 from aurora.shell.tray import Tray
 
 
+class WeatherWidget(Gtk.Button):
+    """Current weather and the next hours; click opens the Weather app."""
+
+    def __init__(self):
+        super().__init__(css_classes=["flat", "weather-widget"], visible=False)
+        self.connect("clicked", lambda *_: apps.spawn(["gnome-weather"]))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        top = Gtk.Box(spacing=10)
+        self.icon = Gtk.Image(pixel_size=40)
+        top.append(self.icon)
+        text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        self.temp = Gtk.Label(xalign=0, css_classes=["title-2"])
+        self.desc = Gtk.Label(xalign=0, css_classes=["dim-label", "caption"])
+        text.append(self.temp)
+        text.append(self.desc)
+        top.append(text)
+        box.append(top)
+        self.hours = Gtk.Box(spacing=4, homogeneous=True)
+        box.append(self.hours)
+        self.set_child(box)
+        self._busy = False
+
+    def refresh(self):
+        from aurora import sun, weather
+        s = settings.get()
+        loc = sun.location()
+        if (s is not None and not s.get_boolean("weather-widget")) or loc is None:
+            self.set_visible(False)
+            return
+        data = weather.cached(*loc)
+        if data is not None:
+            self._show(data)
+            return
+        if self._busy:
+            return
+        self._busy = True
+        import threading
+
+        def work():
+            try:
+                result = weather.fetch(*loc, fahrenheit=weather.uses_fahrenheit())
+            except Exception as e:  # noqa: BLE001 - offline is normal
+                print(f"aurora: weather unavailable: {e}")
+                result = None
+            GLib.idle_add(lambda: (self._done(result), False)[1])
+        threading.Thread(target=work, daemon=True).start()
+
+    def _done(self, data):
+        self._busy = False
+        if data is not None:
+            self._show(data)
+
+    def _show(self, data):
+        from aurora import weather
+        text, icon = weather.describe(data["code"], data["is_day"])
+        unit = data["unit"]
+        self.icon.set_from_icon_name(icon)
+        self.temp.set_label(f"{data['temp']:.0f}{unit}")
+        self.desc.set_label(_("{sky} · H {high:.0f}° L {low:.0f}°").format(
+            sky=_(text), high=data["high"], low=data["low"]))
+        while (c := self.hours.get_first_child()) is not None:
+            self.hours.remove(c)
+        for hour, temp, code in data["hours"]:
+            col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+            col.append(Gtk.Label(label=hour, css_classes=["dim-label", "caption"]))
+            col.append(Gtk.Image(icon_name=weather.describe(code)[1]))
+            col.append(Gtk.Label(label=f"{temp:.0f}°", css_classes=["caption"]))
+            self.hours.append(col)
+        self.set_visible(True)
+
+
 class Clock(Gtk.MenuButton):
     """Clock; opens the calendar and notification center."""
 
@@ -28,6 +99,12 @@ class Clock(Gtk.MenuButton):
         cal_box.append(self._date)
         self._calendar = Gtk.Calendar()
         cal_box.append(self._calendar)
+        self._weather = WeatherWidget()
+        cal_box.append(self._weather)
+        events = Gtk.Button(label=_("Open Calendar"), css_classes=["flat"],
+                            halign=Gtk.Align.START)
+        events.connect("clicked", lambda *_: (pop.popdown(), apps.spawn(["gnome-calendar"])))
+        cal_box.append(events)
         box.append(cal_box)
         pop.set_child(box)
         pop.connect("show", self._on_show)
@@ -44,6 +121,7 @@ class Clock(Gtk.MenuButton):
         now = GLib.DateTime.new_now_local()
         self._calendar.select_day(now)
         self._date.set_label(now.format("%A, %e %B %Y").replace("  ", " "))
+        self._weather.refresh()
 
     def _tick(self):
         s = settings.get()
@@ -169,7 +247,7 @@ class Panel(LayerWindow):
         right.append(search)
         self.status = StatusArea(shell)
         right.append(self.status)
-        clock = Clock(shell)
+        clock = self.clock = Clock(shell)
         if s and s.get_string("clock-position") == "center":
             bar.set_center_widget(clock)
         else:
@@ -192,3 +270,6 @@ class Panel(LayerWindow):
 
     def open_quick_settings(self):
         self.status.popup()
+
+    def open_notifications(self):
+        self.clock.popup()

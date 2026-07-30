@@ -5,9 +5,10 @@ forwards the command to the running instance, e.g.:
 
     aurora-shell launcher [spotlight|grid]
     aurora-shell search TEXT
+    aurora-shell clipboard | emoji | overview
     aurora-shell volume up|down|mute
     aurora-shell brightness up|down
-    aurora-shell screenshot [area]
+    aurora-shell screenshot [area|text]
 """
 
 import os
@@ -38,6 +39,11 @@ from aurora.shell.toplevels import ToplevelTracker  # noqa: E402
 from aurora.shell.wallpaper import Wallpaper  # noqa: E402
 
 VOLUME_STEP = 0.05
+
+
+def search_prefix_clipboard():
+    from aurora.shell.search import CLIPBOARD_PREFIX
+    return CLIPBOARD_PREFIX + " "
 BRIGHTNESS_STEP = 0.05
 
 
@@ -46,7 +52,6 @@ class Shell(Adw.Application):
         super().__init__(application_id="org.aurora.Shell",
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.started = False
-        self._night_light = None
 
     # --- lifecycle ---
 
@@ -90,6 +95,8 @@ class Shell(Adw.Application):
         self.recorder.connect("saved", self._on_recording_saved)
         self.media = Media()
         self.toplevels = ToplevelTracker()
+        from aurora.shell.daycycle import DayCycle
+        self.daycycle = DayCycle()
         self.notifications = NotificationServer(self)
         from aurora.shell.sysnotify import SystemNotifications
         self.sysnotify = SystemNotifications(self)
@@ -98,18 +105,28 @@ class Shell(Adw.Application):
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
         self.panels = PerMonitor(lambda m: Panel(self, m))
         self.docks = PerMonitor(lambda m: Dock(self, m))
+        from aurora.shell.hotcorners import HotCorners
+        from aurora.shell.overview import Overview
+        self.overview = Overview(self)
+        self.hotcorners = PerMonitor(lambda m: HotCorners(self, m))
 
         s = settings.get()
         if s:
-            s.connect("changed::night-light", lambda *a: self._sync_night_light())
             for key in ("panel-position", "clock-position"):
                 s.connect(f"changed::{key}", lambda *a: self._later(self.panels.rebuild))
             for key in ("dock-position", "dock-style", "dock-icon-size", "dock-magnification",
                         "dock-autohide", "dock-show-trash"):
                 s.connect(f"changed::{key}", lambda *a: self._later(self.docks.rebuild))
             s.connect("changed::panel-opacity", lambda *a: self._update_dynamic_css())
-        self._sync_night_light()
+            for corner in ("top-left", "top-right", "bottom-left", "bottom-right"):
+                s.connect(f"changed::hot-corner-{corner}",
+                          lambda *a: self._later(self.hotcorners.rebuild))
         self._update_dynamic_css()
+        self._clip_watch = None
+        if s:
+            s.connect("changed::clipboard-history", lambda *a: self._sync_clipboard())
+        self._sync_clipboard()
+        self.power.play_session_sound("startup")
         iface = settings.interface()
         if iface is not None:
             from aurora import look
@@ -173,6 +190,12 @@ class Shell(Adw.Application):
             self.launcher.toggle(arg or None)
         elif cmd == "search":
             self.launcher.search_for(" ".join(rest))
+        elif cmd == "overview":
+            self.overview.toggle()
+        elif cmd == "clipboard":
+            self.launcher.search_for(search_prefix_clipboard())
+        elif cmd == "emoji":
+            self.launcher.search_for(":")
         elif cmd == "volume":
             if arg == "mute":
                 self.audio.toggle_mute()
@@ -184,7 +207,10 @@ class Shell(Adw.Application):
             self.brightness.step(BRIGHTNESS_STEP if arg == "up" else -BRIGHTNESS_STEP)
             self.osd.show_level("display-brightness-symbolic", self.brightness.level)
         elif cmd == "screenshot":
-            self.screenshot(area=(arg == "area"))
+            if arg == "text":
+                self.screenshot_text()
+            else:
+                self.screenshot(area=(arg == "area"))
         elif cmd == "record":
             self.recorder.toggle()
         elif cmd == "quick-settings":
@@ -212,10 +238,30 @@ class Shell(Adw.Application):
         else:
             Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(GLib.get_home_dir()), None)
 
-    def screenshot(self, area=False):
-        pictures = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) \
-            or os.path.expanduser("~/Pictures")
-        folder = os.path.join(pictures, "Screenshots")
+    def run_corner_action(self, action):
+        """What a hot corner does (Settings → Multitasking)."""
+        if action == "overview":
+            self.overview.toggle()
+        elif action == "launchpad":
+            self.launcher.toggle("grid")
+        elif action == "desktop":
+            self.overview.show_desktop()
+        elif action == "quick-settings":
+            self.handle(["quick-settings"])
+        elif action == "notifications":
+            for panel in self.panels.windows()[:1]:
+                panel.open_notifications()
+        elif action == "lock":
+            self.power.lock()
+        elif action == "screen-off":
+            apps.spawn(["sh", "-c", "sleep 0.5; wlopm --off '*'"])
+
+    def _grab(self, area, folder=None):
+        """Take a screenshot (whole screen or a selected area); returns its path."""
+        if folder is None:
+            pictures = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) \
+                or os.path.expanduser("~/Pictures")
+            folder = os.path.join(pictures, "Screenshots")
         os.makedirs(folder, exist_ok=True)
         stamp = GLib.DateTime.new_now_local().format("%Y-%m-%d_%H-%M-%S")
         path = os.path.join(folder, f"Screenshot_{stamp}.png")
@@ -223,18 +269,82 @@ class Shell(Adw.Application):
         if area:
             geometry = subprocess.run(["slurp"], capture_output=True, text=True).stdout.strip()
             if not geometry:
-                return
+                return None
             argv += ["-g", geometry]
         if subprocess.run(argv + [path]).returncode != 0:
+            return None
+        return path
+
+    def screenshot(self, area=False):
+        path = self._grab(area)
+        if path is None:
             return
         if shutil.which("wl-copy"):
             with open(path, "rb") as f:
                 subprocess.Popen(["wl-copy", "--type", "image/png"], stdin=f)
-        self.notifications.notify(
-            _("Screenshots"), 0, path, _("Screenshot captured"),
+
+        def on_action(key):
+            if key == "edit":
+                # Arrows, text, highlighter and blur; saves next to the original.
+                apps.spawn(["swappy", "-f", path, "-o", path.replace(".png", "-edited.png")])
+            elif key == "text":
+                self.copy_text_from(path)
+            else:
+                Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(path), None)
+
+        self.sysnotify.notify(
+            _("Screenshot captured"),
             _("Saved to {path} and copied to the clipboard.").format(
                 path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
-            [], {"transient": False}, -1)
+            path, actions=[("default", _("Open")), ("edit", _("Annotate")),
+                           ("text", _("Copy Text"))], on_action=on_action)
+
+    def screenshot_text(self):
+        """Select an area and copy the text in it (OCR), like Live Text."""
+        path = self._grab(True, folder=GLib.get_user_runtime_dir())
+        if path is not None:
+            self.copy_text_from(path, remove=True)
+
+    def copy_text_from(self, path, remove=False):
+        import threading
+
+        def work():
+            from aurora import ocr
+            try:
+                text, error = ocr.recognize(path), None
+            except (OSError, RuntimeError, subprocess.TimeoutExpired) as e:
+                text, error = "", str(e)
+            if remove:
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
+            GLib.idle_add(lambda: (self._text_found(text, error), False)[1])
+        threading.Thread(target=work, daemon=True).start()
+
+    def _text_found(self, text, error):
+        if error or not text:
+            self.notifications.notify(
+                _("Text Recognition"), 0, "edit-find-symbolic", _("No text found"),
+                GLib.markup_escape_text(error or _("Try a larger or sharper area.")),
+                [], {"transient": True}, -1)
+            return
+        Gdk.Display.get_default().get_clipboard().set(text)
+        preview = text if len(text) < 160 else text[:157] + "…"
+        self.notifications.notify(
+            _("Text Recognition"), 0, "edit-copy-symbolic", _("Text copied"),
+            GLib.markup_escape_text(preview), [], {"transient": True}, -1)
+
+    def _sync_clipboard(self):
+        """Clipboard history: wl-paste hands every copied text to aurora-clipboard."""
+        s = settings.get()
+        want = s is None or s.get_boolean("clipboard-history")
+        if want and self._clip_watch is None and shutil.which("wl-paste"):
+            self._clip_watch = subprocess.Popen(
+                ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"])
+        elif not want and self._clip_watch is not None:
+            self._clip_watch.terminate()
+            self._clip_watch = None
 
     def _on_recording_saved(self, _rec, path):
         self.notifications.notify(
@@ -242,18 +352,6 @@ class Shell(Adw.Application):
             _("Saved to {path}.").format(
                 path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
             [], {"desktop-entry": "org.aurora.Files"}, -1)
-
-    def _sync_night_light(self):
-        s = settings.get()
-        want = s is not None and s.get_boolean("night-light")
-        if want and self._night_light is None and shutil.which("wlsunset"):
-            temp = s.get_int("night-light-temperature")
-            # Same low/high temperature keeps the filter on regardless of time of day.
-            self._night_light = subprocess.Popen(
-                ["wlsunset", "-t", str(temp), "-T", str(temp + 1)])
-        elif not want and self._night_light is not None:
-            self._night_light.terminate()
-            self._night_light = None
 
 
 def main():

@@ -1,0 +1,12 @@
+[Unit]
+Description=Aurora OS: "Fresh install" system snapshot
+ConditionPathExists=!/var/lib/aurora/first-snapshot
+ConditionPathExists=/etc/timeshift/timeshift.json
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/aurora-snapshot first
+
+[Install]
+WantedBy=multi-user.target

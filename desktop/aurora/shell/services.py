@@ -357,11 +357,30 @@ class Power:
         except GLib.Error as err:
             print(f"aurora: {method} failed: {err.message}")
 
+    SOUNDS = "/usr/share/sounds/aurora"
+    GOODBYE_MS = 1800       # let the shutdown sound play before the session ends
+
+    def play_session_sound(self, name):
+        """The Aurora startup/shutdown sound, unless turned off in Settings → Sound."""
+        from aurora import settings
+        s = settings.get()
+        path = os.path.join(self.SOUNDS, f"{name}.wav")
+        if (s is None or s.get_boolean("session-sounds")) and os.path.exists(path) \
+                and shutil.which("pw-play"):
+            return apps.spawn(["pw-play", path])
+        return False
+
+    def _goodbye(self, action):
+        if self.play_session_sound("shutdown"):
+            GLib.timeout_add(self.GOODBYE_MS, lambda: (action(), False)[1])
+        else:
+            action()
+
     def poweroff(self):
-        self._call("PowerOff")
+        self._goodbye(lambda: self._call("PowerOff"))
 
     def reboot(self):
-        self._call("Reboot")
+        self._goodbye(lambda: self._call("Reboot"))
 
     def suspend(self):
         self._call("Suspend")
@@ -370,7 +389,7 @@ class Power:
         apps.spawn(["aurora-lock"])
 
     def logout(self):
-        apps.spawn(["labwc", "--exit"])
+        self._goodbye(lambda: apps.spawn(["labwc", "--exit"]))
 
 
 class Microphone(GObject.Object):

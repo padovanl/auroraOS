@@ -34,6 +34,28 @@ VARIANTS = {
                          ((1.0, 0.60, 0.70), (0.80, 0.62, 1.0)),
                          ((0.70, 0.56, 1.0), (0.90, 0.80, 1.0))],
                         [(0.62, 0.50, 0.78), (0.45, 0.34, 0.60)], True),
+    # Dynamic wallpaper: one landscape (same seed) through the day. The shell
+    # picks the variant from the sun's position (aurora/sun.py).
+    "aurora-dynamic-night": ((0.008, 0.018, 0.05), (0.025, 0.07, 0.12),
+                             [((0.30, 1.0, 0.66), (0.22, 0.62, 1.0)),
+                              ((0.32, 0.92, 0.78), (0.50, 0.42, 1.0)),
+                              ((0.40, 0.76, 1.0), (0.62, 0.40, 1.0))],
+                             [(0.025, 0.06, 0.09), (0.008, 0.025, 0.045)], False),
+    "aurora-dynamic-dawn": ((0.10, 0.07, 0.22), (0.86, 0.52, 0.52),
+                            [((1.0, 0.80, 0.55), (1.0, 0.55, 0.62)),
+                             ((1.0, 0.58, 0.64), (0.72, 0.52, 1.0)),
+                             ((0.80, 0.60, 1.0), (0.52, 0.48, 0.98))],
+                            [(0.30, 0.18, 0.34), (0.16, 0.09, 0.20)], False),
+    "aurora-dynamic-day": ((0.52, 0.66, 0.95), (0.93, 0.84, 0.90),
+                           [((1.0, 1.0, 1.0), (0.80, 0.88, 1.0)),
+                            ((0.98, 0.78, 0.90), (0.72, 0.70, 1.0)),
+                            ((0.74, 0.70, 1.0), (0.88, 0.86, 1.0))],
+                           [(0.50, 0.50, 0.74), (0.34, 0.33, 0.56)], True),
+    "aurora-dynamic-dusk": ((0.07, 0.04, 0.16), (0.62, 0.24, 0.30),
+                            [((1.0, 0.62, 0.30), (1.0, 0.34, 0.42)),
+                             ((1.0, 0.40, 0.50), (0.66, 0.30, 0.90)),
+                             ((0.78, 0.40, 0.95), (0.40, 0.30, 0.85))],
+                            [(0.20, 0.08, 0.20), (0.09, 0.035, 0.10)], False),
 }
 
 
@@ -75,7 +97,8 @@ def ribbon_field(w, h, rng, base, amp, lower, upper):
 
 def render(name, width, height, out_dir):
     top, bottom, ribbons, ridges, light = VARIANTS[name]
-    rng = np.random.default_rng(sum(map(ord, name)))
+    seed = "aurora-dynamic" if name.startswith("aurora-dynamic-") else name
+    rng = np.random.default_rng(sum(map(ord, seed)))
     h, w = height, width
 
     gy = np.linspace(0, 1, h)[:, None, None]

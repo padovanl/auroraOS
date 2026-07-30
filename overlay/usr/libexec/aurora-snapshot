@@ -1,0 +1,58 @@
+#!/bin/bash
+# System snapshots on btrfs installs (Timeshift in btrfs mode).
+#
+#   aurora-snapshot apt       before apt/dpkg changes packages (apt hook)
+#   aurora-snapshot first     the "Fresh install" snapshot, once, at first boot
+#   aurora-snapshot now       a manual snapshot (Settings → Updates)
+#
+# Does nothing unless the root file system is btrfs and Timeshift was set up
+# by the installer, or when /etc/aurora/snapshots-disabled exists. Snapshots
+# are instant and only store what changes later. grub-btrfsd adds them to the
+# "Aurora OS snapshots" boot menu entry.
+set -u
+
+KEEP_APT=10              # "Before: apt" snapshots kept (older ones are deleted)
+MIN_GAP=600              # seconds: one apt snapshot per ten minutes at most
+STAMP=/var/lib/aurora/last-apt-snapshot
+
+# Not inside the installer's chroot (Calamares runs apt there).
+systemd-detect-virt --chroot >/dev/null 2>&1 && exit 0
+[ "$(findmnt -no FSTYPE /)" = btrfs ] || exit 0
+[ -f /etc/timeshift/timeshift.json ] || exit 0
+command -v timeshift >/dev/null || exit 0
+mkdir -p /var/lib/aurora
+
+create() {
+    timeshift --create --scripted --tags O --comments "$1" >/dev/null 2>&1
+}
+
+case "${1:-}" in
+    apt)
+        [ -e /etc/aurora/snapshots-disabled ] && exit 0
+        # Nested or repeated dpkg runs within one upgrade share one snapshot.
+        if [ -f "$STAMP" ] && [ $(( $(date +%s) - $(stat -c %Y "$STAMP") )) -lt $MIN_GAP ]; then
+            exit 0
+        fi
+        touch "$STAMP"
+        echo "Aurora: taking a system snapshot before changing packages…"
+        create "Before: apt" || echo "Aurora: snapshot failed, continuing" >&2
+        # Prune old apt snapshots, keep the newest $KEEP_APT.
+        timeshift --list --scripted 2>/dev/null |
+            awk '/Before: apt/ {print $3}' | head -n -"$KEEP_APT" |
+            while read -r snap; do
+                timeshift --delete --snapshot "$snap" --scripted >/dev/null 2>&1
+            done
+        ;;
+    first)
+        [ -f /var/lib/aurora/first-snapshot ] && exit 0
+        create "Fresh install" && touch /var/lib/aurora/first-snapshot
+        ;;
+    now)
+        create "Manual snapshot"
+        ;;
+    *)
+        echo "usage: aurora-snapshot apt|first|now" >&2
+        exit 2
+        ;;
+esac
+exit 0

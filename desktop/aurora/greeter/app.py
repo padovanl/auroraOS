@@ -20,6 +20,16 @@ from aurora.greeter.greetd import Greetd, GreetdError  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 
 WALLPAPER = "/usr/share/backgrounds/aurora/aurora-dawn.png"
+
+
+def greeter_wallpaper():
+    """The dynamic landscape for this time of day, like the desktop default."""
+    from aurora import sun
+    dynamic = f"/usr/share/backgrounds/aurora/aurora-dynamic-{sun.phase()}.png"
+    for path in (dynamic, WALLPAPER):
+        if os.path.exists(path):
+            return path
+    return None
 AVATAR_DIR = "/var/lib/AccountsService/icons"
 
 CSS = """
@@ -71,8 +81,9 @@ class Greeter(Adw.ApplicationWindow):
 
         overlay = Gtk.Overlay()
         pic = Gtk.Picture(content_fit=Gtk.ContentFit.COVER, hexpand=True, vexpand=True)
-        if os.path.exists(WALLPAPER):
-            pic.set_file(Gio.File.new_for_path(WALLPAPER))
+        wallpaper = greeter_wallpaper()
+        if wallpaper:
+            pic.set_file(Gio.File.new_for_path(wallpaper))
         overlay.set_child(pic)
 
         column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=28,

@@ -44,6 +44,31 @@ expect "plymouth hand-over for greetd" test -f "$ROOTFS/etc/systemd/system/greet
 expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"
 expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
 
+echo "== features"
+for phase in dawn day dusk night; do
+    expect "dynamic wallpaper: $phase" test -s "$ROOTFS/usr/share/backgrounds/aurora/aurora-dynamic-$phase.png"
+done
+expect "startup sound" test -s "$ROOTFS/usr/share/sounds/aurora/startup.wav"
+expect "shutdown sound" test -s "$ROOTFS/usr/share/sounds/aurora/shutdown.wav"
+expect "time zone coordinates (sun position)" test -s "$ROOTFS/usr/share/zoneinfo/zone1970.tab"
+for bin in aurora-quicklook aurora-clipboard wl-paste wlsunset swappy tesseract grim slurp \
+           kdeconnect-app fprintd-enroll grub-btrfsd inotifywait pw-play; do
+    expect "$bin" chroot "$ROOTFS" sh -c "command -v $bin"
+done
+expect "OCR languages" sh -c "ls '$ROOTFS'/usr/share/tesseract-ocr/*/tessdata/ita.traineddata"
+expect "Quick Look previewers" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import gi; gi.require_version('Poppler','0.18'); gi.require_version('GtkSource','5'); from gi.repository import Poppler, GtkSource"
+expect "GTK 4 video playback" sh -c "ls '$ROOTFS'/usr/lib/x86_64-linux-gnu/gtk-4.0/4.0.0/media/libmedia-gstreamer.so"
+expect "new modules import" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.quicklook, aurora.shell.overview, aurora.shell.hotcorners, aurora.shell.daycycle, aurora.settingsapp.fingerprint, aurora.weather, aurora.convert, aurora.ocr"
+expect "fingerprint for sudo, not the login screen" sh -c "grep -q 'pam_succeed_if.so service in greetd:gtklock' '$ROOTFS/etc/pam.d/common-auth' && grep -q pam_fprintd '$ROOTFS/etc/pam.d/common-auth'"
+expect "KDE Connect firewall profile" test -f "$ROOTFS/etc/ufw/applications.d/aurora-kdeconnect"
+expect "snapshot before apt (hook)" test -f "$ROOTFS/etc/apt/apt.conf.d/80aurora-snapshot"
+expect "snapshot helper" test -x "$ROOTFS/usr/libexec/aurora-snapshot"
+expect "grub-btrfs menu script (off until a btrfs install)" sh -c "test -f '$ROOTFS/etc/grub.d/41_snapshots-btrfs' && test ! -x '$ROOTFS/etc/grub.d/41_snapshots-btrfs'"
+expect "grub-btrfs menu name" grep -q 'Aurora OS snapshots' "$ROOTFS/etc/default/grub-btrfs/config"
+expect "grub-btrfsd not enabled on the live system" sh -c "! chroot '$ROOTFS' systemctl is-enabled grub-btrfsd"
+expect "installer defaults to btrfs" grep -q 'defaultFileSystemType: "btrfs"' "$ROOTFS/etc/calamares/modules/partition.conf"
+expect "installer btrfs subvolumes" grep -q 'subvolume: /@home' "$ROOTFS/etc/calamares/modules/mount.conf"
+
 echo "== default apps (config/apps.manifest)"
 while IFS='|' read -r cat name id launch; do
     id=$(echo $id); name=$(echo $name)

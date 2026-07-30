@@ -1,0 +1,8 @@
+Name: Fingerprint for sudo and admin prompts (Aurora)
+Default: yes
+Priority: 260
+Conflicts: fprintd
+Auth-Type: Primary
+Auth:
+	[success=1 default=ignore]	pam_succeed_if.so service in greetd:gtklock:login:sshd:su quiet
+	[success=end default=ignore]	pam_fprintd.so max-tries=2 timeout=10

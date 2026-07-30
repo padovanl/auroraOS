@@ -5,7 +5,7 @@ All three edit the compositor configuration through aurora.labwcconf.
 
 from gi.repository import Adw, Gtk
 
-from aurora import labwcconf
+from aurora import labwcconf, settings
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, combo_row, switch_row
 
@@ -224,7 +224,30 @@ class Multitasking(Page):
         row.connect("notify::value", lambda r, _p: self._set_workspaces(int(r.get_value())))
         ws.add(row)
 
-        win = self.group(_("Windows"))
+        aurora = settings.get()
+        if aurora is not None:
+            corners = self.group(_("Hot Corners"),
+                                 _("Push the pointer into a corner of the screen to…"))
+            actions = [("none", _("Do Nothing")), ("overview", _("Show All Windows")),
+                       ("launchpad", _("Show Apps (Launchpad)")),
+                       ("desktop", _("Show Desktop")),
+                       ("quick-settings", _("Open Control Center")),
+                       ("notifications", _("Open Notifications")),
+                       ("lock", _("Lock Screen")), ("screen-off", _("Turn Screen Off"))]
+            ids = [a for a, _l in actions]
+            for corner, title in (("top-left", _("Top left")), ("top-right", _("Top right")),
+                                  ("bottom-left", _("Bottom left")),
+                                  ("bottom-right", _("Bottom right"))):
+                key = f"hot-corner-{corner}"
+                cur = aurora.get_string(key)
+                corners.add(combo_row(title, [lbl for _a, lbl in actions],
+                                      ids.index(cur) if cur in ids else 0,
+                                      on_change=lambda i, k=key: aurora.set_string(k, ids[i])))
+
+        win = self.group(_("Windows"),
+                         _("Super+W shows all windows. Super+Left/Right fills half the screen, "
+                           "Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. "
+                           "Hold Super while dragging a window to drop it into a quarter or third."))
         win.add(switch_row(_("Snap windows to screen edges"),
                            self.cfg.get("snapping", "range", default="12") != "0",
                            lambda v: self._save(("snapping", "range"), 12 if v else 0),

@@ -37,7 +37,7 @@ class SystemNotifications:
         self.volumes.connect("volume-added", self._on_volume_added)
         self.volumes.connect("mount-added", self._on_mount_added)
 
-    def _notify(self, summary, body, icon, actions=(), on_action=None, urgency=1):
+    def notify(self, summary, body, icon, actions=(), on_action=None, urgency=1):
         flat = [x for pair in actions for x in pair]
         nid = self.shell.notifications.notify(_("Aurora"), 0, icon, summary, body, flat,
                                               {"urgency": urgency}, -1)
@@ -57,7 +57,7 @@ class SystemNotifications:
         n = count_updates()
         if n and n != self._notified_updates:
             self._notified_updates = n
-            self._notify(_("Software updates available"),
+            self.notify(_("Software updates available"),
                          ngettext("{n} update is ready to install.",
                                   "{n} updates are ready to install.", n).format(n=n),
                          "software-update-available",
@@ -77,7 +77,7 @@ class SystemNotifications:
         for level in BATTERY_WARN:
             if bat.percentage <= level and level not in self._battery_warned:
                 self._battery_warned.add(level)
-                self._notify(_("Battery low") if level > 5 else _("Battery critically low"),
+                self.notify(_("Battery low") if level > 5 else _("Battery critically low"),
                              _("{p}% remaining. Plug in your computer.").format(p=int(bat.percentage)),
                              "battery-caution", urgency=2 if level <= 5 else 1)
                 break
@@ -101,7 +101,7 @@ class SystemNotifications:
         if mount.is_shadowed() or not mount.can_unmount():
             return
         root = mount.get_root()
-        self._notify(_("{name} connected").format(name=mount.get_name()),
+        self.notify(_("{name} connected").format(name=mount.get_name()),
                      _("The drive is ready to use."), "drive-removable-media",
                      [("open", _("Open")), ("eject", _("Eject"))],
                      lambda key: apps.spawn(["aurora-files", root.get_uri()]) if key == "open"

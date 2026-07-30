@@ -67,7 +67,7 @@ class Launcher(LayerWindow):
         root.set_size_request(760, -1)
         self.root = root
 
-        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, settings, files, math, or > command"),
+        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, files, projects, math, 10 km in mi, :emoji, clip:, > command"),
                                      css_classes=["launcher-search"], hexpand=True)
         self.entry.connect("search-changed", self._on_search)
         self.entry.connect("activate", self._on_activate)
@@ -130,7 +130,8 @@ class Launcher(LayerWindow):
             self.stack.set_visible_child_name("grid" if self.mode == "grid" else "empty")
             return
         self.results.remove_all()
-        for r in search.search(text, self.shell.open_settings):
+        for r in search.search(text, self.shell.open_settings,
+                               refresh=lambda: self._on_search(self.entry)):
             self.results.append(ResultRow(r))
         self.results.select_row(self.results.get_row_at_index(0))
         self.stack.set_visible_child_name("results")

@@ -1,23 +1,11 @@
 """Desktop background, one surface per monitor, with a right-click menu."""
 
-import os
-
 from gi.repository import Gdk, Gio, Gtk
 
-from aurora import data_path, settings
 from aurora.i18n import _
 from aurora.shell.layer import Layer, LayerWindow
 
-DEFAULT_WALLPAPER = "/usr/share/backgrounds/aurora/aurora-dawn.png"
-
-
-def current_wallpaper():
-    s = settings.get()
-    path = s.get_string("wallpaper") if s else ""
-    for candidate in (path, DEFAULT_WALLPAPER, data_path("backgrounds", "aurora-dawn.png")):
-        if candidate and os.path.exists(candidate):
-            return candidate
-    return None
+FADE_MS = 2500      # crossfade when the dynamic wallpaper moves to the next phase
 
 
 class Wallpaper(LayerWindow):
@@ -26,9 +14,17 @@ class Wallpaper(LayerWindow):
                          anchors=("top", "bottom", "left", "right"), monitor=monitor,
                          exclusive=-1)  # cover the whole output, ignore panels
         self.add_css_class("aurora-wallpaper")
-        self._picture = Gtk.Picture(content_fit=Gtk.ContentFit.COVER,
-                                    can_shrink=True, hexpand=True, vexpand=True)
-        overlay = Gtk.Overlay(child=self._picture)
+        self.app = app
+        # Two pictures in a crossfading stack: the new background fades in.
+        self._stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
+                                transition_duration=FADE_MS, hexpand=True, vexpand=True)
+        self._pictures = []
+        for name in ("a", "b"):
+            pic = Gtk.Picture(content_fit=Gtk.ContentFit.COVER, can_shrink=True)
+            self._stack.add_named(pic, name)
+            self._pictures.append(pic)
+        self._current = None
+        overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
         # Files from ~/Desktop, on the primary monitor only.
         if monitor == app.get_primary_monitor():
@@ -40,17 +36,19 @@ class Wallpaper(LayerWindow):
         click.connect("pressed", self._on_right_click)
         overlay.add_controller(click)
 
-        s = settings.get()
-        if s:
-            s.connect("changed::wallpaper", lambda *a: self.reload())
+        self._handler = app.daycycle.connect("wallpaper-changed", lambda *a: self.reload())
+        self.connect("destroy", lambda *a: app.daycycle.disconnect(self._handler))
         self.reload()
 
     def reload(self):
-        path = current_wallpaper()
-        if path:
-            self._picture.set_file(Gio.File.new_for_path(path))
-        else:
-            self._picture.set_paintable(None)
+        path = self.app.daycycle.wallpaper()
+        if path == self._current:
+            return
+        self._current = path
+        visible = self._stack.get_visible_child()
+        target = self._pictures[1] if visible is self._pictures[0] else self._pictures[0]
+        target.set_file(Gio.File.new_for_path(path) if path else None)
+        self._stack.set_visible_child(target)
 
     def _build_menu(self, parent):
         menu = Gio.Menu()

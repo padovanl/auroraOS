@@ -1,0 +1,3 @@
+// Take a Timeshift snapshot before packages change (btrfs installs only).
+// Turn off in Settings → Updates, or create /etc/aurora/snapshots-disabled.
+DPkg::Pre-Invoke { "[ -x /usr/libexec/aurora-snapshot ] && /usr/libexec/aurora-snapshot apt || true"; };

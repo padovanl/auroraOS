@@ -37,6 +37,20 @@ while IFS='|' read -r name version url sha dest; do
     tar -xf "$file" -C "$ROOTFS$dest"
 done
 
+# grub-btrfs: "Aurora OS snapshots" in the boot menu (Timeshift snapshots).
+# Not packaged by Debian; installed from the pinned upstream release. The menu
+# script and the daemon are switched on per install, only on btrfs
+# (Calamares aurora-finalize), so ext4/xfs installs and the live ISO ignore it.
+gbsrc=$(ls -d "$ROOTFS"/usr/src/grub-btrfs-* 2>/dev/null | head -1)
+if [ -n "$gbsrc" ]; then
+    log "installing grub-btrfs"
+    make -C "$gbsrc" install DESTDIR="$ROOTFS" PREFIX=/usr INSTALL_DOCS=false >/dev/null
+    rm -rf "$gbsrc"
+    chmod -x "$ROOTFS/etc/grub.d/41_snapshots-btrfs"
+    sed -i 's|^#GRUB_BTRFS_SUBMENUNAME=.*|GRUB_BTRFS_SUBMENUNAME="Aurora OS snapshots"|; s|^#GRUB_BTRFS_LIMIT=.*|GRUB_BTRFS_LIMIT="20"|' \
+        "$ROOTFS/etc/default/grub-btrfs/config"
+fi
+
 # adw-gtk3 is for GTK 3 apps. Its gtk-4.0 folder targets a newer GTK than
 # Debian's 4.18 (hundreds of "Unknown @ rule" errors in every GTK 4 app), and
 # libadwaita apps already look right without it.

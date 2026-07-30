@@ -5,6 +5,15 @@
       <default>'/usr/share/backgrounds/aurora/aurora-dawn.png'</default>
       <summary>Background image path</summary>
     </key>
+    <key name="wallpaper-dynamic" type="b">
+      <default>true</default>
+      <summary>Dynamic background</summary>
+      <description>Use the Aurora landscape that follows the sun: dawn, day, dusk and night.</description>
+    </key>
+    <key name="color-scheme-auto" type="b">
+      <default>false</default>
+      <summary>Switch between light and dark style at sunrise and sunset</summary>
+    </key>
     <key name="dock-favorites" type="as">
       <default>['firefox-esr.desktop', 'org.aurora.Files.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.TextEditor.desktop', 'org.aurora.Settings.desktop']</default>
       <summary>Applications pinned to the dock</summary>
@@ -25,6 +34,19 @@
     <key name="night-light" type="b">
       <default>false</default>
       <summary>Warm screen colors</summary>
+    </key>
+    <key name="night-light-schedule" type="s">
+      <choices><choice value="sunset"/><choice value="manual"/><choice value="always"/></choices>
+      <default>'sunset'</default>
+      <summary>When Night Light is on: sunset to sunrise, manual hours, or all the time</summary>
+    </key>
+    <key name="night-light-from" type="s">
+      <default>'20:00'</default>
+      <summary>Night Light start time (manual schedule)</summary>
+    </key>
+    <key name="night-light-to" type="s">
+      <default>'07:00'</default>
+      <summary>Night Light end time (manual schedule)</summary>
     </key>
     <key name="night-light-temperature" type="i">
       <range min="2500" max="6000"/>
@@ -116,6 +138,54 @@
       <choices><choice value="spotlight"/><choice value="grid"/></choices>
       <default>'spotlight'</default>
       <summary>What the Super key opens: a search bar or the full app grid</summary>
+    </key>
+    <key name="hot-corner-top-left" type="s">
+      <choices>
+        <choice value="none"/><choice value="overview"/><choice value="launchpad"/>
+        <choice value="desktop"/><choice value="quick-settings"/><choice value="notifications"/>
+        <choice value="lock"/><choice value="screen-off"/>
+      </choices>
+      <default>'none'</default>
+      <summary>Hot corner action (top left)</summary>
+    </key>
+    <key name="hot-corner-top-right" type="s">
+      <choices>
+        <choice value="none"/><choice value="overview"/><choice value="launchpad"/>
+        <choice value="desktop"/><choice value="quick-settings"/><choice value="notifications"/>
+        <choice value="lock"/><choice value="screen-off"/>
+      </choices>
+      <default>'none'</default>
+      <summary>Hot corner action (top right)</summary>
+    </key>
+    <key name="hot-corner-bottom-left" type="s">
+      <choices>
+        <choice value="none"/><choice value="overview"/><choice value="launchpad"/>
+        <choice value="desktop"/><choice value="quick-settings"/><choice value="notifications"/>
+        <choice value="lock"/><choice value="screen-off"/>
+      </choices>
+      <default>'overview'</default>
+      <summary>Hot corner action (bottom left)</summary>
+    </key>
+    <key name="hot-corner-bottom-right" type="s">
+      <choices>
+        <choice value="none"/><choice value="overview"/><choice value="launchpad"/>
+        <choice value="desktop"/><choice value="quick-settings"/><choice value="notifications"/>
+        <choice value="lock"/><choice value="screen-off"/>
+      </choices>
+      <default>'desktop'</default>
+      <summary>Hot corner action (bottom right)</summary>
+    </key>
+    <key name="weather-widget" type="b">
+      <default>true</default>
+      <summary>Show the weather next to the calendar (Open-Meteo, approximate location)</summary>
+    </key>
+    <key name="session-sounds" type="b">
+      <default>true</default>
+      <summary>Play the Aurora sounds when you log in and when you shut down, restart or log out</summary>
+    </key>
+    <key name="clipboard-history" type="b">
+      <default>true</default>
+      <summary>Remember copied text for Spotlight (Super+V)</summary>
     </key>
     <key name="idle-dim-minutes" type="i">
       <range min="0" max="120"/>

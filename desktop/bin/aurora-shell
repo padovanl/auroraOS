@@ -3,12 +3,23 @@ import ctypes.util
 import os
 import sys
 
-# gtk4-layer-shell must be loaded before libwayland-client; re-exec with it preloaded.
-if "gtk4-layer-shell" not in os.environ.get("LD_PRELOAD", ""):
+# gtk4-layer-shell must be loaded before libwayland-client: re-exec once with it
+# preloaded, then drop it from the environment again. Every app the shell
+# starts inherits its environment, and GTK 3 apps (Firefox, LibreOffice…)
+# crash with GTK 4 preloaded.
+if os.environ.pop("AURORA_SHELL_PRELOADED", None) is None:
     lib = ctypes.util.find_library("gtk4-layer-shell")
     if lib:
         os.environ["LD_PRELOAD"] = (lib + " " + os.environ.get("LD_PRELOAD", "")).strip()
+        os.environ["AURORA_SHELL_PRELOADED"] = lib
         os.execv(sys.executable, [sys.executable] + sys.argv)
+else:
+    rest = " ".join(p for p in os.environ.get("LD_PRELOAD", "").split()
+                    if "gtk4-layer-shell" not in p)
+    if rest:
+        os.environ["LD_PRELOAD"] = rest
+    else:
+        os.environ.pop("LD_PRELOAD", None)
 
 sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
 
