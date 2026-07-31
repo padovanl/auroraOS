@@ -19,7 +19,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 README = os.path.join(ROOT, "README.md")
 OUT = os.path.join(ROOT, "docs", "technical.html")
-REPO_README = "https://github.com/padovanl/aurora-os/blob/main/README.md"
+REPO_README = "https://github.com/padovanl/auroraOS/blob/main/README.md"
 
 
 def inline(text):
@@ -33,7 +33,7 @@ def inline(text):
         if url.startswith("#"):
             url = REPO_README + url          # README anchors → the README on GitHub
         elif not url.startswith(("http", "mailto:")):
-            url = "https://github.com/padovanl/aurora-os/blob/main/" + url
+            url = "https://github.com/padovanl/auroraOS/blob/main/" + url
         return f'<a href="{url}">{label}</a>'
     return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", link, text)
 

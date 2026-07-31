@@ -1,5 +1,5 @@
 // Aurora OS website behaviour. Edit these two constants when publishing.
-const REPO = "https://github.com/padovanl/aurora-os";
+const REPO = "https://github.com/padovanl/auroraOS";
 const VERSION = "0.1";
 
 const iso = `aurora-os-${VERSION}-amd64.iso`;

@@ -308,7 +308,7 @@ both ways, share the clipboard, control music and use the phone as a touchpad.
 
 ### Build
 ```sh
-git clone <this repository> aurora-os && cd aurora-os
+git clone https://github.com/padovanl/auroraOS.git && cd auroraOS
 make iso          # → out/aurora-os-<version>-amd64.iso (+ .sha256)
 make run          # boot it in a QEMU window (BIOS)
 make run-uefi     # boot it in a QEMU window (UEFI)
