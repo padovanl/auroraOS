@@ -49,7 +49,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 
 - **Its own desktop, not a re-skin.** The panel, dock, launcher, notifications, control
   center, settings, file manager, login screen and welcome app are written from scratch for
-  Aurora (Python + GTK 4 on Wayland), about 7,000 lines you can read and change.
+  Aurora (Python + GTK 4 on Wayland), about 10,000 lines you can read and change.
 - **Beautiful by default.** A macOS-inspired layout: a menu bar, a floating dock with
   magnification, Spotlight-style search, a Launchpad grid and round colored window buttons.
   All of it uses our own artwork.
@@ -61,14 +61,21 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   Studio, Minimal). Past that, the panel and dock can go at the bottom or on either side, be
   floating or full width, auto-hide or magnify, and you pick icon size, window buttons,
   corner radius, fonts, themes, pointer and accent color.
-- **Stable underneath.** Debian's security team, Debian's packages, a 6.12 LTS kernel.
-  Nothing experimental where it matters.
+- **Stable underneath, and you can always go back.** Debian's security team, Debian's
+  packages, a 6.12 LTS kernel. On top of that, Aurora installs on **btrfs** and takes a
+  **snapshot before every update**: if an update ever breaks something, choose "Aurora OS
+  snapshots" in the boot menu and start yesterday's system.
+- **Small things that feel like a Mac**, which no other distribution puts together:
+  Quick Look (press <kbd>Space</kbd> on a file), a wallpaper that follows the sun, dark
+  style at sunset, copy text out of any screenshot, clipboard history and emoji in
+  Spotlight, unit and currency conversion, window overview and hot corners, your phone's
+  notifications on the desktop, and a startup sound.
 - **Features people asked the big distros for**, included by default:
   - Flatpak with Flathub enabled (not only snaps);
   - the firewall on out of the box, with a switch in Settings;
   - automatic security updates;
   - compressed RAM swap (zram);
-  - system snapshots (Timeshift);
+  - system snapshots before every update, bootable from the GRUB menu;
   - a real per-user "log in automatically" switch;
   - custom keyboard shortcuts in Settings;
   - SSH that you turn on with one switch;
@@ -84,13 +91,22 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 |---|---|
 | **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, Spotlight, status icons, clock. |
 | **Dock** | Pinned and running apps, running indicators, right-click menus (windows, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Magnification, autohide, bottom/left/right, floating or full-width. |
-| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, a calculator (`12*(3+4)`), commands (`> htop`) and the web. |
+| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
+| **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
+| **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
+| **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
+| **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next. The login and lock screens follow it. |
+| **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
+| **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. |
+| **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). |
+| **Weather** | Current weather and the next hours next to the calendar (can be turned off). |
+| **Sounds** | An Aurora sound when you log in and when you shut down, restart or log out (on by default, Settings → Sound). |
 | **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right). |
-| **Windows** | labwc compositor: snapping to halves, 4 to 9 workspaces, window switcher, round colored buttons (or monochrome), server-side and GTK decorations styled alike. |
+| **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons (or monochrome), server-side and GTK decorations styled alike. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
 | **One look everywhere** | libadwaita apps, GTK 3 apps (adw-gtk3), plain GTK 4 apps, Qt apps (QGnomePlatform), window decorations and icons all follow the light/dark style and accent color you pick. |
@@ -99,11 +115,12 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 - **Settings**: Network, Bluetooth, Displays, Sound, Power, Appearance, Desktop & Dock,
   Multitasking, Notifications, Apps (default and startup apps), Mouse & Touchpad, Keyboard
   (repeat and custom shortcuts), Printers, Accessibility, Privacy & Security (screen lock,
-  file history, firewall), Sharing (SSH), Users, Language & Region, Date & Time, Software
-  Updates, About.
+  file history, clipboard history, weather, firewall), Sharing (phone, SSH), Users
+  (fingerprint), Language & Region, Date & Time, Software Updates (system snapshots),
+  About.
 - **Files**: places and drives, grid and list views, search, hidden files, cut/copy/paste
   with progress, trash with restore, rename, new folder, "Open With", properties, open in
-  terminal.
+  terminal, and **Quick Look** (<kbd>Space</kbd>).
 - **Dev Hub**: one-click installers for editors, languages, cloud tools and databases.
 - **Welcome**: first-run tour (light or dark, shortcuts, install).
 
@@ -129,8 +146,12 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 - Firmware for Intel, AMD, Realtek, Atheros, Broadcom and MediaTek Wi-Fi and Bluetooth,
   GPUs and audio (SOF).
 - Mesa with Vulkan and VA-API video acceleration, the Intel media driver, NVIDIA detection.
-- Laptops: power profiles, thermald, fingerprint readers, screen rotation, firmware updates
-  (fwupd), backlight and battery.
+- Laptops: power profiles, thermald, screen rotation, firmware updates (fwupd), backlight
+  and battery.
+- **Fingerprint readers:** set up your finger in Settings → Users, then use it instead of
+  the password for `sudo` and admin prompts.
+- **Your phone:** KDE Connect (Android and iPhone) shows the phone's notifications on the
+  desktop and shares files and the clipboard. Turn it on in Settings → Sharing.
 - VMs: QEMU/KVM guest agent and SPICE, VMware tools, Hyper-V daemons.
 - Printing (CUPS, driverless IPP) and scanning, Bluetooth manager.
 - **Additional Drivers** (Settings → Software Updates) detects NVIDIA cards and installs the
@@ -142,7 +163,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 The installer is Calamares with Aurora's branding. It walks you through language,
 location and time zone (detected automatically), keyboard, disk, user and a summary. For
 the disk you can erase it, install alongside another OS, replace a partition, or partition
-by hand. It supports LUKS2 encryption and ext4, btrfs or xfs. On the user page you set your
+by hand. It supports LUKS2 encryption and btrfs (the default, with automatic snapshots),
+ext4 or xfs. On the user page you set your
 name, user name, password and computer name, and choose **automatic login** or the login
 screen. Everything the installer needs is on the USB stick, so it **works offline**.
 
@@ -191,7 +213,8 @@ From the live desktop you can install at any time with **Install Aurora OS** in 
 3. **Keyboard**: pick the layout and try it in the test field.
 4. **Disk**:
    - *Erase disk* for a clean install. Optionally tick **Encrypt system** and choose a
-     passphrase.
+     passphrase. Keep the file system on **btrfs** (the default) to get automatic
+     snapshots and rollback from the boot menu.
    - *Install alongside* to keep Windows or another Linux (drag the divider to size them).
    - *Replace a partition* or *Manual partitioning* for full control.
 5. **Users**: your name, user name, password, computer name, and whether to
@@ -212,12 +235,17 @@ already enabled).
 | <kbd>Super</kbd> (tap) / <kbd>Super</kbd>+<kbd>Space</kbd> | Spotlight search |
 | <kbd>Super</kbd>+<kbd>A</kbd> | Spotlight search |
 | <kbd>Super</kbd>+<kbd>S</kbd> | Control Center |
+| <kbd>Super</kbd>+<kbd>W</kbd> | Overview: all open windows |
+| <kbd>Super</kbd>+<kbd>V</kbd> | Clipboard history |
+| <kbd>Super</kbd>+<kbd>.</kbd> | Emoji |
 | <kbd>Super</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> | Terminal |
 | <kbd>Super</kbd>+<kbd>E</kbd> | Files |
 | <kbd>Super</kbd>+<kbd>I</kbd> | Settings |
 | <kbd>Super</kbd>+<kbd>L</kbd> | Lock screen |
 | <kbd>Alt</kbd>+<kbd>Tab</kbd> | Switch windows |
 | <kbd>Super</kbd>+<kbd>←</kbd> / <kbd>→</kbd> | Snap window to the left or right half |
+| <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>U</kbd> <kbd>I</kbd> <kbd>J</kbd> <kbd>K</kbd> | Snap window to the top-left, top-right, bottom-left, bottom-right quarter |
+| <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> | Snap window to the left, center, right third |
 | <kbd>Super</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> | Maximize / restore |
 | <kbd>Super</kbd>+<kbd>H</kbd> | Minimize |
 | <kbd>Super</kbd>+<kbd>F</kbd> | Fullscreen |
@@ -225,9 +253,37 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>1</kbd>…<kbd>9</kbd> | Go to workspace |
 | <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>1</kbd>…<kbd>9</kbd> | Move window to workspace |
 | <kbd>Print</kbd> / <kbd>Shift</kbd>+<kbd>Print</kbd> | Screenshot of the screen / of an area (saved to Pictures/Screenshots and copied) |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> | Copy the text in an area of the screen (OCR) |
+| <kbd>Space</kbd> (in Files) | Quick Look |
 | Media keys | Volume and brightness with an on-screen indicator |
 
 Add your own in **Settings → Keyboard → Shortcuts**.
+
+### Going back in time (system snapshots)
+On a btrfs install (the installer's default) Aurora keeps snapshots of the system:
+- one called **Fresh install**, taken at the first boot;
+- one **before every update** or package install (the last 10 are kept);
+- daily and weekly ones (the last 5 and 3).
+
+Snapshots are instant and only take the space of what changes afterwards. They cover the
+system, not your files in Home: rolling back never loses your documents.
+
+**If an update breaks something:**
+1. Restart. In the boot menu choose **Aurora OS snapshots** (hold <kbd>Shift</kbd> or
+   press <kbd>Esc</kbd> during boot if the menu is hidden), then the snapshot from before
+   the update.
+2. Aurora starts as it was then. Check that everything works.
+3. Open **Timeshift** (Settings → Software Updates → Open Timeshift), select the same
+   snapshot and click **Restore**. Restart once more: the rollback is permanent.
+
+Take one by hand with **Settings → Software Updates → Take a Snapshot Now**, or turn off
+the automatic ones there.
+
+### Your phone
+Install **KDE Connect** on your Android phone (Play Store or F-Droid) or iPhone (App Store),
+then in Aurora open **Settings → Sharing** and switch on **Allow phones to connect**. Pair
+from the phone. The phone's notifications show up on the desktop, and you can send files
+both ways, share the clipboard, control music and use the phone as a touchpad.
 
 ### The developer setup
 - The terminal is **Ptyxis** (tabs, profiles, and a menu to open shells inside your
@@ -269,10 +325,10 @@ reuse the root filesystem and the apt cache and take a few minutes.
 |---|---|
 | `10-bootstrap` | `debootstrap` creates a minimal Debian trixie root filesystem (skipped if one exists). |
 | `20-packages` | Writes apt sources, installs every list in `config/packages/`, Firefox and LibreOffice translations, and generates the locales in `config/locales.list`. |
-| `25-extras` | Downloads third-party `.deb`s from `config/extra-debs.list` (portop), verified against the publisher's SHA-256 checksums, and archives from `config/extra-archives.list` (the adw-gtk3 theme), pinned by SHA-256. |
+| `25-extras` | Downloads third-party `.deb`s from `config/extra-debs.list` (portop), verified against the publisher's SHA-256 checksums, and archives from `config/extra-archives.list` (the adw-gtk3 theme, grub-btrfs), pinned by SHA-256. |
 | `30-system` | Copies `overlay/` into the image, writes the Aurora identity (`os-release`, `issue`, `lsb-release`), hides upstream installer launchers and enables services. |
-| `35-defaults` | Firewall on, automatic security updates, Flathub, Docker socket activation, shell setup, SSH off. |
-| `40-desktop` | `make -C desktop install`: the Aurora desktop, generated Wayland bindings, themes, wallpapers, schemas, icons, translations. |
+| `35-defaults` | Firewall on, automatic security updates, fingerprint for sudo and admin prompts, Flathub, Docker socket activation, shell setup, SSH off. |
+| `40-desktop` | `make -C desktop install`: the Aurora desktop, generated Wayland bindings, themes, wallpapers (including the dynamic set), session sounds, schemas, icons, translations. |
 | `50-branding` | Renders the Plymouth animation, the GRUB theme and fonts, and the installer branding. |
 | `70-pool` | Downloads the boot loader and encryption packages into an offline apt pool for the installer. |
 | `80-finalize` | Sets the boot splash, rebuilds the initramfs and cleans caches, logs and the machine id. |
@@ -448,9 +504,48 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   GRUB on UEFI. An **offline package pool** on the ISO means installing never needs a
   network.
 
-#### File systems: ext4 by default; btrfs and xfs available; LUKS2 encryption
-- **Why:** ext4 is the most proven choice for most users. btrfs is there for people who
-  want copy-on-write snapshots, and Timeshift supports both.
+#### File systems: btrfs by default (ext4 and xfs available); LUKS2 encryption
+- **Alternatives:** ext4 by default (Ubuntu, Debian), XFS (RHEL), ZFS (Ubuntu offered it
+  experimentally).
+- **Why:** btrfs makes snapshots instant and nearly free (copy-on-write), which is what
+  lets Aurora take one before every update and boot into it (see
+  [Snapshots](#system-snapshots-timeshift-btrfs-mode--grub-btrfs)). It also compresses
+  transparently (`compress=zstd:1`: less disk space and fewer SSD writes, at no noticeable
+  cost) and checksums data. Fedora and openSUSE have used it by default for years. ZFS
+  can't ship in the kernel because of its license and needs DKMS modules.
+- **Layout:** Ubuntu-style subvolumes created by Calamares (`mount.conf`): `@` (the
+  system), `@home` (your files, never rolled back), `@cache` and `@log` (so caches and
+  logs aren't in snapshots and survive a rollback), and `@swap` for the swap file, because
+  btrfs can't snapshot a subvolume that holds an active swap file.
+- ext4 and xfs are still in the installer. On them, everything works except automatic
+  snapshots (Timeshift can still make rsync copies).
+
+#### System snapshots: Timeshift (btrfs mode) + grub-btrfs
+- **Alternatives:** Snapper with `snapper-rollback` (openSUSE's approach), Timeshift's
+  rsync mode, ZFS boot environments, image-based OSes with A/B updates (Fedora Silverblue,
+  Vanilla OS), no snapshots (Ubuntu).
+- **Why:** Timeshift is in Debian, has a clear graphical app for browsing and restoring
+  snapshots, and in btrfs mode snapshots take a second. Its layout (`@`, `@home`) is the
+  one most tutorials describe. Snapper is more flexible, but rolling back a Debian-style
+  layout with it needs extra tooling and has no GUI in Debian. Immutable A/B systems are
+  robust, but they change how you install software, and Aurora wants to stay a normal
+  Debian system.
+- **How it fits together:**
+  - the installer's `aurora-finalize` module writes Timeshift's configuration (the btrfs
+    device, including the LUKS container when encrypted) and turns the rest on, on btrfs
+    only;
+  - `aurora-first-snapshot.service` takes a **"Fresh install"** snapshot at the first boot;
+  - an apt hook (`/etc/apt/apt.conf.d/80aurora-snapshot` →
+    `/usr/libexec/aurora-snapshot apt`) takes a snapshot **before dpkg changes anything**,
+    at most one per ten minutes (an upgrade runs dpkg several times), and keeps the last
+    10. It skips itself inside the installer's chroot;
+  - Timeshift's own schedule keeps 5 daily and 3 weekly snapshots;
+  - **grub-btrfs** adds an "Aurora OS snapshots" submenu to GRUB, and its daemon
+    (`grub-btrfsd --timeshift-auto`) refreshes it whenever a snapshot appears or goes. It
+    isn't packaged in Debian, so the build installs the upstream 4.13 release pinned by
+    SHA-256. Its menu script stays disabled on the live system and on non-btrfs installs.
+- Timeshift snapshots are writable, so the snapshotted system boots normally from the
+  menu. Restoring it for good is one click in Timeshift.
 
 #### Swap: zram (systemd-zram-generator) + optional swap file
 - **Alternatives:** swap partition only, zswap, zram-tools.
@@ -500,7 +595,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 
 #### Language: Python 3 (PyGObject)
 - **Alternatives:** C, Vala, Rust (gtk-rs), JavaScript (GJS, AGS/Astal), Qt/QML.
-- **Why:** Python makes the desktop small (about 7,000 lines), readable and easy to
+- **Why:** Python makes the desktop small (about 10,000 lines), readable and easy to
   contribute to. Every part is a plain `.py` file you can change and restart. The
   expensive work happens in C libraries (GTK, GLib, wlroots), so Python is not the
   bottleneck. Rust or C would be faster to run but much slower to write and change. JS
@@ -548,6 +643,95 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 - **Why:** apps, settings pages (by keywords), recent files, a **safe** calculator (an AST
   walker, never `eval`), commands (`> …`) and web search. They are simple, fast and all
   covered by tests.
+- **Conversions** (`aurora/convert.py`): length, mass, volume, time, speed, data (SI and
+  binary), area, energy and temperature, offline. Currencies use the **European Central
+  Bank's** daily reference rates: a public XML file with no key or account, fetched only
+  when you type a currency conversion and cached for 12 hours. Commercial APIs need keys
+  and track usage.
+- **Emoji** (`:` prefix): the names come from Python's own Unicode database, so there is
+  no extra data file to ship or update.
+- **Projects**: git repositories up to two levels inside `~/Projects`, `~/src`, `~/code`,
+  `~/git`, `~/dev`, `~/work` and similar, with the current branch. Enter opens the project
+  in VS Code, VSCodium, Zed or Sublime if installed, otherwise a terminal there.
+- **Clipboard history** (`clip:` prefix, <kbd>Super</kbd>+<kbd>V</kbd>): see below.
+
+#### Clipboard history: `wl-paste --watch` + a tiny store
+- **Alternatives:** cliphist, clipman, CopyQ, GPaste.
+- **Why:** Wayland only shows the clipboard to the focused app, but the
+  `wlr-data-control` protocol lets a helper watch it. The shell runs
+  `wl-paste --type text --watch aurora-clipboard store`, and `aurora/clipboard.py` keeps the
+  last 100 text entries (up to 64 KB each) in `~/.local/share/aurora/clipboard.json`,
+  readable only by you. Password managers mark their copies as sensitive and wl-paste
+  passes that on, so passwords are never stored. cliphist would work too, but it adds a
+  Go binary for what is about 60 lines of Python, and it doesn't skip sensitive entries.
+  CopyQ and GPaste bring their own UIs, and ours is Spotlight. Turn it off or clear it in
+  Settings → Privacy.
+
+#### Quick Look: GTK widgets per file type
+- **Alternatives:** GNOME Sushi (needs Nautilus and GJS), opening the default app.
+- **Why:** a small GTK 4 window (`aurora/quicklook.py`) with the right widget for each type:
+  - `Gtk.Picture` for images;
+  - `Gtk.Video` (GStreamer, `libgtk-4-media-gstreamer`) for video and audio;
+  - **Poppler** for the first pages of a PDF;
+  - **GtkSourceView 5** for text and code, with syntax highlighting in the light or dark
+    scheme;
+  - a folder summary, and for anything else a card with its thumbnail and details.
+- Files opens it with <kbd>Space</kbd>; arrow keys move the selection in Files and the
+  preview follows. `aurora-quicklook FILE…` works from anywhere.
+
+#### Sun position without a location service (`aurora/sun.py`)
+- **Alternatives:** GeoClue (Wi-Fi-based location through an online service), asking the
+  user for a city, fixed hours.
+- **Why:** the dynamic wallpaper, automatic dark style and Night Light only need sunrise
+  and sunset. The time zone you picked in the installer already says roughly where you
+  are: tzdata's `zone1970.tab` gives coordinates for every zone. The NOAA solar formulas
+  then give the sun's elevation within a few minutes. Nothing leaves the computer and
+  nothing asks for permission. Unit tests compare against known sunrise and sunset times.
+
+#### Dynamic wallpaper and automatic dark style (`shell/daycycle.py`)
+- **Alternatives:** GNOME's XML slideshows (fixed clock times), HEIC dynamic wallpapers
+  (macOS).
+- **Why:** four renders of the same landscape (same random seed, different palettes and
+  lighting) come from the wallpaper generator. Once a minute the shell checks the sun's
+  elevation: night below −6°, dawn and dusk up to 8°, day above. On a change, the new
+  picture fades in over 2.5 seconds. Following the sun rather than the clock means
+  winter evenings get dark when it's actually dark. The shell keeps
+  `~/.cache/aurora/wallpaper` pointing at the current picture for the lock screen, and the
+  login screen computes the same phase. "Auto" dark style flips the system color scheme
+  at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
+
+#### Overview and hot corners
+- **Alternatives:** labwc's built-in window switcher only, a GNOME-style overview with
+  live thumbnails.
+- **Why:** the overview (`shell/overview.py`) is a full-screen layer with a card per
+  window from the foreign-toplevel list, over a blurred screenshot of the desktop (grim at
+  half scale, shrunk and scaled back up: a cheap blur with no GPU code). labwc 0.8 doesn't
+  let other programs capture single windows yet, so cards show the app icon and title
+  instead of live thumbnails. Hot corners (`shell/hotcorners.py`) are 2×2-pixel
+  transparent layer surfaces in the corners. The pointer must rest there for 120 ms,
+  which avoids triggers on fast passes, and there is a short cooldown afterwards.
+- **Quarters and thirds** are labwc snap regions defined in `rc.xml`, so they work with
+  keyboard shortcuts and by holding a modifier while dragging.
+
+#### Weather in the calendar: Open-Meteo
+- **Alternatives:** libgweather/GNOME Weather's providers (MET Norway), OpenWeatherMap
+  (needs an API key).
+- **Why:** Open-Meteo is free, open data and needs no key or account. The shell asks
+  for the weather at your time zone's main city (never an exact position), at most every
+  30 minutes, only when you open the calendar. Fahrenheit is used where it is the local
+  convention. Settings → Privacy turns it off.
+
+#### Session sounds: synthesized, not sampled
+- **Why:** the startup and shutdown sounds are generated by `branding/sounds/generate.py`
+  with numpy, like the rest of the artwork.
+  - Startup: a D♭ major 9 pad swelling voice by voice, a tone gliding up an octave "like a
+    ribbon of light", and high sparkles, all through a synthetic stereo reverb
+    (convolution with decaying noise).
+  - Shutdown: the same palette descending and fading.
+- There are no samples and no licensing questions, and the sounds can be changed by
+  editing code. They play with `pw-play` (PipeWire). The shell waits 1.8 s for the
+  shutdown sound before powering off, restarting or logging out. Both are on by default
+  and switch off together in Settings → Sound.
 
 #### Settings storage: GSettings (dconf) + labwc's XML
 - **Why:** GSettings is what GTK, portals and GNOME apps already read, so one switch
@@ -588,8 +772,12 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 | Bluetooth | **BlueZ** (D-Bus) + **Blueman** for advanced settings | — | BlueZ is the Linux stack. Our Control Center and Settings talk to it directly. |
 | Power | **UPower** + **power-profiles-daemon** + **thermald** | TLP, auto-cpufreq | power-profiles-daemon gives the three modes users understand, is what GNOME and KDE use, and doesn't conflict with firmware. TLP needs tuning and conflicts with it. |
 | Idle / lock | **swayidle** + **wlopm** + **gtklock** | swaylock, hyprlock | gtklock shows a clock, date and styled password field (our CSS), unlike swaylock. hyprlock isn't in Debian. |
-| Night light | **wlsunset** | gammastep, redshift | Small and Wayland-native, with no location service needed. |
+| Night light | **wlsunset** | gammastep, redshift | Small and Wayland-native. The shell runs it with sunrise and sunset for your time zone's coordinates, manual hours, or the same temperature day and night ("all the time"). |
 | Screenshots / recording | **grim**, **slurp**, **wl-clipboard**, **wf-recorder** | GNOME Screenshot, OBS | Standard wlroots tools, fast and scriptable. OBS is one click away in App Center. |
+| Screenshot annotation | **swappy** | Satty, Flameshot, Ksnip | A small GTK 3 editor made for grim: arrows, text, highlighter, blur. Satty isn't in Debian. Flameshot and Ksnip are Qt apps with their own capture code that works poorly on wlroots. |
+| Text from pictures (OCR) | **Tesseract 5** + language data for all 18 boot-menu scripts | EasyOCR, PaddleOCR, online OCR | Offline, fast, in Debian. The neural-network alternatives need hundreds of MB of Python and models. English plus your language is used for recognition. |
+| Phone integration | **KDE Connect** | GSConnect, Valent | Works with Android and iPhone, is in Debian, and shows up in our tray. GSConnect needs GNOME Shell. Valent (GTK) isn't in Debian yet. Its ports (1714–1764) stay closed until you switch it on in Settings → Sharing (a ufw profile plus one `aurora-admin` action). |
+| Fingerprint | **fprintd** + our PAM profile | Debian's default (off), Howdy (face) | A pam-auth-update profile (`/usr/share/pam-configs/aurora-fingerprint`) puts `pam_fprintd` in the stack for sudo, pkexec and polkit prompts, but skips it for greetd, gtklock, login and ssh. The login password is still needed at boot (it also unlocks the keyring, as macOS does after a restart), and the lock screen can't get stuck waiting for a finger. |
 | Media keys / controls | **playerctl** (MPRIS) | — | Controls any player: browsers, Spotify, Celluloid, Rhythmbox. |
 | Portals | **xdg-desktop-portal-gtk** + **-wlr** | -gnome, -kde | GTK file choosers and settings; wlr for screenshots and screen sharing in browsers and video calls. |
 | Admin prompts | **mate-polkit** agent | polkit-gnome, lxpolkit, our own | A maintained, small GTK agent that works on Wayland. |
@@ -612,7 +800,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 | Video | **Celluloid** (mpv) | Showtime, Totem, VLC | mpv plays almost anything with hardware decoding. Showtime is pretty but less capable. |
 | Music | **Rhythmbox** | Lollypop, Amberol | A complete music library and podcasts. |
 | Store | **GNOME Software** + Flatpak plugin | KDE Discover, our own | Covers apt, Flatpak and firmware (fwupd) updates in one place. |
-| Backups / snapshots | **Déjà Dup** / **Timeshift** | Borg/Vorta, Snapper | Déjà Dup for personal files (encrypted, incremental). Timeshift for system rollbacks on ext4 and btrfs. Snapper is btrfs-only. |
+| Backups / snapshots | **Déjà Dup** / **Timeshift** | Borg/Vorta, Snapper | Déjà Dup for personal files (encrypted, incremental). Timeshift for system snapshots, automatic on btrfs (see [Snapshots](#system-snapshots-timeshift-btrfs-mode--grub-btrfs)). |
 | Personal | Calendar, Contacts, Weather, Maps, Clocks, Calculator, Camera (Snapshot), Sound Recorder, Scanner, Remmina, Transmission, Disks, Disk Usage, System Monitor, Logs, Characters, Fonts, Power Statistics, Firmware, games | — | The same everyday set Ubuntu ships (GTK 4 versions wherever they exist), listed in `config/apps.manifest` and tested to launch. |
 
 ### Security and privacy
@@ -626,7 +814,16 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 - **Least privilege:** Settings never runs as root. One audited helper does privileged
   actions through polkit.
 - **No telemetry**, no crash uploads, no ads, no account required.
-- Third-party downloads at build time (portop, adw-gtk3) are **verified by checksum**.
+- **Every network request the desktop makes on its own**, all of them optional:
+  - weather (Open-Meteo, only the time zone's main city, when you open the calendar);
+  - exchange rates (the ECB's public file, only when you type a currency conversion);
+  - update checks (Debian's mirrors).
+  Everything else (sun position, OCR, clipboard history, emoji, unit conversion) runs
+  offline.
+- **Fingerprint** only for sudo and admin prompts, never instead of the login password.
+- **Phone integration** ports stay closed until you turn it on.
+- Third-party downloads at build time (portop, adw-gtk3, grub-btrfs) are **verified by
+  checksum**.
 
 ### Developer experience
 - **Preinstalled:** git (+ lfs, lazygit, delta), build-essential, gdb, cmake, shellcheck,
@@ -665,18 +862,29 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   XML and YAML parsing, manifest consistency.
 - **Unit (pytest):** the logic that could silently break: calculator safety, search,
   markup sanitizing, file operations, labwc config editing, GTK CSS management,
-  autostart rules, the greetd protocol, tray icons.
+  autostart rules, the greetd protocol, tray icons, sunrise and sunset, unit and currency
+  conversion, clipboard history (including skipping passwords), OCR language choice,
+  weather parsing, the Spotlight providers, the Night Light schedule.
 - **Smoke:** a real labwc session on wlroots' **headless backend** in a container. Every
-  app and Settings page opens without exceptions, the tray works end to end, and
-  screenshots are saved.
+  app and Settings page opens without exceptions, the tray works end to end, Spotlight
+  answers conversions, emoji, clipboard and project searches, Quick Look previews code, a
+  PDF and a picture, the overview opens with windows in it, and screenshots are saved.
 - **Image:** checks the finished root filesystem and ISO (programs, services, themes,
   installer, cleanliness, BIOS and UEFI boot records, offline pool, every manifest app).
 - **Boot:** QEMU boots the real ISO through GRUB, with BIOS and with UEFI (OVMF). The
   **QEMU guest agent** inside the image lets the test run checks in the live system and
   launch every default app with the real session environment.
-- **What the tests have already caught:** a heap-corrupting GRUB font on BIOS, a missing
-  Docker CLI, Plymouth hiding the desktop, games unreachable from the session PATH, two
-  garbage-collection bugs, a Files crash and a Settings crash.
+- **What the tests have already caught:**
+  - a heap-corrupting GRUB font on BIOS;
+  - a missing Docker CLI;
+  - Plymouth hiding the desktop;
+  - games unreachable from the session PATH;
+  - two garbage-collection bugs, a Files crash and a Settings crash;
+  - a 25-second black desktop: the shell asked D-Bus to start BlueZ on machines with no
+    Bluetooth adapter;
+  - a theme built for a newer GTK filling logs with CSS errors;
+  - the shell passing its `gtk4-layer-shell` preload on to every app it started, which
+    crashed GTK 3 apps (Firefox, LibreOffice, Geary) launched from the dock.
 
 ### Website
 - **Choice:** hand-written HTML, CSS and a few lines of JavaScript in `docs/`, served by
@@ -719,11 +927,11 @@ major release.
 | Command | Needs | What it checks |
 |---|---|---|
 | `make test-static` | Docker | Python and shell syntax, shellcheck, `.desktop` files, GSettings schemas (strict), labwc/polkit XML, installer YAML and module sequence, translations, theme generator, duplicate packages. |
-| `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol. |
-| `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
+| `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol, sunrise/sunset, conversions, clipboard history, OCR language choice, weather parsing, Spotlight providers, Night Light schedule. |
+| `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, tries conversions, emoji, clipboard history and project search, previews code, a PDF and a picture with Quick Look, opens the overview, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
 | `make test` | Docker | All three above. |
-| `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. |
-| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
+| `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
+| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
 
 Run `make test && make iso && make test-image && make test-boot` before every release. The
 future GitHub release workflow will run the same targets.
@@ -732,8 +940,10 @@ future GitHub release workflow will run the same targets.
 
 - **Settings → Desktop & Dock**: layout presets and every panel, dock, window and launcher
   option.
-- **Settings → Appearance**: light/dark, accent color, background (add your own), icons,
-  pointer and size, animations, fonts, scaling, anti-aliasing, hinting, night light.
+- **Settings → Appearance**: light, dark or automatic (sunset/sunrise), accent color,
+  background (dynamic or a picture, add your own), icons, pointer and size, animations,
+  fonts, scaling, anti-aliasing, hinting, Night Light and its schedule.
+- **Settings → Multitasking**: workspaces, hot corners, window snapping.
 - **Config files** (safe to edit; Settings keeps your changes):
   - `~/.config/labwc/rc.xml`: compositor, keybindings, input devices (see the
     [labwc docs](https://labwc.github.io/labwc-config.5.html));
@@ -787,12 +997,13 @@ screenshots, features, download and the install guide.
 | `desktop/aurora/files/` | Files app. |
 | `desktop/aurora/devhub/` | Dev Hub and its catalog (`recipes.py`). |
 | `desktop/aurora/greeter/` | Login screen and greetd client. |
+| `desktop/aurora/{quicklook,clipboard,convert,ocr,sun,weather}.py` | Quick Look, clipboard history, conversions, OCR, sun position, weather. |
 | `desktop/aurora/{look,labwcconf,apps,settings,i18n}.py` | Shared helpers. |
 | `desktop/bin/`, `desktop/libexec/` | Launchers and the privileged helper. |
 | `desktop/data/` | labwc config, stylesheets, window themes (generated), schemas, `.desktop` files, icons. |
 | `desktop/protocols/` | Wayland protocol XML (bindings generated at build time). |
 | `desktop/dev/` | Headless development and test environment. |
-| `branding/` | Logo and boot animation, wallpapers, Plymouth, GRUB and installer themes: all generated by code. |
+| `branding/` | Logo and boot animation, wallpapers (including the dynamic set), session sounds, Plymouth, GRUB and installer themes: all generated by code. |
 | `tests/` | Static, unit, smoke, image and boot tests. |
 | `docs/` | The website (GitHub Pages) and the images used by this README. |
 | `tools/` | Developer helpers (`serve-site.py`). |
@@ -805,10 +1016,16 @@ screenshots, features, download and the install guide.
 - **Aurora packages and repository.** The desktop is installed as files. *Planned:* package
   it as `aurora-desktop` / `aurora-settings` `.deb`s and host an Aurora apt repository, so
   installed systems receive desktop updates like any other package.
-- **System tray (StatusNotifierItem).** Apps with tray icons (chat clients, cloud sync)
-  don't show them yet. *Planned:* a tray area in the menu bar.
-- **Translations of Aurora's own apps.** The system, Firefox and LibreOffice are
-  translated. Aurora's apps are ready for gettext but still need translators.
+- **Translations of Aurora's own apps.** The system, Firefox and LibreOffice come in 20
+  languages. Aurora's own apps are complete in English and Italian; other languages need
+  translators (see [Languages](#languages)).
+- **Overview thumbnails.** labwc 0.8 doesn't let other programs capture single windows,
+  so the overview shows app icons and titles. *Planned:* live thumbnails once labwc
+  supports the `ext-image-capture-source` protocol.
+- **Snapshots need btrfs.** On ext4 or xfs installs there is no automatic snapshot or
+  boot-menu rollback (Timeshift can still make rsync copies).
+- **Fingerprint** unlocks sudo and admin prompts, not the login or lock screen (on
+  purpose, see [Fingerprint](#session-services)).
 - **Window blur.** labwc has no background blur, so the panels use translucency instead.
 - **RAID creation in the installer.** Calamares can install onto existing RAID/LVM but
   cannot create RAID arrays.
