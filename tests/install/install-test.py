@@ -165,16 +165,19 @@ def install(args, disk, out, results):
         vm.keys("alt-i")           # "Install now" in the confirmation dialog
         time.sleep(10)
         vm.shot("installing")
+        # Calamares logs every job; the last one unmounts the target. A failure
+        # at any point shows up as onInstallationFailed.
         done = False
         deadline = time.time() + args.timeout
+        log_cmd = "cat /root/.cache/calamares/session.log 2>/dev/null"
         while time.time() < deadline:
-            code, out_ = vm.run("grep -h -E 'Installation (complete|failed)|JobQueue.*(done|failed)|"
-                                "Finished\\. Success' /root/.cache/calamares/session.log "
-                                "/tmp/calamares.log 2>/dev/null | tail -3")
-            if "fail" in out_.lower():
+            _code, log = vm.run(log_cmd)
+            if "onInstallationFailed" in log:
                 break
-            if out_.strip():
-                done = True
+            if 'Starting job "umount"' in log or "Starting job \"Unmount" in log:
+                time.sleep(20)
+                _code, log = vm.run(log_cmd)
+                done = "onInstallationFailed" not in log
                 break
             code, _o = vm.run("pgrep -x calamares")
             if code != 0:
@@ -185,7 +188,9 @@ def install(args, disk, out, results):
         _code, log = vm.run("cat /root/.cache/calamares/session.log 2>/dev/null | tail -400")
         with open(os.path.join(out, f"calamares-{args.firmware}.log"), "w") as f:
             f.write(log)
-        results.append(("installer finished", done, ""))
+        failure = next((ln.split("ERROR:", 1)[1].strip() for ln in log.splitlines()
+                        if "ERROR: Installation failed" in ln), "")
+        results.append(("installer finished", done, failure))
         return done
     finally:
         vm.stop()

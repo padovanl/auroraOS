@@ -3,12 +3,12 @@
 
 Usage: generate.py OUTPUT_DIR   → startup.wav, shutdown.wav
 
-The idea is a sky lighting up. Startup: a warm pad (D♭ major 9) swells in
-voice by voice, a soft tone glides up an octave like a ribbon of light, and
-high "sparkles" twinkle over it. Shutdown is the same palette the other way
-round: a short descending arpeggio over a pad that settles and fades.
-Everything goes through a synthetic stereo reverb (convolution with decaying
-noise), for the airy, far-away feel. 48 kHz, 16-bit stereo.
+Warm and organic rather than electronic: a marimba (modal synthesis of a
+wooden bar, with the soft click of the mallet) plays a short motif in D major
+over a round bass note, then settles on a chord held by a soft felt pad.
+Startup rises and resolves; shutdown walks back down and fades. A short room
+reverb gives it space without making it sound far away.
+48 kHz, 16-bit stereo.
 """
 
 import os
@@ -22,88 +22,70 @@ rng = np.random.default_rng(2026)
 
 
 def note(name):
-    """'Db4' → frequency in Hz."""
-    names = {"C": 0, "Db": 1, "D": 2, "Eb": 3, "E": 4, "F": 5, "Gb": 6, "G": 7,
-             "Ab": 8, "A": 9, "Bb": 10, "B": 11}
+    """'D4' / 'F#5' → frequency in Hz."""
+    names = {"C": 0, "C#": 1, "D": 2, "D#": 3, "E": 4, "F": 5, "F#": 6, "G": 7,
+             "G#": 8, "A": 9, "A#": 10, "B": 11}
     pitch, octave = name[:-1], int(name[-1])
     return 440.0 * 2 ** ((names[pitch] + 12 * (octave + 1) - 69) / 12)
 
 
-def envelope(n, attack, release, start=0.0, sustain_end=None):
-    """Smooth attack (raised cosine), hold, then an exponential release."""
-    t = np.arange(n) / RATE
-    env = np.zeros(n)
-    a0, a1 = start, start + attack
-    rise = (t >= a0) & (t < a1)
-    env[rise] = 0.5 - 0.5 * np.cos(np.pi * (t[rise] - a0) / attack)
-    hold_end = sustain_end if sustain_end is not None else a1
-    env[(t >= a1) & (t < hold_end)] = 1.0
-    tail = t >= hold_end
-    env[tail] = np.exp(-(t[tail] - hold_end) / release)
-    return env
+def marimba(freq, length, velocity=1.0):
+    """A struck wooden bar: tuned partials (1 : 3.93 : 9.2) that die out fast,
+    the upper ones faster, plus a short filtered noise click for the mallet."""
+    t = np.arange(int(length * RATE)) / RATE
+    tone = np.zeros_like(t)
+    for ratio, amp, decay in ((1.0, 1.0, 0.55), (3.93, 0.32 * velocity, 0.09),
+                              (9.2, 0.08 * velocity, 0.03)):
+        if freq * ratio < RATE / 2.2:
+            tone += amp * np.sin(2 * np.pi * freq * ratio * t) * np.exp(-t / decay)
+    # Resonator tube: a touch of the fundamental that rings a little longer.
+    tone += 0.25 * np.sin(2 * np.pi * freq * t) * np.exp(-t / 0.9)
+    click = rng.standard_normal(len(t)) * np.exp(-t / 0.0025)
+    click = np.convolve(click, np.ones(12) / 12, mode="same") * 0.35 * velocity
+    attack = 1 - np.exp(-t / 0.0015)
+    return (tone + click) * attack * velocity
 
 
-def pad_voice(freq, n, detune_cents=7):
-    """Three slightly detuned soft oscillators: a wide, shimmering tone."""
-    t = np.arange(n) / RATE
-    out = np.zeros(n)
-    for cents in (-detune_cents, 0, detune_cents):
-        f = freq * 2 ** (cents / 1200)
-        phase = rng.random() * 2 * np.pi
-        # Sine plus a little 2nd and 3rd harmonic: warm, not buzzy.
-        out += (np.sin(2 * np.pi * f * t + phase) + 0.18 * np.sin(4 * np.pi * f * t + phase)
-                + 0.06 * np.sin(6 * np.pi * f * t + phase))
-    # Slow tremolo, like light rippling.
-    return out / 3 * (1 + 0.08 * np.sin(2 * np.pi * (0.35 + rng.random() * 0.3) * t))
+def felt_pad(freqs, length, attack, hold, release):
+    """A soft sustained chord (a few warm harmonics, gently swelling)."""
+    t = np.arange(int(length * RATE)) / RATE
+    out = np.zeros_like(t)
+    for f in freqs:
+        for cents in (-4, 4):
+            ff = f * 2 ** (cents / 1200)
+            out += (np.sin(2 * np.pi * ff * t) + 0.22 * np.sin(4 * np.pi * ff * t)
+                    + 0.07 * np.sin(6 * np.pi * ff * t))
+    env = np.clip(t / attack, 0, 1) ** 2
+    tail = t > attack + hold
+    env[tail] *= np.exp(-(t[tail] - attack - hold) / release)
+    return out / (2 * len(freqs)) * env
 
 
-def glide(f0, f1, n, start, length):
-    """A pure tone sliding from f0 to f1 with gentle vibrato."""
-    t = np.arange(n) / RATE
-    k = np.clip((t - start) / length, 0, 1)
-    k = k * k * (3 - 2 * k)                       # smoothstep
-    freq = f0 * (f1 / f0) ** k * (1 + 0.004 * np.sin(2 * np.pi * 5.2 * t))
-    phase = 2 * np.pi * np.cumsum(freq) / RATE
-    return np.sin(phase)
-
-
-def sparkles(n, count, start, end, notes):
-    """Short bell pings high up, scattered in time and across the stereo field."""
-    left, right = np.zeros(n), np.zeros(n)
-    for _ in range(count):
-        at = start + (end - start) * rng.random() ** 0.8
-        s = int(at * RATE)
-        length = int(0.6 * RATE)
-        if s + length >= n:
-            continue
-        t = np.arange(length) / RATE
-        f = notes[rng.integers(len(notes))] * (2 if rng.random() < 0.4 else 1)
-        ping = (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * f * 2.76 * t)) \
-            * np.exp(-t / 0.16) * (1 - np.exp(-t / 0.004))
-        pan = rng.uniform(-0.9, 0.9)
-        gain = rng.uniform(0.25, 0.6)
-        left[s:s + length] += ping * gain * (1 - pan) / 2
-        right[s:s + length] += ping * gain * (1 + pan) / 2
-    return left, right
-
-
-def reverb(left, right, seconds=2.4, decay=0.75, wet=0.38):
-    """Convolution with exponentially decaying noise (different per side)."""
+def room(left, right, seconds=1.0, decay=0.35, wet=0.16):
+    """A short, dark room reverb (convolution with decaying noise)."""
     n_ir = int(seconds * RATE)
     t = np.arange(n_ir) / RATE
     out = []
     for sig in (left, right):
         ir = rng.standard_normal(n_ir) * np.exp(-t / (decay / 3))
-        # Darken the tail: a running average acts as a gentle low-pass.
-        ir = np.convolve(ir, np.ones(24) / 24, mode="same")
+        ir = np.convolve(ir, np.ones(40) / 40, mode="same")
+        ir[: int(0.012 * RATE)] = 0                    # a little pre-delay
         ir /= np.sqrt(np.sum(ir ** 2))
         size = 1 << int(np.ceil(np.log2(len(sig) + n_ir)))
         conv = np.fft.irfft(np.fft.rfft(sig, size) * np.fft.rfft(ir, size), size)[:len(sig)]
-        out.append(sig * (1 - wet) + conv * wet * 1.4)
+        out.append(sig * (1 - wet) + conv * wet * 1.2)
     return out
 
 
-def finish(left, right, fade_s=0.5, peak=0.72):
+def place(buf_l, buf_r, sound, at, pan):
+    s = int(at * RATE)
+    end = min(len(buf_l), s + len(sound))
+    part = sound[: end - s]
+    buf_l[s:end] += part * (1 - pan) / 2
+    buf_r[s:end] += part * (1 + pan) / 2
+
+
+def finish(left, right, fade_s, peak):
     n = len(left)
     fade = np.ones(n)
     f = int(fade_s * RATE)
@@ -114,59 +96,39 @@ def finish(left, right, fade_s=0.5, peak=0.72):
 
 
 def startup():
-    length = 4.6
-    n = int(length * RATE)
+    n = int(2.8 * RATE)
     left, right = np.zeros(n), np.zeros(n)
-    # The sky fills in from the bottom: each voice enters a little later.
-    chord = [("Db3", 0.00, -0.1), ("Ab3", 0.18, 0.25), ("F4", 0.36, -0.3),
-             ("C5", 0.54, 0.35), ("Eb5", 0.72, -0.2)]
-    for name, start, pan in chord:
-        env = envelope(n, attack=1.1, release=0.9, start=start, sustain_end=2.6)
-        v = pad_voice(note(name), n) * env * 0.2
-        left += v * (1 - pan) / 2
-        right += v * (1 + pan) / 2
-    # The ribbon: a soft tone rising an octave, Ab4 → Ab5.
-    rib = glide(note("Ab4"), note("Ab5"), n, start=0.5, length=1.6) \
-        * envelope(n, attack=0.7, release=0.6, start=0.4, sustain_end=2.2) * 0.16
-    left += rib * 0.45
-    right += rib * 0.55
-    # Stars coming out.
-    sl, sr = sparkles(n, 26, 0.6, 3.0, [note(x) for x in ("Db6", "Eb6", "F6", "Ab6", "Bb6")])
-    left += sl * 0.22
-    right += sr * 0.22
-    left, right = reverb(left, right)
-    return finish(left, right, fade_s=0.9)
+    # A round bass note on the downbeat…
+    place(left, right, marimba(note("D3"), 2.0, 0.9) * 0.9, 0.0, 0.0)
+    # …a rising motif, then two notes that land on the chord.
+    motif = [("D4", 0.00, -0.3, 0.8), ("A4", 0.13, 0.2, 0.75), ("F#5", 0.26, -0.15, 0.8),
+             ("E5", 0.42, 0.25, 0.7), ("A5", 0.58, -0.05, 0.9)]
+    for name, at, pan, vel in motif:
+        place(left, right, marimba(note(name), 1.8, vel) * 0.55, at, pan)
+    # The chord everything resolves to, struck softly together, with a felt pad.
+    for name, pan in (("D5", -0.35), ("F#5", 0.35), ("A5", 0.0)):
+        place(left, right, marimba(note(name), 2.0, 0.55) * 0.35, 0.60, pan)
+    pad = felt_pad([note("D4"), note("F#4"), note("A4"), note("D5")], 2.2,
+                   attack=0.35, hold=0.5, release=0.5) * 0.18
+    place(left, right, pad, 0.55, 0.0)
+    left, right = room(left, right)
+    return finish(left, right, fade_s=0.5, peak=0.7)
 
 
 def shutdown():
-    length = 3.2
-    n = int(length * RATE)
+    n = int(2.3 * RATE)
     left, right = np.zeros(n), np.zeros(n)
-    # A pad that settles and fades…
-    for name, pan in (("Db3", 0.0), ("Ab3", 0.2), ("F4", -0.2)):
-        env = envelope(n, attack=0.35, release=0.7, start=0.0, sustain_end=1.0)
-        v = pad_voice(note(name), n) * env * 0.2
-        left += v * (1 - pan) / 2
-        right += v * (1 + pan) / 2
-    # …under a descending arpeggio of soft bells, like lights going out.
-    t = np.arange(n) / RATE
-    for i, name in enumerate(("Eb5", "C5", "Ab4", "F4", "Db4")):
-        start = 0.05 + i * 0.16
-        s = int(start * RATE)
-        tt = t[: n - s]
-        f = note(name)
-        bell = (np.sin(2 * np.pi * f * tt) + 0.25 * np.sin(2 * np.pi * f * 2 * tt)) \
-            * np.exp(-tt / 0.55) * (1 - np.exp(-tt / 0.01)) * 0.22
-        pan = 0.4 - i * 0.2
-        left[s:] += bell * (1 - pan) / 2
-        right[s:] += bell * (1 + pan) / 2
-    # The ribbon sinks back: Ab5 → Ab4.
-    rib = glide(note("Ab5"), note("Ab4"), n, start=0.1, length=1.2) \
-        * envelope(n, attack=0.25, release=0.5, start=0.0, sustain_end=0.9) * 0.1
-    left += rib * 0.5
-    right += rib * 0.5
-    left, right = reverb(left, right, decay=0.6)
-    return finish(left, right, fade_s=0.8, peak=0.62)
+    motif = [("A5", 0.00, 0.3, 0.7), ("F#5", 0.14, -0.2, 0.65), ("D5", 0.28, 0.15, 0.62),
+             ("A4", 0.44, -0.1, 0.6)]
+    for name, at, pan, vel in motif:
+        place(left, right, marimba(note(name), 1.6, vel) * 0.5, at, pan)
+    place(left, right, marimba(note("D4"), 1.8, 0.55) * 0.5, 0.62, 0.0)
+    place(left, right, marimba(note("D3"), 1.7, 0.6) * 0.6, 0.62, 0.0)
+    pad = felt_pad([note("D4"), note("A4"), note("D5")], 1.7, attack=0.25, hold=0.2,
+                   release=0.45) * 0.14
+    place(left, right, pad, 0.55, 0.0)
+    left, right = room(left, right, decay=0.3)
+    return finish(left, right, fade_s=0.6, peak=0.6)
 
 
 def write(path, data):
