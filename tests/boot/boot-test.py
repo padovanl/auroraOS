@@ -30,7 +30,7 @@ CHECKS = [
     ("greetd running", "systemctl is-active greetd"),
     ("live user created", "id aurora"),
     ("compositor running", "pgrep -x labwc"),
-    ("aurora shell running", "pgrep -f /usr/bin/aurora-shell"),
+    ("aurora shell running", "pgrep -f [/]usr/bin/aurora-shell"),
     ("no shell exceptions",
      "! grep -q Traceback /run/user/$(id -u aurora)/aurora-shell.log"),
     ("no theme CSS errors",
@@ -100,7 +100,7 @@ MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
 # gtk4-layer-shell preload the shell removes before starting apps: apps start
 # the way they would from the dock or Launchpad.
 USER_ENV = ("runuser -u aurora -- bash -c 'while IFS= read -r -d \"\" kv; do export \"$kv\"; "
-            "done < /proc/$(pgrep -o -u aurora -f /usr/bin/aurora-shell)/environ; "
+            "done < /proc/$(pgrep -o -u aurora -f [/]usr/bin/aurora-shell)/environ; "
             "unset LD_PRELOAD AURORA_SHELL_PRELOADED; exec \"$@\"' _ ")
 
 
@@ -214,8 +214,11 @@ def main():
         results.append(("guest agent answered", up, f"{boot_time:.0f}s"))
         if up:
             # Give the session a moment to start after the agent comes up.
-            code, _ = agent.run("for i in $(seq 60); do pgrep -f /usr/bin/aurora-shell && "
-                                "exit 0; sleep 1; done; exit 1", timeout=70)
+            # Wait for the end of the boot and for the shell (the [/] keeps pgrep
+            # from matching this very command line).
+            code, _ = agent.run("for i in $(seq 120); do systemctl is-active -q graphical.target && "
+                                "pgrep -f [/]usr/bin/aurora-shell && exit 0; sleep 1; done; exit 1",
+                                timeout=130)
             time.sleep(5)
             for desc, command in CHECKS:
                 code, out = agent.run(command)

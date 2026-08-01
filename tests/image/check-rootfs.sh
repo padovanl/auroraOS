@@ -89,6 +89,7 @@ expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/s
 echo "== installer"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"
 expect "branding logo rendered" test -s "$ROOTFS/etc/calamares/branding/aurora/logo.png"
+expect "password dictionary for the installer's strength check" sh -c "ls '$ROOTFS'/var/cache/cracklib/cracklib_dict.pwd*"
 expect "aurora-finalize module" test -f "$ROOTFS/usr/lib/calamares/modules/aurora-finalize/main.py"
 expect "Install Debian launcher hidden" test ! -e "$ROOTFS/usr/share/applications/calamares-install-debian.desktop"
 

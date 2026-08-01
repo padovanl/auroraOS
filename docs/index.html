@@ -72,18 +72,65 @@
   <div class="feature reveal">
     <div class="feature-text">
       <h3>Spotlight, for everything</h3>
-      <p>Tap <kbd>Super</kbd> and start typing. Apps, settings, recent files, a calculator,
-        terminal commands (<code>&gt; htop</code>) and web search all live in one box. Enter opens
-        the top result.</p>
+      <p>Tap <kbd>Super</kbd> and start typing. Apps, settings, recent files, your git projects,
+        a calculator, terminal commands (<code>&gt; htop</code>) and web search all live in one box.
+        Enter opens the top result.</p>
       <ul class="ticks">
         <li>Finds settings by what they do: type “wifi”, “dark”, “keyboard”</li>
-        <li>Does math as you type, and <kbd>Enter</kbd> copies the result</li>
-        <li>Remembers nothing about you, and sends nothing anywhere</li>
+        <li>Math and conversions as you type: <code>12*(3+4)</code>, <code>10 km in mi</code>,
+          <code>100 usd in eur</code></li>
+        <li>Emoji with <code>:rocket</code>, and your clipboard history with <kbd>Super</kbd>+<kbd>V</kbd></li>
+        <li>Everything runs on your computer. Only currency rates are fetched, from the European
+          Central Bank.</li>
       </ul>
     </div>
     <div class="feature-media stack">
       <img src="screenshots/spotlight-search.png" alt="Spotlight search showing apps and settings" data-zoom>
-      <img src="screenshots/spotlight-math.png" alt="Spotlight calculating 12*(3+4)/2" data-zoom>
+      <img src="screenshots/spotlight-convert.png" alt="Spotlight converting 10 km to miles" data-zoom>
+    </div>
+  </div>
+
+  <div class="feature reverse reveal">
+    <div class="feature-text">
+      <h3>Quick Look</h3>
+      <p>Select a file and press <kbd>Space</kbd>. Photos, videos, PDFs and source code open
+        instantly in a preview, with syntax highlighting for code. The arrow keys move to the next
+        file, and <kbd>Space</kbd> closes the preview.</p>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/quicklook.png" alt="Quick Look previewing a Python file" data-zoom>
+    </div>
+  </div>
+
+  <div class="feature reveal">
+    <div class="feature-text">
+      <h3>All your windows at a glance</h3>
+      <p>Press <kbd>Super</kbd>+<kbd>W</kbd>, or push the pointer into the bottom-left corner, and
+        every open window lays out in front of you. Type to filter, click to jump. The bottom-right
+        corner shows the desktop. Pick what each corner does in Settings.</p>
+      <ul class="ticks">
+        <li>Snap windows to halves, quarters and thirds from the keyboard</li>
+        <li>Or hold <kbd>Super</kbd> while dragging and drop them into place</li>
+      </ul>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/overview.png" alt="The overview showing every open window" data-zoom>
+    </div>
+  </div>
+
+  <div class="feature reverse reveal">
+    <div class="feature-text">
+      <h3>A desktop that follows the sun</h3>
+      <p>The Aurora landscape changes with the time of day, from dawn to a starry night, and fades
+        gently from one to the next. Set the style to <em>Auto</em> and Aurora goes dark at sunset
+        and light again at sunrise. Night Light warms the screen in the evening.</p>
+      <ul class="ticks">
+        <li>Sunrise and sunset come from your time zone, no location service involved</li>
+        <li>The login and lock screens follow along</li>
+      </ul>
+    </div>
+    <div class="feature-media">
+      <img src="screenshots/dynamic-wallpaper.jpg" alt="The Aurora wallpaper at dawn, day, dusk and night" data-zoom>
     </div>
   </div>
 
@@ -222,7 +269,13 @@
     <div class="card reveal"><h4>🔐 A lock screen you'll like</h4><p>A big clock over your wallpaper, a clean password field, and automatic locking when you step away.</p></div>
     <div class="card reveal"><h4>🔒 Secure by default</h4><p>Firewall on, automatic security updates, full-disk encryption in the installer, Secure Boot on installed UEFI systems, no telemetry.</p></div>
     <div class="card reveal"><h4>💻 Runs on your hardware</h4><p>Firmware for Intel, AMD, Realtek, Broadcom and MediaTek; Wi-Fi, Bluetooth, fingerprint readers, touchpads; guest tools for QEMU, VMware and Hyper-V.</p></div>
-    <div class="card reveal"><h4>♻️ Safe to experiment</h4><p>System snapshots with Timeshift, backups with Déjà Dup, compressed RAM swap, and Flatpak apps that never touch the system.</p></div>
+    <div class="card reveal"><h4>⏪ Undo a bad update</h4><p>Aurora takes a system snapshot before every update. If something breaks, pick <em>Aurora OS snapshots</em> in the boot menu and start yesterday's system. Your files are never touched.</p></div>
+    <div class="card reveal"><h4>📝 Text from any picture</h4><p>Screenshots offer <em>Annotate</em> and <em>Copy Text</em>. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any part of the screen, offline, in 18 languages.</p></div>
+    <div class="card reveal"><h4>📱 Your phone, connected</h4><p>With KDE Connect your Android phone or iPhone shows its notifications on the desktop, and you can share files and the clipboard. It's one switch in Settings.</p></div>
+    <div class="card reveal"><h4>☁️ Weather and calendar</h4><p>Click the clock for your calendar, notifications and today's weather with the next hours. No account needed.</p></div>
+    <div class="card reveal"><h4>👆 Fingerprint</h4><p>Set up your finger in Settings → Users and use it instead of the password for <code>sudo</code> and admin prompts.</p></div>
+    <div class="card reveal"><h4>🎶 It sounds like Aurora</h4><p>A soft, shimmering sound when you log in and a gentle one when you shut down. Both are original, and one switch turns them off.</p></div>
+    <div class="card reveal"><h4>♻️ Safe to experiment</h4><p>Backups with Déjà Dup, compressed RAM swap, and Flatpak apps that never touch the system.</p></div>
   </div>
 </section>
 
@@ -300,8 +353,8 @@
       <p>Pick your language, your location on the map and your keyboard. Then choose how to use the
         disk: <em>erase</em> it, install <em>alongside</em> Windows or another Linux, or
         <em>partition manually</em>, with optional encryption. Finally create your user and
-        choose whether to <em>log in automatically</em>. Installation takes a few minutes and works
-        offline.</p>
+        choose whether to <em>log in automatically</em>. Keep the default btrfs file system to get
+        automatic snapshots. Installation takes a few minutes and works offline.</p>
     </li>
     <li class="reveal">
       <h3>Restart and enjoy</h3>
@@ -332,6 +385,7 @@
         <li>PipeWire · NetworkManager · BlueZ</li>
         <li>Calamares · GRUB · Plymouth</li>
         <li>Flatpak + apt · ufw · unattended-upgrades</li>
+        <li>btrfs · Timeshift · grub-btrfs</li>
       </ul>
     </div>
   </div>
@@ -357,6 +411,14 @@
   <details class="reveal"><summary>Can I install apps from Flathub, or .deb files?</summary>
     <p>Both. Flathub is enabled in App Center out of the box, and you can install any Debian package
       or a vendor's <code>.deb</code> with a double-click or <code>apt</code>.</p></details>
+  <details class="reveal"><summary>What if an update breaks something?</summary>
+    <p>Restart and choose <strong>Aurora OS snapshots</strong> in the boot menu. You'll find a
+      snapshot from right before every update. Start it, check that all is well, then make it permanent
+      with one click in Timeshift. This needs the btrfs file system, which is the installer's default.</p></details>
+  <details class="reveal"><summary>Does Aurora send any data anywhere?</summary>
+    <p>No telemetry, ever. The only requests the desktop makes on its own are the weather in the
+      calendar (only your time zone's main city is sent, and it can be turned off), today's exchange
+      rates when you type a currency conversion, and update checks with Debian's mirrors.</p></details>
   <details class="reveal"><summary>Will it run next to Windows?</summary>
     <p>Yes. Choose <em>Install alongside</em> in the installer and drag the divider to share the disk.
       A boot menu lets you pick the system at startup.</p></details>

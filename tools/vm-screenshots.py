@@ -42,8 +42,8 @@ STEPS = [
     ("desktop", None, 2),
     (None, "aurora-shell search disp", 2),
     ("spotlight-search", None, 0),
-    (None, "aurora-shell search '12*(3+4)/2'", 2),
-    ("spotlight-math", None, 0),
+    (None, "aurora-shell search '10 km in mi'", 2),
+    ("spotlight-convert", None, 0),
     (None, "aurora-shell launcher spotlight; aurora-shell launcher grid", 3),
     ("launchpad", None, 0),
     (None, "aurora-shell launcher grid; aurora-shell quick-settings", 3),
@@ -59,6 +59,14 @@ STEPS = [
     ("devhub", None, 0),
     (None, "pkill -f aurora-devhub; gio launch /usr/share/applications/org.gnome.Ptyxis.desktop", 5),
     ("terminal", None, 0),
+    (None, "gio launch /usr/share/applications/org.gnome.TextEditor.desktop; "
+           "gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
+    (None, "aurora-shell overview", 3),
+    ("overview", None, 0),
+    (None, "aurora-shell overview; pkill -f gnome-text-editor; "
+           "aurora-quicklook /usr/lib/aurora/aurora/sun.py >/dev/null 2>&1 &", 4),
+    ("quicklook", None, 0),
+    (None, "pkill -f aurora-quicklook", 1),
     (None, "pkill -f ptyxis; gio launch /usr/share/applications/org.aurora.Files.desktop", 4),
     (None, PRESET.format(name="studio"), 4),
     ("layout-studio", None, 0),
@@ -98,7 +106,7 @@ def main():
             except Exception:  # noqa: BLE001 - keep polling until the guest answers
                 agent.sock = None
                 time.sleep(3)
-        agent.run("for i in $(seq 90); do pgrep -f /usr/bin/aurora-shell && exit 0; sleep 1; done",
+        agent.run("for i in $(seq 90); do pgrep -f [/]usr/bin/aurora-shell && exit 0; sleep 1; done",
                   timeout=100)
         time.sleep(8)
         for name, command, wait in STEPS:

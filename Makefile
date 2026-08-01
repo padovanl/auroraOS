@@ -10,7 +10,7 @@ DOCKER_RUN = docker run --rm --privileged \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot dev-image screenshots site vm-screenshots
+	test test-static test-unit test-smoke test-image test-boot test-install dev-image screenshots site vm-screenshots
 
 all: iso
 
@@ -81,6 +81,12 @@ test-image: builder
 test-boot:
 	python3 tests/boot/boot-test.py $(ISO) --firmware bios --out work/boot-test
 	python3 tests/boot/boot-test.py $(ISO) --firmware uefi --out work/boot-test
+
+# Installs the ISO onto an empty virtual disk with the real installer (driven by
+# key presses), then boots the installed system and checks it (~20 min each).
+test-install:
+	python3 tests/install/install-test.py $(ISO) --firmware bios --out work/install-test
+	python3 tests/install/install-test.py $(ISO) --firmware uefi --out work/install-test
 
 clean:
 	$(DOCKER_RUN) rm -rf /work/rootfs /work/iso

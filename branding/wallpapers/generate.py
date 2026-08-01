@@ -156,14 +156,18 @@ def render(name, width, height, out_dir):
     ctx.rectangle(0, h * 0.62, w, h * 0.3)
     ctx.fill()
 
+    # Rolling hills: each ridge is a sum of slow waves, drawn as a dense
+    # polyline so its outline is smooth (no sharp peaks).
     ridge_rng = np.random.default_rng(11)
     for (color, base, rough) in ((ridges[0], 0.80, 0.045), (ridges[1], 0.885, 0.028)):
+        xs = np.linspace(0, 1, max(64, w // 4))
+        profile = np.zeros_like(xs)
+        for freq, amp in ((1.3, 1.0), (2.9, 0.55), (5.3, 0.28), (9.1, 0.12)):
+            profile += amp * np.sin(2 * math.pi * (freq * xs + ridge_rng.random()))
+        profile /= 1.95
         ctx.move_to(0, h)
-        x = 0.0
-        ctx.line_to(0, base * h)
-        while x < w:
-            x += w * (0.025 + ridge_rng.random() * 0.045)
-            ctx.line_to(x, (base + ridge_rng.uniform(-rough, rough)) * h)
+        for x, y in zip(xs, profile):
+            ctx.line_to(x * w, (base + rough * y) * h)
         ctx.line_to(w, h)
         ctx.close_path()
         ctx.set_source_rgb(*color)

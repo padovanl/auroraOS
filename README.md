@@ -874,6 +874,10 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 - **Boot:** QEMU boots the real ISO through GRUB, with BIOS and with UEFI (OVMF). The
   **QEMU guest agent** inside the image lets the test run checks in the live system and
   launch every default app with the real session environment.
+- **Install:** the real installer, driven by key presses sent through QEMU's monitor (no
+  test hooks inside the installer), installs onto an empty virtual disk. The installed
+  system then boots on its own and is checked: user, login, btrfs layout, snapshots and
+  the snapshot boot menu.
 - **What the tests have already caught:**
   - a heap-corrupting GRUB font on BIOS;
   - a missing Docker CLI;
@@ -885,6 +889,8 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   - a theme built for a newer GTK filling logs with CSS errors;
   - the shell passing its `gtk4-layer-shell` preload on to every app it started, which
     crashed GTK 3 apps (Firefox, LibreOffice, Geary) launched from the dock.
+  - the installer's "strong password" check failing every password, because the
+    cracklib dictionary wasn't installed.
 
 ### Website
 - **Choice:** hand-written HTML, CSS and a few lines of JavaScript in `docs/`, served by
@@ -932,8 +938,10 @@ major release.
 | `make test` | Docker | All three above. |
 | `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
 | `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
+| `make test-install` | ISO + QEMU/KVM + OVMF | **Installs Aurora for real**, once with BIOS and once with UEFI. It boots the ISO with an empty 24 GB disk, starts the installer and drives it with key presses sent through QEMU, just like a person at the keyboard: welcome, location, keyboard, "Erase disk" on btrfs, a user with a strong password, Install. Then it boots the installed disk alone and checks the user, the login screen, the live user and live-only files being gone, the btrfs subvolumes and compression, Timeshift's configuration, the "Fresh install" snapshot, a "Before: apt" snapshot after installing a package, and the snapshots entry in the boot menu. Screenshots of every installer step, and of GRUB's snapshot menu, are kept in `work/install-test/`. |
 
-Run `make test && make iso && make test-image && make test-boot` before every release. The
+Run `make test && make iso && make test-image && make test-boot && make test-install` before
+every release. The
 future GitHub release workflow will run the same targets.
 
 ## Customizing
