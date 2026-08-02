@@ -69,6 +69,14 @@ expect "grub-btrfsd not enabled on the live system" sh -c "! chroot '$ROOTFS' sy
 expect "installer defaults to btrfs" grep -q 'defaultFileSystemType: "btrfs"' "$ROOTFS/etc/calamares/modules/partition.conf"
 expect "installer btrfs subvolumes" grep -q 'subvolume: /@home' "$ROOTFS/etc/calamares/modules/mount.conf"
 
+echo "== Aurora packages"
+expect "aurora-desktop installed as a package" chroot "$ROOTFS" dpkg -s aurora-desktop
+expect "aurora-artwork installed as a package" chroot "$ROOTFS" dpkg -s aurora-artwork
+expect "aurora-desktop owns the shell" chroot "$ROOTFS" dpkg -S /usr/bin/aurora-shell
+expect "Aurora archive key" test -s "$ROOTFS/usr/share/keyrings/aurora-archive-keyring.gpg"
+expect "Aurora apt source (off until published)" grep -q '^Enabled: no' "$ROOTFS/etc/apt/sources.list.d/aurora.sources"
+expect "repository check timer enabled" chroot "$ROOTFS" systemctl is-enabled aurora-repo-check.timer
+
 echo "== default apps (config/apps.manifest)"
 while IFS='|' read -r cat name id launch; do
     id=$(echo $id); name=$(echo $name)

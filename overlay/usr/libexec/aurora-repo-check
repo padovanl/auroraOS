@@ -1,0 +1,12 @@
+#!/bin/sh
+# Switch on Aurora's apt source once the repository is published, so that
+# `apt update` never fails on a repository that doesn't exist yet.
+# Run daily by aurora-repo-check.timer.
+src=/etc/apt/sources.list.d/aurora.sources
+url=https://padovanl.github.io/auroraOS/apt
+[ -f "$src" ] || exit 0
+grep -q '^Enabled: no' "$src" || exit 0
+if curl -fsSL --max-time 20 -o /dev/null "$url/dists/trixie/InRelease"; then
+    sed -i '/^Enabled: no/d' "$src"
+    echo "aurora-repo-check: Aurora repository reachable, source enabled"
+fi

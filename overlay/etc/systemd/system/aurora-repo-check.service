@@ -1,0 +1,8 @@
+[Unit]
+Description=Aurora OS: enable the Aurora apt repository once it is online
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/aurora-repo-check

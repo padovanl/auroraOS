@@ -5,12 +5,14 @@ WORKVOL   := $(CURDIR)/work
 OUTDIR    := $(CURDIR)/out
 VERSION   := $(shell . config/aurora.conf && echo $$AURORA_VERSION)
 ISO       := $(OUTDIR)/aurora-os-$(VERSION)-amd64.iso
-DOCKER_RUN = docker run --rm --privileged \
+# Package version: release.commit-count, e.g. 0.1.47 (newer builds upgrade older ones).
+PKG_VERSION := $(VERSION).$(shell git rev-list --count HEAD 2>/dev/null || echo 0)
+DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 	-v $(CURDIR):/src:ro -v $(WORKVOL):/work -v $(OUTDIR):/out \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot test-install dev-image screenshots site vm-screenshots
+	test test-static test-unit test-smoke test-image test-boot test-install dev-image screenshots site vm-screenshots debs repo
 
 all: iso
 
@@ -64,6 +66,15 @@ test-smoke: dev-image
 # Screenshots for the website/README from the real ISO in QEMU.
 vm-screenshots:
 	python3 tools/vm-screenshots.py $(ISO) --out docs/screenshots
+
+# Only Aurora's packages (out/debs/), without building an ISO.
+debs: builder
+	@mkdir -p $(WORKVOL) $(OUTDIR)
+	$(DOCKER_RUN) bash -c 'mkdir -p /work/src && rsync -a --delete --exclude /desktop/build /src/desktop /src/branding /work/src/ && cp /src/LICENSE /work/src/ && bash /src/build/package-desktop.sh /work/src /out/debs $(PKG_VERSION)'
+
+# Publish out/debs/ into the signed apt repository in docs/apt/ (GitHub Pages).
+repo:
+	tools/publish-apt.sh out/debs docs/apt
 
 # Regenerate the website's technical page from README.md.
 site:
