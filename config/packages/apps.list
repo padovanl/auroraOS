@@ -107,3 +107,13 @@ kdeconnect
 
 # Fingerprint for sudo and admin prompts (fprintd itself is in hardware.list)
 libpam-fprintd
+
+# Aurora AI (the models themselves are downloaded only when a feature is set
+# up in Settings → AI): typing dictated text, the keyring for API keys, PDF
+# text for search by meaning, the libraries the llama.cpp runtime links to
+wtype
+gir1.2-secret-1
+poppler-utils
+libvulkan1
+libgomp1
+libssl3t64

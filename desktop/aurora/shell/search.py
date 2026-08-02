@@ -321,6 +321,65 @@ def search_projects(query):
     return out[:6]
 
 
+# --- Aurora AI ("?" prefix, and a fallback for questions) -------------------
+
+def search_ai(query):
+    from aurora import ai
+    if not ai.feature("spotlight"):
+        return []
+    q = query.strip()
+    if q.startswith("?"):
+        q = q[1:].strip()
+        score = 1000
+    elif len(q.split()) >= 3:
+        score = 2                         # below real results, above web search
+    else:
+        return []
+    if not q:
+        return [Result(_("Ask Aurora…"), _("Type a question after the ?"),
+                       "aurora-assistant-symbolic", score=score)]
+    return [Result(_("Ask Aurora: “{q}”").format(q=q), _("Aurora AI · opens the Assistant"),
+                   "aurora-assistant-symbolic",
+                   lambda: apps.spawn(["aurora-assistant", "--ask", q]), score)]
+
+
+def search_semantic(query, callback):
+    """Documents that match the query's meaning (async; calls back on the main loop)."""
+    from aurora import ai
+    if not ai.feature("semantic-search") or len(query.strip()) < 4 or \
+            query.strip()[0] in "?:>":
+        return
+    import threading
+    from gi.repository import GLib
+
+    def work():
+        try:
+            from aurora.ai import index, providers
+            hits = index.search(providers.embed([query])[0], limit=5)
+        except Exception as e:  # noqa: BLE001 - search must never break Spotlight
+            print(f"aurora: semantic search unavailable: {e}")
+            return
+        results = []
+        home = os.path.expanduser("~")
+        # Keep clear matches only: above a floor, and close to the best one.
+        best = hits[0][1] if hits else 0
+        for path, score, passage in hits:
+            if score < max(0.25, best - 0.15):
+                continue
+            excerpt = " ".join(passage.split())[:90]
+            results.append(Result(os.path.basename(path),
+                                  _("By meaning · {where} · “{excerpt}…”").format(
+                                      where=os.path.dirname(path).replace(home, "~", 1),
+                                      excerpt=excerpt),
+                                  "text-x-generic",
+                                  lambda p=path: Gio.AppInfo.launch_default_for_uri(
+                                      Gio.File.new_for_path(p).get_uri(), None),
+                                  20 + score))
+        if results:
+            GLib.idle_add(lambda: (callback(query, results), False)[1])
+    threading.Thread(target=work, daemon=True).start()
+
+
 # --- Settings panels -------------------------------------------------------
 
 SETTINGS_PAGES = [
@@ -338,6 +397,8 @@ SETTINGS_PAGES = [
      N_("clock time zone timezone date")),
     ("power", N_("Power"), "battery-good-symbolic",
      N_("battery sleep suspend screen blank lock")),
+    ("ai", N_("AI"), "aurora-assistant-symbolic",
+     N_("artificial intelligence assistant chat model dictation voice speech read aloud")),
     ("about", N_("About"), "help-about-symbolic",
      N_("system information version hardware memory disk")),
 ]
@@ -402,8 +463,10 @@ def search(query, open_settings, refresh=None):
         return search_clipboard(stripped)
     if stripped.startswith(":") and len(stripped) > 1:
         return search_emoji(stripped)
+    if stripped.startswith("?"):
+        return search_ai(stripped)
     results = (search_calculator(query) + search_convert(query, refresh) + search_apps(query)
                + search_settings(query, open_settings) + search_projects(query)
-               + search_recent(query))
+               + search_recent(query) + search_ai(query))
     results.sort(key=lambda r: -r.score)
     return results[:30] + fallback_results(query)

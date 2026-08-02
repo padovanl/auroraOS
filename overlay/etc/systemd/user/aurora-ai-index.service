@@ -1,0 +1,9 @@
+[Unit]
+Description=Aurora AI: update the index for search by meaning
+ConditionPathExists=%h/.local/share/aurora/ai/models/embeddinggemma-300M-Q8_0.gguf
+
+[Service]
+Type=oneshot
+Nice=15
+IOSchedulingClass=idle
+ExecStart=/usr/bin/aurora-ai index

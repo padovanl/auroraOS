@@ -61,13 +61,14 @@ class Launcher(LayerWindow):
         self.shell = shell
 
         self.mode = "grid"
+        self._semantic_source = 0
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18,
                        halign=Gtk.Align.CENTER, margin_top=64, margin_bottom=48,
                        css_classes=["launcher-root"])
         root.set_size_request(760, -1)
         self.root = root
 
-        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, files, projects, math, 10 km in mi, :emoji, clip:, > command"),
+        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"),
                                      css_classes=["launcher-search"], hexpand=True)
         self.entry.connect("search-changed", self._on_search)
         self.entry.connect("activate", self._on_activate)
@@ -135,6 +136,29 @@ class Launcher(LayerWindow):
             self.results.append(ResultRow(r))
         self.results.select_row(self.results.get_row_at_index(0))
         self.stack.set_visible_child_name("results")
+        # Documents by meaning arrive later (a local model computes them).
+        if self._semantic_source:
+            GLib.source_remove(self._semantic_source)
+        self._semantic_source = GLib.timeout_add(400, self._start_semantic, text)
+
+    def _start_semantic(self, text):
+        self._semantic_source = 0
+        search.search_semantic(text, self._add_semantic)
+        return GLib.SOURCE_REMOVE
+
+    def _add_semantic(self, query, results):
+        if self.entry.get_text() != query:
+            return
+        for r in results:
+            row = ResultRow(r)
+            # Insert before the web-search fallback at the end.
+            self.results.insert(row, max(0, self._count_rows() - 1))
+
+    def _count_rows(self):
+        n = 0
+        while self.results.get_row_at_index(n) is not None:
+            n += 1
+        return n
 
     # --- activation ---
 

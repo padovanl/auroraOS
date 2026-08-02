@@ -187,6 +187,60 @@
       <default>true</default>
       <summary>Remember copied text for Spotlight (Super+V)</summary>
     </key>
+    <key name="ai-enabled" type="b">
+      <default>false</default>
+      <summary>Aurora AI (nothing is downloaded until this is on)</summary>
+    </key>
+    <key name="ai-provider" type="s">
+      <choices><choice value="local"/><choice value="anthropic"/><choice value="openai"/></choices>
+      <default>'local'</default>
+      <summary>Where answers come from: this computer, Anthropic Claude, or an OpenAI-compatible API</summary>
+    </key>
+    <key name="ai-model" type="s">
+      <default>'qwen3-1.7b'</default>
+      <summary>Local chat model (an id from the AI catalog)</summary>
+    </key>
+    <key name="ai-anthropic-model" type="s">
+      <default>'claude-sonnet-5'</default>
+      <summary>Claude model used with the Anthropic provider</summary>
+    </key>
+    <key name="ai-openai-url" type="s">
+      <default>'https://api.openai.com/v1'</default>
+      <summary>Base URL of the OpenAI-compatible API</summary>
+    </key>
+    <key name="ai-openai-model" type="s">
+      <default>''</default>
+      <summary>Model name for the OpenAI-compatible API</summary>
+    </key>
+    <key name="ai-spotlight" type="b">
+      <default>true</default>
+      <summary>Ask the assistant from Spotlight with a question mark</summary>
+    </key>
+    <key name="ai-terminal" type="b">
+      <default>true</default>
+      <summary>The ask and why commands in the terminal</summary>
+    </key>
+    <key name="ai-dictation" type="b">
+      <default>false</default>
+      <summary>Dictation with Super+H (speech recognition on this computer)</summary>
+    </key>
+    <key name="ai-whisper-model" type="s">
+      <choices><choice value="base"/><choice value="small"/></choices>
+      <default>'small'</default>
+      <summary>Speech recognition model</summary>
+    </key>
+    <key name="ai-read-aloud" type="b">
+      <default>false</default>
+      <summary>Read the selected text aloud with Super+Shift+R</summary>
+    </key>
+    <key name="ai-semantic-search" type="b">
+      <default>false</default>
+      <summary>Find documents by meaning in Spotlight</summary>
+    </key>
+    <key name="ai-index-folders" type="as">
+      <default>['~/Documents', '~/Desktop', '~/Downloads']</default>
+      <summary>Folders indexed for search by meaning</summary>
+    </key>
     <key name="idle-dim-minutes" type="i">
       <range min="0" max="120"/>
       <default>5</default>

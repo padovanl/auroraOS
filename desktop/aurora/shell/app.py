@@ -5,7 +5,8 @@ forwards the command to the running instance, e.g.:
 
     aurora-shell launcher [spotlight|grid]
     aurora-shell search TEXT
-    aurora-shell clipboard | emoji | overview
+    aurora-shell clipboard | emoji | overview | assistant
+    aurora-shell dictate | read-aloud
     aurora-shell volume up|down|mute
     aurora-shell brightness up|down
     aurora-shell screenshot [area|text]
@@ -190,6 +191,12 @@ class Shell(Adw.Application):
             self.launcher.toggle(arg or None)
         elif cmd == "search":
             self.launcher.search_for(" ".join(rest))
+        elif cmd == "dictate":
+            self.toggle_dictation()
+        elif cmd == "read-aloud":
+            self.read_aloud()
+        elif cmd == "assistant":
+            apps.spawn(["aurora-assistant"])
         elif cmd == "overview":
             self.overview.toggle()
         elif cmd == "clipboard":
@@ -237,6 +244,70 @@ class Shell(Adw.Application):
             apps.launch(app)
         else:
             Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(GLib.get_home_dir()), None)
+
+    # --- Aurora AI: dictation and read-aloud ---
+
+    def _ai_hint(self, text):
+        self.notifications.notify(_("Aurora AI"), 0, "aurora-assistant-symbolic", text,
+                                  _("Set it up in Settings → AI."), [], {"transient": True}, -1)
+
+    def toggle_dictation(self):
+        from aurora import ai
+        from aurora.ai import speech
+        if not ai.feature("dictation"):
+            self._ai_hint(_("Dictation is off"))
+            return
+        if not hasattr(self, "_dictation"):
+            self._dictation = speech.Dictation()
+        d = self._dictation
+        if not d.recording:
+            if not d.ready():
+                self._ai_hint(_("Dictation isn't installed yet"))
+                return
+            d.start()
+            self.osd.show_message("audio-input-microphone-symbolic",
+                                  _("Listening… press Super+H to stop"))
+            return
+        self.osd.show_message("content-loading-symbolic", _("Writing it down…"))
+        import threading
+
+        def work():
+            try:
+                text, error = d.stop(), None
+            except (OSError, RuntimeError, subprocess.TimeoutExpired) as e:
+                text, error = "", str(e)
+            GLib.idle_add(lambda: (self._dictated(text, error), False)[1])
+        threading.Thread(target=work, daemon=True).start()
+
+    def _dictated(self, text, error):
+        self.osd.hide()
+        if error or not text:
+            self._ai_hint(error or _("Nothing was heard"))
+            return
+        from aurora.ai import speech
+        speech.type_text(text)
+
+    def read_aloud(self):
+        from aurora import ai
+        from aurora.ai import speech
+        if not ai.feature("read-aloud"):
+            self._ai_hint(_("Read aloud is off"))
+            return
+        if speech.speaking():
+            speech.stop_speaking()
+            return
+        text = speech.selected_text()
+        if not text.strip():
+            self._ai_hint(_("Select some text first"))
+            return
+        import threading
+
+        def work():
+            try:
+                speech.speak(text)
+            except (OSError, RuntimeError, subprocess.TimeoutExpired) as e:
+                GLib.idle_add(lambda: (self._ai_hint(str(e)), False)[1])
+        threading.Thread(target=work, daemon=True).start()
 
     def run_corner_action(self, action):
         """What a hot corner does (Settings → Multitasking)."""

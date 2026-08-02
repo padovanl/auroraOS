@@ -44,3 +44,27 @@ if command -v starship >/dev/null; then
     [ -f "$HOME/.config/starship.toml" ] || export STARSHIP_CONFIG=/etc/aurora/starship.toml
     eval "$(starship init bash)"
 fi
+
+# Aurora AI in the terminal (Settings → AI):
+#   ask "what you want to do"   suggests a command and runs it if you agree
+#   why                         explains why the last command failed
+#   cmd 2>&1 | why              …using the command's output
+__aurora_last() {
+    local s=$?
+    AURORA_LAST_STATUS=$s
+    AURORA_LAST_COMMAND=$(HISTTIMEFORMAT='' history 1 | sed 's/^ *[0-9]* *//')
+    return $s
+}
+PROMPT_COMMAND="__aurora_last${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+ask() {
+    local h s
+    h=$(mktemp)
+    AURORA_AI_HISTORY=$h aurora-ai ask "$*"
+    s=$?
+    [ -s "$h" ] && history -s "$(cat "$h")"
+    rm -f "$h"
+    return $s
+}
+why() {
+    AURORA_LAST_COMMAND="$AURORA_LAST_COMMAND" AURORA_LAST_STATUS="$AURORA_LAST_STATUS" aurora-ai why
+}

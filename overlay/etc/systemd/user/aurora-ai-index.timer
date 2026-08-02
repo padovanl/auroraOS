@@ -1,0 +1,9 @@
+[Unit]
+Description=Aurora AI: keep the search-by-meaning index up to date
+
+[Timer]
+OnStartupSec=10min
+OnUnitActiveSec=1h
+
+[Install]
+WantedBy=timers.target
