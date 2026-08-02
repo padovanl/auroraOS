@@ -11,6 +11,7 @@ from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 from aurora.settingsapp.about import About  # noqa: E402
 from aurora.settingsapp.ai import AI  # noqa: E402
+from aurora.settingsapp.health import Health  # noqa: E402
 from aurora.settingsapp.applications import Accessibility, Applications, Notifications  # noqa: E402
 from aurora.settingsapp.devices import Bluetooth, Printers  # noqa: E402
 from aurora.settingsapp.inputs import Keyboard, Mouse, Multitasking  # noqa: E402
@@ -32,7 +33,7 @@ SECTIONS = [
     [Mouse, Keyboard, Printers, Accessibility],
     [Privacy, Sharing],
     [AI],
-    [Users, Language, DateTime, Updates, About],
+    [Users, Language, DateTime, Updates, Health, About],
 ]
 PAGES = [p for section in SECTIONS for p in section]
 

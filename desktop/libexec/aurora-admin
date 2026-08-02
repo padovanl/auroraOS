@@ -22,6 +22,27 @@ case "$cmd" in
             off) ufw delete allow "KDE Connect"; rm -f /etc/aurora/phone-allowed ;;
             *) exit 2 ;;
         esac ;;
+    vnc)
+        case "${1:-}" in
+            on) ufw allow 5900/tcp comment "Aurora screen sharing" ;;
+            off) ufw delete allow 5900/tcp ;;
+            *) exit 2 ;;
+        esac ;;
+    nearby)
+        # LocalSend listens on port 53317 on the local network.
+        case "${1:-}" in
+            on) ufw allow "LocalSend" && mkdir -p /etc/aurora && touch /etc/aurora/nearby-allowed ;;
+            off) ufw delete allow "LocalSend"; rm -f /etc/aurora/nearby-allowed ;;
+            *) exit 2 ;;
+        esac ;;
+    battery-limit)
+        # Stop charging at 80% (kept across reboots by aurora-battery-limit.service).
+        case "${1:-}" in
+            80) mkdir -p /etc/aurora && echo 80 > /etc/aurora/battery-limit ;;
+            off) rm -f /etc/aurora/battery-limit ;;
+            *) exit 2 ;;
+        esac
+        /usr/libexec/aurora-battery-limit ;;
     snapshots)
         case "${1:-}" in
             on) rm -f /etc/aurora/snapshots-disabled ;;
@@ -72,6 +93,6 @@ EOF
         user="${1:-}"; valid_user "$user" || exit 2
         if [ "${2:-}" = yes ]; then usermod -aG sudo "$user"; else gpasswd -d "$user" sudo; fi ;;
     *)
-        echo "usage: aurora-admin firewall|phone|snapshots|snapshot-now|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
+        echo "usage: aurora-admin firewall|phone|vnc|nearby|battery-limit|snapshots|snapshot-now|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
         exit 2 ;;
 esac

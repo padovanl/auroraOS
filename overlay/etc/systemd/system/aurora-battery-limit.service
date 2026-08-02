@@ -1,0 +1,11 @@
+[Unit]
+Description=Aurora OS: battery charge limit (Settings → Power)
+ConditionPathExists=/etc/aurora/battery-limit
+After=sysinit.target suspend.target hibernate.target hybrid-sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/aurora-battery-limit
+
+[Install]
+WantedBy=multi-user.target suspend.target hibernate.target hybrid-sleep.target

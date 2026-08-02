@@ -12,7 +12,10 @@ while IFS='|' read -r name version url sums; do
     file=$(basename "$url")
     log "extra: $name $version"
     [ -f "$dir/$file" ] || curl -fsSL -o "$dir/$file" "$url"
-    expected=$(curl -fsSL "$sums" | awk -v f="$file" '$2 == f || $2 == "*"f {print $1}')
+    case "$sums" in
+        sha256:*) expected=${sums#sha256:} ;;       # pinned in the list itself
+        *) expected=$(curl -fsSL "$sums" | awk -v f="$file" '$2 == f || $2 == "*"f {print $1}') ;;
+    esac
     [ -n "$expected" ] || die "no checksum for $file in $sums"
     actual=$(sha256sum "$dir/$file" | cut -d' ' -f1)
     [ "$expected" = "$actual" ] || die "checksum mismatch for $file"

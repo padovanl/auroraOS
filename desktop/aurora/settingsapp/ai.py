@@ -115,7 +115,22 @@ class AI(Page):
                                                                   r.get_text().strip()))
         self.cloud_group.add(self.openai_model)
 
-        feats = self.group(_("Features"))
+        feats = self.group(_("Where Aurora AI Helps"),
+                           _("Turn off anything you don't want. Features with a download are "
+                             "set up the first time you switch them on."))
+        for key, title, sub in (
+            ("ai-writing-tools", _("Writing tools"),
+             _("Select text anywhere and press Super+Shift+W: proofread, rewrite, shorten, "
+               "summarize, translate, then replace the selection")),
+            ("ai-files", _("Files"), _("“Summarize” and “Ask About This File” in the Files "
+                                       "menu, for text, code, PDF and documents")),
+            ("ai-screenshots", _("Screenshots"),
+             _("“Ask Aurora” on the screenshot notification explains what's on screen")),
+            ("ai-notifications", _("Notifications"),
+             _("A Summarize button when notifications pile up")),
+        ):
+            feats.add(switch_row(title, s.get_boolean(key),
+                                 lambda v, k=key: s.set_boolean(k, v), subtitle=sub))
         feats.add(switch_row(_("Ask from Spotlight"), s.get_boolean("ai-spotlight"),
                              lambda v: s.set_boolean("ai-spotlight", v),
                              subtitle=_("Type ? and a question. Super+Shift+Space opens the "

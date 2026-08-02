@@ -288,6 +288,10 @@ class NotificationServer:
         header = Gtk.Box()
         header.append(Gtk.Label(label=_("Notifications"), xalign=0, hexpand=True,
                                 css_classes=["heading"]))
+        self._summarize_btn = Gtk.Button(label=_("Summarize"), css_classes=["flat", "pill"],
+                                         tooltip_text=_("Aurora AI summarizes your notifications"))
+        self._summarize_btn.connect("clicked", lambda *_: self.summarize())
+        header.append(self._summarize_btn)
         outer.append(header)
         self._history_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         scroller = Gtk.ScrolledWindow(child=self._history_box, vexpand=True,
@@ -311,6 +315,13 @@ class NotificationServer:
         self._refresh_history()
         return outer
 
+    def summarize(self):
+        lines = [f"- {n.app_name}: {n.summary} — {re.sub(r'<[^>]+>', '', n.body)[:200]}"
+                 for n in self.history[:30]]
+        apps.spawn(["aurora-assistant", "--ask",
+                    "Summarize these notifications in a few short bullets, most important "
+                    "first, and say if anything needs action:\n" + "\n".join(lines)])
+
     def clear_history(self):
         self.history = []
         self._refresh_history()
@@ -319,6 +330,8 @@ class NotificationServer:
         box = self._history_box
         if box is None:
             return
+        from aurora import ai
+        self._summarize_btn.set_visible(ai.feature("notifications") and len(self.history) >= 3)
         while (c := box.get_first_child()) is not None:
             box.remove(c)
         if not self.history:

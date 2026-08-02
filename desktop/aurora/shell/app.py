@@ -6,7 +6,7 @@ forwards the command to the running instance, e.g.:
     aurora-shell launcher [spotlight|grid]
     aurora-shell search TEXT
     aurora-shell clipboard | emoji | overview | assistant
-    aurora-shell dictate | read-aloud
+    aurora-shell dictate | read-aloud | writing
     aurora-shell volume up|down|mute
     aurora-shell brightness up|down
     aurora-shell screenshot [area|text]
@@ -124,9 +124,17 @@ class Shell(Adw.Application):
                           lambda *a: self._later(self.hotcorners.rebuild))
         self._update_dynamic_css()
         self._clip_watch = None
+        self._vnc = None
         if s:
             s.connect("changed::clipboard-history", lambda *a: self._sync_clipboard())
+            s.connect("changed::screen-sharing", lambda *a: self._sync_screen_sharing())
         self._sync_clipboard()
+        self._sync_screen_sharing()
+        from aurora.shell.gestures import Gestures
+        self.gestures = Gestures(self)
+        if s:
+            s.connect("changed::gestures", lambda *a: self._sync_gestures())
+        self._sync_gestures()
         self.power.play_session_sound("startup")
         iface = settings.interface()
         if iface is not None:
@@ -197,6 +205,12 @@ class Shell(Adw.Application):
             self.read_aloud()
         elif cmd == "assistant":
             apps.spawn(["aurora-assistant"])
+        elif cmd == "writing":
+            from aurora import ai
+            if ai.feature("writing-tools"):
+                apps.spawn(["aurora-assistant", "--writing"])
+            else:
+                self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
         elif cmd == "clipboard":
@@ -360,6 +374,8 @@ class Shell(Adw.Application):
                 apps.spawn(["swappy", "-f", path, "-o", path.replace(".png", "-edited.png")])
             elif key == "text":
                 self.copy_text_from(path)
+            elif key == "ask":
+                self.ask_about_screenshot(path)
             else:
                 Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(path), None)
 
@@ -367,8 +383,31 @@ class Shell(Adw.Application):
             _("Screenshot captured"),
             _("Saved to {path} and copied to the clipboard.").format(
                 path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
-            path, actions=[("default", _("Open")), ("edit", _("Annotate")),
-                           ("text", _("Copy Text"))], on_action=on_action)
+            path, actions=self._screenshot_actions(), on_action=on_action)
+
+    def _screenshot_actions(self):
+        actions = [("default", _("Open")), ("edit", _("Annotate")), ("text", _("Copy Text"))]
+        from aurora import ai
+        if ai.feature("screenshots"):
+            actions.append(("ask", _("Ask Aurora")))
+        return actions
+
+    def ask_about_screenshot(self, path):
+        """Read the text in the screenshot (OCR) and ask the assistant about it."""
+        import threading
+
+        def work():
+            from aurora import ocr
+            try:
+                text = ocr.recognize(path)
+            except (OSError, RuntimeError, subprocess.TimeoutExpired):
+                text = ""
+            prompt = (("Explain what this screenshot shows and what I might do next. Its text "
+                       "(read with OCR):\n\n" + text[:8000]) if text else
+                      "I took a screenshot with no readable text. Tell me you can only read "
+                      "text in screenshots, briefly.")
+            apps.spawn(["aurora-assistant", "--ask", prompt])
+        threading.Thread(target=work, daemon=True).start()
 
     def screenshot_text(self):
         """Select an area and copy the text in it (OCR), like Live Text."""
@@ -405,6 +444,24 @@ class Shell(Adw.Application):
         self.notifications.notify(
             _("Text Recognition"), 0, "edit-copy-symbolic", _("Text copied"),
             GLib.markup_escape_text(preview), [], {"transient": True}, -1)
+
+    def _sync_gestures(self):
+        s = settings.get()
+        if s is None or s.get_boolean("gestures"):
+            self.gestures.start()
+        else:
+            self.gestures.stop()
+
+    def _sync_screen_sharing(self):
+        """wayvnc runs while Settings → Sharing → Screen Sharing is on."""
+        s = settings.get()
+        want = s is not None and s.get_boolean("screen-sharing")
+        if want and self._vnc is None and shutil.which("wayvnc"):
+            from aurora import screenshare
+            self._vnc = subprocess.Popen(screenshare.command())
+        elif not want and self._vnc is not None:
+            self._vnc.terminate()
+            self._vnc = None
 
     def _sync_clipboard(self):
         """Clipboard history: wl-paste hands every copied text to aurora-clipboard."""

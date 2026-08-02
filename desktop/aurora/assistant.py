@@ -2,6 +2,8 @@
 
     aurora-assistant                 open the window
     aurora-assistant --ask TEXT      open it and ask (Spotlight's "?" uses this)
+    aurora-assistant --writing       writing tools for the selected text (Super+Shift+W)
+    aurora-assistant --file PATH [--summarize]   ask about a file (Files' menu)
 
 Quick actions work on the clipboard: summarize, improve the writing,
 translate, explain. Answers stream in; code blocks get a Copy button, and
@@ -19,7 +21,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango  # noqa: E402
 
 from aurora import VERSION, ai, apps  # noqa: E402
-from aurora.i18n import _  # noqa: E402
+from aurora.i18n import N_, _  # noqa: E402
 
 CSS = """
 .bubble { border-radius: 16px; padding: 10px 14px; }
@@ -176,6 +178,29 @@ class AssistantWindow(Adw.ApplicationWindow):
                  "openai": _("OpenAI-compatible")}.get(which, which)
         self.title.set_subtitle(label if on else "")
 
+    def attach_file(self, path, summarize=False):
+        """Put a file's text in the conversation, then summarize it or wait for a question."""
+        import os
+        from aurora.ai.index import extract
+        text = extract(path).strip()
+        name = os.path.basename(path)
+        if not text:
+            self.entry.set_placeholder_text(_("Can't read text from {name}").format(name=name))
+            return
+        self.new_chat()
+        context = f"The user shares the file “{name}”. Its content:\n\n{text[:16000]}"
+        self.history.append({"role": "user", "content": context})
+        self.history.append({"role": "assistant",
+                             "content": "I have read the file. What would you like to know?"})
+        if self.empty.get_parent() is not None:
+            self.list.remove(self.empty)
+        self.list.append(Message("user", "📄 " + name))
+        if summarize:
+            self.send(_("Summarize this file in a few bullet points."))
+        else:
+            self.entry.set_placeholder_text(_("Ask about {name}…").format(name=name))
+            self.entry.grab_focus()
+
     def new_chat(self):
         self.history = []
         while (c := self.list.get_first_child()) is not None:
@@ -261,6 +286,115 @@ class AssistantWindow(Adw.ApplicationWindow):
         return False
 
 
+WRITING_ACTIONS = [
+    ("proofread", N_("Proofread"), "Fix spelling, grammar and punctuation. Keep the wording, "
+                                   "language and meaning. Reply with the corrected text only."),
+    ("friendly", N_("Friendlier"), "Rewrite this in a warmer, friendlier tone, same language. "
+                                   "Reply with the new text only."),
+    ("professional", N_("More Professional"), "Rewrite this in a clear, professional tone, same "
+                                              "language. Reply with the new text only."),
+    ("concise", N_("Shorter"), "Make this shorter and clearer without losing information, same "
+                               "language. Reply with the new text only."),
+    ("summary", N_("Summarize"), "Summarize this in two or three sentences, same language."),
+    ("points", N_("Key Points"), "List the key points of this as short bullets, same language."),
+    ("translate", N_("Translate"), "Translate this into {lang}. Reply with the translation only."),
+]
+
+
+def _user_language_name():
+    import locale
+    lang = (locale.getlocale(locale.LC_MESSAGES)[0] or "en").split("_")[0]
+    return "English" if lang == "en" else f"the language with ISO code '{lang}'"
+
+
+class WritingTools(Adw.ApplicationWindow):
+    """Apple-style writing tools: act on the selected text, then replace it."""
+
+    def __init__(self, app, text):
+        super().__init__(application=app, title=_("Writing Tools"), default_width=520,
+                         default_height=520)
+        self.source = text
+        self.result = ""
+        header = Adw.HeaderBar(title_widget=Adw.WindowTitle(title=_("Writing Tools"),
+                                                            subtitle=_("Aurora AI")))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin_top=12,
+                      margin_bottom=12, margin_start=16, margin_end=16)
+        preview = Gtk.Label(label=text[:400] + ("…" if len(text) > 400 else ""), xalign=0,
+                            wrap=True, lines=4, ellipsize=Pango.EllipsizeMode.END,
+                            css_classes=["dim-label"])
+        box.append(preview)
+        flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, max_children_per_line=4,
+                           column_spacing=6, row_spacing=6)
+        for key, label, prompt in WRITING_ACTIONS:
+            b = Gtk.Button(label=_(label), css_classes=["pill"])
+            b.connect("clicked", lambda _b, p=prompt: self.run(p))
+            flow.append(b)
+        box.append(flow)
+        self.output = Gtk.TextView(wrap_mode=Gtk.WrapMode.WORD_CHAR, editable=True,
+                                   top_margin=10, bottom_margin=10, left_margin=10,
+                                   right_margin=10, css_classes=["card"])
+        box.append(Gtk.ScrolledWindow(child=self.output, vexpand=True))
+        actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
+        copy = Gtk.Button(label=_("Copy"))
+        copy.connect("clicked", lambda *_: self._copy())
+        self.replace = Gtk.Button(label=_("Replace Selection"), css_classes=["suggested-action"],
+                                  sensitive=False)
+        self.replace.connect("clicked", lambda *_: self._replace())
+        actions.append(copy)
+        actions.append(self.replace)
+        box.append(actions)
+        view = Adw.ToolbarView(content=box)
+        view.add_top_bar(header)
+        self.set_content(view)
+
+    def run(self, prompt):
+        buf = self.output.get_buffer()
+        buf.set_text(_("Working…"))
+        self.replace.set_sensitive(False)
+        instruction = prompt.replace("{lang}", _user_language_name())
+        messages = [{"role": "user", "content": f"{instruction}\n\n---\n{self.source}"}]
+
+        def work():
+            from aurora.ai.providers import ProviderError, chat
+            parts = []
+            try:
+                for piece in chat(messages, max_tokens=1500):
+                    parts.append(piece)
+                    GLib.idle_add(buf.set_text, "".join(parts))
+                GLib.idle_add(self._done)
+            except ProviderError as e:
+                GLib.idle_add(buf.set_text, _("Something went wrong: {error}").format(error=e))
+        threading.Thread(target=work, daemon=True).start()
+
+    def _done(self):
+        self.replace.set_sensitive(True)
+        return False
+
+    def _text(self):
+        buf = self.output.get_buffer()
+        return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).strip()
+
+    def _copy(self):
+        Gdk.Display.get_default().get_clipboard().set(self._text())
+
+    def _replace(self):
+        """Put the result on the clipboard, close, and paste it over the selection."""
+        import subprocess
+        text = self._text()
+        subprocess.run(["wl-copy", "--", text])
+        self.close()
+        subprocess.Popen(["sh", "-c", "sleep 0.4; wtype -M ctrl -k v -m ctrl"])
+
+
+def _selected_text():
+    import subprocess
+    for args in (["wl-paste", "--primary", "--no-newline"], ["wl-paste", "--no-newline"]):
+        res = subprocess.run(args, capture_output=True, text=True)
+        if res.returncode == 0 and res.stdout.strip():
+            return res.stdout
+    return ""
+
+
 class AssistantApp(Adw.Application):
     def __init__(self):
         super().__init__(application_id="org.aurora.Assistant",
@@ -276,12 +410,19 @@ class AssistantApp(Adw.Application):
 
     def do_command_line(self, cmdline):
         args = cmdline.get_arguments()[1:]
+        if args[:1] == ["--writing"]:
+            text = _selected_text()
+            if ai.enabled() and text.strip():
+                WritingTools(self, text).present()
+                return 0
         if self.window is None:
             self.window = AssistantWindow(self)
         self.window.present()
         self.window.refresh()
         if args[:1] == ["--ask"] and len(args) > 1:
             self.window.send(" ".join(args[1:]))
+        elif args[:1] == ["--file"] and len(args) > 1:
+            self.window.attach_file(args[1], summarize="--summarize" in args)
         return 0
 
 

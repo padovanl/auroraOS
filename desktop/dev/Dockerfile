@@ -12,7 +12,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         fonts-inter fonts-noto-core fonts-noto-color-emoji \
         gnome-calculator gnome-text-editor mousepad libnotify-bin \
         gettext make rsync locales wlrctl \
-        gir1.2-gtksource-5 gir1.2-poppler-0.18 libgtk-4-media-gstreamer wl-clipboard \
+        gir1.2-gtksource-5 gir1.2-poppler-0.18 libgtk-4-media-gstreamer wl-clipboard python3-qrcode \
         tesseract-ocr tesseract-ocr-eng poppler-utils \
         xdg-desktop-portal xdg-desktop-portal-gtk \
         python3-pytest python3-yaml desktop-file-utils libxml2-utils shellcheck \

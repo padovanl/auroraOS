@@ -1,0 +1,16 @@
+#!/bin/sh
+# Apply the battery charge limit chosen in Settings → Power (/etc/aurora/battery-limit),
+# or restore full charging. Run at boot and after resume, and by aurora-admin.
+limit=100
+[ -r /etc/aurora/battery-limit ] && limit=$(cat /etc/aurora/battery-limit)
+case "$limit" in ''|*[!0-9]*) limit=100 ;; esac
+for bat in /sys/class/power_supply/BAT*; do
+    [ -w "$bat/charge_control_end_threshold" ] || continue
+    # Some firmware needs the start threshold below the end one.
+    if [ -w "$bat/charge_control_start_threshold" ]; then
+        start=$((limit - 5)); [ "$limit" -ge 100 ] && start=0
+        echo "$start" > "$bat/charge_control_start_threshold" 2>/dev/null || true
+    fi
+    echo "$limit" > "$bat/charge_control_end_threshold" 2>/dev/null || true
+done
+exit 0

@@ -203,7 +203,7 @@ class AuroraMenu(Gtk.MenuButton):
             [(_("System Settings…"), "app.settings::"),
              (_("App Center…"), "app.software"),
              (_("Dev Hub…"), "app.devhub")],
-            [(_("Force Quit…"), "app.force-quit")],
+            [(_("System Health…"), "app.settings::health"), (_("Force Quit…"), "app.force-quit")],
             [(_("Sleep"), "app.suspend"), (_("Restart…"), "app.reboot"),
              (_("Shut Down…"), "app.poweroff")],
             [(_("Lock Screen"), "app.lock"), (_("Log Out"), "app.logout")],

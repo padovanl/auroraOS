@@ -58,6 +58,13 @@ class Mouse(Page):
         tp.add(combo_row(_("Secondary click"), [_("Two-finger click"), _("Bottom-right corner")],
                          clicks.index(cur) if cur in clicks else 0,
                          on_change=lambda i: self._set("touchpad", "clickMethod", clicks[i])))
+        aurora = settings.get()
+        if aurora is not None:
+            tp.add(switch_row(_("Gestures"), aurora.get_boolean("gestures"),
+                              lambda v: aurora.set_boolean("gestures", v),
+                              subtitle=_("Three fingers: up for all windows, down for the "
+                                         "desktop, sideways to change workspace. Pinch with "
+                                         "four fingers for Launchpad.")))
 
     def _speed_row(self, category):
         row = Adw.ActionRow(title=_("Pointer speed"))

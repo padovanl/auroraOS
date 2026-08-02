@@ -119,6 +119,8 @@ class Sharing(Page):
     icon_name = "preferences-system-sharing-symbolic"
 
     def build(self):
+        self._screen_group()
+        self._nearby_group()
         self._phone_group()
         g = self.group(_("Remote Login"),
                        _("Allow connecting to this computer with SSH."))
@@ -134,6 +136,55 @@ class Sharing(Page):
         g.add(Adw.ActionRow(title=_("Connect with"),
                             subtitle=f"ssh {user}@{addr or host + '.local'}",
                             subtitle_selectable=True))
+
+    def _screen_group(self):
+        g = self.group(_("Screen Sharing"),
+                       _("Let someone see and control this screen from another computer with a "
+                         "VNC app (Remmina, TigerVNC, RealVNC). Connections are encrypted and "
+                         "need the password below."))
+        if not shutil.which("wayvnc"):
+            g.add(Adw.ActionRow(title=_("wayvnc is not installed")))
+            return
+        aurora = settings.get()
+        g.add(switch_row(_("Share this screen"), aurora.get_boolean("screen-sharing"),
+                         self._set_screen))
+        from aurora import screenshare
+        addr = self._address()
+        g.add(Adw.ActionRow(title=_("Connect to"), subtitle=f"{addr or GLib.get_host_name()}:5900",
+                            subtitle_selectable=True))
+        self.vnc_pw = Adw.ActionRow(title=_("Password"), subtitle=screenshare.password(),
+                                    subtitle_selectable=True)
+        new = Gtk.Button(icon_name="view-refresh-symbolic", valign=Gtk.Align.CENTER,
+                         css_classes=["flat"], tooltip_text=_("New Password"))
+        new.connect("clicked", lambda *_: self.vnc_pw.set_subtitle(screenshare.new_password()))
+        self.vnc_pw.add_suffix(new)
+        g.add(self.vnc_pw)
+
+    def _set_screen(self, on):
+        ok, err = admin("vnc", "on" if on else "off")
+        if not ok:
+            toast(self, err)
+            return
+        settings.get().set_boolean("screen-sharing", on)
+        toast(self, _("Screen sharing is on") if on else _("Screen sharing is off"))
+
+    def _nearby_group(self):
+        g = self.group(_("Nearby Sharing"),
+                       _("Send files to phones and computers around you with LocalSend, "
+                         "like AirDrop but with every system: Android, iPhone, Windows, macOS "
+                         "and Linux. In Files, right-click a file and choose “Send to Nearby "
+                         "Device…”."))
+        if not shutil.which("localsend_app"):
+            g.add(Adw.ActionRow(title=_("LocalSend is not installed")))
+            return
+        g.add(switch_row(_("Let nearby devices find this computer"),
+                         os.path.exists("/etc/aurora/nearby-allowed"), self._set_nearby,
+                         subtitle=_("Opens port 53317 in the firewall")))
+
+    def _set_nearby(self, on):
+        ok, err = admin("nearby", "on" if on else "off")
+        toast(self, (_("Nearby devices can find this computer") if on else
+                     _("Nearby sharing blocked")) if ok else err)
 
     def _phone_group(self):
         g = self.group(_("Phone"),

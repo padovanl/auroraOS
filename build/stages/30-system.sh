@@ -60,7 +60,7 @@ EOF
 in_chroot install -d -o _greetd -g _greetd -m 700 /var/lib/aurora-greeter
 
 log "enabling services"
-in_chroot systemctl enable NetworkManager greetd aurora-live-setup aurora-repo-check.timer
+in_chroot systemctl enable NetworkManager greetd aurora-live-setup aurora-repo-check.timer aurora-battery-limit.service
 in_chroot systemctl set-default graphical.target
 
 # Hide helper/terminal-only launchers (config/hidden-apps.list) with

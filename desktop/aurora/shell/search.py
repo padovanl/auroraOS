@@ -397,6 +397,8 @@ SETTINGS_PAGES = [
      N_("clock time zone timezone date")),
     ("power", N_("Power"), "battery-good-symbolic",
      N_("battery sleep suspend screen blank lock")),
+    ("health", N_("System Health"), "emblem-ok-symbolic",
+     N_("doctor diagnostics problems disk space smart firmware drivers repair check")),
     ("ai", N_("AI"), "aurora-assistant-symbolic",
      N_("artificial intelligence assistant chat model dictation voice speech read aloud")),
     ("about", N_("About"), "help-about-symbolic",

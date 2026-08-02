@@ -1,4 +1,8 @@
-"""Aurora Dev Hub: one-click developer toolchains from official sources."""
+"""Aurora Dev Hub and Game Hub: one-click installs from official sources.
+
+Both are the same window with a different catalog: Dev Hub for developer
+toolchains (recipes.py), Game Hub for games, Windows and Android apps (games.py).
+"""
 
 import os
 import subprocess
@@ -13,7 +17,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
 
 from aurora import VERSION  # noqa: E402
 from aurora.devhub.recipes import CATEGORIES, RECIPES  # noqa: E402
-from aurora.i18n import _  # noqa: E402
+from aurora.i18n import N_, _  # noqa: E402
 
 CSS = """
 .devhub-card { padding: 16px; border-radius: 16px; }
@@ -64,14 +68,24 @@ class Card(Gtk.Box):
             (self.button.remove_css_class if done else self.button.add_css_class)(c)
 
 
+DEV_HUB = {
+    "id": "org.aurora.DevHub", "title": N_("Dev Hub"), "search": N_("Search tools"),
+    "hero": N_("Your toolbox, one click away"),
+    "text": N_("Everything installs from its official source, so you always get the latest "
+               "release. Git, Python, Node.js, Docker, Podman and more are already on your "
+               "system."),
+    "categories": CATEGORIES, "recipes": RECIPES,
+}
+
+
 class DevHub(Adw.ApplicationWindow):
-    def __init__(self, app):
-        super().__init__(application=app, title=_("Dev Hub"), default_width=1100,
+    def __init__(self, app, hub=DEV_HUB):
+        super().__init__(application=app, title=_(hub["title"]), default_width=1100,
                          default_height=760)
         self.cards = []
         view = Adw.ToolbarView()
         header = Adw.HeaderBar()
-        self.search = Gtk.SearchEntry(placeholder_text=_("Search tools"), width_chars=28)
+        self.search = Gtk.SearchEntry(placeholder_text=_(hub["search"]), width_chars=28)
         self.search.connect("search-changed", lambda *_: self._filter())
         header.set_title_widget(self.search)
         view.add_top_bar(header)
@@ -79,21 +93,17 @@ class DevHub(Adw.ApplicationWindow):
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=22,
                           margin_top=18, margin_bottom=24, margin_start=24, margin_end=24)
         hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, css_classes=["devhub-hero"])
-        hero.append(Gtk.Label(label=_("Your toolbox, one click away"), xalign=0,
-                              css_classes=["title-1"]))
-        hero.append(Gtk.Label(label=_("Everything installs from its official source, so you "
-                                      "always get the latest release. Git, Python, Node.js, "
-                                      "Docker, Podman and more are already on your system."),
-                              xalign=0, wrap=True))
+        hero.append(Gtk.Label(label=_(hub["hero"]), xalign=0, css_classes=["title-1"]))
+        hero.append(Gtk.Label(label=_(hub["text"]), xalign=0, wrap=True))
         content.append(hero)
 
         self.sections = []
-        for cat, title in CATEGORIES:
+        for cat, title in hub["categories"]:
             label = Gtk.Label(label=_(title), xalign=0, css_classes=["title-3"])
             flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
                                max_children_per_line=4, min_children_per_line=2,
                                column_spacing=14, row_spacing=14)
-            for r in [r for r in RECIPES if r["cat"] == cat]:
+            for r in [r for r in hub["recipes"] if r["cat"] == cat]:
                 card = Card(self, r)
                 self.cards.append(card)
                 flow.append(card)
@@ -126,7 +136,7 @@ class DevHub(Adw.ApplicationWindow):
                    "[ $status -ne 0 ] && echo && echo '✖ Installation failed (see above).'; "
                    "echo; read -rp 'Press Enter to close…' _")
         try:
-            proc = subprocess.Popen(["foot", "--title", f"Dev Hub · {r['name']}",
+            proc = subprocess.Popen(["foot", "--title", f"{self.get_title()} · {r['name']}",
                                      "bash", "-c", wrapper])
         except OSError:
             proc = subprocess.Popen(["x-terminal-emulator", "-e", "bash", "-c", wrapper])
@@ -144,8 +154,9 @@ class DevHub(Adw.ApplicationWindow):
 
 
 class DevHubApp(Adw.Application):
-    def __init__(self):
-        super().__init__(application_id="org.aurora.DevHub")
+    def __init__(self, hub=DEV_HUB):
+        super().__init__(application_id=hub["id"])
+        self.hub = hub
 
     def do_startup(self):
         Adw.Application.do_startup(self)
@@ -155,8 +166,13 @@ class DevHubApp(Adw.Application):
                                                   Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def do_activate(self):
-        (self.props.active_window or DevHub(self)).present()
+        (self.props.active_window or DevHub(self, self.hub)).present()
 
 
 def main():
     return DevHubApp().run(sys.argv)
+
+
+def main_games():
+    from aurora.devhub.games import GAME_HUB
+    return DevHubApp(GAME_HUB).run(sys.argv)

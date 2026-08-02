@@ -1,11 +1,33 @@
-"""Network: connection status, Wi-Fi networks, airplane mode."""
+"""Network: connection status, Wi-Fi networks (share one with a QR code), VPNs."""
 
-from gi.repository import Adw, GLib, Gtk
+import subprocess
+
+from gi.repository import Adw, Gdk, GLib, Gtk
 
 from aurora import apps
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, switch_row, toast
 from aurora.shell.services import Network as NetworkService
+
+
+def wifi_qr_payload(ssid, password, security="WPA"):
+    """The standard Wi-Fi QR text phones understand (camera app → join)."""
+    def esc(v):
+        return "".join("\\" + c if c in '\\;,:"' else c for c in v)
+    if not password:
+        return f"WIFI:T:nopass;S:{esc(ssid)};;"
+    return f"WIFI:T:{security};S:{esc(ssid)};P:{esc(password)};;"
+
+
+def qr_svg(text):
+    import io
+    import qrcode
+    import qrcode.image.svg
+    img = qrcode.make(text, image_factory=qrcode.image.svg.SvgPathFillImage, box_size=12,
+                      border=2)
+    buf = io.BytesIO()
+    img.save(buf)
+    return buf.getvalue()
 
 
 class Network(Page):
@@ -84,6 +106,10 @@ class Network(Page):
             row.connect("activated", lambda *_: self._connect(entry, None))
             if entry["active"]:
                 row.set_subtitle(_("Connected"))
+                share = Gtk.Button(icon_name="qr-code-symbolic", valign=Gtk.Align.CENTER,
+                                   css_classes=["flat"], tooltip_text=_("Share Wi-Fi"))
+                share.connect("clicked", lambda *_: self._share(entry["ssid"]))
+                row.add_suffix(share)
                 row.add_suffix(Gtk.Image(icon_name="object-select-symbolic"))
         row.add_prefix(Gtk.Image(icon_name=f"network-wireless-signal-{level}-symbolic"))
         self.wifi_group.add(row)
@@ -94,3 +120,31 @@ class Network(Page):
             toast(self, _("Connected to {ssid}").format(ssid=entry["ssid"]) if ok
                   else _("Could not connect to {ssid}").format(ssid=entry["ssid"]))
         self.net.connect_to(entry, password, done)
+
+    def _share(self, ssid):
+        conn = self.net.known_connection(ssid)
+        name = conn.get_id() if conn is not None else ssid
+        password = subprocess.run(["nmcli", "-s", "-g", "802-11-wireless-security.psk",
+                                   "connection", "show", name],
+                                  capture_output=True, text=True).stdout.strip()
+        try:
+            svg = qr_svg(wifi_qr_payload(ssid, password))
+        except ImportError:
+            toast(self, _("QR codes need the python3-qrcode package"))
+            return
+        texture = Gdk.Texture.new_from_bytes(GLib.Bytes.new(svg))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin_top=12,
+                      margin_bottom=18, margin_start=24, margin_end=24)
+        pic = Gtk.Picture(paintable=texture, can_shrink=True, width_request=260,
+                          height_request=260)
+        box.append(pic)
+        box.append(Gtk.Label(label=_("Point a phone's camera at the code to join “{ssid}”.").format(
+            ssid=ssid), wrap=True, justify=Gtk.Justification.CENTER))
+        if password:
+            box.append(Gtk.Label(label=_("Password: {p}").format(p=password), selectable=True,
+                                 css_classes=["dim-label"]))
+        dialog = Adw.Dialog(title=_("Share Wi-Fi"), content_width=340)
+        view = Adw.ToolbarView(content=box)
+        view.add_top_bar(Adw.HeaderBar())
+        dialog.set_child(view)
+        dialog.present(self.get_root())

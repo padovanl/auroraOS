@@ -1,6 +1,7 @@
 """Aurora Files main window."""
 
 import os
+import shutil
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 
@@ -373,6 +374,9 @@ class FilesWindow(Adw.ApplicationWindow):
         add("select-all", lambda: self.selection.select_all(), ["<Ctrl>a"])
         add("terminal-here", self.terminal_here)
         add("quick-look", self.quick_look)
+        add("send-nearby", self.send_nearby)
+        add("ai-summarize", lambda: self.ask_ai(summarize=True))
+        add("ai-ask", lambda: self.ask_ai(summarize=False))
         add("reload", self.reload, ["F5", "<Ctrl>r"])
         add("show-hidden", self.set_show_hidden, ["<Ctrl>h"], state=False)
         add("list-view", self.set_list_view, ["<Ctrl>1"], state=False)
@@ -603,6 +607,21 @@ class FilesWindow(Adw.ApplicationWindow):
         self.quicklook.connect("close-request", lambda *_: setattr(self, "quicklook", None))
         self.quicklook.present()
 
+    def selection_has_dir(self):
+        return any(is_dir(i) for i in self.selected_infos())
+
+    def ask_ai(self, summarize):
+        files = [f.get_path() for f in self.selected_files() if f.get_path()]
+        if files:
+            argv = ["aurora-assistant", "--file", files[0]]
+            apps.spawn(argv + (["--summarize"] if summarize else []))
+
+    def send_nearby(self):
+        """Hand the selected files to LocalSend, which asks which device to send to."""
+        files = [f.get_path() for f in self.selected_files() if f.get_path()]
+        if files:
+            apps.spawn(["localsend_app", *files])
+
     def open_with(self):
         files = self.selected_files()
         if files:
@@ -635,6 +654,14 @@ class FilesWindow(Adw.ApplicationWindow):
                 s.append(_("Open"), "win.open")
                 s.append(_("Open With…"), "win.open-with")
                 s.append(_("Quick Look"), "win.quick-look")
+                if shutil.which("localsend_app"):
+                    s.append(_("Send to Nearby Device…"), "win.send-nearby")
+                from aurora import ai
+                if ai.feature("files") and not self.selection_has_dir():
+                    ai_menu = Gio.Menu()
+                    ai_menu.append(_("Summarize with Aurora"), "win.ai-summarize")
+                    ai_menu.append(_("Ask Aurora About This File…"), "win.ai-ask")
+                    menu.append_section(None, ai_menu)
             menu.append_section(None, s)
             if not trash:
                 s = Gio.Menu()
