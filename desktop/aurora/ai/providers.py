@@ -11,6 +11,7 @@ import urllib.error
 import urllib.request
 
 from aurora import settings
+from aurora.i18n import _
 from aurora.ai import keys, provider
 
 SYSTEM_PROMPT = (
@@ -118,7 +119,7 @@ def _openai_stream(base, model, messages, api_key, max_tokens, local):
 
 def _anthropic_stream(model, messages, system, api_key, max_tokens):
     if not api_key:
-        raise ProviderError("add your Anthropic API key in Settings → AI")
+        raise ProviderError(_("add your Anthropic API key in Settings → AI"))
     body = {"model": model, "max_tokens": max_tokens, "system": system,
             "messages": messages, "stream": True}
     headers = {"x-api-key": api_key, "anthropic-version": ANTHROPIC_VERSION}

@@ -17,6 +17,7 @@ import subprocess
 import sys
 
 from aurora import settings
+from aurora.i18n import _
 from aurora.ai import components, enabled, feature, provider
 from aurora.ai.providers import SYSTEM_PROMPT, ProviderError, chat, first_code_block
 
@@ -35,9 +36,9 @@ DIM, BOLD, RESET = "\033[2m", "\033[1m", "\033[0m"
 
 def _check():
     if not enabled():
-        sys.exit("Aurora AI is off. Turn it on in Settings → AI.")
+        sys.exit(_("Aurora AI is off. Turn it on in Settings → AI."))
     if not feature("terminal"):
-        sys.exit("The terminal assistant is off (Settings → AI).")
+        sys.exit(_("The terminal assistant is off (Settings → AI)."))
 
 
 def _stream(messages, system):
@@ -61,7 +62,7 @@ def ask(request):
     if not command or not sys.stdin.isatty():
         return 0
     try:
-        answer = input(f"{BOLD}Run it?{RESET} [y/N/e = edit] ").strip().lower()
+        answer = input(f"{BOLD}" + _("Run it?") + f"{RESET} " + _("[y/N/e = edit]") + " ").strip().lower()
     except EOFError:
         return 0
     if answer == "e":
@@ -86,7 +87,7 @@ def why(command, status, output):
     if output.strip():
         parts.append("Output (last lines):\n" + "\n".join(output.strip().splitlines()[-40:]))
     else:
-        parts.append("No output was captured. Tip: `cmd 2>&1 | why` includes it.")
+        parts.append("No output was captured.")
     _stream([{"role": "user", "content": "\n".join(parts)}], WHY_SYSTEM)
     return 0
 
@@ -127,7 +128,7 @@ def main(argv=None):
         return status()
     if cmd == "index":
         if not feature("semantic-search"):
-            sys.exit("Search by meaning is off (Settings → AI).")
+            sys.exit(_("Search by meaning is off (Settings → AI)."))
         from aurora.ai.index import run_indexer
         run_indexer()
         return 0

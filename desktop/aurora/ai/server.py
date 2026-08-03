@@ -19,6 +19,7 @@ import urllib.request
 
 from aurora import settings
 from aurora.ai import components, state_dir
+from aurora.i18n import _
 
 PORTS = {"chat": 47651, "embed": 47652}
 IDLE_MINUTES = 10
@@ -61,7 +62,7 @@ def chat_model_id():
 def command(kind):
     binary = components.server_binary()
     if binary is None:
-        raise RuntimeError("the AI runtime is not installed (Settings → AI)")
+        raise RuntimeError(_("the AI runtime is not installed (Settings → AI)"))
     if kind == "chat":
         model = components.model_path("chat", chat_model_id())
         extra = ["--ctx-size", "8192", "--jinja", "--n-gpu-layers", "99"]
@@ -70,7 +71,7 @@ def command(kind):
         extra = ["--embeddings", "--pooling", "mean", "--ctx-size", "2048",
                  "--n-gpu-layers", "99"]
     if not os.path.exists(model):
-        raise RuntimeError(f"the {kind} model is not downloaded (Settings → AI)")
+        raise RuntimeError(_("the AI model is not downloaded (Settings → AI)"))
     threads = max(2, (os.cpu_count() or 4) - 2)
     return [binary, "--model", model, "--host", "127.0.0.1", "--port", str(PORTS[kind]),
             "--threads", str(threads), "--no-webui", *extra]
@@ -90,11 +91,11 @@ def ensure(kind, wait=180):
     deadline = time.time() + wait
     while time.time() < deadline:
         if proc.poll() is not None:
-            raise RuntimeError(f"the AI {kind} server stopped (see {log.name})")
+            raise RuntimeError(_("the AI model stopped unexpectedly (see {log})").format(log=log.name))
         if healthy(kind):
             return url(kind)
         time.sleep(0.5)
-    raise RuntimeError(f"the AI {kind} server did not start in {wait} s")
+    raise RuntimeError(_("the AI model did not start in {n} seconds").format(n=wait))
 
 
 def stop(kind):

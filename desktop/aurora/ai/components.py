@@ -12,6 +12,7 @@ import tarfile
 
 from aurora.ai import base_dir, catalog
 from aurora.ai.download import fetch, is_complete
+from aurora.i18n import _
 
 
 def runtime_dir():
@@ -87,7 +88,7 @@ def install_speech(log=None):
         if log:
             log(line.rstrip())
     if proc.wait() != 0:
-        raise RuntimeError("pip could not install the speech packages")
+        raise RuntimeError(_("the speech packages could not be installed"))
     open(os.path.join(venv_dir(), ".aurora-speech-ok"), "w").close()
 
 

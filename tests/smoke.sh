@@ -31,12 +31,16 @@ launch() {  # launch NAME COMMAND...
 }
 
 launch files aurora-files
+launch gamehub aurora-gamehub
+pkill -f aurora-gamehub
+launch assistant-off aurora-assistant
+pkill -f aurora-assistant
 launch devhub aurora-devhub
 launch welcome aurora-welcome
 launch settings aurora-settings
 for page in network bluetooth display sound power appearance desktop multitasking \
             notifications apps mouse keyboard printers accessibility privacy sharing \
-            users language datetime updates about; do
+            users language datetime updates ai health about; do
     timeout 15 aurora-settings --page "$page" >>"$out/smoke/settings.log" 2>&1 ||
         echo "timeout or error opening page $page" >>"$out/smoke/settings.log"
     sleep 1.5
@@ -88,6 +92,43 @@ sleep 4
 aurora-shell overview; sleep 2; grim "$out/smoke/overview.png"
 aurora-shell overview
 pkill -f aurora-files; pkill -f gnome-text-editor
+
+# Aurora AI against a fake OpenAI-compatible server: the Assistant streams an
+# answer, and the Writing Tools open on the selected text.
+python3 - >"$out/smoke/fake-llm.log" 2>&1 <<'PY' &
+import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
+class H(BaseHTTPRequestHandler):
+    def do_POST(self):
+        self.rfile.read(int(self.headers["Content-Length"]))
+        self.send_response(200); self.send_header("Content-Type", "text/event-stream"); self.end_headers()
+        answer = "To see what uses space, run:\n```bash\ndu -sh ~/* | sort -h\n```\nThe biggest folders are listed last."
+        for i in range(0, len(answer), 12):
+            self.wfile.write(("data: " + json.dumps({"choices": [{"delta": {"content": answer[i:i+12]}}]}) + "\n\n").encode())
+        self.wfile.write(b"data: [DONE]\n\n")
+HTTPServer(("127.0.0.1", 47699), H).serve_forever()
+PY
+gsettings set org.aurora.desktop ai-provider openai
+gsettings set org.aurora.desktop ai-openai-url http://127.0.0.1:47699/v1
+gsettings set org.aurora.desktop ai-openai-model fake
+gsettings set org.aurora.desktop ai-enabled true
+sleep 1
+aurora-assistant --ask "What uses the space on my disk?" >"$out/smoke/assistant.log" 2>&1 &
+sleep 5; grim "$out/smoke/assistant.png"
+pkill -f aurora-assistant
+printf 'Their going to the meeting tomorow, we should prepare the slides.' | wl-copy --primary
+aurora-assistant --writing >"$out/smoke/writing.log" 2>&1 &
+sleep 4; grim "$out/smoke/writing-tools.png"
+pkill -f aurora-assistant
+for f in assistant writing; do
+    if grep -q Traceback "$out/smoke/$f.log"; then
+        echo "FAILED: $f raised an exception"; fail=1; sed -n '/Traceback/,$p' "$out/smoke/$f.log" | head -20
+    else
+        echo "ok: $f"
+    fi
+done
+aurora-shell search "? how do I free disk space"; sleep 1.5; grim "$out/smoke/spotlight-ask.png"
+aurora-shell launcher spotlight
 
 if grep -q "Traceback" "$out/shell.log"; then
     echo "FAILED: shell raised an exception"; fail=1

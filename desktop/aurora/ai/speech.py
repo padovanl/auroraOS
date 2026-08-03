@@ -15,6 +15,7 @@ import subprocess
 
 from aurora import settings
 from aurora.ai import components, state_dir
+from aurora.i18n import _
 
 WORKER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "speechworker.py")
 
@@ -63,7 +64,7 @@ class Dictation:
             pass
         if res.returncode != 0:
             raise RuntimeError(res.stderr.strip().splitlines()[-1] if res.stderr.strip()
-                               else "speech recognition failed")
+                               else _("speech recognition failed"))
         return res.stdout.strip()
 
 
@@ -97,7 +98,7 @@ def speak(text):
                          input=text[:20000], capture_output=True, text=True, timeout=600)
     if res.returncode != 0:
         raise RuntimeError(res.stderr.strip().splitlines()[-1] if res.stderr.strip()
-                           else "speech synthesis failed")
+                           else _("speech synthesis failed"))
     _player = subprocess.Popen(["pw-play", out])
 
 

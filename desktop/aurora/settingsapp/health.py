@@ -18,7 +18,7 @@ from aurora import apps
 from aurora.i18n import _, ngettext
 from aurora.settingsapp.util import Page
 
-ICONS = {"ok": ("emblem-ok-symbolic", "success"), "warn": ("dialog-warning-symbolic", "warning"),
+ICONS = {"ok": ("object-select-symbolic", "success"), "warn": ("dialog-warning-symbolic", "warning"),
          "bad": ("dialog-error-symbolic", "error")}
 
 
@@ -223,7 +223,7 @@ CHECKS = [
 class Health(Page):
     page_id = "health"
     title = _("System Health")
-    icon_name = "emblem-ok-symbolic"
+    icon_name = "security-high-symbolic"
 
     def build(self):
         self.summary = self.group(_("Aurora Doctor"),

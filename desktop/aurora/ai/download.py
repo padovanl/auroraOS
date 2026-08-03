@@ -9,6 +9,8 @@ import hashlib
 import os
 import urllib.request
 
+from aurora.i18n import _
+
 CHUNK = 1 << 20
 
 
@@ -67,6 +69,6 @@ def fetch(item, dest, progress=None, cancelled=None, opener=urllib.request.urlop
                     progress(done, item["size"])
     if os.path.getsize(part) != item["size"] or sha256_of(part) != item["sha256"]:
         os.remove(part)
-        raise DownloadError(f"checksum mismatch for {os.path.basename(dest)}")
+        raise DownloadError(_("{name} is damaged (checksum mismatch); try again").format(name=os.path.basename(dest)))
     os.replace(part, dest)
     return dest
