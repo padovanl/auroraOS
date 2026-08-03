@@ -73,6 +73,11 @@ class AI(Page):
               "unless you choose a cloud provider below. Nothing is downloaded until you "
               "set up a feature."))
         intro.add(switch_row(_("Aurora AI"), s.get_boolean("ai-enabled"), self._set_enabled))
+        intro.add(switch_row(_("Assistant button in the top bar"),
+                             s.get_boolean("ai-panel-button"),
+                             lambda v: s.set_boolean("ai-panel-button", v),
+                             subtitle=_("The Assistant is also in the dock and opens with "
+                                        "Super+Shift+Space")))
 
         where = self.group(_("Answers Come From"))
         providers = ["local", "anthropic", "openai"]
@@ -95,7 +100,19 @@ class AI(Page):
 
         self.cloud_group = self.group(_("Cloud Provider"),
                                       _("Questions and the text you ask about are sent to the "
-                                        "provider. Keys are kept in your login keyring."))
+                                        "provider. Keys are kept in your login keyring. "
+                                        "Claude and ChatGPT subscriptions work only in their "
+                                        "own apps: Dev Hub installs Claude Code and Codex, "
+                                        "which sign in with your subscription."))
+        billing = Adw.ActionRow(
+            title=_("API keys are paid per use"),
+            subtitle=_("Every answer uses credits billed by the provider, separately from any "
+                       "Claude Pro/Max or ChatGPT Plus subscription, which API keys don't use. "
+                       "Check prices and set a spending limit in the provider's console. "
+                       "Answers on this computer are free."),
+            subtitle_lines=0)
+        billing.add_prefix(Gtk.Image(icon_name="dialog-warning-symbolic", css_classes=["warning"]))
+        self.cloud_group.add(billing)
         self.key_row = Adw.PasswordEntryRow(title=_("API key"), show_apply_button=True)
         self.key_row.connect("apply", lambda r: self._save_key(r.get_text()))
         self.cloud_group.add(self.key_row)
@@ -104,6 +121,22 @@ class AI(Page):
         self.claude_model.connect("apply", lambda r: s.set_string("ai-anthropic-model",
                                                                   r.get_text().strip()))
         self.cloud_group.add(self.claude_model)
+        presets = [(_("Choose a service…"), None), ("OpenAI", "https://api.openai.com/v1"),
+                   ("Google Gemini", "https://generativelanguage.googleapis.com/v1beta/openai"),
+                   ("Mistral", "https://api.mistral.ai/v1"),
+                   ("OpenRouter", "https://openrouter.ai/api/v1"),
+                   ("Groq", "https://api.groq.com/openai/v1"),
+                   (_("Ollama on this computer"), "http://localhost:11434/v1")]
+
+        def pick(i):
+            url = presets[i][1]
+            if url:
+                s.set_string("ai-openai-url", url)
+                self.openai_url.set_text(url)
+        self.openai_service = combo_row(_("Service"), [n for n, _u in presets], 0,
+                                        subtitle=_("Fills in the address; then add your key "
+                                                   "and a model name"), on_change=pick)
+        self.cloud_group.add(self.openai_service)
         self.openai_url = Adw.EntryRow(title=_("API address"), show_apply_button=True,
                                        text=s.get_string("ai-openai-url"))
         self.openai_url.connect("apply", lambda r: s.set_string("ai-openai-url",
@@ -169,6 +202,8 @@ class AI(Page):
         index_now.connect("activated", lambda *_: self._index_now())
         feats.add(index_now)
 
+        self._language_group()
+
         store = self.group(_("Storage"))
         self.usage = Adw.ActionRow(title=_("Space used by AI"),
                                    subtitle=_size(components.disk_usage()))
@@ -178,6 +213,69 @@ class AI(Page):
         store.add(remove)
         self._sync()
 
+    # --- languages ---
+
+    NATIVE = [("en", "English"), ("it", "Italiano"), ("es", "Español"), ("fr", "Français"),
+              ("de", "Deutsch"), ("pt", "Português"), ("nl", "Nederlands"), ("pl", "Polski"),
+              ("sv", "Svenska"), ("tr", "Türkçe"), ("ru", "Русский"), ("uk", "Українська"),
+              ("zh", "中文"), ("ja", "日本語"), ("ko", "한국어"), ("ar", "العربية"),
+              ("hi", "हिन्दी")]
+
+    def _language_group(self):
+        s = self.s
+        g = self.group(_("Languages"),
+                       _("Aurora AI understands and answers in many languages. Ask it in "
+                         "any language, or tell it “reply in Italian”, whatever the system "
+                         "language is."))
+        codes = [""] + [c for c, _n in self.NATIVE]
+        names = [_("The language I write in")] + [n for _c, n in self.NATIVE]
+        cur = s.get_string("ai-language")
+        g.add(combo_row(_("Answers in"), names, codes.index(cur) if cur in codes else 0,
+                        on_change=lambda i: s.set_string("ai-language", codes[i])))
+        dnames = [_("Detect automatically")] + [n for _c, n in self.NATIVE]
+        cur = s.get_string("ai-dictation-language")
+        g.add(combo_row(_("Dictation language"), dnames, codes.index(cur) if cur in codes else 0,
+                        on_change=lambda i: s.set_string("ai-dictation-language", codes[i])))
+        voices = list(ai.catalog()["voices"])
+        native = dict(self.NATIVE)
+        labels = [f"{native.get(v.split('_')[0], v)} ({v.split('_')[1]})" for v in voices]
+        from aurora.ai import speech
+        cur = speech.voice_code()
+        self.voice_row = combo_row(_("Read-aloud voice"), labels,
+                                   voices.index(cur) if cur in voices else 0, search=True,
+                                   on_change=lambda i: self._set_voice(voices[i]))
+        g.add(self.voice_row)
+        self._voice_button(cur)
+
+    def _voice_button(self, code):
+        row = self.voice_row
+        old = getattr(row, "_aurora_dl", None)
+        if old is not None:
+            row.remove(old)
+            row._aurora_dl = None
+        if components.speech_installed() and components.voice_installed(code):
+            row.set_subtitle(_("Downloaded"))
+            return
+        row.set_subtitle(_("Not downloaded yet"))
+        b = Gtk.Button(label=_("Download"), valign=Gtk.Align.CENTER)
+        b.connect("clicked", lambda *_: self._download_voice(code, b))
+        row.add_suffix(b)
+        row._aurora_dl = b
+
+    def _set_voice(self, code):
+        self.s.set_string("ai-voice", code)
+        self._voice_button(code)
+
+    def _download_voice(self, code, button):
+        button.set_sensitive(False)
+
+        def work(job):
+            if not components.speech_installed():
+                components.install_speech()
+            components.install_voice(code, job.progress)
+        Job(self.voice_row, work, lambda e: (self._after_setup(e, _("Voice ready")),
+                                             self._voice_button(code)))
+
     # --- state ---
 
     def _sync(self):
@@ -186,6 +284,7 @@ class AI(Page):
         self.cloud_group.set_visible(which != "local")
         self.claude_model.set_visible(which == "anthropic")
         self.openai_url.set_visible(which == "openai")
+        self.openai_service.set_visible(which == "openai")
         self.openai_model.set_visible(which == "openai")
         if which != "local":
             self.key_row.set_text(keys.get(which))
@@ -275,8 +374,8 @@ class AI(Page):
 
     def _set_read_aloud(self, on):
         self.s.set_boolean("ai-read-aloud", on)
-        import locale
-        code = components.voice_for(locale.getlocale(locale.LC_MESSAGES)[0])
+        from aurora.ai import speech
+        code = speech.voice_code()
         if on and not (components.speech_installed() and components.voice_installed(code)):
             def work(job):
                 if not components.speech_installed():

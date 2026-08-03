@@ -241,6 +241,14 @@ class Panel(LayerWindow):
 
         right = Gtk.Box(spacing=2)
         right.append(Tray())
+        # Aurora Assistant, one click away (it explains how to turn AI on if it's off).
+        assistant = Gtk.Button(icon_name="aurora-assistant-symbolic",
+                               tooltip_text=_("Aurora Assistant (Super+Shift+Space)"),
+                               css_classes=["flat", "panel-button", "panel-assistant"])
+        assistant.connect("clicked", lambda *_: apps.spawn(["aurora-assistant"]))
+        if s:
+            s.bind("ai-panel-button", assistant, "visible", 0)
+        right.append(assistant)
         search = Gtk.Button(icon_name="system-search-symbolic", tooltip_text=_("Search"),
                             css_classes=["flat", "panel-button"])
         search.connect("clicked", lambda *_: shell.launcher.toggle("spotlight"))

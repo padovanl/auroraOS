@@ -21,8 +21,19 @@ WORKER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "speechworker.
 
 
 def _language():
-    loc = locale.getlocale(locale.LC_MESSAGES)[0] or os.environ.get("LANG", "en_US")
-    return loc.split("_")[0] or None
+    """Dictation language: the one chosen in Settings, or None to let Whisper detect it."""
+    s = settings.get()
+    return (s.get_string("ai-dictation-language") if s else "") or None
+
+
+def voice_code():
+    """The read-aloud voice: chosen in Settings, else the system language's."""
+    s = settings.get()
+    chosen = s.get_string("ai-voice") if s else ""
+    if chosen and chosen in components.catalog()["voices"]:
+        return chosen
+    return components.voice_for(locale.getlocale(locale.LC_MESSAGES)[0]
+                                or os.environ.get("LANG"))
 
 
 class Dictation:
@@ -88,8 +99,7 @@ def speak(text):
     """Read text aloud (blocking until the audio is ready, then plays in background)."""
     global _player
     stop_speaking()
-    code = components.voice_for(locale.getlocale(locale.LC_MESSAGES)[0]
-                                or os.environ.get("LANG"))
+    code = voice_code()
     if not components.voice_installed(code):
         code = "en_US"
     onnx, _json = components.voice_paths(code)

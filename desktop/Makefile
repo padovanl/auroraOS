@@ -81,7 +81,7 @@ build/sounds/.stamp: $(BRANDING)/sounds/generate.py
 # Regenerate the translation template from the sources.
 pot:
 	xgettext --from-code=UTF-8 --language=Python --keyword=_ --keyword=N_ \
-		--keyword=ngettext:1,2 --add-comments=TRANSLATORS \
+		--keyword=ngettext:1,2 --add-comments=TRANSLATORS --flag=_:1:no-python-format \
 		--package-name=aurora -o po/aurora.pot $$(find aurora -name '*.py' | sort)
 	for po in po/*.po; do [ -e "$$po" ] && msgmerge -q -U --backup=none $$po po/aurora.pot; done; true
 

@@ -15,7 +15,7 @@
       <summary>Switch between light and dark style at sunrise and sunset</summary>
     </key>
     <key name="dock-favorites" type="as">
-      <default>['firefox-esr.desktop', 'org.aurora.Files.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.TextEditor.desktop', 'org.aurora.Settings.desktop']</default>
+      <default>['firefox-esr.desktop', 'org.aurora.Files.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.TextEditor.desktop', 'org.aurora.Assistant.desktop', 'org.aurora.Settings.desktop']</default>
       <summary>Applications pinned to the dock</summary>
     </key>
     <key name="clock-format" type="s">
@@ -211,6 +211,22 @@
     <key name="ai-openai-model" type="s">
       <default>''</default>
       <summary>Model name for the OpenAI-compatible API</summary>
+    </key>
+    <key name="ai-panel-button" type="b">
+      <default>true</default>
+      <summary>Show the Aurora Assistant button in the top bar</summary>
+    </key>
+    <key name="ai-language" type="s">
+      <default>''</default>
+      <summary>Language of the answers: empty = the language you write in; or a code like "it"</summary>
+    </key>
+    <key name="ai-dictation-language" type="s">
+      <default>''</default>
+      <summary>Dictation language: empty = detect automatically; or a code like "it"</summary>
+    </key>
+    <key name="ai-voice" type="s">
+      <default>''</default>
+      <summary>Read-aloud voice (a locale from the AI catalog, like "it_IT"); empty = the system language</summary>
     </key>
     <key name="ai-spotlight" type="b">
       <default>true</default>

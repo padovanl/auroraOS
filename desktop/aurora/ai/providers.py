@@ -16,9 +16,32 @@ from aurora.ai import keys, provider
 
 SYSTEM_PROMPT = (
     "You are Aurora, the assistant built into Aurora OS, a Linux desktop based on "
-    "Debian 13 (apt, systemd, Wayland with the labwc compositor, bash). Answer in the "
-    "language the user writes in. Be concise and practical. Use Markdown code blocks "
-    "for commands and code. Never claim to have run a command or opened a file yourself.")
+    "Debian 13 (apt, systemd, Wayland with the labwc compositor, bash). Be concise and "
+    "practical. Use Markdown code blocks for commands and code. Never claim to have run a "
+    "command or opened a file yourself.")
+
+# Language names for the instruction below (the model understands English best).
+LANGUAGES = {"en": "English", "it": "Italian", "es": "Spanish", "fr": "French",
+             "de": "German", "pt": "Portuguese", "nl": "Dutch", "pl": "Polish",
+             "sv": "Swedish", "tr": "Turkish", "ru": "Russian", "uk": "Ukrainian",
+             "zh": "Chinese", "ja": "Japanese", "ko": "Korean", "ar": "Arabic", "hi": "Hindi"}
+
+
+def language_rule():
+    """How to pick the answer language: the user's choice in Settings, else the
+    language of their message (and any explicit request, like "reply in Italian"),
+    falling back to the system language."""
+    import locale
+    s = settings.get()
+    fixed = s.get_string("ai-language") if s else ""
+    if fixed:
+        name = LANGUAGES.get(fixed, fixed)
+        return (f" Always answer in {name}, unless the user explicitly asks for another "
+                f"language.")
+    system = (locale.getlocale(locale.LC_MESSAGES)[0] or "en").split("_")[0]
+    return (" Answer in the language of the user's latest message. If the user asks you to "
+            "use a language (for example 'speak Italian'), use it from then on. If the "
+            f"language is unclear, use {LANGUAGES.get(system, 'English')}.")
 
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
@@ -134,6 +157,7 @@ def _anthropic_stream(model, messages, system, api_key, max_tokens):
 
 def chat(messages, system=SYSTEM_PROMPT, max_tokens=1024):
     """Stream the reply to a list of {role, content} messages."""
+    system = system + language_rule()
     s = settings.get()
     which = provider()
     if which == "anthropic":

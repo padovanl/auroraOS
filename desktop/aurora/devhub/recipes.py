@@ -21,6 +21,7 @@ CATEGORIES = [
     ("languages", N_("Languages & Runtimes")),
     ("cloud", N_("Cloud & DevOps")),
     ("data", N_("Databases & API Tools")),
+    ("ai", N_("AI Assistants")),
 ]
 
 
@@ -175,4 +176,22 @@ aws --version
      "fallback_icon": "network-server", "desc": N_("API development and testing (Flathub)."),
      "check": "flatpak info com.getpostman.Postman",
      "script": flatpak("com.getpostman.Postman")},
+    # --- AI ---
+    {"id": "claude-code", "cat": "ai", "name": "Claude Code", "icon": "claude",
+     "fallback_icon": "utilities-terminal",
+     "desc": N_("Anthropic's coding agent in the terminal. Sign in with your Claude "
+                "subscription or an API key."),
+     "check": "command -v claude || test -x ~/.local/bin/claude",
+     "script": "curl -fsSL https://claude.ai/install.sh | bash"},
+    {"id": "codex", "cat": "ai", "name": "OpenAI Codex CLI", "icon": "openai",
+     "fallback_icon": "utilities-terminal",
+     "desc": N_("OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or "
+                "an API key."),
+     "check": "command -v codex",
+     "script": "mkdir -p ~/.local && npm install -g --prefix ~/.local @openai/codex"},
+    {"id": "ollama", "cat": "ai", "name": "Ollama", "icon": "ollama",
+     "fallback_icon": "application-x-executable",
+     "desc": N_("Run many more open models locally; Aurora AI can use it as its provider."),
+     "check": "command -v ollama",
+     "script": "curl -fsSL https://ollama.com/install.sh | sh"},
 ]

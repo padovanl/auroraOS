@@ -228,3 +228,33 @@ def test_package_build_script_splits_artwork():
     script = open(os.path.join(root, "build", "package-desktop.sh")).read()
     assert "aurora-artwork" in script and "usr/share/backgrounds" in script
     assert "Maintainer: Luca Padovan" in script
+
+
+# --- AI languages ------------------------------------------------------------
+
+class _Settings:
+    def __init__(self, **v):
+        self.v = v
+
+    def get_string(self, k):
+        return self.v.get(k, "")
+
+
+def test_answer_language_follows_the_user(monkeypatch):
+    monkeypatch.setattr(providers.settings, "get", lambda *a: _Settings())
+    rule = providers.language_rule()
+    assert "language of the user's latest message" in rule and "speak Italian" in rule
+
+
+def test_answer_language_can_be_fixed(monkeypatch):
+    monkeypatch.setattr(providers.settings, "get", lambda *a: _Settings(**{"ai-language": "it"}))
+    assert "Always answer in Italian" in providers.language_rule()
+
+
+def test_dictation_detects_language_unless_chosen(monkeypatch):
+    from aurora.ai import speech
+    monkeypatch.setattr(speech.settings, "get", lambda *a: _Settings())
+    assert speech._language() is None
+    monkeypatch.setattr(speech.settings, "get",
+                        lambda *a: _Settings(**{"ai-dictation-language": "de"}))
+    assert speech._language() == "de"

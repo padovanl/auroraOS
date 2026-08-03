@@ -217,10 +217,7 @@ class AssistantWindow(Adw.ApplicationWindow):
                 toast = _("Copy some text first, then pick an action.")
                 self.entry.set_placeholder_text(toast)
                 return
-            import locale
-            lang = (locale.getlocale(locale.LC_MESSAGES)[0] or "en").split("_")[0]
-            target = "English" if lang == "en" else f"the language with ISO code '{lang}'"
-            self.send(prompt.replace("{lang}", target).format(text.strip()[:12000]))
+            self.send(prompt.replace("{lang}", _user_language_name()).format(text.strip()[:12000]))
         Gdk.Display.get_default().get_clipboard().read_text_async(None, got)
 
     def send(self, text):
@@ -302,9 +299,14 @@ WRITING_ACTIONS = [
 
 
 def _user_language_name():
+    """Translate into the AI answer language if one is set, else the system language."""
     import locale
-    lang = (locale.getlocale(locale.LC_MESSAGES)[0] or "en").split("_")[0]
-    return "English" if lang == "en" else f"the language with ISO code '{lang}'"
+    from aurora import settings
+    from aurora.ai.providers import LANGUAGES
+    s = settings.get()
+    lang = (s.get_string("ai-language") if s else "") or \
+        (locale.getlocale(locale.LC_MESSAGES)[0] or "en").split("_")[0]
+    return LANGUAGES.get(lang, "English")
 
 
 class WritingTools(Adw.ApplicationWindow):
