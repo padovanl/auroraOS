@@ -23,7 +23,8 @@ command -v timeshift >/dev/null || exit 0
 mkdir -p /var/lib/aurora
 
 create() {
-    timeshift --create --scripted --tags O --comments "$1" >/dev/null 2>&1
+    # On-demand is the default tag; Debian's Timeshift rejects "--tags O" with --create.
+    timeshift --create --scripted --comments "$1" >/dev/null 2>&1
 }
 
 case "${1:-}" in
