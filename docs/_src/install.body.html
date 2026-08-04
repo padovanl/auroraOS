@@ -1,0 +1,138 @@
+<main>
+
+<section class="section">
+  <div class="section-head">
+    <p class="eyebrow">Install guide</p>
+    <h1>From download to desktop.</h1>
+    <p class="lead">Try Aurora live from a USB stick without touching your disk, then install it
+      with a guided installer. It works on laptops, desktops and virtual machines, with BIOS or
+      UEFI firmware, and it installs offline.</p>
+  </div>
+  <div class="download-card reveal">
+    <div>
+      <h3>What you need</h3>
+      <ul class="ticks">
+        <li>A 64-bit Intel or AMD computer, 4 GB of memory (2 GB minimum)</li>
+        <li>20 GB of free disk space to install</li>
+        <li>A USB stick of 4 GB or more (it will be erased)</li>
+        <li>For the local AI: 4 GB of memory for the small model, 8–16 GB for the bigger ones</li>
+      </ul>
+      <a class="btn btn-primary" href="index.html#download">Download the ISO</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+<ol class="steps">
+    <li class="reveal">
+      <h3>Write the ISO to a USB stick</h3>
+      <div class="tabs small" role="tablist">
+        <button class="tab active" data-os="any">Windows / macOS</button>
+        <button class="tab" data-os="linux">Linux</button>
+      </div>
+      <div class="os-panel" data-panel="any">
+        <p>Install <a href="https://etcher.balena.io/" rel="noopener">balenaEtcher</a>, choose the
+          Aurora ISO, choose your USB stick and click <em>Flash</em>. (Rufus in DD mode and Ventoy work
+          too.)</p>
+      </div>
+      <div class="os-panel" data-panel="linux" hidden>
+        <p>Use GNOME Disks → <em>Restore Disk Image</em>, or a terminal. Replace <code>sdX</code> with
+          your stick. This erases it, so double-check the name with <code>lsblk</code>:</p>
+        <div class="code"><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
+      </div>
+    </li>
+    <li class="reveal">
+      <h3>Boot from the stick</h3>
+      <p>Restart and press the boot-menu key while the logo appears (usually <kbd>F12</kbd>,
+        <kbd>F10</kbd>, <kbd>F9</kbd>, <kbd>Esc</kbd> or <kbd>Del</kbd>), then pick the USB stick.
+        Both UEFI and legacy BIOS work. <em>If your PC uses Secure Boot, switch it off to start the
+        live USB</em>; you can switch it back on after installing.</p>
+    </li>
+    <li class="reveal">
+      <h3>Try or Install</h3>
+      <p>The Aurora menu offers <strong>Try Aurora OS</strong> (runs from the stick, touches nothing),
+        <strong>Install Aurora OS</strong> (opens the installer right away) and a <strong>Language</strong>
+        menu with 20 languages. From the live desktop you can install any time from the dock.</p>
+    </li>
+    <li class="reveal">
+      <h3>Follow the installer</h3>
+      <p>Pick your language, your location on the map and your keyboard. Then choose how to use the
+        disk: <em>erase</em> it, install <em>alongside</em> Windows or another Linux, or
+        <em>partition manually</em>, with optional encryption. Finally create your user and
+        choose whether to <em>log in automatically</em>. Keep the default btrfs file system to get
+        automatic snapshots. Installation takes a few minutes and works offline.</p>
+      <div class="grid-2">
+        <figure><img src="screenshots/install-partitions.png" alt="The installer's disk page: erase disk, btrfs" data-zoom>
+          <figcaption>Disk: erase and install, btrfs by default, optional encryption</figcaption></figure>
+        <figure><img src="screenshots/install-users.png" alt="The installer's user page" data-zoom>
+          <figcaption>Your name, password and computer name</figcaption></figure>
+      </div>
+    </li>
+    <li class="reveal">
+      <h3>Restart and enjoy</h3>
+      <p>Remove the stick when asked. The Welcome app greets you on first login. Open
+        <strong>Dev Hub</strong> to add your favorite tools, or <strong>App Center</strong> for
+        everything else.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <p class="eyebrow">After installing</p>
+    <h2>Undo a bad update in two minutes.</h2>
+    <p>On btrfs (the installer's default) Aurora keeps snapshots of the system: one called
+      <em>Fresh install</em>, one before every update (the last 10), and daily and weekly ones.
+      They cover the system, never your files in Home.</p>
+  </div>
+  <ol class="steps">
+    <li class="reveal"><h3>Restart and open the snapshot menu</h3>
+      <p>In the boot menu choose <strong>Aurora OS snapshots</strong> (hold <kbd>Shift</kbd> or press
+        <kbd>Esc</kbd> during boot if the menu is hidden), then the snapshot from before the update.</p></li>
+    <li class="reveal"><h3>Check that everything works</h3>
+      <p>Aurora starts as it was at that moment.</p></li>
+    <li class="reveal"><h3>Make it permanent</h3>
+      <p>Open <strong>Settings → Software Updates → Open Timeshift</strong>, select the same snapshot
+        and click <em>Restore</em>. Restart once more.</p></li>
+  </ol>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <p class="eyebrow">Everyday tips</p>
+    <h2>Share, sync and look after your computer.</h2>
+  </div>
+  <div class="app-groups">
+    <div class="card reveal"><h4>📤 Send files to any device</h4><p>Right-click a file in Files → <em>Send to Nearby Device…</em> (LocalSend: Android, iPhone, Windows, macOS, Linux). To receive, switch on <em>Let nearby devices find this computer</em> in Settings → Sharing.</p></div>
+    <div class="card reveal"><h4>📶 Share your Wi-Fi</h4><p>Settings → Network → the QR icon next to your network. Point a phone's camera at it.</p></div>
+    <div class="card reveal"><h4>🖥️ Share your screen</h4><p>Settings → Sharing → <em>Share this screen</em>, then connect with any VNC app using the address and password shown.</p></div>
+    <div class="card reveal"><h4>📱 Your phone</h4><p>Install KDE Connect on the phone, switch on <em>Allow phones to connect</em> in Settings → Sharing and pair.</p></div>
+    <div class="card reveal"><h4>🩺 System Health</h4><p>Settings → System Health checks disks, space, updates, firmware, drivers, services, the firewall, snapshots and the battery, and fixes each problem with a click.</p></div>
+    <div class="card reveal"><h4>🔋 Battery care</h4><p>On supported laptops, Settings → Power → <em>Limit charging to 80%</em> keeps the battery healthy for years.</p></div>
+  </div>
+  <figure class="layout-shot reveal"><img src="screenshots/settings-health.png" alt="Settings → System Health" data-zoom></figure>
+</section>
+
+<section class="section faq">
+  <div class="section-head">
+    <p class="eyebrow">Troubleshooting</p>
+    <h2>If something doesn't go to plan.</h2>
+  </div>
+  <details class="reveal"><summary>The USB stick doesn't boot</summary>
+    <p>Turn off Secure Boot in the firmware settings (the live USB's boot loader isn't signed
+      yet; installed systems use Debian's signed boot chain, so you can turn it back on after
+      installing). Also try the other USB port and the one-time boot menu key (F12, F10, F9, Esc
+      or Del).</p></details>
+  <details class="reveal"><summary>Black screen after the boot menu</summary>
+    <p>Choose <em>Try Aurora OS (safe graphics)</em> in the boot menu. With an NVIDIA card,
+      install its driver afterwards from Settings → Software Updates → Additional Drivers.</p></details>
+  <details class="reveal"><summary>Keeping Windows</summary>
+    <p>Choose <em>Install alongside</em> in the installer and drag the divider. The boot menu
+      then lets you pick the system at startup. Back up your files first.</p></details>
+  <details class="reveal"><summary>Wi-Fi isn't working</summary>
+    <p>Aurora includes firmware for most Wi-Fi chips. Plug in a cable or share your phone's
+      connection over USB, then run the updates: newer firmware often fixes brand-new chips.
+      System Health tells you if a driver is missing.</p></details>
+</section>
+
+</main>

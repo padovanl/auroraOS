@@ -79,6 +79,7 @@ PY
 
 step "Website technical page matches README"
 check python3 tools/build-site.py --check
+check python3 tools/check-site-links.py
 
 step "Package lists have no duplicates"
 dups=$(sed -e 's/#.*//' -e '/^\s*$/d' config/packages/*.list | sort | uniq -d)

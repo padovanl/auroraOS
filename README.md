@@ -53,6 +53,12 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 - **Beautiful by default.** A macOS-inspired layout: a menu bar, a floating dock with
   magnification, Spotlight-style search, a Launchpad grid and round colored window buttons.
   All of it uses our own artwork.
+- **A private AI assistant, built in, off until you want it.** Aurora AI runs a language
+  model **on your computer** (nothing leaves it) or uses Claude or any OpenAI-compatible
+  service with your key. Ask from Spotlight with `?`, get commands in the terminal with
+  `ask` and `why`, fix and rewrite any text with Writing Tools, dictate with
+  <kbd>Super</kbd>+<kbd>H</kbd>, have text read aloud, and find documents by what they're
+  about. Every place it appears has its own switch, and it answers in your language.
 - **Made for developers, but not bloated.** Git, compilers, Python, Node.js, Docker, Podman,
   distrobox, a modern shell and a pretty terminal work out of the box. Heavier toolchains
   (VS Code, Rust, Go, Java, Kubernetes, Terraform, databases) are **one click away in Dev
@@ -69,7 +75,15 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   Quick Look (press <kbd>Space</kbd> on a file), a wallpaper that follows the sun, dark
   style at sunset, copy text out of any screenshot, clipboard history and emoji in
   Spotlight, unit and currency conversion, window overview and hot corners, your phone's
-  notifications on the desktop, and a startup sound.
+  notifications on the desktop, touchpad gestures, AirDrop-style sharing with any phone
+  or computer, and startup and shutdown sounds.
+- **Games and Windows apps without fiddling.** Game Hub installs Steam (with Proton),
+  Heroic (Epic, GOG), Lutris, Bottles for Windows programs and Waydroid for Android apps,
+  one click each.
+- **It looks after itself.** Settings → System Health checks disks (including SMART),
+  space, updates, firmware, drivers, services, the firewall, snapshots and the battery,
+  and fixes each problem with one click. Laptops can stop charging at 80% to keep the
+  battery young.
 - **Features people asked the big distros for**, included by default:
   - Flatpak with Flathub enabled (not only snaps);
   - the firewall on out of the box, with a switch in Settings;
@@ -81,19 +95,21 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   - SSH that you turn on with one switch;
   - a Settings search built into the launcher;
   - no telemetry, no ads in the terminal, no snaps forced on you.
-- **Tested before every release.** Unit tests, a headless desktop smoke test, image checks
-  and real boots in BIOS and UEFI virtual machines (see [Testing](#testing)).
+- **Tested before every release.** Unit tests, a headless desktop smoke test, image checks,
+  real boots in BIOS and UEFI virtual machines, and a real installation driven through the
+  installer's own screens (see [Testing](#testing)).
 
 ## Features
 
 ### Desktop
 | | |
 |---|---|
-| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, Spotlight, status icons, clock. |
+| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, the Aurora Assistant button, Spotlight, status icons, clock. |
 | **Dock** | Pinned and running apps, running indicators, right-click menus (windows, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Magnification, autohide, bottom/left/right, floating or full-width. |
-| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), commands (`> htop`) and the web. |
+| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
 | **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
+| **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
 | **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
 | **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next. The login and lock screens follow it. |
@@ -112,16 +128,23 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **One look everywhere** | libadwaita apps, GTK 3 apps (adw-gtk3), plain GTK 4 apps, Qt apps (QGnomePlatform), window decorations and icons all follow the light/dark style and accent color you pick. |
 
 ### Apps written for Aurora
-- **Settings**: Network, Bluetooth, Displays, Sound, Power, Appearance, Desktop & Dock,
-  Multitasking, Notifications, Apps (default and startup apps), Mouse & Touchpad, Keyboard
-  (repeat and custom shortcuts), Printers, Accessibility, Privacy & Security (screen lock,
-  file history, clipboard history, weather, firewall), Sharing (phone, SSH), Users
-  (fingerprint), Language & Region, Date & Time, Software Updates (system snapshots),
-  About.
+- **Settings**: Network (share Wi-Fi with a QR code), Bluetooth, Displays, Sound (session
+  sounds), Power (battery health, 80% charge limit), Appearance, Desktop & Dock,
+  Multitasking, Notifications, Apps (default and startup apps), Mouse & Touchpad (gestures),
+  Keyboard (repeat and custom shortcuts), Printers, Accessibility, Privacy & Security
+  (screen lock, file history, clipboard history, weather, firewall), Sharing (screen
+  sharing, nearby sharing, phone, SSH), **AI**, Users (fingerprint), Language & Region,
+  Date & Time, Software Updates (system snapshots), **System Health**, About.
+- **Aurora Assistant**: chat with the AI, with quick actions on copied text (summarize,
+  improve, translate, explain), code blocks you can copy, answers read aloud, and
+  **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
 - **Files**: places and drives, grid and list views, search, hidden files, cut/copy/paste
   with progress, trash with restore, rename, new folder, "Open With", properties, open in
-  terminal, and **Quick Look** (<kbd>Space</kbd>).
-- **Dev Hub**: one-click installers for editors, languages, cloud tools and databases.
+  terminal, **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
+  "Summarize" and "Ask About This File".
+- **Dev Hub**: one-click installers for editors, languages, cloud tools, databases and AI
+  assistants (Claude Code, Codex, Ollama).
+- **Game Hub**: Steam, Heroic, Lutris, Bottles, ProtonUp-Qt, GameMode, MangoHud, Waydroid.
 - **Welcome**: first-run tour (light or dark, shortcuts, install).
 
 ### Preinstalled software
@@ -136,7 +159,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   codecs), Camera, Sound Recorder, Document Scanner, Backups (Déjà Dup), Remote Desktop
   (Remmina), Transmission, Archive Manager, Disks, Disk Usage, System Monitor, Logs,
   Characters, Fonts, Power Statistics, Firmware, Passwords and Keys, App Center (GNOME
-  Software with Flatpak).
+  Software with Flatpak), and **LocalSend** for sending files to any nearby device.
 - The full list, with what the tests check for each app, is in
   [`config/apps.manifest`](config/apps.manifest).
 - **Anything else** is one click away in App Center, which covers the whole Debian archive
@@ -147,7 +170,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   GPUs and audio (SOF).
 - Mesa with Vulkan and VA-API video acceleration, the Intel media driver, NVIDIA detection.
 - Laptops: power profiles, thermald, screen rotation, firmware updates (fwupd), backlight
-  and battery.
+  and battery, battery health and an **80% charge limit** on laptops whose firmware
+  supports it (ThinkPad, ASUS, Dell, Framework, Huawei, LG, Samsung, System76…).
 - **Fingerprint readers:** set up your finger in Settings → Users, then use it instead of
   the password for `sudo` and admin prompts.
 - **Your phone:** KDE Connect (Android and iPhone) shows the phone's notifications on the
@@ -247,7 +271,11 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>U</kbd> <kbd>I</kbd> <kbd>J</kbd> <kbd>K</kbd> | Snap window to the top-left, top-right, bottom-left, bottom-right quarter |
 | <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> | Snap window to the left, center, right third |
 | <kbd>Super</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> | Maximize / restore |
-| <kbd>Super</kbd>+<kbd>H</kbd> | Minimize |
+| <kbd>Super</kbd>+<kbd>M</kbd> | Minimize |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> | Aurora Assistant |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd> | Writing Tools for the selected text |
+| <kbd>Super</kbd>+<kbd>H</kbd> | Dictation (press again to stop) |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> | Read the selected text aloud |
 | <kbd>Super</kbd>+<kbd>F</kbd> | Fullscreen |
 | <kbd>Super</kbd>+<kbd>Q</kbd>, <kbd>Alt</kbd>+<kbd>F4</kbd> | Close window |
 | <kbd>Super</kbd>+<kbd>1</kbd>…<kbd>9</kbd> | Go to workspace |
@@ -278,6 +306,45 @@ system, not your files in Home: rolling back never loses your documents.
 
 Take one by hand with **Settings → Software Updates → Take a Snapshot Now**, or turn off
 the automatic ones there.
+
+### Aurora AI
+Aurora AI is **off until you turn it on** in **Settings → AI**. Then:
+1. **Choose where answers come from.**
+   - *This computer (private):* download a model (Qwen3 1.7B for any computer, Qwen3 4B or
+     Gemma 3 4B with 8 GB of memory, Qwen3 8B with 16 GB). It runs locally, even offline;
+     nothing is sent anywhere. The model loads when you ask and unloads after 10 idle
+     minutes.
+   - *Anthropic Claude* or an *OpenAI-compatible* service (OpenAI, Google Gemini, Mistral,
+     OpenRouter, Groq, or Ollama on your computer): paste your API key. **API keys are
+     billed per use by the provider, separately from any Claude Pro/Max or ChatGPT Plus
+     subscription**, which third-party apps can't use. Settings says so right next to the
+     key field. To use a subscription, install **Claude Code** or **Codex** from Dev Hub →
+     AI Assistants: they sign in with your plan.
+2. **Pick where it helps** (each has its own switch): Spotlight (`? question`), the
+   terminal (`ask`, `why`), Writing Tools (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>),
+   Files ("Summarize", "Ask About This File"), screenshots ("Ask Aurora"), notification
+   summaries, dictation (<kbd>Super</kbd>+<kbd>H</kbd>), read aloud
+   (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>) and search by meaning in Spotlight.
+3. **Languages.** It answers in the language you write in, and follows "reply in
+   Italian" whatever the system language. You can also fix one language for answers and
+   one for dictation (or let it detect), and download a reading voice for any of 19
+   languages.
+
+The Assistant is in the dock and in the top bar (✦), and opens with
+<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>. In the terminal:
+```sh
+ask "find files bigger than 1 GB in my home"   # suggests a command, runs it if you say y
+make 2>&1 | why                                 # explains the error and the fix
+```
+
+### Sharing
+- **Files with nearby devices:** right-click a file in Files → *Send to Nearby Device…*
+  (LocalSend, works with Android, iPhone, Windows, macOS and Linux). Settings → Sharing →
+  *Let nearby devices find this computer* opens the port for receiving.
+- **Your Wi-Fi:** Settings → Network → the QR icon next to the connected network. Point a
+  phone's camera at it to join.
+- **Your screen:** Settings → Sharing → *Share this screen*. Connect from another computer
+  with a VNC app (Remmina, TigerVNC, RealVNC) to the address shown, with the password shown.
 
 ### Your phone
 Install **KDE Connect** on your Android phone (Play Store or F-Droid) or iPhone (App Store),
@@ -328,13 +395,15 @@ reuse the root filesystem and the apt cache and take a few minutes.
 | `25-extras` | Downloads third-party `.deb`s from `config/extra-debs.list` (portop), verified against the publisher's SHA-256 checksums, and archives from `config/extra-archives.list` (the adw-gtk3 theme, grub-btrfs), pinned by SHA-256. |
 | `30-system` | Copies `overlay/` into the image, writes the Aurora identity (`os-release`, `issue`, `lsb-release`), hides upstream installer launchers and enables services. |
 | `35-defaults` | Firewall on, automatic security updates, fingerprint for sudo and admin prompts, Flathub, Docker socket activation, shell setup, SSH off. |
-| `40-desktop` | `make -C desktop install`: the Aurora desktop, generated Wayland bindings, themes, wallpapers (including the dynamic set), session sounds, schemas, icons, translations. |
+| `40-desktop` | Builds Aurora's own packages, `aurora-desktop` (shell, apps, data, translations, generated Wayland bindings and themes) and `aurora-artwork` (wallpapers and sounds), into `out/debs/`, and installs them with apt, plus the Aurora archive key. |
 | `50-branding` | Renders the Plymouth animation, the GRUB theme and fonts, and the installer branding. |
 | `70-pool` | Downloads the boot loader and encryption packages into an offline apt pool for the installer. |
 | `80-finalize` | Sets the boot splash, rebuilds the initramfs and cleans caches, logs and the machine id. |
 | `90-iso` | Packs the root filesystem into SquashFS (zstd), writes the offline repository and the GRUB menu, and makes a hybrid BIOS+UEFI ISO with `grub-mkrescue`. |
 
-Rebuild only some stages while iterating: `make stage S="40 80 90"`.
+Rebuild only some stages while iterating: `make stage S="40 80 90"`. Build only the
+packages with `make debs`, and publish them to the signed apt repository in `docs/apt/`
+with `make repo`.
 Start over with `make clean` (keeps the apt cache) or `make distclean`.
 
 ### Developing the desktop without building an ISO
@@ -736,6 +805,84 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   shell waits 1.8 s for the shutdown sound before powering off, restarting or logging
   out. Both are on by default and switch off together in Settings → Sound.
 
+### Aurora AI
+
+The goal: an assistant that is **private by default, useful where you already are, and
+never in your way**. It is off until you switch it on, nothing is downloaded until you
+set up a feature, and every place it appears has its own switch.
+
+#### Runtime: llama.cpp's `llama-server`, downloaded on demand
+- **Alternatives:** Ollama, LocalAI, vLLM, a Python stack (transformers/PyTorch).
+- **Why:** llama.cpp is the engine under most local AI tools. Its official release
+  (build b11149, the Vulkan build) is a 30 MB download that runs on any GPU with Vulkan
+  (Intel, AMD, NVIDIA) and falls back to the CPU. It serves an OpenAI-compatible API, so
+  local and cloud providers share one client. Ollama wraps the same engine but its Linux
+  bundle is over 1 GB (CUDA included), and PyTorch stacks are several GB. None of them is
+  in Debian, so Aurora downloads the runtime only when you set it up, **pinned by
+  SHA-256** like everything in the AI catalog.
+- **On demand, not always on:** `aurora/ai/server.py` starts the server on the first
+  question, on `127.0.0.1` only, and a small reaper stops it after 10 idle minutes, so a
+  model only uses memory while you use it.
+
+#### Models: Qwen3 and Gemma 3 (GGUF, 4-bit)
+- **Choice:** Qwen3 1.7B (1.1 GB, any computer), Qwen3 4B and Gemma 3 4B (2.5 GB, 8 GB of
+  memory), Qwen3 8B (5 GB, 16 GB of memory), quantized to Q4_K_M.
+- **Why:** they are the strongest openly licensed models at these sizes, they are
+  multilingual (Qwen3 covers over 100 languages, Italian included), and they follow
+  instructions well enough for commands and rewriting. Qwen3's "thinking" mode is turned
+  off for speed (`enable_thinking: false`), and any `<think>` text that slips through is
+  filtered out of the stream.
+- **Tested:** on the build machine, Qwen3 1.7B answers a question in Italian in about 4
+  seconds, including loading the model, and turns "find files bigger than 1 GB" into
+  `find ~/ -type f -size +1G`.
+
+#### Speech: faster-whisper and Piper, in a private venv
+- **Dictation:** faster-whisper (Whisper small or base, CTranslate2, int8 on the CPU).
+  `pw-record` captures the microphone, Whisper transcribes (detecting the language unless
+  you fix one), and `wtype` types the text into the focused app through Wayland's virtual
+  keyboard. Alternatives: whisper.cpp (no Linux release binaries), Vosk (lower accuracy),
+  cloud speech (not private).
+- **Read aloud:** Piper, natural neural voices, one per language (19 voices in the
+  catalog). Alternatives: espeak-ng (robotic), cloud TTS.
+- Both are Python packages that aren't in Debian, so `pip` installs pinned versions
+  (`faster-whisper==1.2.1`, `piper-tts==1.8.0`) into `~/.local/share/aurora/ai/venv`, away
+  from the system Python. A round trip on the build machine: Piper reads an Italian
+  sentence, and Whisper writes it back nearly word for word.
+
+#### Search by meaning: EmbeddingGemma + SQLite + numpy
+- **Why:** EmbeddingGemma 300M is small (333 MB), multilingual and fast on a CPU. The
+  indexer (`aurora-ai index`, a user timer every hour, at idle priority) reads text, code,
+  Markdown, PDF (`pdftotext`) and Word/LibreOffice documents in the folders you choose,
+  and stores a vector per passage in SQLite. A query is one embedding and a matrix
+  product. In a test, "quanto devo pagare di luce" finds the English electricity bill,
+  and "where is my train seat" finds an Italian PDF ticket.
+- **Alternatives:** Tracker/LocalSearch full-text (not by meaning), vector databases
+  (overkill for a desktop).
+
+#### Cloud providers, keys and subscriptions
+- **Anthropic Claude** (Messages API) and any **OpenAI-compatible** API, with presets for
+  OpenAI, Google Gemini, Mistral, OpenRouter, Groq and a local Ollama. Keys are stored in
+  the login keyring with libsecret, never in a file.
+- **Subscriptions:** Claude and ChatGPT plans are only for the providers' own apps, so
+  Aurora AI doesn't pretend to log in with them. Settings says clearly that **API keys
+  are billed per use**, separately from any subscription. Dev Hub installs **Claude Code**
+  and **Codex**, which do sign in with a plan.
+
+#### Languages
+- The system prompt tells the model to answer in the language of your latest message and
+  to follow requests like "reply in Italian". It falls back to the system language, and
+  you can fix a language in Settings. Dictation detects the spoken language, and any of
+  the 19 reading voices can be downloaded.
+
+#### Where it appears
+- Spotlight (`?` and, for longer questions, an "Ask Aurora" result); the Assistant (dock,
+  top bar, <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>); Writing Tools on the
+  selection (it pastes the result back with `wl-copy` and a simulated
+  <kbd>Ctrl</kbd>+<kbd>V</kbd>); Files; screenshots (the OCR text goes to the Assistant,
+  so any model can help, not only vision models); notification summaries; `ask` and `why`
+  in bash (a `PROMPT_COMMAND` hook remembers the last command and its exit status; `ask`
+  runs nothing without a `y`).
+
 ### Look and feel
 
 - **GTK 4 / libadwaita apps** follow the style and accent through the settings portal.
@@ -773,6 +920,11 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 | Admin prompts | **mate-polkit** agent | polkit-gnome, lxpolkit, our own | A maintained, small GTK agent that works on Wayland. |
 | Keyring | **gnome-keyring** (unlocked by PAM at login) + Seahorse | KeePassXC's secret service | Every app that saves passwords (Wi-Fi, browsers, Git credential helpers) supports it. |
 | Removable media | **udisks2 + GVfs**, automounted by the shell | udiskie | Drives mount on insert, with a notification to open or eject. |
+| Touchpad gestures | **libinput events** read by the shell | libinput-gestures, fusuma, touchégg | labwc 0.8 has no gestures. The shell reads `libinput debug-events` (the user is in the `input` group) and turns 3- and 4-finger movements into actions. The alternatives aren't in Debian or need extra daemons. Workspace switches press labwc's own shortcut through `wtype`. |
+| Nearby sharing | **LocalSend** (pinned official `.deb`) | Warpinator, KDE Connect only, Snapdrop | Works with Android, iPhone, Windows, macOS and Linux with no account, over the local network. Warpinator is Linux-first. Its port (53317) opens only when you switch on "Let nearby devices find this computer". |
+| Screen sharing | **wayvnc** (RSA-AES encryption, password) | gnome-remote-desktop (RDP), RustDesk | wayvnc is the wlroots VNC server and is in Debian. gnome-remote-desktop needs GNOME's compositor, and RustDesk relays through servers. Port 5900 opens only while sharing. |
+| Battery charge limit | **sysfs `charge_control_end_threshold`** + a boot and resume service | TLP, vendor tools | The kernel's standard interface works on many brands. TLP would conflict with power-profiles-daemon. |
+| System Health | **Our own checks** (UDisks2 SMART over D-Bus, apt, fwupd, systemd, nvidia-detect, UPower) | GNOME Disks alone, smartd e-mails | One page with every common problem and its fix, no admin password needed to look. |
 | Autostart | **aurora-autostart** (XDG autostart) | dex | labwc doesn't run XDG autostart entries. Our small runner honors OnlyShowIn, NotShowIn, Hidden and TryExec, and is unit-tested. |
 
 ### Apps
@@ -807,7 +959,10 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 - **Every network request the desktop makes on its own**, all of them optional:
   - weather (Open-Meteo, only the time zone's main city, when you open the calendar);
   - exchange rates (the ECB's public file, only when you type a currency conversion);
-  - update checks (Debian's mirrors).
+  - update checks (Debian's and Aurora's repositories);
+  - Aurora AI: nothing while it runs on your computer; model and voice downloads (GitHub,
+    Hugging Face, PyPI) only when you set up a feature; your questions go to a cloud
+    provider only if you choose one and add its key.
   Everything else (sun position, OCR, clipboard history, emoji, unit conversion) runs
   offline.
 - **Fingerprint** only for sudo and admin prompts, never instead of the login password.
@@ -831,10 +986,34 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   Toolbox). Ptyxis integrates with both.
 
 ### Internationalization
-- **gettext** for all Aurora strings (template in `desktop/po/aurora.pot`, complete Italian
-  translation). There are 20 locales, with Firefox and LibreOffice language
-  packs and Noto fonts for every script. The boot menu sets language and keyboard for the
-  live session, and Settings changes them per user.
+- **gettext** for every Aurora string, including the AI's messages (template in
+  `desktop/po/aurora.pot`). Italian is complete; Spanish and French are nearly complete;
+  more are on the way. Translations are kept as JSON keyed by the English text in
+  `desktop/po/sources/` and turned into `.po` files by `tools/po-from-json.py`, which
+  rejects any translation whose `{placeholders}` differ from the English, so a typo can't
+  crash the app.
+- There are 20 locales, with Firefox and LibreOffice language packs and Noto fonts for
+  every script. The boot menu sets language and keyboard for the live session, and
+  Settings changes them per user.
+
+### Aurora's own packages and repository
+- **Choice:** `build/package-desktop.sh` builds two `.deb`s with `dpkg-deb`:
+  `aurora-desktop` (everything that changes often, about 160 KB) and `aurora-artwork`
+  (wallpapers and sounds, about 13 MB, rarely changes). `tools/publish-apt.sh` makes a
+  signed apt repository (`apt-ftparchive`, `InRelease` and `Release.gpg` with an Ed25519
+  key) for GitHub Pages.
+- **Alternatives:** a Launchpad PPA or OBS (tied to other distributions' infrastructure),
+  reprepro, Flatpak for the desktop (a shell can't run sandboxed), no packages (installed
+  systems would never get Aurora updates).
+- **Why:** a plain static repository needs no server. apt already knows how to verify,
+  upgrade and roll back packages, and a snapshot is taken before each upgrade anyway.
+
+### Game Hub
+- **Choice:** the Dev Hub window with a games catalog: Steam, Heroic, Bottles and
+  ProtonUp-Qt from Flathub (sandboxed, with their own graphics runtimes, always current),
+  Lutris, GameMode and MangoHud from Debian, Waydroid from its official repository.
+- **Why:** gaming on Linux is great today but setup is scattered. One click each, from the
+  sources their developers recommend.
 
 ### Build system
 - **Choice:** our own staged Bash scripts running `debootstrap` inside a privileged Debian
@@ -880,7 +1059,9 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   - the shell passing its `gtk4-layer-shell` preload on to every app it started, which
     crashed GTK 3 apps (Firefox, LibreOffice, Geary) launched from the dock.
   - the installer's "strong password" check failing every password, because the
-    cracklib dictionary wasn't installed.
+    cracklib dictionary wasn't installed;
+  - installing was impossible: `unsquashfs` (squashfs-tools) was missing from the image,
+    so Calamares couldn't copy the system to the disk.
 
 ### Website
 - **Choice:** hand-written HTML, CSS and a few lines of JavaScript in `docs/`, served by
@@ -913,18 +1094,23 @@ to start from newer packages, or when Aurora itself gains features. Bump `AURORA
 the ISO and its `.sha256`. When Debian 14 comes out, change `DEBIAN_SUITE` for the next
 major release.
 
-> **Important current limitation:** the Aurora desktop itself is installed as files, not as
-> a `.deb` package yet. So installed systems get Debian updates automatically, but **not
-> updates to the Aurora desktop**. Fixing this (an Aurora apt repository, see the
-> [roadmap](#known-limitations-and-roadmap)) is the next infrastructure step.
+**Aurora's own updates.** The desktop ships as two Debian packages, `aurora-desktop` and
+`aurora-artwork` (version *release.commit-count*, e.g. `0.1.52`), from a signed apt
+repository served by GitHub Pages (`https://padovanl.github.io/auroraOS/apt`). Installed
+systems update them like any other package. The apt source ships switched off and
+`aurora-repo-check.timer` switches it on once the repository answers, so `apt update`
+never fails before it is published. To publish: `make debs && make repo`, commit
+`docs/apt/`, push. The signing key lives outside the repository
+(`~/.config/aurora-os/archive-gnupg`); its public half is
+`config/keys/aurora-archive-keyring.gpg`.
 
 ## Testing
 
 | Command | Needs | What it checks |
 |---|---|---|
 | `make test-static` | Docker | Python and shell syntax, shellcheck, `.desktop` files, GSettings schemas (strict), labwc/polkit XML, installer YAML and module sequence, translations, theme generator, duplicate packages. |
-| `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol, sunrise/sunset, conversions, clipboard history, OCR language choice, weather parsing, Spotlight providers, Night Light schedule. |
-| `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, tries conversions, emoji, clipboard history and project search, previews code, a PDF and a picture with Quick Look, opens the overview, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
+| `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol, sunrise/sunset, conversions, clipboard history, OCR language choice, weather parsing, Spotlight providers, Night Light schedule, verified and resumable downloads, the AI catalog's pins, streaming from an OpenAI-compatible server, the reasoning filter, search by meaning, answer and dictation languages, touchpad gestures, disk health parsing, Wi-Fi QR codes. |
+| `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, tries conversions, emoji, clipboard history and project search, previews code, a PDF and a picture with Quick Look, opens the overview, streams an answer in the Assistant and opens Writing Tools (against a fake AI server), opens Game Hub and the AI and System Health pages, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
 | `make test` | Docker | All three above. |
 | `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
 | `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
@@ -963,9 +1149,13 @@ LibreOffice translations.
 - **Live:** pick a language in the boot menu.
 - **Installed:** Settings → Language & Region (language, formats, keyboard layouts,
   switch layouts with <kbd>Alt</kbd>+<kbd>Shift</kbd>).
+- **Aurora's own apps** are translated into English, Italian (complete), Spanish and
+  French (nearly complete). Other languages show Aurora's own apps in English for now.
 - **Translating Aurora's own apps:** strings use gettext (domain `aurora`). Run
-  `make -C desktop pot` to regenerate `desktop/po/aurora.pot`, then copy it to
-  `desktop/po/<lang>.po` and translate it. It is compiled automatically at build time.
+  `make -C desktop pot` to regenerate `desktop/po/aurora.pot`. Add translations to
+  `desktop/po/sources/<lang>.json` (English text → translation) and run
+  `tools/po-from-json.py <lang>`, or edit a `.po` file directly. They are compiled at
+  build time.
 - **Adding a bundled language:** add a line to `config/locales.list`.
 
 ## Website
@@ -993,30 +1183,38 @@ screenshots, features, download and the install guide.
 | `desktop/aurora/shell/` | Aurora Shell: panel, dock, launcher, search, notifications, control center, OSD, wallpaper, window tracking, system services. |
 | `desktop/aurora/settingsapp/` | Settings app, one module per group of pages. |
 | `desktop/aurora/files/` | Files app. |
-| `desktop/aurora/devhub/` | Dev Hub and its catalog (`recipes.py`). |
+| `desktop/aurora/devhub/` | Dev Hub and Game Hub, and their catalogs (`recipes.py`, `games.py`). |
+| `desktop/po/` | Translations (`.po`) and their JSON sources. |
 | `desktop/aurora/greeter/` | Login screen and greetd client. |
-| `desktop/aurora/{quicklook,clipboard,convert,ocr,sun,weather}.py` | Quick Look, clipboard history, conversions, OCR, sun position, weather. |
+| `desktop/aurora/ai/` | Aurora AI: the pinned download catalog, verified downloads, local servers, providers, keys, speech, search by meaning, the `aurora-ai` CLI. |
+| `desktop/aurora/assistant.py` | Aurora Assistant and Writing Tools. |
+| `desktop/aurora/{quicklook,clipboard,convert,ocr,sun,weather,screenshare}.py` | Quick Look, clipboard history, conversions, OCR, sun position, weather, screen sharing. |
 | `desktop/aurora/{look,labwcconf,apps,settings,i18n}.py` | Shared helpers. |
 | `desktop/bin/`, `desktop/libexec/` | Launchers and the privileged helper. |
 | `desktop/data/` | labwc config, stylesheets, window themes (generated), schemas, `.desktop` files, icons. |
 | `desktop/protocols/` | Wayland protocol XML (bindings generated at build time). |
 | `desktop/dev/` | Headless development and test environment. |
 | `branding/` | Logo and boot animation, wallpapers (including the dynamic set), session sounds, Plymouth, GRUB and installer themes: all generated by code. |
-| `tests/` | Static, unit, smoke, image and boot tests. |
+| `tests/` | Static, unit, smoke, image, boot and install tests. |
 | `docs/` | The website (GitHub Pages) and the images used by this README. |
-| `tools/` | Developer helpers (`serve-site.py`). |
+| `tools/` | Developer helpers: site preview and generator, VM screenshots, the AI catalog generator, the apt repository publisher, the translation builder. |
 
 ## Known limitations and roadmap
 
 - **Secure Boot on the live USB.** The ISO's GRUB is built with `grub-mkrescue` and is not
   signed, so Secure Boot must be off to boot the stick. *Planned:* boot the ISO through
   Debian's signed shim and GRUB.
-- **Aurora packages and repository.** The desktop is installed as files. *Planned:* package
-  it as `aurora-desktop` / `aurora-settings` `.deb`s and host an Aurora apt repository, so
-  installed systems receive desktop updates like any other package.
+- **Publishing the Aurora repository.** The packages and the signed repository are ready
+  (`make debs && make repo`); installed systems switch the source on by themselves as
+  soon as it is online on GitHub Pages.
 - **Translations of Aurora's own apps.** The system, Firefox and LibreOffice come in 20
-  languages. Aurora's own apps are complete in English and Italian; other languages need
-  translators (see [Languages](#languages)).
+  languages. Aurora's own apps are complete in English and Italian and nearly complete in
+  Spanish and French; German, Portuguese, Russian, Chinese, Japanese, Arabic and Hindi
+  are next (see [Languages](#languages)).
+- **Claude or ChatGPT subscriptions inside Aurora AI.** Their terms only allow
+  subscriptions in the providers' own apps, so Aurora AI uses API keys (billed per use)
+  and Dev Hub installs Claude Code and Codex for subscription users. *Idea:* an Aurora MCP
+  server so those assistants can act on the desktop.
 - **Overview thumbnails.** labwc 0.8 doesn't let other programs capture single windows,
   so the overview shows app icons and titles. *Planned:* live thumbnails once labwc
   supports the `ext-image-capture-source` protocol.
