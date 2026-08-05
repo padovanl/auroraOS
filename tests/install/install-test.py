@@ -121,7 +121,7 @@ def install(args, disk, out, results):
         if not vm.wait_agent():
             results.append(("live system booted", False, ""))
             return False
-        vm.run("for i in $(seq 90); do pgrep -f [/]usr/bin/aurora-shell && exit 0; sleep 1; done",
+        vm.run("for i in $(seq 180); do test -f /run/user/1000/aurora-shell.ready && exit 0; sleep 1; done",
                timeout=100)
         time.sleep(8)
         vm.run("pkill -f 'bin/aurora-welcom[e]'", timeout=10)

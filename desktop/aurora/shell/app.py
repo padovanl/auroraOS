@@ -84,6 +84,8 @@ class Shell(Adw.Application):
             return
         self.started = True
         self.hold()
+        import time
+        t0 = time.monotonic()
         self.audio = Audio()
         self.brightness = Brightness()
         self.battery = Battery()
@@ -142,6 +144,18 @@ class Shell(Adw.Application):
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
             look.apply()
+        # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
+        GLib.idle_add(self._ready, t0)
+
+    def _ready(self, t0):
+        import time
+        print(f"aurora-shell: ready in {time.monotonic() - t0:.1f} s", flush=True)
+        try:
+            with open(os.path.join(GLib.get_user_runtime_dir(), "aurora-shell.ready"), "w") as f:
+                f.write(f"{time.monotonic() - t0:.1f}\n")
+        except OSError:
+            pass
+        return GLib.SOURCE_REMOVE
 
     def _later(self, fn):
         """Coalesce bursts of setting changes (layout presets change several keys)."""

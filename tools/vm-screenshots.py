@@ -113,7 +113,7 @@ def main():
             except Exception:  # noqa: BLE001 - keep polling until the guest answers
                 agent.sock = None
                 time.sleep(3)
-        agent.run("for i in $(seq 90); do pgrep -f [/]usr/bin/aurora-shell && exit 0; sleep 1; done",
+        agent.run("for i in $(seq 180); do test -f /run/user/1000/aurora-shell.ready && exit 0; sleep 1; done",
                   timeout=100)
         time.sleep(8)
         for name, command, wait in STEPS:

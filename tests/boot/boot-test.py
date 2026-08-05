@@ -216,10 +216,17 @@ def main():
             # Give the session a moment to start after the agent comes up.
             # Wait for the end of the boot and for the shell (the [/] keeps pgrep
             # from matching this very command line).
-            code, _ = agent.run("for i in $(seq 120); do systemctl is-active -q graphical.target && "
-                                "pgrep -f [/]usr/bin/aurora-shell && exit 0; sleep 1; done; exit 1",
-                                timeout=130)
-            time.sleep(5)
+            # The shell writes aurora-shell.ready once its surfaces are up.
+            code, _ = agent.run("for i in $(seq 180); do systemctl is-active -q graphical.target && "
+                                "test -f /run/user/$(id -u aurora)/aurora-shell.ready && exit 0; "
+                                "sleep 1; done; exit 1", timeout=190)
+            _c, took = agent.run("cat /run/user/$(id -u aurora)/aurora-shell.ready")
+            try:
+                ready_ok = float(took.strip()) <= 30
+            except ValueError:
+                ready_ok = False
+            results.append(("shell ready within 30 s", ready_ok, took.strip() + " s"))
+            time.sleep(3)
             for desc, command in CHECKS:
                 code, out = agent.run(command)
                 results.append((desc, code == 0, out.strip()[:200]))
