@@ -34,7 +34,10 @@ PRESET = ("python3 -c \"import sys; sys.path.insert(0, '/usr/lib/aurora'); "
 
 # (screenshot name or None, shell command run in the session, seconds to wait)
 STEPS = [
-    (None, "pkill -f aurora-welcome; mkdir -p ~/Desktop; "
+    # No screen blanking while the screenshots are taken.
+    (None, "gsettings set org.aurora.desktop idle-dim-minutes 0; pkill -x swayidle; "
+           "wlopm --on '*'", 1),
+    (None, "pkill -f [a]urora-welcome; mkdir -p ~/Desktop; "
            "printf 'Welcome to Aurora' > ~/Desktop/Welcome.txt", 2),
     (None, "gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
     (None, "notify-send -a Aurora -i software-update-available 'Updates installed' "
@@ -48,33 +51,33 @@ STEPS = [
     ("launchpad", None, 0),
     (None, "aurora-shell launcher grid; aurora-shell quick-settings", 3),
     ("control-center", None, 0),
-    (None, "pkill -f aurora-files; gio launch /usr/share/applications/org.aurora.Settings.desktop; "
+    (None, "pkill -f [a]urora-files; gio launch /usr/share/applications/org.aurora.Settings.desktop; "
            "sleep 3; aurora-settings --page desktop", 4),
     ("settings-desktop", None, 0),
     (None, "aurora-settings --page appearance", 3),
     ("settings-appearance", None, 0),
     (None, "aurora-settings --page keyboard", 3),
     ("settings-keyboard", None, 0),
-    (None, "pkill -f aurora-settings; gio launch /usr/share/applications/org.aurora.DevHub.desktop", 6),
+    (None, "pkill -f [a]urora-settings; gio launch /usr/share/applications/org.aurora.DevHub.desktop", 6),
     ("devhub", None, 0),
-    (None, "pkill -f aurora-devhub; gio launch /usr/share/applications/org.gnome.Ptyxis.desktop", 5),
+    (None, "pkill -f [a]urora-devhub; gio launch /usr/share/applications/org.gnome.Ptyxis.desktop", 5),
     ("terminal", None, 0),
     (None, "gio launch /usr/share/applications/org.gnome.TextEditor.desktop; "
            "gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
     (None, "aurora-shell overview", 3),
     ("overview", None, 0),
-    (None, "aurora-shell overview; pkill -f gnome-text-editor; "
+    (None, "aurora-shell overview; pkill -f [g]nome-text-editor; "
            "aurora-quicklook /usr/lib/aurora/aurora/sun.py >/dev/null 2>&1 &", 4),
     ("quicklook", None, 0),
-    (None, "pkill -f aurora-quicklook", 1),
-    (None, "pkill -f ptyxis; gio launch /usr/share/applications/org.aurora.Files.desktop", 4),
-    (None, "pkill -f aurora-quicklook; aurora-settings --page health", 6),
+    (None, "pkill -f [a]urora-quicklook", 1),
+    (None, "pkill -f [p]tyxis; gio launch /usr/share/applications/org.aurora.Files.desktop", 4),
+    (None, "pkill -f [a]urora-quicklook; aurora-settings --page health", 6),
     ("settings-health", None, 0),
     (None, "aurora-settings --page ai", 3),
     ("settings-ai", None, 0),
-    (None, "pkill -f aurora-settings; gio launch /usr/share/applications/org.aurora.GameHub.desktop", 6),
+    (None, "pkill -f [a]urora-settings; gio launch /usr/share/applications/org.aurora.GameHub.desktop", 6),
     ("gamehub", None, 0),
-    (None, "pkill -f aurora-gamehub", 1),
+    (None, "pkill -f [a]urora-gamehub", 1),
     (None, PRESET.format(name="studio"), 4),
     ("layout-studio", None, 0),
     (None, PRESET.format(name="classic"), 4),
