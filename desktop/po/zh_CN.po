@@ -1,0 +1,3578 @@
+# Chinese (Simplified) translation of Aurora OS.
+# This file is distributed under the same license as Aurora OS (GPL-3.0-or-later).
+msgid ""
+msgstr ""
+"Project-Id-Version: aurora\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: aurora/ai/cli.py:39
+msgid "Aurora AI is off. Turn it on in Settings → AI."
+msgstr "Aurora AI 已关闭。请在“设置 → AI”中开启。"
+
+#: aurora/ai/cli.py:41
+msgid "The terminal assistant is off (Settings → AI)."
+msgstr "终端助手已关闭（设置 → AI）。"
+
+#: aurora/ai/cli.py:65
+msgid "Run it?"
+msgstr "要运行吗？"
+
+#: aurora/ai/cli.py:65
+msgid "[y/N/e = edit]"
+msgstr "[y = 是 / N = 否 / e = 编辑]"
+
+#: aurora/ai/cli.py:131
+msgid "Search by meaning is off (Settings → AI)."
+msgstr "按含义搜索已关闭（设置 → AI）。"
+
+#: aurora/ai/components.py:91
+msgid "the speech packages could not be installed"
+msgstr "无法安装语音软件包"
+
+#: aurora/ai/download.py:72
+msgid "{name} is damaged (checksum mismatch); try again"
+msgstr "{name} 已损坏（校验和错误）；请重试"
+
+#: aurora/ai/providers.py:145
+msgid "add your Anthropic API key in Settings → AI"
+msgstr "请在“设置 → AI”中添加 Anthropic API 密钥"
+
+#: aurora/ai/server.py:65
+msgid "the AI runtime is not installed (Settings → AI)"
+msgstr "未安装 AI 引擎（设置 → AI）"
+
+#: aurora/ai/server.py:74
+msgid "the AI model is not downloaded (Settings → AI)"
+msgstr "未下载 AI 模型（设置 → AI）"
+
+#: aurora/ai/server.py:94
+msgid "the AI model stopped unexpectedly (see {log})"
+msgstr "AI 模型意外停止（参见 {log}）"
+
+#: aurora/ai/server.py:98
+msgid "the AI model did not start in {n} seconds"
+msgstr "AI 模型在 {n} 秒内未能启动"
+
+#: aurora/ai/speech.py:78
+msgid "speech recognition failed"
+msgstr "无法识别语音"
+
+#: aurora/ai/speech.py:111
+msgid "speech synthesis failed"
+msgstr "无法合成语音"
+
+#: aurora/assistant.py:97 aurora/assistant.py:262 aurora/assistant.py:340
+#: aurora/files/window.py:669
+msgid "Copy"
+msgstr "复制"
+
+#: aurora/assistant.py:107 aurora/assistant.py:111
+msgid "Aurora Assistant"
+msgstr "Aurora 助手"
+
+#: aurora/assistant.py:113
+msgid "New Chat"
+msgstr "新对话"
+
+#: aurora/assistant.py:116
+msgid "AI Settings"
+msgstr "AI 设置"
+
+#: aurora/assistant.py:121
+msgid "Aurora AI is off"
+msgstr "Aurora AI 已关闭"
+
+#: aurora/assistant.py:122
+msgid "Turn it on in Settings → AI. It runs on this computer, or with the cloud provider you choose."
+msgstr "请在“设置 → AI”中开启。它可以在本机运行，也可以使用你选择的云服务。"
+
+#: aurora/assistant.py:124
+msgid "Open AI Settings"
+msgstr "打开 AI 设置"
+
+#: aurora/assistant.py:134
+msgid "How can I help?"
+msgstr "有什么可以帮你？"
+
+#: aurora/assistant.py:135
+msgid "Ask anything, or pick an action for the text you copied."
+msgstr "随便问点什么，或为复制的文本选择一个操作。"
+
+#: aurora/assistant.py:144 aurora/assistant.py:295
+#: aurora/shell/notifications.py:291
+msgid "Summarize"
+msgstr "总结"
+
+#: aurora/assistant.py:145
+msgid "Improve Writing"
+msgstr "改进写作"
+
+#: aurora/assistant.py:147 aurora/assistant.py:297
+msgid "Translate"
+msgstr "翻译"
+
+#: aurora/assistant.py:149
+msgid "Explain"
+msgstr "解释"
+
+#: aurora/assistant.py:152
+msgid "Uses the text you copied"
+msgstr "使用已复制的文本"
+
+#: aurora/assistant.py:158 aurora/shell/search.py:339
+msgid "Ask Aurora…"
+msgstr "问问 Aurora…"
+
+#: aurora/assistant.py:177
+msgid "On this computer"
+msgstr "本机"
+
+#: aurora/assistant.py:178
+msgid "OpenAI-compatible"
+msgstr "OpenAI 兼容"
+
+#: aurora/assistant.py:188
+msgid "Can't read text from {name}"
+msgstr "无法读取 {name} 中的文本"
+
+#: aurora/assistant.py:199
+msgid "Summarize this file in a few bullet points."
+msgstr "用几个要点总结这个文件。"
+
+#: aurora/assistant.py:201
+msgid "Ask about {name}…"
+msgstr "询问关于 {name} 的问题…"
+
+#: aurora/assistant.py:217
+msgid "Copy some text first, then pick an action."
+msgstr "请先复制一些文本，然后选择一个操作。"
+
+#: aurora/assistant.py:258 aurora/assistant.py:368
+msgid "Something went wrong: {error}"
+msgstr "出错了：{error}"
+
+#: aurora/assistant.py:267
+msgid "Read Aloud"
+msgstr "朗读"
+
+#: aurora/assistant.py:287
+msgid "Proofread"
+msgstr "修正"
+
+#: aurora/assistant.py:289
+msgid "Friendlier"
+msgstr "更友好"
+
+#: aurora/assistant.py:291
+msgid "More Professional"
+msgstr "更专业"
+
+#: aurora/assistant.py:293
+msgid "Shorter"
+msgstr "更简短"
+
+#: aurora/assistant.py:296
+msgid "Key Points"
+msgstr "要点"
+
+#: aurora/assistant.py:316 aurora/assistant.py:320
+msgid "Writing Tools"
+msgstr "写作工具"
+
+#: aurora/assistant.py:321 aurora/settingsapp/ai.py:69
+#: aurora/settingsapp/ai.py:75 aurora/shell/app.py:265
+msgid "Aurora AI"
+msgstr "Aurora AI"
+
+#: aurora/assistant.py:342
+msgid "Replace Selection"
+msgstr "替换所选内容"
+
+#: aurora/assistant.py:354
+msgid "Working…"
+msgstr "正在处理…"
+
+#: aurora/devhub/app.py:65
+msgid "Installed"
+msgstr "已安装"
+
+#: aurora/devhub/app.py:65 aurora/settingsapp/system.py:570
+msgid "Install"
+msgstr "安装"
+
+#: aurora/devhub/app.py:72
+msgid "Dev Hub"
+msgstr "Dev Hub"
+
+#: aurora/devhub/app.py:72
+msgid "Search tools"
+msgstr "搜索工具"
+
+#: aurora/devhub/app.py:73
+msgid "Your toolbox, one click away"
+msgstr "一键获取你的工具链"
+
+#: aurora/devhub/app.py:74
+msgid "Everything installs from its official source, so you always get the latest release. Git, Python, Node.js, Docker, Podman and more are already on your system."
+msgstr "所有工具都从官方来源安装，因此始终是最新版本。Git、Python、Node.js、Docker、Podman 等已预装在系统中。"
+
+#: aurora/devhub/app.py:143
+msgid "Installing…"
+msgstr "正在安装…"
+
+#: aurora/devhub/app.py:151
+msgid "{name} installed"
+msgstr "已安装 {name}"
+
+#: aurora/devhub/games.py:12
+msgid "Game Stores"
+msgstr "游戏商店"
+
+#: aurora/devhub/games.py:13
+msgid "Windows Apps and Games"
+msgstr "Windows 应用和游戏"
+
+#: aurora/devhub/games.py:14
+msgid "Performance Tools"
+msgstr "性能工具"
+
+#: aurora/devhub/games.py:15
+msgid "Android Apps"
+msgstr "Android 应用"
+
+#: aurora/devhub/games.py:26
+msgid "Valve's store. Proton runs most Windows games; turn it on in Steam Play."
+msgstr "Valve 的商店。Proton 可运行大多数 Windows 游戏；在 Steam Play 中开启。"
+
+#: aurora/devhub/games.py:31
+msgid "Epic Games, GOG and Amazon Prime Gaming libraries in one launcher."
+msgstr "在一个启动器中管理 Epic Games、GOG 和 Amazon Prime Gaming 游戏库。"
+
+#: aurora/devhub/games.py:36
+msgid "Install scripts for thousands of games, emulators included."
+msgstr "数千款游戏的安装脚本，包括模拟器。"
+
+#: aurora/devhub/games.py:40
+msgid "Run Windows programs in tidy, separate Wine bottles."
+msgstr "在整洁、独立的 Wine“瓶子”中运行 Windows 程序。"
+
+#: aurora/devhub/games.py:45
+msgid "Install newer Proton-GE and Wine-GE builds for Steam, Lutris and Heroic."
+msgstr "为 Steam、Lutris 和 Heroic 安装最新的 Proton-GE 和 Wine-GE 版本。"
+
+#: aurora/devhub/games.py:50
+msgid "Feral's daemon: the CPU and GPU run at full speed while you play."
+msgstr "Feral 出品的服务：游戏时让 CPU 和 GPU 全速运行。"
+
+#: aurora/devhub/games.py:55
+msgid "Frame rate, temperatures and load on top of your games."
+msgstr "在游戏上方显示帧率、温度和负载。"
+
+#: aurora/devhub/games.py:60
+msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
+msgstr "在容器中运行 Android，其应用显示在程序坞中。约需 1 GB。"
+
+#: aurora/devhub/games.py:75
+msgid "Game Hub"
+msgstr "Game Hub"
+
+#: aurora/devhub/games.py:75
+msgid "Search games and tools"
+msgstr "搜索游戏和工具"
+
+#: aurora/devhub/games.py:76
+msgid "Play anything"
+msgstr "畅玩一切"
+
+#: aurora/devhub/games.py:77
+msgid "Steam with Proton runs most Windows games. Add the Epic and GOG stores, Windows programs with Bottles, and Android apps with Waydroid, each with one click."
+msgstr "Steam 配合 Proton 可运行大多数 Windows 游戏。再加上 Epic 和 GOG 商店、通过 Bottles 运行的 Windows 程序和通过 Waydroid 运行的 Android 应用——每项只需一键。"
+
+#: aurora/devhub/recipes.py:20
+msgid "Editors & IDEs"
+msgstr "编辑器与 IDE"
+
+#: aurora/devhub/recipes.py:21
+msgid "Languages & Runtimes"
+msgstr "语言与运行时"
+
+#: aurora/devhub/recipes.py:22
+msgid "Cloud & DevOps"
+msgstr "云与 DevOps"
+
+#: aurora/devhub/recipes.py:23
+msgid "Databases & API Tools"
+msgstr "数据库与 API 工具"
+
+#: aurora/devhub/recipes.py:24
+msgid "AI Assistants"
+msgstr "AI 助手"
+
+#: aurora/devhub/recipes.py:42
+msgid "Microsoft's popular code editor, from the official apt repository."
+msgstr "Microsoft 出品的流行代码编辑器，来自官方 apt 仓库。"
+
+#: aurora/devhub/recipes.py:53
+msgid "VS Code built from source without telemetry."
+msgstr "从源代码构建的 VS Code，不含遥测。"
+
+#: aurora/devhub/recipes.py:64
+msgid "A very fast, collaborative editor written in Rust."
+msgstr "用 Rust 编写的高速协作编辑器。"
+
+#: aurora/devhub/recipes.py:68
+msgid "The JetBrains IDE for Java and Kotlin (Flathub)."
+msgstr "JetBrains 出品的 Java 和 Kotlin IDE（Flathub）。"
+
+#: aurora/devhub/recipes.py:72
+msgid "The JetBrains IDE for Python (Flathub)."
+msgstr "JetBrains 出品的 Python IDE（Flathub）。"
+
+#: aurora/devhub/recipes.py:76
+msgid "Google's IDE for Android apps (Flathub)."
+msgstr "Google 出品的 Android 应用 IDE（Flathub）。"
+
+#: aurora/devhub/recipes.py:82
+msgid "rustup, cargo and the stable toolchain."
+msgstr "rustup、cargo 和稳定版工具链。"
+
+#: aurora/devhub/recipes.py:86
+msgid "The latest Go release from go.dev, in /usr/local/go."
+msgstr "来自 go.dev 的最新 Go，安装在 /usr/local/go。"
+
+#: aurora/devhub/recipes.py:96
+msgid "OpenJDK 21 LTS with Maven and Gradle."
+msgstr "OpenJDK 21 LTS，附带 Maven 和 Gradle。"
+
+#: aurora/devhub/recipes.py:99
+msgid "Node.js versions (fnm)"
+msgstr "Node.js 版本（fnm）"
+
+#: aurora/devhub/recipes.py:100
+msgid "Install and switch any Node.js version, including the latest LTS."
+msgstr "安装并切换任意 Node.js 版本，包括最新 LTS。"
+
+#: aurora/devhub/recipes.py:104
+msgid "Astral's extremely fast Python package and project manager."
+msgstr "Astral 出品的极速 Python 包和项目管理器。"
+
+#: aurora/devhub/recipes.py:108
+msgid "All-in-one JavaScript runtime, bundler and test runner."
+msgstr "集 JavaScript 运行时、打包器和测试运行器于一体。"
+
+#: aurora/devhub/recipes.py:112
+msgid "Secure JavaScript and TypeScript runtime."
+msgstr "安全的 JavaScript 和 TypeScript 运行时。"
+
+#: aurora/devhub/recipes.py:118
+msgid "Work with GitHub issues, pull requests and Actions from the terminal."
+msgstr "在终端中处理 GitHub 的 issue、拉取请求和 Actions。"
+
+#: aurora/devhub/recipes.py:127
+msgid "The Kubernetes command-line tool, latest stable."
+msgstr "Kubernetes 命令行工具，最新稳定版。"
+
+#: aurora/devhub/recipes.py:136
+msgid "Infrastructure as code by HashiCorp, latest release."
+msgstr "HashiCorp 出品的基础设施即代码工具，最新版本。"
+
+#: aurora/devhub/recipes.py:146
+msgid "Amazon Web Services command-line interface v2."
+msgstr "Amazon Web Services 命令行界面 v2。"
+
+#: aurora/devhub/recipes.py:155
+msgid "PostgreSQL (Docker)"
+msgstr "PostgreSQL（Docker）"
+
+#: aurora/devhub/recipes.py:156
+msgid "PostgreSQL 17 in a container. User and password: postgres."
+msgstr "容器中的 PostgreSQL 17。用户名和密码：postgres。"
+
+#: aurora/devhub/recipes.py:159
+msgid "MariaDB (Docker)"
+msgstr "MariaDB（Docker）"
+
+#: aurora/devhub/recipes.py:160
+msgid "MariaDB in a container. Root password: mariadb."
+msgstr "容器中的 MariaDB。root 密码：mariadb。"
+
+#: aurora/devhub/recipes.py:163
+msgid "Redis (Docker)"
+msgstr "Redis（Docker）"
+
+#: aurora/devhub/recipes.py:164
+msgid "Redis key-value store in a container."
+msgstr "容器中的 Redis 键值存储。"
+
+#: aurora/devhub/recipes.py:167
+msgid "MongoDB (Docker)"
+msgstr "MongoDB（Docker）"
+
+#: aurora/devhub/recipes.py:168
+msgid "MongoDB document database in a container."
+msgstr "容器中的 MongoDB 文档数据库。"
+
+#: aurora/devhub/recipes.py:172
+msgid "Universal database client (Flathub)."
+msgstr "通用数据库客户端（Flathub）。"
+
+#: aurora/devhub/recipes.py:176
+msgid "API development and testing (Flathub)."
+msgstr "API 开发和测试（Flathub）。"
+
+#: aurora/devhub/recipes.py:182
+msgid "Anthropic's coding agent in the terminal. Sign in with your Claude subscription or an API key."
+msgstr "Anthropic 出品的终端编程智能体。使用 Claude 订阅或 API 密钥登录。"
+
+#: aurora/devhub/recipes.py:188
+msgid "OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an API key."
+msgstr "OpenAI 出品的终端编程智能体。使用 ChatGPT 套餐或 API 密钥登录。"
+
+#: aurora/devhub/recipes.py:194
+msgid "Run many more open models locally; Aurora AI can use it as its provider."
+msgstr "在本地运行许多其他开放模型；Aurora AI 可将其作为提供方使用。"
+
+#: aurora/files/app.py:56 aurora/files/window.py:168 aurora/files/window.py:273
+#: aurora/files/window.py:274 aurora/settingsapp/ai.py:158
+#: aurora/settingsapp/applications.py:14
+msgid "Files"
+msgstr "文件"
+
+#: aurora/files/operations.py:60
+msgid "Moving {n} item(s)"
+msgstr "正在移动 {n} 个项目"
+
+#: aurora/files/operations.py:61
+msgid "Copying {n} item(s)"
+msgstr "正在复制 {n} 个项目"
+
+#: aurora/files/operations.py:91
+msgid "Cannot copy a folder into itself"
+msgstr "不能将文件夹复制到其自身中"
+
+#: aurora/files/operations.py:109
+msgid "Cancelled"
+msgstr "已取消"
+
+#: aurora/files/properties.py:28 aurora/files/window.py:676
+#: aurora/files/window.py:688
+msgid "Properties"
+msgstr "属性"
+
+#: aurora/files/properties.py:43
+msgid "{n} items"
+msgstr "{n} 个项目"
+
+#: aurora/files/properties.py:44
+msgid "Total size"
+msgstr "总大小"
+
+#: aurora/files/properties.py:44 aurora/files/properties.py:70
+msgid "Calculating…"
+msgstr "正在计算…"
+
+#: aurora/files/properties.py:59
+msgid "Error"
+msgstr "错误"
+
+#: aurora/files/properties.py:64 aurora/files/window.py:229
+msgid "Name"
+msgstr "名称"
+
+#: aurora/files/properties.py:66
+msgid "Type"
+msgstr "类型"
+
+#: aurora/files/properties.py:68
+msgid "Location"
+msgstr "位置"
+
+#: aurora/files/properties.py:70
+msgid "Contents"
+msgstr "内容"
+
+#: aurora/files/properties.py:73 aurora/files/window.py:229
+msgid "Size"
+msgstr "大小"
+
+#: aurora/files/properties.py:76 aurora/files/window.py:230
+msgid "Modified"
+msgstr "修改时间"
+
+#: aurora/files/properties.py:79
+msgid "Accessed"
+msgstr "访问时间"
+
+#: aurora/files/properties.py:84
+msgid "Permissions"
+msgstr "权限"
+
+#: aurora/files/properties.py:99
+msgid "{size} · {n} items"
+msgstr "{size} · {n} 个项目"
+
+#: aurora/files/window.py:84 aurora/files/window.py:422
+#: aurora/settingsapp/health.py:40
+msgid "Home"
+msgstr "主文件夹"
+
+#: aurora/files/window.py:96 aurora/files/window.py:419
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:166
+msgid "Trash"
+msgstr "废纸篓"
+
+#: aurora/files/window.py:110 aurora/files/window.py:424
+msgid "Computer"
+msgstr "计算机"
+
+#: aurora/files/window.py:174 aurora/welcome.py:48
+msgid "Back"
+msgstr "后退"
+
+#: aurora/files/window.py:176
+msgid "Forward"
+msgstr "前进"
+
+#: aurora/files/window.py:195 aurora/files/window.py:873
+msgid "New Folder"
+msgstr "新建文件夹"
+
+#: aurora/files/window.py:196 aurora/files/window.py:687
+msgid "Open in Terminal"
+msgstr "在终端中打开"
+
+#: aurora/files/window.py:199
+msgid "Show Hidden Files"
+msgstr "显示隐藏文件"
+
+#: aurora/files/window.py:200
+msgid "List View"
+msgstr "列表视图"
+
+#: aurora/files/window.py:203 aurora/shell/dock.py:127
+msgid "New Window"
+msgstr "新建窗口"
+
+#: aurora/files/window.py:204
+msgid "About Files"
+msgstr "关于“文件”"
+
+#: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
+#: aurora/shell/panel.py:252
+msgid "Search"
+msgstr "搜索"
+
+#: aurora/files/window.py:238 aurora/files/window.py:530
+msgid "Folder is Empty"
+msgstr "文件夹为空"
+
+#: aurora/files/window.py:254 aurora/files/window.py:679
+#: aurora/files/window.py:815 aurora/shell/dock.py:188
+msgid "Empty Trash"
+msgstr "清空废纸篓"
+
+#: aurora/files/window.py:255
+msgid "Items in the Trash are deleted permanently when emptied"
+msgstr "清空废纸篓会永久删除其中的项目"
+
+#: aurora/files/window.py:528
+msgid "No Results Found"
+msgstr "无结果"
+
+#: aurora/files/window.py:529
+msgid "Trash is Empty"
+msgstr "废纸篓为空"
+
+#: aurora/files/window.py:651
+msgid "Restore"
+msgstr "恢复"
+
+#: aurora/files/window.py:652
+msgid "Delete Permanently"
+msgstr "永久删除"
+
+#: aurora/files/window.py:654 aurora/quicklook.py:141 aurora/shell/app.py:389
+#: aurora/shell/dock.py:187 aurora/shell/sysnotify.py:106
+msgid "Open"
+msgstr "打开"
+
+#: aurora/files/window.py:655
+msgid "Open With…"
+msgstr "打开方式…"
+
+#: aurora/files/window.py:656
+msgid "Quick Look"
+msgstr "快速查看"
+
+#: aurora/files/window.py:658
+msgid "Send to Nearby Device…"
+msgstr "发送到附近设备…"
+
+#: aurora/files/window.py:662
+msgid "Summarize with Aurora"
+msgstr "用 Aurora 总结"
+
+#: aurora/files/window.py:663
+msgid "Ask Aurora About This File…"
+msgstr "向 Aurora 询问此文件…"
+
+#: aurora/files/window.py:668
+msgid "Cut"
+msgstr "剪切"
+
+#: aurora/files/window.py:670
+msgid "Rename…"
+msgstr "重命名…"
+
+#: aurora/files/window.py:673
+msgid "Move to Trash"
+msgstr "移到废纸篓"
+
+#: aurora/files/window.py:682
+msgid "New Folder…"
+msgstr "新建文件夹…"
+
+#: aurora/files/window.py:683
+msgid "Paste"
+msgstr "粘贴"
+
+#: aurora/files/window.py:686
+msgid "Select All"
+msgstr "全选"
+
+#: aurora/files/window.py:711
+msgid "{n} item(s) cut"
+msgstr "已剪切 {n} 个项目"
+
+#: aurora/files/window.py:711
+msgid "{n} item(s) copied"
+msgstr "已复制 {n} 个项目"
+
+#: aurora/files/window.py:762
+msgid "{n} item(s) moved to the Trash"
+msgstr "已将 {n} 个项目移到废纸篓"
+
+#: aurora/files/window.py:775
+msgid "Permanently Delete {n} Item(s)?"
+msgstr "要永久删除 {n} 个项目吗？"
+
+#: aurora/files/window.py:776
+msgid "Deleted items cannot be restored."
+msgstr "删除的项目无法恢复。"
+
+#: aurora/files/window.py:777 aurora/files/window.py:814
+#: aurora/files/window.py:835 aurora/settingsapp/inputs.py:166
+#: aurora/settingsapp/system.py:391 aurora/settingsapp/system.py:460
+#: aurora/settingsapp/system.py:478
+msgid "Cancel"
+msgstr "取消"
+
+#: aurora/files/window.py:778 aurora/settingsapp/ai.py:329
+msgid "Delete"
+msgstr "删除"
+
+#: aurora/files/window.py:812
+msgid "Empty Trash?"
+msgstr "要清空废纸篓吗？"
+
+#: aurora/files/window.py:813
+msgid "All items in the Trash will be permanently deleted."
+msgstr "废纸篓中的所有项目都将被永久删除。"
+
+#: aurora/files/window.py:861
+msgid "Rename"
+msgstr "重命名"
+
+#: aurora/files/window.py:873
+msgid "Untitled Folder"
+msgstr "新建文件夹"
+
+#: aurora/files/window.py:873
+msgid "Create"
+msgstr "创建"
+
+#: aurora/greeter/app.py:104
+msgid "Other…"
+msgstr "其他…"
+
+#: aurora/greeter/app.py:108 aurora/settingsapp/system.py:309
+#: aurora/settingsapp/system.py:449
+msgid "Username"
+msgstr "用户名"
+
+#: aurora/greeter/app.py:111 aurora/settingsapp/system.py:155
+#: aurora/settingsapp/system.py:450 aurora/shell/quicksettings.py:349
+msgid "Password"
+msgstr "密码"
+
+#: aurora/greeter/app.py:122
+msgid "Log In"
+msgstr "登录"
+
+#: aurora/greeter/app.py:132
+msgid "Restart"
+msgstr "重新启动"
+
+#: aurora/greeter/app.py:133
+msgid "Power Off"
+msgstr "关机"
+
+#: aurora/greeter/app.py:212
+msgid "Login failed"
+msgstr "登录失败"
+
+#: aurora/greeter/app.py:215
+msgid "Could not start session"
+msgstr "无法启动会话"
+
+#: aurora/greeter/app.py:220
+msgid "Wrong password. Please try again."
+msgstr "密码错误，请重试。"
+
+#: aurora/quicklook.py:66
+msgid "Previous"
+msgstr "上一个"
+
+#: aurora/quicklook.py:67 aurora/welcome.py:50 aurora/welcome.py:139
+msgid "Next"
+msgstr "下一个"
+
+#: aurora/quicklook.py:131
+msgid "Can’t Preview"
+msgstr "无法预览"
+
+#: aurora/quicklook.py:140
+msgid "Open with {app}"
+msgstr "用 {app} 打开"
+
+#: aurora/quicklook.py:201
+msgid "{n} more pages"
+msgstr "还有 {n} 页"
+
+#: aurora/quicklook.py:244
+#, python-brace-format
+msgid "{n} item"
+msgid_plural "{n} items"
+msgstr[0] "{n} 个项目"
+
+#: aurora/quicklook.py:264
+msgid "Modified {date}"
+msgstr "修改于 {date}"
+
+#: aurora/settingsapp/about.py:60 aurora/settingsapp/health.py:49
+#: aurora/weather.py:47
+msgid "Unknown"
+msgstr "未知"
+
+#: aurora/settingsapp/about.py:65 aurora/shell/search.py:404
+msgid "About"
+msgstr "关于"
+
+#: aurora/settingsapp/about.py:78
+msgid "Device"
+msgstr "设备"
+
+#: aurora/settingsapp/about.py:79
+msgid "Device name"
+msgstr "设备名称"
+
+#: aurora/settingsapp/about.py:83
+msgid "Processor"
+msgstr "处理器"
+
+#: aurora/settingsapp/about.py:83 aurora/settingsapp/health.py:219
+msgid "Memory"
+msgstr "内存"
+
+#: aurora/settingsapp/about.py:84 aurora/settingsapp/system.py:517
+msgid "Graphics"
+msgstr "图形"
+
+#: aurora/settingsapp/about.py:84
+msgid "Disk capacity"
+msgstr "磁盘容量"
+
+#: aurora/settingsapp/about.py:87
+msgid "Software"
+msgstr "软件"
+
+#: aurora/settingsapp/about.py:90
+msgid "Operating system"
+msgstr "操作系统"
+
+#: aurora/settingsapp/about.py:91
+msgid "Based on"
+msgstr "基于"
+
+#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
+#: aurora/shell/panel.py:272
+msgid "Desktop"
+msgstr "桌面"
+
+#: aurora/settingsapp/about.py:93
+msgid "Windowing system"
+msgstr "窗口系统"
+
+#: aurora/settingsapp/about.py:94
+msgid "Kernel"
+msgstr "内核"
+
+#: aurora/settingsapp/about.py:106
+msgid "Use letters, digits and hyphens only."
+msgstr "只能使用字母、数字和连字符。"
+
+#: aurora/settingsapp/about.py:110
+msgid "Device name changed"
+msgstr "设备名称已更改"
+
+#: aurora/settingsapp/ai.py:62 aurora/shell/search.py:402
+msgid "AI"
+msgstr "AI"
+
+#: aurora/settingsapp/ai.py:70
+msgid "A private assistant: ask questions from Spotlight with “?”, get commands in the terminal with ask and why, dictate text, have text read aloud and find documents by meaning. It runs on this computer; nothing is sent anywhere unless you choose a cloud provider below. Nothing is downloaded until you set up a feature."
+msgstr "私人助手：在 Spotlight 中输入“?”提问，在终端用 ask 和 why 获取命令，口述文字，朗读文本，并按含义查找文档。它在本机运行；除非你在下面选择云服务，否则不会发送任何内容。在你设置某项功能之前不会下载任何东西。"
+
+#: aurora/settingsapp/ai.py:76
+msgid "Assistant button in the top bar"
+msgstr "顶栏中的助手按钮"
+
+#: aurora/settingsapp/ai.py:79
+msgid "The Assistant is also in the dock and opens with Super+Shift+Space"
+msgstr "助手也在程序坞中，并可用 Super+Shift+空格 打开"
+
+#: aurora/settingsapp/ai.py:82
+msgid "Answers Come From"
+msgstr "回答来源"
+
+#: aurora/settingsapp/ai.py:85
+msgid "Provider"
+msgstr "提供方"
+
+#: aurora/settingsapp/ai.py:85
+msgid "This computer (private)"
+msgstr "本机（私密）"
+
+#: aurora/settingsapp/ai.py:86
+msgid "OpenAI-compatible API"
+msgstr "OpenAI 兼容 API"
+
+#: aurora/settingsapp/ai.py:90
+msgid "Model on This Computer"
+msgstr "本机模型"
+
+#: aurora/settingsapp/ai.py:91
+msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
+msgstr "更大的模型回答更好，但需要更多内存。本机有 {ram:.0f} GB。"
+
+#: aurora/settingsapp/ai.py:96
+msgid "needs {n} GB of memory"
+msgstr "需要 {n} GB 内存"
+
+#: aurora/settingsapp/ai.py:101
+msgid "Cloud Provider"
+msgstr "云服务"
+
+#: aurora/settingsapp/ai.py:102
+msgid "Questions and the text you ask about are sent to the provider. Keys are kept in your login keyring. Claude and ChatGPT subscriptions work only in their own apps: Dev Hub installs Claude Code and Codex, which sign in with your subscription."
+msgstr "问题以及你询问的文本会发送给提供方。密钥保存在你的登录钥匙环中。Claude 和 ChatGPT 订阅只能在它们自己的应用中使用：Dev Hub 可安装 Claude Code 和 Codex，它们通过你的订阅登录。"
+
+#: aurora/settingsapp/ai.py:108
+msgid "API keys are paid per use"
+msgstr "API 密钥按用量计费"
+
+#: aurora/settingsapp/ai.py:109
+msgid "Every answer uses credits billed by the provider, separately from any Claude Pro/Max or ChatGPT Plus subscription, which API keys don't use. Check prices and set a spending limit in the provider's console. Answers on this computer are free."
+msgstr "每次回答都会消耗额度，提供方会单独收费，与 Claude Pro/Max 或 ChatGPT Plus 订阅无关——API 密钥不会使用订阅。请在提供方控制台查看价格并设置消费上限。本机回答免费。"
+
+#: aurora/settingsapp/ai.py:116
+msgid "API key"
+msgstr "API 密钥"
+
+#: aurora/settingsapp/ai.py:119
+msgid "Claude model"
+msgstr "Claude 模型"
+
+#: aurora/settingsapp/ai.py:124
+msgid "Choose a service…"
+msgstr "选择服务…"
+
+#: aurora/settingsapp/ai.py:129
+msgid "Ollama on this computer"
+msgstr "本机上的 Ollama"
+
+#: aurora/settingsapp/ai.py:136
+msgid "Service"
+msgstr "服务"
+
+#: aurora/settingsapp/ai.py:137
+msgid "Fills in the address; then add your key and a model name"
+msgstr "填写地址；然后添加密钥和模型名称"
+
+#: aurora/settingsapp/ai.py:140
+msgid "API address"
+msgstr "API 地址"
+
+#: aurora/settingsapp/ai.py:145
+msgid "Model"
+msgstr "模型"
+
+#: aurora/settingsapp/ai.py:151
+msgid "Where Aurora AI Helps"
+msgstr "Aurora AI 在哪里提供帮助"
+
+#: aurora/settingsapp/ai.py:152
+msgid "Turn off anything you don't want. Features with a download are set up the first time you switch them on."
+msgstr "关闭你不需要的功能。需要下载的功能会在首次开启时进行设置。"
+
+#: aurora/settingsapp/ai.py:155
+msgid "Writing tools"
+msgstr "写作工具"
+
+#: aurora/settingsapp/ai.py:156
+msgid "Select text anywhere and press Super+Shift+W: proofread, rewrite, shorten, summarize, translate, then replace the selection"
+msgstr "在任意位置选中文本并按 Super+Shift+W：修正、改写、缩短、总结、翻译并替换所选内容"
+
+#: aurora/settingsapp/ai.py:158
+msgid "“Summarize” and “Ask About This File” in the Files menu, for text, code, PDF and documents"
+msgstr "“文件”菜单中的“总结”和“询问此文件”，适用于文本、代码、PDF 和文档"
+
+#: aurora/settingsapp/ai.py:160
+msgid "Screenshots"
+msgstr "截图"
+
+#: aurora/settingsapp/ai.py:161
+msgid "“Ask Aurora” on the screenshot notification explains what's on screen"
+msgstr "截图通知中的“问问 Aurora”会解释屏幕上的内容"
+
+#: aurora/settingsapp/ai.py:162 aurora/settingsapp/applications.py:125
+#: aurora/shell/notifications.py:289
+msgid "Notifications"
+msgstr "通知"
+
+#: aurora/settingsapp/ai.py:163
+msgid "A Summarize button when notifications pile up"
+msgstr "通知堆积时显示“总结”按钮"
+
+#: aurora/settingsapp/ai.py:167
+msgid "Ask from Spotlight"
+msgstr "从 Spotlight 提问"
+
+#: aurora/settingsapp/ai.py:169
+msgid "Type ? and a question. Super+Shift+Space opens the Assistant."
+msgstr "输入 ? 加上你的问题。Super+Shift+空格 打开助手。"
+
+#: aurora/settingsapp/ai.py:171
+msgid "Terminal commands"
+msgstr "终端命令"
+
+#: aurora/settingsapp/ai.py:173
+msgid "ask \"what to do\" suggests a command; why explains the last error"
+msgstr "ask \"要做什么\" 会建议一条命令；why 解释上一个错误"
+
+#: aurora/settingsapp/ai.py:177
+msgid "Dictation"
+msgstr "语音输入"
+
+#: aurora/settingsapp/ai.py:178
+msgid "Super+H, speak, Super+H again: the text is typed where you are. Speech recognition runs on this computer (Whisper)."
+msgstr "按 Super+H，说话，再按 Super+H：文字会输入到当前位置。语音识别在本机运行（Whisper）。"
+
+#: aurora/settingsapp/ai.py:182
+msgid "Dictation accuracy"
+msgstr "语音输入精度"
+
+#: aurora/settingsapp/ai.py:183
+msgid "Quick (Whisper base)"
+msgstr "快速（Whisper base）"
+
+#: aurora/settingsapp/ai.py:183
+msgid "Accurate (Whisper small)"
+msgstr "精确（Whisper small）"
+
+#: aurora/settingsapp/ai.py:187
+msgid "Read aloud"
+msgstr "朗读"
+
+#: aurora/settingsapp/ai.py:188
+msgid "Select text anywhere and press Super+Shift+R (a natural voice for your language, Piper)"
+msgstr "在任意位置选中文本并按 Super+Shift+R（用你的语言的自然语音，Piper）"
+
+#: aurora/settingsapp/ai.py:192
+msgid "Search documents by meaning"
+msgstr "按含义搜索文档"
+
+#: aurora/settingsapp/ai.py:194
+msgid "Spotlight finds files by what they're about, not only their name"
+msgstr "Spotlight 按内容而不仅按名称查找文件"
+
+#: aurora/settingsapp/ai.py:196
+msgid "Folders to index"
+msgstr "要索引的文件夹"
+
+#: aurora/settingsapp/ai.py:201
+msgid "Update the Index Now"
+msgstr "立即更新索引"
+
+#: aurora/settingsapp/ai.py:207
+msgid "Storage"
+msgstr "存储"
+
+#: aurora/settingsapp/ai.py:208
+msgid "Space used by AI"
+msgstr "AI 占用的空间"
+
+#: aurora/settingsapp/ai.py:211
+msgid "Remove All AI Downloads"
+msgstr "删除所有 AI 下载内容"
+
+#: aurora/settingsapp/ai.py:226
+msgid "Languages"
+msgstr "语言"
+
+#: aurora/settingsapp/ai.py:227
+msgid "Aurora AI understands and answers in many languages. Ask it in any language, or tell it “reply in Italian”, whatever the system language is."
+msgstr "Aurora AI 能理解并使用多种语言回答。用任何语言提问，或说“用意大利语回答”——与系统语言无关。"
+
+#: aurora/settingsapp/ai.py:231
+msgid "The language I write in"
+msgstr "我使用的语言"
+
+#: aurora/settingsapp/ai.py:233
+msgid "Answers in"
+msgstr "回答语言"
+
+#: aurora/settingsapp/ai.py:235
+msgid "Detect automatically"
+msgstr "自动检测"
+
+#: aurora/settingsapp/ai.py:237
+msgid "Dictation language"
+msgstr "语音输入语言"
+
+#: aurora/settingsapp/ai.py:244
+msgid "Read-aloud voice"
+msgstr "朗读语音"
+
+#: aurora/settingsapp/ai.py:257
+msgid "Downloaded"
+msgstr "已下载"
+
+#: aurora/settingsapp/ai.py:259
+msgid "Not downloaded yet"
+msgstr "尚未下载"
+
+#: aurora/settingsapp/ai.py:260 aurora/settingsapp/ai.py:336
+msgid "Download"
+msgstr "下载"
+
+#: aurora/settingsapp/ai.py:276
+msgid "Voice ready"
+msgstr "语音已就绪"
+
+#: aurora/settingsapp/ai.py:299
+msgid "Now download a model below"
+msgstr "现在请在下方下载一个模型"
+
+#: aurora/settingsapp/ai.py:310
+msgid "Key saved in your keyring"
+msgstr "密钥已保存到钥匙环"
+
+#: aurora/settingsapp/ai.py:324
+msgid "In use"
+msgstr "使用中"
+
+#: aurora/settingsapp/ai.py:326
+msgid "Use"
+msgstr "使用"
+
+#: aurora/settingsapp/ai.py:357
+msgid "Download failed: {error}"
+msgstr "下载失败：{error}"
+
+#: aurora/settingsapp/ai.py:373
+msgid "Dictation is ready"
+msgstr "语音输入已就绪"
+
+#: aurora/settingsapp/ai.py:384
+msgid "Read aloud is ready"
+msgstr "朗读已就绪"
+
+#: aurora/settingsapp/ai.py:395
+msgid "Indexing your documents…"
+msgstr "正在索引文档…"
+
+#: aurora/settingsapp/ai.py:400
+msgid "Setup failed: {error}"
+msgstr "设置失败：{error}"
+
+#: aurora/settingsapp/ai.py:405
+msgid "Updating the index in the background"
+msgstr "索引正在后台更新"
+
+#: aurora/settingsapp/ai.py:412
+msgid "AI downloads removed"
+msgstr "已删除 AI 下载内容"
+
+#: aurora/settingsapp/appearance.py:13
+msgid "Blue"
+msgstr "蓝色"
+
+#: aurora/settingsapp/appearance.py:13
+msgid "Teal"
+msgstr "青色"
+
+#: aurora/settingsapp/appearance.py:14
+msgid "Green"
+msgstr "绿色"
+
+#: aurora/settingsapp/appearance.py:14
+msgid "Yellow"
+msgstr "黄色"
+
+#: aurora/settingsapp/appearance.py:15
+msgid "Orange"
+msgstr "橙色"
+
+#: aurora/settingsapp/appearance.py:15
+msgid "Red"
+msgstr "红色"
+
+#: aurora/settingsapp/appearance.py:16
+msgid "Pink"
+msgstr "粉色"
+
+#: aurora/settingsapp/appearance.py:16
+msgid "Purple"
+msgstr "紫色"
+
+#: aurora/settingsapp/appearance.py:17
+msgid "Slate"
+msgstr "石墨色"
+
+#: aurora/settingsapp/appearance.py:71 aurora/shell/search.py:386
+msgid "Appearance"
+msgstr "外观"
+
+#: aurora/settingsapp/appearance.py:78 aurora/settingsapp/desktop.py:100
+msgid "Style"
+msgstr "样式"
+
+#: aurora/settingsapp/appearance.py:81
+msgid "Color scheme"
+msgstr "配色方案"
+
+#: aurora/settingsapp/appearance.py:81 aurora/welcome.py:80
+msgid "Light"
+msgstr "浅色"
+
+#: aurora/settingsapp/appearance.py:81 aurora/welcome.py:81
+msgid "Dark"
+msgstr "深色"
+
+#: aurora/settingsapp/appearance.py:81
+msgid "Auto"
+msgstr "自动"
+
+#: aurora/settingsapp/appearance.py:83
+msgid "Auto switches to dark at sunset and back at sunrise"
+msgstr "“自动”会在日落时切换为深色，日出时切回浅色"
+
+#: aurora/settingsapp/appearance.py:86
+msgid "Accent color"
+msgstr "强调色"
+
+#: aurora/settingsapp/appearance.py:108
+msgid "Icons"
+msgstr "图标"
+
+#: aurora/settingsapp/appearance.py:116
+msgid "Pointer"
+msgstr "光标"
+
+#: aurora/settingsapp/appearance.py:122
+msgid "Pointer size"
+msgstr "光标大小"
+
+#: aurora/settingsapp/appearance.py:126
+msgid "Animations"
+msgstr "动画"
+
+#: aurora/settingsapp/appearance.py:129
+msgid "Fonts"
+msgstr "字体"
+
+#: aurora/settingsapp/appearance.py:131
+msgid "Interface"
+msgstr "界面"
+
+#: aurora/settingsapp/appearance.py:131
+msgid "Documents"
+msgstr "文档"
+
+#: aurora/settingsapp/appearance.py:132
+msgid "Monospace"
+msgstr "等宽"
+
+#: aurora/settingsapp/appearance.py:134
+msgid "Scaling"
+msgstr "缩放"
+
+#: aurora/settingsapp/appearance.py:146
+msgid "Anti-aliasing"
+msgstr "抗锯齿"
+
+#: aurora/settingsapp/appearance.py:146
+msgid "Standard (grayscale)"
+msgstr "标准（灰度）"
+
+#: aurora/settingsapp/appearance.py:147
+msgid "Subpixel (for LCD screens)"
+msgstr "次像素（适用于 LCD 屏幕）"
+
+#: aurora/settingsapp/appearance.py:147 aurora/settingsapp/appearance.py:152
+msgid "None"
+msgstr "无"
+
+#: aurora/settingsapp/appearance.py:152
+msgid "Hinting"
+msgstr "微调"
+
+#: aurora/settingsapp/appearance.py:152
+msgid "Slight"
+msgstr "轻微"
+
+#: aurora/settingsapp/appearance.py:152
+msgid "Medium"
+msgstr "中等"
+
+#: aurora/settingsapp/appearance.py:152
+msgid "Full"
+msgstr "完全"
+
+#: aurora/settingsapp/appearance.py:157
+msgid "Background"
+msgstr "背景"
+
+#: aurora/settingsapp/appearance.py:159
+msgid "Add Picture…"
+msgstr "添加图片…"
+
+#: aurora/settingsapp/appearance.py:170 aurora/settingsapp/appearance.py:171
+#: aurora/shell/quicksettings.py:173
+msgid "Night Light"
+msgstr "夜灯"
+
+#: aurora/settingsapp/appearance.py:170
+msgid "Warmer colors are easier on the eyes at night."
+msgstr "暖色调在夜间更护眼。"
+
+#: aurora/settingsapp/appearance.py:175
+msgid "Schedule"
+msgstr "计划"
+
+#: aurora/settingsapp/appearance.py:175
+msgid "Sunset to Sunrise"
+msgstr "日落到日出"
+
+#: aurora/settingsapp/appearance.py:175
+msgid "Manual"
+msgstr "手动"
+
+#: aurora/settingsapp/appearance.py:176
+msgid "All the Time"
+msgstr "始终"
+
+#: aurora/settingsapp/appearance.py:178
+msgid "Sunset and sunrise follow your time zone"
+msgstr "日落和日出时间根据你的时区计算"
+
+#: aurora/settingsapp/appearance.py:181
+msgid "From"
+msgstr "从"
+
+#: aurora/settingsapp/appearance.py:181
+msgid "To"
+msgstr "到"
+
+#: aurora/settingsapp/appearance.py:188
+msgid "Color temperature"
+msgstr "色温"
+
+#: aurora/settingsapp/appearance.py:262
+msgid "Dynamic"
+msgstr "动态"
+
+#: aurora/settingsapp/appearance.py:269
+msgid "Changes with the time of day: dawn, day, dusk and night"
+msgstr "随一天的时间变化：黎明、白天、黄昏和夜晚"
+
+#: aurora/settingsapp/appearance.py:295
+msgid "Choose a Background"
+msgstr "选择背景"
+
+#: aurora/settingsapp/appearance.py:296 aurora/settingsapp/system.py:365
+msgid "Images"
+msgstr "图片"
+
+#: aurora/settingsapp/applications.py:12
+msgid "Web"
+msgstr "网页"
+
+#: aurora/settingsapp/applications.py:13
+msgid "Mail"
+msgstr "邮件"
+
+#: aurora/settingsapp/applications.py:15
+msgid "Text Editor"
+msgstr "文本编辑器"
+
+#: aurora/settingsapp/applications.py:16
+msgid "Music"
+msgstr "音乐"
+
+#: aurora/settingsapp/applications.py:17
+msgid "Video"
+msgstr "视频"
+
+#: aurora/settingsapp/applications.py:18
+msgid "Photos"
+msgstr "照片"
+
+#: aurora/settingsapp/applications.py:19
+msgid "PDF"
+msgstr "PDF"
+
+#: aurora/settingsapp/applications.py:25
+msgid "Apps"
+msgstr "应用"
+
+#: aurora/settingsapp/applications.py:29
+msgid "Default Apps"
+msgstr "默认应用"
+
+#: aurora/settingsapp/applications.py:51
+msgid "Startup Apps"
+msgstr "开机启动应用"
+
+#: aurora/settingsapp/applications.py:52
+msgid "Apps that open automatically when you log in."
+msgstr "登录时自动打开的应用。"
+
+#: aurora/settingsapp/applications.py:54
+msgid "Add Startup App"
+msgstr "添加开机启动应用"
+
+#: aurora/settingsapp/applications.py:70
+msgid "No startup apps"
+msgstr "没有开机启动应用"
+
+#: aurora/settingsapp/applications.py:81 aurora/settingsapp/inputs.py:146
+#: aurora/settingsapp/language.py:180 aurora/settingsapp/system.py:479
+msgid "Remove"
+msgstr "移除"
+
+#: aurora/settingsapp/applications.py:132 aurora/shell/notifications.py:304
+#: aurora/shell/quicksettings.py:176
+msgid "Do Not Disturb"
+msgstr "勿扰模式"
+
+#: aurora/settingsapp/applications.py:134
+msgid "Only urgent notifications will pop up. Everything still appears in the notification center."
+msgstr "只显示紧急通知。其他通知仍会保留在通知中心。"
+
+#: aurora/settingsapp/applications.py:136
+msgid "Where to find them"
+msgstr "在哪里查看"
+
+#: aurora/settingsapp/applications.py:137
+msgid "Click the clock in the top bar"
+msgstr "点击顶栏中的时钟"
+
+#: aurora/settingsapp/applications.py:138
+msgid "to see past notifications and the calendar."
+msgstr "查看过去的通知和日历。"
+
+#: aurora/settingsapp/applications.py:143
+msgid "Accessibility"
+msgstr "辅助功能"
+
+#: aurora/settingsapp/applications.py:149
+msgid "Seeing"
+msgstr "视觉"
+
+#: aurora/settingsapp/applications.py:151
+msgid "High contrast"
+msgstr "高对比度"
+
+#: aurora/settingsapp/applications.py:154
+msgid "Large text"
+msgstr "大号文本"
+
+#: aurora/settingsapp/applications.py:157
+msgid "Large pointer"
+msgstr "大号光标"
+
+#: aurora/settingsapp/applications.py:159
+msgid "Reduce animation"
+msgstr "减少动画"
+
+#: aurora/settingsapp/applications.py:169
+msgid "Screen reader"
+msgstr "屏幕阅读器"
+
+#: aurora/settingsapp/applications.py:171
+msgid "Reads the screen aloud (Orca)"
+msgstr "朗读屏幕内容（Orca）"
+
+#: aurora/settingsapp/app.py:43 aurora/settingsapp/app.py:65
+#: aurora/settingsapp/app.py:77 aurora/settingsapp/app.py:78
+#: aurora/shell/quicksettings.py:236 aurora/shell/search.py:421
+#: aurora/shell/wallpaper.py:62
+msgid "Settings"
+msgstr "设置"
+
+#: aurora/settingsapp/app.py:97
+msgid "This page could not be loaded"
+msgstr "无法加载此页面"
+
+#: aurora/settingsapp/app.py:118
+msgid "Open a specific page"
+msgstr "打开指定页面"
+
+#: aurora/settingsapp/desktop.py:12 aurora/shell/sysnotify.py:42
+msgid "Aurora"
+msgstr "Aurora"
+
+#: aurora/settingsapp/desktop.py:12
+msgid "Menu bar on top, floating dock"
+msgstr "顶部菜单栏，浮动程序坞"
+
+#: aurora/settingsapp/desktop.py:21
+msgid "Classic"
+msgstr "经典"
+
+#: aurora/settingsapp/desktop.py:21
+msgid "Full-width taskbar at the bottom"
+msgstr "底部全宽任务栏"
+
+#: aurora/settingsapp/desktop.py:30
+msgid "Studio"
+msgstr "Studio"
+
+#: aurora/settingsapp/desktop.py:30
+msgid "Dock on the left, clock in the middle"
+msgstr "左侧程序坞，时钟居中"
+
+#: aurora/settingsapp/desktop.py:39
+msgid "Minimal"
+msgstr "极简"
+
+#: aurora/settingsapp/desktop.py:39
+msgid "Dock hides until you need it"
+msgstr "程序坞在需要时才出现"
+
+#: aurora/settingsapp/desktop.py:54
+msgid "Desktop & Dock"
+msgstr "桌面与程序坞"
+
+#: aurora/settingsapp/desktop.py:60
+msgid "Settings schema not installed"
+msgstr "未安装设置架构"
+
+#: aurora/settingsapp/desktop.py:64
+msgid "Layout"
+msgstr "布局"
+
+#: aurora/settingsapp/desktop.py:64
+msgid "Start from a preset, then fine-tune below."
+msgstr "从预设开始，然后在下方微调。"
+
+#: aurora/settingsapp/desktop.py:88
+msgid "Top Bar"
+msgstr "顶栏"
+
+#: aurora/settingsapp/desktop.py:89 aurora/settingsapp/desktop.py:97
+msgid "Position"
+msgstr "位置"
+
+#: aurora/settingsapp/desktop.py:90
+msgid "Top"
+msgstr "顶部"
+
+#: aurora/settingsapp/desktop.py:90 aurora/settingsapp/desktop.py:98
+msgid "Bottom"
+msgstr "底部"
+
+#: aurora/settingsapp/desktop.py:91
+msgid "Clock"
+msgstr "时钟"
+
+#: aurora/settingsapp/desktop.py:92 aurora/settingsapp/desktop.py:98
+#: aurora/settingsapp/desktop.py:109
+msgid "Right"
+msgstr "右侧"
+
+#: aurora/settingsapp/desktop.py:92
+msgid "Center"
+msgstr "居中"
+
+#: aurora/settingsapp/desktop.py:93
+msgid "Opacity"
+msgstr "不透明度"
+
+#: aurora/settingsapp/desktop.py:94
+msgid "Show seconds"
+msgstr "显示秒"
+
+#: aurora/settingsapp/desktop.py:96
+msgid "Dock"
+msgstr "程序坞"
+
+#: aurora/settingsapp/desktop.py:98 aurora/settingsapp/desktop.py:109
+msgid "Left"
+msgstr "左侧"
+
+#: aurora/settingsapp/desktop.py:99
+msgid "Hidden"
+msgstr "隐藏"
+
+#: aurora/settingsapp/desktop.py:101
+msgid "Floating"
+msgstr "浮动"
+
+#: aurora/settingsapp/desktop.py:101
+msgid "Full-width panel"
+msgstr "全宽面板"
+
+#: aurora/settingsapp/desktop.py:102
+msgid "Icon size"
+msgstr "图标大小"
+
+#: aurora/settingsapp/desktop.py:103
+msgid "Magnify icons on hover"
+msgstr "悬停时放大图标"
+
+#: aurora/settingsapp/desktop.py:104
+msgid "Automatically hide"
+msgstr "自动隐藏"
+
+#: aurora/settingsapp/desktop.py:105
+msgid "Show Trash"
+msgstr "显示废纸篓"
+
+#: aurora/settingsapp/desktop.py:107 aurora/settingsapp/inputs.py:254
+msgid "Windows"
+msgstr "窗口"
+
+#: aurora/settingsapp/desktop.py:108
+msgid "Buttons"
+msgstr "按钮"
+
+#: aurora/settingsapp/desktop.py:110
+msgid "Button style"
+msgstr "按钮样式"
+
+#: aurora/settingsapp/desktop.py:111
+msgid "Colored circles"
+msgstr "彩色圆点"
+
+#: aurora/settingsapp/desktop.py:111
+msgid "Monochrome icons"
+msgstr "单色图标"
+
+#: aurora/settingsapp/desktop.py:112
+msgid "Corner radius"
+msgstr "圆角半径"
+
+#: aurora/settingsapp/desktop.py:113
+msgid "Gaps around snapped windows"
+msgstr "贴靠窗口周围的间距"
+
+#: aurora/settingsapp/desktop.py:116
+msgid "Show files from the Desktop folder"
+msgstr "显示“桌面”文件夹中的文件"
+
+#: aurora/settingsapp/desktop.py:117
+msgid "Icon position"
+msgstr "图标位置"
+
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:245
+msgid "Top left"
+msgstr "左上角"
+
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:245
+msgid "Top right"
+msgstr "右上角"
+
+#: aurora/settingsapp/desktop.py:120
+msgid "Super Key"
+msgstr "Super 键"
+
+#: aurora/settingsapp/desktop.py:121
+msgid "Super opens"
+msgstr "Super 键打开"
+
+#: aurora/settingsapp/desktop.py:122
+msgid "Spotlight search"
+msgstr "Spotlight 搜索"
+
+#: aurora/settingsapp/desktop.py:122
+msgid "Launchpad (all apps)"
+msgstr "Launchpad（所有应用）"
+
+#: aurora/settingsapp/devices.py:16 aurora/settingsapp/devices.py:38
+#: aurora/shell/quicksettings.py:168
+msgid "Bluetooth"
+msgstr "蓝牙"
+
+#: aurora/settingsapp/devices.py:29
+msgid "Devices"
+msgstr "设备"
+
+#: aurora/settingsapp/devices.py:33
+msgid "No Bluetooth adapter found"
+msgstr "未找到蓝牙适配器"
+
+#: aurora/settingsapp/devices.py:45
+msgid "Advanced Bluetooth Settings…"
+msgstr "高级蓝牙设置…"
+
+#: aurora/settingsapp/devices.py:108 aurora/settingsapp/network.py:108
+msgid "Connected"
+msgstr "已连接"
+
+#: aurora/settingsapp/devices.py:109 aurora/settingsapp/devices.py:120
+msgid "Paired"
+msgstr "已配对"
+
+#: aurora/settingsapp/devices.py:109
+msgid "Not set up"
+msgstr "未设置"
+
+#: aurora/settingsapp/devices.py:112
+msgid "Disconnect"
+msgstr "断开连接"
+
+#: aurora/settingsapp/devices.py:115 aurora/shell/quicksettings.py:350
+msgid "Connect"
+msgstr "连接"
+
+#: aurora/settingsapp/devices.py:118
+msgid "Pair"
+msgstr "配对"
+
+#: aurora/settingsapp/devices.py:129 aurora/settingsapp/devices.py:133
+msgid "Printers"
+msgstr "打印机"
+
+#: aurora/settingsapp/devices.py:133
+msgid "Most network and USB printers are found automatically."
+msgstr "大多数网络和 USB 打印机会被自动发现。"
+
+#: aurora/settingsapp/devices.py:137
+msgid "No printers"
+msgstr "没有打印机"
+
+#: aurora/settingsapp/devices.py:140
+msgid "Default"
+msgstr "默认"
+
+#: aurora/settingsapp/devices.py:143
+msgid "Make Default"
+msgstr "设为默认"
+
+#: aurora/settingsapp/devices.py:145
+msgid "Default printer changed"
+msgstr "默认打印机已更改"
+
+#: aurora/settingsapp/devices.py:149
+msgid "Add or Configure Printers…"
+msgstr "添加或配置打印机…"
+
+#: aurora/settingsapp/display.py:18
+msgid "Normal"
+msgstr "正常"
+
+#: aurora/settingsapp/display.py:18
+msgid "90° Clockwise"
+msgstr "顺时针 90°"
+
+#: aurora/settingsapp/display.py:19
+msgid "Upside Down"
+msgstr "上下颠倒"
+
+#: aurora/settingsapp/display.py:19
+msgid "90° Counterclockwise"
+msgstr "逆时针 90°"
+
+#: aurora/settingsapp/display.py:32 aurora/shell/search.py:388
+msgid "Displays"
+msgstr "显示器"
+
+#: aurora/settingsapp/display.py:45
+msgid "No displays found"
+msgstr "未找到显示器"
+
+#: aurora/settingsapp/display.py:46
+msgid "Display configuration needs a running Aurora session."
+msgstr "配置显示器需要正在运行的 Aurora 会话。"
+
+#: aurora/settingsapp/display.py:57
+msgid "Enabled"
+msgstr "已启用"
+
+#: aurora/settingsapp/display.py:75
+msgid "Resolution"
+msgstr "分辨率"
+
+#: aurora/settingsapp/display.py:80
+msgid "Scale"
+msgstr "缩放"
+
+#: aurora/settingsapp/display.py:85
+msgid "Orientation"
+msgstr "方向"
+
+#: aurora/settingsapp/display.py:95
+msgid "Could not change display: {err}"
+msgstr "无法更改显示器：{err}"
+
+#: aurora/settingsapp/fingerprint.py:16
+msgid "Good. Lift your finger and touch the reader again."
+msgstr "很好。抬起手指，再次触摸传感器。"
+
+#: aurora/settingsapp/fingerprint.py:17
+msgid "Try again."
+msgstr "请重试。"
+
+#: aurora/settingsapp/fingerprint.py:18
+msgid "Swipe was too short. Try again."
+msgstr "滑动太短。请重试。"
+
+#: aurora/settingsapp/fingerprint.py:19
+msgid "Center your finger on the reader and try again."
+msgstr "将手指放在传感器中央后重试。"
+
+#: aurora/settingsapp/fingerprint.py:20
+msgid "Lift your finger and try again."
+msgstr "抬起手指后重试。"
+
+#: aurora/settingsapp/fingerprint.py:21
+msgid "This finger is already enrolled."
+msgstr "该手指已录入。"
+
+#: aurora/settingsapp/fingerprint.py:45 aurora/settingsapp/fingerprint.py:50
+#: aurora/settingsapp/fingerprint.py:68
+msgid "Fingerprint"
+msgstr "指纹"
+
+#: aurora/settingsapp/fingerprint.py:46
+msgid "No fingerprint reader found"
+msgstr "未找到指纹识别器"
+
+#: aurora/settingsapp/fingerprint.py:49
+msgid "Use your finger instead of the password for sudo and admin prompts"
+msgstr "使用手指代替密码进行 sudo 和管理员验证"
+
+#: aurora/settingsapp/fingerprint.py:51
+msgid "Add Finger…"
+msgstr "添加手指…"
+
+#: aurora/settingsapp/fingerprint.py:51
+msgid "Set Up…"
+msgstr "设置…"
+
+#: aurora/settingsapp/fingerprint.py:57
+msgid "Delete Fingerprints"
+msgstr "删除指纹"
+
+#: aurora/settingsapp/fingerprint.py:76
+msgid "Finger"
+msgstr "手指"
+
+#: aurora/settingsapp/fingerprint.py:81
+msgid "Choose a finger, then press Start and touch the reader several times."
+msgstr "选择一根手指，按“开始”，然后多次触摸识别器。"
+
+#: aurora/settingsapp/fingerprint.py:87
+msgid "Start"
+msgstr "开始"
+
+#: aurora/settingsapp/fingerprint.py:101
+msgid "Touch the fingerprint reader."
+msgstr "请触摸指纹识别器。"
+
+#: aurora/settingsapp/fingerprint.py:124
+msgid "Fingerprint saved."
+msgstr "指纹已保存。"
+
+#: aurora/settingsapp/fingerprint.py:127
+msgid "Enrollment failed. Please try again."
+msgstr "录入失败。请重试。"
+
+#: aurora/settingsapp/fingerprint.py:138 aurora/welcome.py:139
+msgid "Done"
+msgstr "完成"
+
+#: aurora/settingsapp/health.py:40
+msgid "System"
+msgstr "系统"
+
+#: aurora/settingsapp/health.py:51
+msgid "{label}: {free} free ({pct:.0f}%)"
+msgstr "{label}：可用 {free}（{pct:.0f}%）"
+
+#: aurora/settingsapp/health.py:54
+msgid "See What Uses Space"
+msgstr "查看占用空间的内容"
+
+#: aurora/settingsapp/health.py:70
+msgid "Disk"
+msgstr "磁盘"
+
+#: aurora/settingsapp/health.py:76
+msgid "the disk reports that it is failing"
+msgstr "磁盘报告即将故障"
+
+#: aurora/settingsapp/health.py:78
+msgid "{n} bad sectors"
+msgstr "{n} 个坏扇区"
+
+#: aurora/settingsapp/health.py:81
+msgid "critical warning: {w}"
+msgstr "严重警告：{w}"
+
+#: aurora/settingsapp/health.py:82
+msgid "critical warning"
+msgstr "严重警告"
+
+#: aurora/settingsapp/health.py:96
+msgid "Disk health isn't available on this computer"
+msgstr "本机无法获取磁盘健康状况"
+
+#: aurora/settingsapp/health.py:98
+msgid "No disks report health data (normal in virtual machines)"
+msgstr "没有磁盘报告健康数据（虚拟机中很常见）"
+
+#: aurora/settingsapp/health.py:101
+msgid "Back up your files now. "
+msgstr "请立即备份你的文件。"
+
+#: aurora/settingsapp/health.py:102
+msgid "Open Disks"
+msgstr "打开“磁盘”"
+
+#: aurora/settingsapp/health.py:103
+#, python-brace-format
+msgid "{n} disk healthy"
+msgid_plural "{n} disks healthy"
+msgstr[0] "{n} 个磁盘状况良好"
+
+#: aurora/settingsapp/health.py:111
+#, python-brace-format
+msgid "{n} update available"
+msgid_plural "{n} updates available"
+msgstr[0] "有 {n} 个更新可用"
+
+#: aurora/settingsapp/health.py:112 aurora/shell/sysnotify.py:64
+msgid "Update"
+msgstr "更新"
+
+#: aurora/settingsapp/health.py:113
+msgid "Software is up to date"
+msgstr "软件已是最新"
+
+#: aurora/settingsapp/health.py:118
+msgid "Firmware updates aren't supported here"
+msgstr "此处不支持固件更新"
+
+#: aurora/settingsapp/health.py:127
+msgid "Firmware updates for {names}"
+msgstr "{names} 有固件更新"
+
+#: aurora/settingsapp/health.py:128
+msgid "Open Firmware"
+msgstr "打开“固件”"
+
+#: aurora/settingsapp/health.py:129
+msgid "Firmware is up to date"
+msgstr "固件已是最新"
+
+#: aurora/settingsapp/health.py:136
+msgid "Stopped with an error: {names}"
+msgstr "出错停止：{names}"
+
+#: aurora/settingsapp/health.py:137
+msgid "Open Logs"
+msgstr "打开“日志”"
+
+#: aurora/settingsapp/health.py:138
+msgid "All system services are running"
+msgstr "所有系统服务运行正常"
+
+#: aurora/settingsapp/health.py:143 aurora/settingsapp/health.py:151
+msgid "No extra drivers needed"
+msgstr "不需要额外驱动"
+
+#: aurora/settingsapp/health.py:148
+msgid "The NVIDIA driver is installed"
+msgstr "已安装 NVIDIA 驱动"
+
+#: aurora/settingsapp/health.py:149
+msgid "An NVIDIA graphics card could use its own driver ({pkg})"
+msgstr "NVIDIA 显卡可以使用其专有驱动（{pkg}）"
+
+#: aurora/settingsapp/health.py:150 aurora/settingsapp/system.py:515
+msgid "Additional Drivers"
+msgstr "附加驱动"
+
+#: aurora/settingsapp/health.py:161
+msgid "The firewall is on"
+msgstr "防火墙已开启"
+
+#: aurora/settingsapp/health.py:162
+msgid "The firewall is off"
+msgstr "防火墙已关闭"
+
+#: aurora/settingsapp/health.py:163 aurora/settingsapp/system.py:41
+msgid "Privacy & Security"
+msgstr "隐私与安全"
+
+#: aurora/settingsapp/health.py:169
+msgid "Snapshots need btrfs; this system uses another file system"
+msgstr "快照需要 btrfs；此系统使用其他文件系统"
+
+#: aurora/settingsapp/health.py:171
+msgid "Automatic snapshots aren't set up"
+msgstr "未设置自动快照"
+
+#: aurora/settingsapp/health.py:172
+msgid "Open Timeshift"
+msgstr "打开 Timeshift"
+
+#: aurora/settingsapp/health.py:174
+msgid "Snapshots before updates are turned off"
+msgstr "更新前快照已关闭"
+
+#: aurora/settingsapp/health.py:175 aurora/settingsapp/system.py:495
+msgid "Software Updates"
+msgstr "软件更新"
+
+#: aurora/settingsapp/health.py:176
+msgid "A snapshot is taken before every update"
+msgstr "每次更新前都会创建快照"
+
+#: aurora/settingsapp/health.py:188
+msgid "The battery holds {pct:.0f}% of its original charge"
+msgstr "电池保持原始电量的 {pct:.0f}%"
+
+#: aurora/settingsapp/health.py:190
+msgid "(consider replacing it)"
+msgstr "（建议更换）"
+
+#: aurora/settingsapp/health.py:202
+msgid "{free} of {total} free"
+msgstr "可用 {free}，共 {total}"
+
+#: aurora/settingsapp/health.py:205
+msgid "See What Uses Memory"
+msgstr "查看占用内存的内容"
+
+#: aurora/settingsapp/health.py:210
+msgid "Disk space"
+msgstr "磁盘空间"
+
+#: aurora/settingsapp/health.py:211
+msgid "Disk health"
+msgstr "磁盘健康"
+
+#: aurora/settingsapp/health.py:212
+msgid "Software updates"
+msgstr "软件更新"
+
+#: aurora/settingsapp/health.py:213
+msgid "Firmware"
+msgstr "固件"
+
+#: aurora/settingsapp/health.py:214
+msgid "System services"
+msgstr "系统服务"
+
+#: aurora/settingsapp/health.py:215
+msgid "Graphics drivers"
+msgstr "显卡驱动"
+
+#: aurora/settingsapp/health.py:216 aurora/settingsapp/system.py:82
+#: aurora/settingsapp/system.py:91
+msgid "Firewall"
+msgstr "防火墙"
+
+#: aurora/settingsapp/health.py:217
+msgid "System snapshots"
+msgstr "系统快照"
+
+#: aurora/settingsapp/health.py:218 aurora/settingsapp/power.py:73
+msgid "Battery"
+msgstr "电池"
+
+#: aurora/settingsapp/health.py:225 aurora/shell/search.py:400
+msgid "System Health"
+msgstr "系统健康"
+
+#: aurora/settingsapp/health.py:229
+msgid "Aurora Doctor"
+msgstr "Aurora Doctor"
+
+#: aurora/settingsapp/health.py:230
+msgid "Checks your computer for common problems. Nothing is changed without you clicking."
+msgstr "检查计算机的常见问题。未经你点击不会做任何更改。"
+
+#: aurora/settingsapp/health.py:232 aurora/settingsapp/health.py:246
+#: aurora/settingsapp/system.py:509 aurora/settingsapp/system.py:517
+msgid "Checking…"
+msgstr "正在检查…"
+
+#: aurora/settingsapp/health.py:235
+msgid "Check Again"
+msgstr "再次检查"
+
+#: aurora/settingsapp/health.py:262
+msgid "Everything looks good"
+msgstr "一切正常"
+
+#: aurora/settingsapp/health.py:263
+#, python-brace-format
+msgid "{n} thing needs attention"
+msgid_plural "{n} things need attention"
+msgstr[0] "{n} 项需要注意"
+
+#: aurora/settingsapp/inputs.py:19
+msgid "Mouse & Touchpad"
+msgstr "鼠标和触摸板"
+
+#: aurora/settingsapp/inputs.py:24
+msgid "General"
+msgstr "常规"
+
+#: aurora/settingsapp/inputs.py:25
+msgid "Left-handed"
+msgstr "左手模式"
+
+#: aurora/settingsapp/inputs.py:29
+msgid "Mouse"
+msgstr "鼠标"
+
+#: aurora/settingsapp/inputs.py:33
+msgid "Acceleration"
+msgstr "加速"
+
+#: aurora/settingsapp/inputs.py:33
+msgid "Adaptive"
+msgstr "自适应"
+
+#: aurora/settingsapp/inputs.py:33
+msgid "Flat"
+msgstr "平直"
+
+#: aurora/settingsapp/inputs.py:36 aurora/settingsapp/inputs.py:45
+msgid "Natural scrolling"
+msgstr "自然滚动"
+
+#: aurora/settingsapp/inputs.py:39
+msgid "Content moves in the direction of the wheel"
+msgstr "内容随滚轮方向移动"
+
+#: aurora/settingsapp/inputs.py:41
+msgid "Touchpad"
+msgstr "触摸板"
+
+#: aurora/settingsapp/inputs.py:43
+msgid "Tap to click"
+msgstr "轻点以点击"
+
+#: aurora/settingsapp/inputs.py:48
+msgid "Disable while typing"
+msgstr "打字时禁用"
+
+#: aurora/settingsapp/inputs.py:53
+msgid "Scroll method"
+msgstr "滚动方式"
+
+#: aurora/settingsapp/inputs.py:53
+msgid "Two fingers"
+msgstr "双指"
+
+#: aurora/settingsapp/inputs.py:53
+msgid "Edge"
+msgstr "边缘"
+
+#: aurora/settingsapp/inputs.py:58
+msgid "Secondary click"
+msgstr "辅助点击"
+
+#: aurora/settingsapp/inputs.py:58
+msgid "Two-finger click"
+msgstr "双指点击"
+
+#: aurora/settingsapp/inputs.py:58
+msgid "Bottom-right corner"
+msgstr "右下角"
+
+#: aurora/settingsapp/inputs.py:63
+msgid "Gestures"
+msgstr "手势"
+
+#: aurora/settingsapp/inputs.py:65
+msgid "Three fingers: up for all windows, down for the desktop, sideways to change workspace. Pinch with four fingers for Launchpad."
+msgstr "三指：向上显示所有窗口，向下显示桌面，左右滑动切换工作区。四指捏合打开 Launchpad。"
+
+#: aurora/settingsapp/inputs.py:70
+msgid "Pointer speed"
+msgstr "指针速度"
+
+#: aurora/settingsapp/inputs.py:92 aurora/settingsapp/language.py:113
+msgid "Keyboard"
+msgstr "键盘"
+
+#: aurora/settingsapp/inputs.py:97
+msgid "Typing"
+msgstr "输入"
+
+#: aurora/settingsapp/inputs.py:98
+msgid "Keyboard layouts are in Language & Region."
+msgstr "键盘布局在“语言与地区”中。"
+
+#: aurora/settingsapp/inputs.py:99
+msgid "Repeat delay (ms)"
+msgstr "重复延迟（毫秒）"
+
+#: aurora/settingsapp/inputs.py:101
+msgid "Repeat rate (per second)"
+msgstr "重复速率（每秒）"
+
+#: aurora/settingsapp/inputs.py:103
+msgid "Num Lock on at login"
+msgstr "登录时开启数字锁定"
+
+#: aurora/settingsapp/inputs.py:108
+msgid "Shortcuts"
+msgstr "快捷键"
+
+#: aurora/settingsapp/inputs.py:109
+msgid "Built-in shortcuts, plus your own commands."
+msgstr "内置快捷键，以及你自己的命令。"
+
+#: aurora/settingsapp/inputs.py:111 aurora/settingsapp/inputs.py:158
+msgid "Add Custom Shortcut"
+msgstr "添加自定义快捷键"
+
+#: aurora/settingsapp/inputs.py:159
+msgid "Press the key combination, then enter the command to run."
+msgstr "按下组合键，然后输入要运行的命令。"
+
+#: aurora/settingsapp/inputs.py:161
+msgid "Press keys…"
+msgstr "请按键…"
+
+#: aurora/settingsapp/inputs.py:162
+msgid "Command, e.g. firefox-esr --private-window"
+msgstr "命令，例如 firefox-esr --private-window"
+
+#: aurora/settingsapp/inputs.py:167 aurora/settingsapp/system.py:461
+msgid "Add"
+msgstr "添加"
+
+#: aurora/settingsapp/inputs.py:220
+msgid "Multitasking"
+msgstr "多任务"
+
+#: aurora/settingsapp/inputs.py:225
+msgid "Workspaces"
+msgstr "工作区"
+
+#: aurora/settingsapp/inputs.py:226
+msgid "Switch with Super+1…9 or Ctrl+Alt+Left/Right."
+msgstr "使用 Super+1…9 或 Ctrl+Alt+左/右 切换。"
+
+#: aurora/settingsapp/inputs.py:229
+msgid "Number of workspaces"
+msgstr "工作区数量"
+
+#: aurora/settingsapp/inputs.py:236
+msgid "Hot Corners"
+msgstr "触发角"
+
+#: aurora/settingsapp/inputs.py:237
+msgid "Push the pointer into a corner of the screen to…"
+msgstr "将指针移到屏幕角落以…"
+
+#: aurora/settingsapp/inputs.py:238
+msgid "Do Nothing"
+msgstr "不执行任何操作"
+
+#: aurora/settingsapp/inputs.py:238
+msgid "Show All Windows"
+msgstr "显示所有窗口"
+
+#: aurora/settingsapp/inputs.py:239
+msgid "Show Apps (Launchpad)"
+msgstr "显示应用（Launchpad）"
+
+#: aurora/settingsapp/inputs.py:240 aurora/shell/overview.py:95
+msgid "Show Desktop"
+msgstr "显示桌面"
+
+#: aurora/settingsapp/inputs.py:241
+msgid "Open Control Center"
+msgstr "打开控制中心"
+
+#: aurora/settingsapp/inputs.py:242
+msgid "Open Notifications"
+msgstr "打开通知"
+
+#: aurora/settingsapp/inputs.py:243 aurora/shell/panel.py:209
+msgid "Lock Screen"
+msgstr "锁定屏幕"
+
+#: aurora/settingsapp/inputs.py:243
+msgid "Turn Screen Off"
+msgstr "关闭屏幕"
+
+#: aurora/settingsapp/inputs.py:246
+msgid "Bottom left"
+msgstr "左下角"
+
+#: aurora/settingsapp/inputs.py:247
+msgid "Bottom right"
+msgstr "右下角"
+
+#: aurora/settingsapp/inputs.py:255
+msgid "Super+W shows all windows. Super+Left/Right fills half the screen, Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. Hold Super while dragging a window to drop it into a quarter or third."
+msgstr "Super+W 显示所有窗口。Super+左/右 占据半屏，Super+Ctrl+U/I/J/K 占四分之一，Super+Ctrl+D/F/G 占三分之一。拖动窗口时按住 Super 可将其放入四分之一或三分之一区域。"
+
+#: aurora/settingsapp/inputs.py:258
+msgid "Snap windows to screen edges"
+msgstr "将窗口贴靠到屏幕边缘"
+
+#: aurora/settingsapp/inputs.py:261
+msgid "Drag a window to an edge to fill half the screen"
+msgstr "将窗口拖到边缘以占据半个屏幕"
+
+#: aurora/settingsapp/inputs.py:262
+msgid "Drag to the top to maximize"
+msgstr "拖到顶部以最大化"
+
+#: aurora/settingsapp/inputs.py:265
+msgid "Focus follows the pointer"
+msgstr "焦点跟随指针"
+
+#: aurora/settingsapp/language.py:90 aurora/shell/search.py:394
+msgid "Language & Region"
+msgstr "语言与地区"
+
+#: aurora/settingsapp/language.py:98 aurora/settingsapp/language.py:102
+msgid "Language"
+msgstr "语言"
+
+#: aurora/settingsapp/language.py:99
+msgid "Changes take effect the next time you log in."
+msgstr "更改将在下次登录时生效。"
+
+#: aurora/settingsapp/language.py:105
+msgid "Formats"
+msgstr "格式"
+
+#: aurora/settingsapp/language.py:106
+msgid "Dates, times, numbers and units"
+msgstr "日期、时间、数字和单位"
+
+#: aurora/settingsapp/language.py:109
+msgid "Log Out Now"
+msgstr "立即注销"
+
+#: aurora/settingsapp/language.py:114
+msgid "Add several layouts and switch with Alt+Shift."
+msgstr "添加多个布局，使用 Alt+Shift 切换。"
+
+#: aurora/settingsapp/language.py:118
+msgid "Add layout"
+msgstr "添加布局"
+
+#: aurora/settingsapp/language.py:141
+msgid "Language will change after you log out."
+msgstr "语言将在注销后更改。"
+
+#: aurora/settingsapp/network.py:35 aurora/shell/search.py:392
+msgid "Network"
+msgstr "网络"
+
+#: aurora/settingsapp/network.py:40
+msgid "Status"
+msgstr "状态"
+
+#: aurora/settingsapp/network.py:41
+msgid "VPN and Advanced"
+msgstr "VPN 与高级"
+
+#: aurora/settingsapp/network.py:42
+msgid "VPNs (WireGuard, OpenVPN, OpenConnect), static IP addresses, proxies, hotspots and every other connection option."
+msgstr "VPN（WireGuard、OpenVPN、OpenConnect）、静态 IP 地址、代理、热点以及所有其他连接选项。"
+
+#: aurora/settingsapp/network.py:44
+msgid "Open Connection Editor…"
+msgstr "打开连接编辑器…"
+
+#: aurora/settingsapp/network.py:47 aurora/settingsapp/network.py:53
+#: aurora/shell/quicksettings.py:164
+msgid "Wi-Fi"
+msgstr "Wi-Fi"
+
+#: aurora/settingsapp/network.py:51
+msgid "NetworkManager is not running"
+msgstr "NetworkManager 未运行"
+
+#: aurora/settingsapp/network.py:57
+msgid "Scan"
+msgstr "扫描"
+
+#: aurora/settingsapp/network.py:75
+msgid "Disconnected"
+msgstr "已断开"
+
+#: aurora/settingsapp/network.py:110 aurora/settingsapp/network.py:146
+msgid "Share Wi-Fi"
+msgstr "分享 Wi-Fi"
+
+#: aurora/settingsapp/network.py:120
+msgid "Connected to {ssid}"
+msgstr "已连接到 {ssid}"
+
+#: aurora/settingsapp/network.py:121
+msgid "Could not connect to {ssid}"
+msgstr "无法连接到 {ssid}"
+
+#: aurora/settingsapp/network.py:133
+msgid "QR codes need the python3-qrcode package"
+msgstr "二维码需要 python3-qrcode 软件包"
+
+#: aurora/settingsapp/network.py:141
+msgid "Point a phone's camera at the code to join “{ssid}”."
+msgstr "用手机相机对准二维码即可加入“{ssid}”。"
+
+#: aurora/settingsapp/network.py:144
+msgid "Password: {p}"
+msgstr "密码：{p}"
+
+#: aurora/settingsapp/power.py:27 aurora/shell/quicksettings.py:17
+msgid "Power Saver"
+msgstr "省电"
+
+#: aurora/settingsapp/power.py:27 aurora/shell/quicksettings.py:16
+msgid "Balanced"
+msgstr "平衡"
+
+#: aurora/settingsapp/power.py:28 aurora/shell/quicksettings.py:16
+msgid "Performance"
+msgstr "性能"
+
+#: aurora/settingsapp/power.py:38 aurora/shell/search.py:398
+msgid "Power"
+msgstr "电源"
+
+#: aurora/settingsapp/power.py:43
+msgid "Screen"
+msgstr "屏幕"
+
+#: aurora/settingsapp/power.py:45
+#, python-brace-format
+msgid "{n} minute"
+msgid_plural "{n} minutes"
+msgstr[0] "{n} 分钟"
+
+#: aurora/settingsapp/power.py:45
+msgid "Never"
+msgstr "从不"
+
+#: aurora/settingsapp/power.py:58
+msgid "Screen blank"
+msgstr "屏幕关闭"
+
+#: aurora/settingsapp/power.py:59
+msgid "Turn the screen off after a period of inactivity"
+msgstr "空闲一段时间后关闭屏幕"
+
+#: aurora/settingsapp/power.py:60
+msgid "Automatic screen lock"
+msgstr "自动锁定屏幕"
+
+#: aurora/settingsapp/power.py:64 aurora/settingsapp/power.py:67
+msgid "Power mode"
+msgstr "电源模式"
+
+#: aurora/settingsapp/power.py:74
+msgid "Charge"
+msgstr "电量"
+
+#: aurora/settingsapp/power.py:77
+msgid "Battery health"
+msgstr "电池健康"
+
+#: aurora/settingsapp/power.py:79
+msgid "Limit charging to 80%"
+msgstr "将充电限制在 80%"
+
+#: aurora/settingsapp/power.py:80
+msgid "Keeping a battery below full makes it last years longer. Turn off before a trip for a full charge."
+msgstr "不把电池充满可以让它多用好几年。出门前关闭此项以充满电。"
+
+#: aurora/settingsapp/power.py:88
+msgid "{pct} of its original capacity"
+msgstr "原始容量的 {pct}"
+
+#: aurora/settingsapp/power.py:94
+msgid "Charging stops at 80%"
+msgstr "充电在 80% 停止"
+
+#: aurora/settingsapp/power.py:94
+msgid "Charging to 100%"
+msgstr "充电至 100%"
+
+#: aurora/settingsapp/sound.py:18 aurora/shell/search.py:390
+msgid "Sound"
+msgstr "声音"
+
+#: aurora/settingsapp/sound.py:22
+msgid "Output"
+msgstr "输出"
+
+#: aurora/settingsapp/sound.py:23
+msgid "Input"
+msgstr "输入"
+
+#: aurora/settingsapp/sound.py:29
+msgid "System Sounds"
+msgstr "系统声音"
+
+#: aurora/settingsapp/sound.py:30
+msgid "Startup and shutdown sounds"
+msgstr "开机和关机声音"
+
+#: aurora/settingsapp/sound.py:32
+msgid "The Aurora sound when you log in, shut down, restart or log out"
+msgstr "登录、关机、重启或注销时播放 Aurora 声音"
+
+#: aurora/settingsapp/sound.py:35
+msgid "Startup sound"
+msgstr "开机声音"
+
+#: aurora/settingsapp/sound.py:36
+msgid "Shutdown sound"
+msgstr "关机声音"
+
+#: aurora/settingsapp/sound.py:39
+msgid "Play"
+msgstr "播放"
+
+#: aurora/settingsapp/sound.py:52
+msgid "Output device"
+msgstr "输出设备"
+
+#: aurora/settingsapp/sound.py:54
+msgid "Input device"
+msgstr "输入设备"
+
+#: aurora/settingsapp/sound.py:62 aurora/shell/quicksettings.py:339
+msgid "No devices found"
+msgstr "未找到设备"
+
+#: aurora/settingsapp/sound.py:73
+msgid "Volume"
+msgstr "音量"
+
+#: aurora/settingsapp/sound.py:76
+msgid "Mute"
+msgstr "静音"
+
+#: aurora/settingsapp/system.py:29
+msgid "Authorization was cancelled"
+msgstr "授权已取消"
+
+#: aurora/settingsapp/system.py:48
+msgid "Screen Lock"
+msgstr "锁屏"
+
+#: aurora/settingsapp/system.py:50
+msgid "Lock automatically"
+msgstr "自动锁定"
+
+#: aurora/settingsapp/system.py:52
+msgid "When the screen turns off or the computer sleeps"
+msgstr "屏幕关闭或计算机睡眠时"
+
+#: aurora/settingsapp/system.py:53
+msgid "Lock now"
+msgstr "立即锁定"
+
+#: aurora/settingsapp/system.py:55
+msgid "File History"
+msgstr "文件历史"
+
+#: aurora/settingsapp/system.py:57
+msgid "Remember recent files"
+msgstr "记住最近使用的文件"
+
+#: aurora/settingsapp/system.py:60
+msgid "Clear History…"
+msgstr "清除历史…"
+
+#: aurora/settingsapp/system.py:64
+msgid "Clipboard History"
+msgstr "剪贴板历史"
+
+#: aurora/settingsapp/system.py:65
+msgid "Copied text is kept on this computer only, for Spotlight (Super+V). Passwords copied from password managers are skipped."
+msgstr "复制的文本只保存在本机，供 Spotlight 使用（Super+V）。从密码管理器复制的密码会被跳过。"
+
+#: aurora/settingsapp/system.py:68
+msgid "Remember copied text"
+msgstr "记住复制的文本"
+
+#: aurora/settingsapp/system.py:70
+msgid "Clear Clipboard History"
+msgstr "清除剪贴板历史"
+
+#: aurora/settingsapp/system.py:74
+msgid "Online Services"
+msgstr "在线服务"
+
+#: aurora/settingsapp/system.py:77
+msgid "Weather next to the calendar"
+msgstr "日历旁显示天气"
+
+#: aurora/settingsapp/system.py:79
+msgid "Asks Open-Meteo for the weather of your time zone’s main city. No account, no exact location."
+msgstr "向 Open-Meteo 查询你所在时区主要城市的天气。无需账户，也不使用精确位置。"
+
+#: aurora/settingsapp/system.py:83
+msgid "Blocks unrequested incoming connections. Outgoing traffic is not affected."
+msgstr "阻止未经请求的传入连接。传出流量不受影响。"
+
+#: aurora/settingsapp/system.py:95
+msgid "Automatically empty Trash"
+msgstr "自动清空废纸篓"
+
+#: aurora/settingsapp/system.py:98
+msgid "Items older than 30 days"
+msgstr "超过 30 天的项目"
+
+#: aurora/settingsapp/system.py:102
+msgid "History cleared"
+msgstr "历史已清除"
+
+#: aurora/settingsapp/system.py:107
+msgid "Clipboard history cleared"
+msgstr "剪贴板历史已清除"
+
+#: aurora/settingsapp/system.py:111
+msgid "Firewall enabled"
+msgstr "防火墙已开启"
+
+#: aurora/settingsapp/system.py:111
+msgid "Firewall disabled"
+msgstr "防火墙已关闭"
+
+#: aurora/settingsapp/system.py:118
+msgid "Sharing"
+msgstr "共享"
+
+#: aurora/settingsapp/system.py:125
+msgid "Remote Login"
+msgstr "远程登录"
+
+#: aurora/settingsapp/system.py:126
+msgid "Allow connecting to this computer with SSH."
+msgstr "允许通过 SSH 连接到这台计算机。"
+
+#: aurora/settingsapp/system.py:129
+msgid "OpenSSH server is not installed"
+msgstr "未安装 OpenSSH 服务器"
+
+#: aurora/settingsapp/system.py:132
+msgid "Secure Shell (SSH)"
+msgstr "安全外壳（SSH）"
+
+#: aurora/settingsapp/system.py:136
+msgid "Connect with"
+msgstr "使用以下命令连接"
+
+#: aurora/settingsapp/system.py:141
+msgid "Screen Sharing"
+msgstr "屏幕共享"
+
+#: aurora/settingsapp/system.py:142
+msgid "Let someone see and control this screen from another computer with a VNC app (Remmina, TigerVNC, RealVNC). Connections are encrypted and need the password below."
+msgstr "允许他人从另一台计算机通过 VNC 应用（Remmina、TigerVNC、RealVNC）查看并控制此屏幕。连接经过加密，并需要下面的密码。"
+
+#: aurora/settingsapp/system.py:146
+msgid "wayvnc is not installed"
+msgstr "未安装 wayvnc"
+
+#: aurora/settingsapp/system.py:149
+msgid "Share this screen"
+msgstr "共享此屏幕"
+
+#: aurora/settingsapp/system.py:153
+msgid "Connect to"
+msgstr "连接到"
+
+#: aurora/settingsapp/system.py:158
+msgid "New Password"
+msgstr "新密码"
+
+#: aurora/settingsapp/system.py:169
+msgid "Screen sharing is on"
+msgstr "屏幕共享已开启"
+
+#: aurora/settingsapp/system.py:169
+msgid "Screen sharing is off"
+msgstr "屏幕共享已关闭"
+
+#: aurora/settingsapp/system.py:172
+msgid "Nearby Sharing"
+msgstr "附近共享"
+
+#: aurora/settingsapp/system.py:173
+msgid "Send files to phones and computers around you with LocalSend, like AirDrop but with every system: Android, iPhone, Windows, macOS and Linux. In Files, right-click a file and choose “Send to Nearby Device…”."
+msgstr "使用 LocalSend 将文件发送到附近的手机和计算机——类似隔空投送，但适用于所有系统：Android、iPhone、Windows、macOS 和 Linux。在“文件”中右键点击文件，选择“发送到附近设备…”。"
+
+#: aurora/settingsapp/system.py:178
+msgid "LocalSend is not installed"
+msgstr "未安装 LocalSend"
+
+#: aurora/settingsapp/system.py:180
+msgid "Let nearby devices find this computer"
+msgstr "允许附近设备发现这台计算机"
+
+#: aurora/settingsapp/system.py:182
+msgid "Opens port 53317 in the firewall"
+msgstr "在防火墙中开放端口 53317"
+
+#: aurora/settingsapp/system.py:186
+msgid "Nearby devices can find this computer"
+msgstr "附近设备可以发现这台计算机"
+
+#: aurora/settingsapp/system.py:187
+msgid "Nearby sharing blocked"
+msgstr "附近共享已阻止"
+
+#: aurora/settingsapp/system.py:190
+msgid "Phone"
+msgstr "手机"
+
+#: aurora/settingsapp/system.py:191
+msgid "Connect your Android phone or iPhone with KDE Connect: see phone notifications here, send files both ways, share the clipboard and use the phone as a touchpad. Install the KDE Connect app on the phone and keep both on the same network."
+msgstr "通过 KDE Connect 连接 Android 手机或 iPhone：在这里查看手机通知，双向发送文件，共享剪贴板，把手机当作触摸板。在手机上安装 KDE Connect 应用，并让两台设备处于同一网络。"
+
+#: aurora/settingsapp/system.py:197
+msgid "KDE Connect is not installed"
+msgstr "未安装 KDE Connect"
+
+#: aurora/settingsapp/system.py:200
+msgid "Allow phones to connect"
+msgstr "允许手机连接"
+
+#: aurora/settingsapp/system.py:201
+msgid "Opens the KDE Connect ports (1714–1764) in the firewall"
+msgstr "在防火墙中开放 KDE Connect 端口（1714–1764）"
+
+#: aurora/settingsapp/system.py:202
+msgid "Paired devices"
+msgstr "已配对的设备"
+
+#: aurora/settingsapp/system.py:203
+msgid "Pair, browse the phone’s files, ring it, send files"
+msgstr "配对、浏览手机文件、让手机响铃、发送文件"
+
+#: aurora/settingsapp/system.py:210
+msgid "Phones can connect"
+msgstr "手机可以连接"
+
+#: aurora/settingsapp/system.py:210
+msgid "Phone connections blocked"
+msgstr "手机连接已阻止"
+
+#: aurora/settingsapp/system.py:223
+msgid "SSH enabled"
+msgstr "SSH 已开启"
+
+#: aurora/settingsapp/system.py:223
+msgid "SSH disabled"
+msgstr "SSH 已关闭"
+
+#: aurora/settingsapp/system.py:284
+msgid "Users"
+msgstr "用户"
+
+#: aurora/settingsapp/system.py:290
+msgid "Your Account"
+msgstr "你的账户"
+
+#: aurora/settingsapp/system.py:297
+msgid "Change Picture…"
+msgstr "更换图片…"
+
+#: aurora/settingsapp/system.py:304 aurora/settingsapp/system.py:448
+msgid "Full name"
+msgstr "全名"
+
+#: aurora/settingsapp/system.py:310
+msgid "Change Password…"
+msgstr "更改密码…"
+
+#: aurora/settingsapp/system.py:318
+msgid "Login"
+msgstr "登录"
+
+#: aurora/settingsapp/system.py:320
+msgid "Log in automatically"
+msgstr "自动登录"
+
+#: aurora/settingsapp/system.py:322
+msgid "Skip the login screen when the computer starts"
+msgstr "计算机启动时跳过登录界面"
+
+#: aurora/settingsapp/system.py:324
+msgid "Other Users"
+msgstr "其他用户"
+
+#: aurora/settingsapp/system.py:326 aurora/settingsapp/system.py:446
+msgid "Add User"
+msgstr "添加用户"
+
+#: aurora/settingsapp/system.py:357 aurora/settingsapp/system.py:419
+#: aurora/settingsapp/system.py:589
+msgid "Saved"
+msgstr "已保存"
+
+#: aurora/settingsapp/system.py:364
+msgid "Choose a Picture"
+msgstr "选择图片"
+
+#: aurora/settingsapp/system.py:383
+msgid "Change Password"
+msgstr "更改密码"
+
+#: aurora/settingsapp/system.py:385
+msgid "Current password"
+msgstr "当前密码"
+
+#: aurora/settingsapp/system.py:386
+msgid "New password"
+msgstr "新密码"
+
+#: aurora/settingsapp/system.py:387
+msgid "Confirm new password"
+msgstr "确认新密码"
+
+#: aurora/settingsapp/system.py:392
+msgid "Change"
+msgstr "更改"
+
+#: aurora/settingsapp/system.py:399
+msgid "The new passwords do not match"
+msgstr "两次输入的新密码不一致"
+
+#: aurora/settingsapp/system.py:402
+msgid "Password changed"
+msgstr "密码已更改"
+
+#: aurora/settingsapp/system.py:402
+msgid "Could not change password"
+msgstr "无法更改密码"
+
+#: aurora/settingsapp/system.py:431 aurora/settingsapp/system.py:451
+msgid "Administrator"
+msgstr "管理员"
+
+#: aurora/settingsapp/system.py:432
+msgid "Standard"
+msgstr "标准"
+
+#: aurora/settingsapp/system.py:435
+msgid "Remove User"
+msgstr "删除用户"
+
+#: aurora/settingsapp/system.py:441
+msgid "No other users"
+msgstr "没有其他用户"
+
+#: aurora/settingsapp/system.py:470
+msgid "User added"
+msgstr "用户已添加"
+
+#: aurora/settingsapp/system.py:470
+msgid "Could not add user"
+msgstr "无法添加用户"
+
+#: aurora/settingsapp/system.py:476
+msgid "Remove {user}?"
+msgstr "要删除 {user} 吗？"
+
+#: aurora/settingsapp/system.py:477
+msgid "Their home folder and all their files will be deleted."
+msgstr "其主文件夹及所有文件都将被删除。"
+
+#: aurora/settingsapp/system.py:485
+msgid "User removed"
+msgstr "用户已删除"
+
+#: aurora/settingsapp/system.py:499
+msgid "Updates"
+msgstr "更新"
+
+#: aurora/settingsapp/system.py:499
+msgid "Aurora keeps itself secure by installing security updates automatically in the background."
+msgstr "Aurora 会在后台自动安装安全更新，保证你的安全。"
+
+#: aurora/settingsapp/system.py:507
+msgid "Install security updates automatically"
+msgstr "自动安装安全更新"
+
+#: aurora/settingsapp/system.py:509
+msgid "Available updates"
+msgstr "可用更新"
+
+#: aurora/settingsapp/system.py:511
+msgid "Open App Center to Update…"
+msgstr "打开应用中心进行更新…"
+
+#: aurora/settingsapp/system.py:516
+msgid "Proprietary drivers for hardware that needs them."
+msgstr "为需要的硬件提供专有驱动。"
+
+#: aurora/settingsapp/system.py:523
+msgid "System Snapshots"
+msgstr "系统快照"
+
+#: aurora/settingsapp/system.py:524
+msgid "Aurora takes a snapshot of the system before every update. If something breaks, pick “Aurora OS snapshots” in the boot menu to start yesterday’s system, then restore it in Timeshift. Your files in Home are never rolled back."
+msgstr "Aurora 在每次更新前都会为系统拍摄快照。如果出现问题，在启动菜单中选择“Aurora OS snapshots”即可启动昨天的系统，然后在 Timeshift 中恢复。主文件夹中的文件永远不会被回滚。"
+
+#: aurora/settingsapp/system.py:528
+msgid "Automatic snapshots need the btrfs file system (the installer’s default). On this system, Timeshift can still make copies."
+msgstr "自动快照需要 btrfs 文件系统（安装程序的默认选项）。在此系统上 Timeshift 仍然可以创建副本。"
+
+#: aurora/settingsapp/system.py:531
+msgid "Snapshot before every update"
+msgstr "每次更新前拍摄快照"
+
+#: aurora/settingsapp/system.py:534
+msgid "Keeps the last 10, plus daily and weekly ones"
+msgstr "保留最近 10 个，以及每日和每周快照"
+
+#: aurora/settingsapp/system.py:535
+msgid "Take a Snapshot Now"
+msgstr "立即拍摄快照"
+
+#: aurora/settingsapp/system.py:538
+msgid "Open Timeshift…"
+msgstr "打开 Timeshift…"
+
+#: aurora/settingsapp/system.py:550
+msgid "Taking a snapshot…"
+msgstr "正在拍摄快照…"
+
+#: aurora/settingsapp/system.py:554
+msgid "Snapshot saved"
+msgstr "快照已保存"
+
+#: aurora/settingsapp/system.py:560
+msgid "Your system is up to date"
+msgstr "系统已是最新"
+
+#: aurora/settingsapp/system.py:561
+msgid "{n} updates available"
+msgstr "有 {n} 个更新可用"
+
+#: aurora/settingsapp/system.py:569
+msgid "NVIDIA card found. Recommended driver: {pkg}"
+msgstr "发现 NVIDIA 显卡。推荐驱动：{pkg}"
+
+#: aurora/settingsapp/system.py:575
+msgid "Your graphics use open-source drivers that are already installed."
+msgstr "图形使用已安装的开源驱动。"
+
+#: aurora/settingsapp/system.py:585
+msgid "Installing graphics driver"
+msgstr "正在安装显卡驱动"
+
+#: aurora/settingsapp/timedate.py:21 aurora/shell/search.py:396
+msgid "Date & Time"
+msgstr "日期和时间"
+
+#: aurora/settingsapp/timedate.py:27
+msgid "Current time"
+msgstr "当前时间"
+
+#: aurora/settingsapp/timedate.py:32
+msgid "Automatic date & time"
+msgstr "自动设置日期和时间"
+
+#: aurora/settingsapp/timedate.py:33
+msgid "Requires an internet connection"
+msgstr "需要互联网连接"
+
+#: aurora/settingsapp/timedate.py:38
+msgid "Time zone"
+msgstr "时区"
+
+#: aurora/settingsapp/timedate.py:44
+msgid "24-hour clock"
+msgstr "24 小时制"
+
+#: aurora/shell/app.py:213
+msgid "Writing tools are off"
+msgstr "写作工具已关闭"
+
+#: aurora/shell/app.py:266
+msgid "Set it up in Settings → AI."
+msgstr "在“设置 → AI”中配置。"
+
+#: aurora/shell/app.py:272
+msgid "Dictation is off"
+msgstr "语音输入已关闭"
+
+#: aurora/shell/app.py:279
+msgid "Dictation isn't installed yet"
+msgstr "语音输入尚未安装"
+
+#: aurora/shell/app.py:283
+msgid "Listening… press Super+H to stop"
+msgstr "正在聆听… 按 Super+H 停止"
+
+#: aurora/shell/app.py:285
+msgid "Writing it down…"
+msgstr "正在转写…"
+
+#: aurora/shell/app.py:299
+msgid "Nothing was heard"
+msgstr "什么也没听到"
+
+#: aurora/shell/app.py:308
+msgid "Read aloud is off"
+msgstr "朗读已关闭"
+
+#: aurora/shell/app.py:315
+msgid "Select some text first"
+msgstr "请先选中一些文本"
+
+#: aurora/shell/app.py:383
+msgid "Screenshot captured"
+msgstr "已截图"
+
+#: aurora/shell/app.py:384
+msgid "Saved to {path} and copied to the clipboard."
+msgstr "已保存到 {path} 并复制到剪贴板。"
+
+#: aurora/shell/app.py:389
+msgid "Annotate"
+msgstr "标注"
+
+#: aurora/shell/app.py:389
+msgid "Copy Text"
+msgstr "复制文本"
+
+#: aurora/shell/app.py:392
+msgid "Ask Aurora"
+msgstr "问问 Aurora"
+
+#: aurora/shell/app.py:438 aurora/shell/app.py:445
+msgid "Text Recognition"
+msgstr "文字识别"
+
+#: aurora/shell/app.py:438
+msgid "No text found"
+msgstr "未找到文字"
+
+#: aurora/shell/app.py:439
+msgid "Try a larger or sharper area."
+msgstr "请尝试更大或更清晰的区域。"
+
+#: aurora/shell/app.py:445
+msgid "Text copied"
+msgstr "文本已复制"
+
+#: aurora/shell/app.py:479 aurora/shell/quicksettings.py:179
+msgid "Screen Recording"
+msgstr "屏幕录制"
+
+#: aurora/shell/app.py:479
+msgid "Screen recording saved"
+msgstr "屏幕录制已保存"
+
+#: aurora/shell/app.py:480
+msgid "Saved to {path}."
+msgstr "已保存到 {path}。"
+
+#: aurora/shell/dock.py:123
+msgid "Window"
+msgstr "窗口"
+
+#: aurora/shell/dock.py:133
+msgid "Remove from Dock"
+msgstr "从程序坞中移除"
+
+#: aurora/shell/dock.py:135
+msgid "Keep in Dock"
+msgstr "保留在程序坞中"
+
+#: aurora/shell/dock.py:137
+msgid "Quit"
+msgstr "退出"
+
+#: aurora/shell/dock.py:138
+msgid "Quit {n} Windows"
+msgstr "关闭 {n} 个窗口"
+
+#: aurora/shell/dock.py:355
+msgid "Launchpad"
+msgstr "Launchpad"
+
+#: aurora/shell/launcher.py:71
+msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
+msgstr "搜索应用、文件、项目、计算、10 km in mi、:emoji、clip:、? 问问 Aurora"
+
+#: aurora/shell/notifications.py:292
+msgid "Aurora AI summarizes your notifications"
+msgstr "Aurora AI 为你总结通知"
+
+#: aurora/shell/notifications.py:311
+msgid "Clear"
+msgstr "清除"
+
+#: aurora/shell/notifications.py:342
+msgid "No Notifications"
+msgstr "没有通知"
+
+#: aurora/shell/overview.py:44
+msgid "Close Window"
+msgstr "关闭窗口"
+
+#: aurora/shell/overview.py:61
+msgid "Minimized"
+msgstr "已最小化"
+
+#: aurora/shell/overview.py:89
+msgid "Type to filter windows"
+msgstr "输入以筛选窗口"
+
+#: aurora/shell/overview.py:106
+msgid "No open windows"
+msgstr "没有打开的窗口"
+
+#: aurora/shell/panel.py:70
+msgid "{sky} · H {high:.0f}° L {low:.0f}°"
+msgstr "{sky} · 最高 {high:.0f}° 最低 {low:.0f}°"
+
+#: aurora/shell/panel.py:104
+msgid "Open Calendar"
+msgstr "打开日历"
+
+#: aurora/shell/panel.py:153
+msgid "Control Center"
+msgstr "控制中心"
+
+#: aurora/shell/panel.py:162
+msgid "Recording the screen"
+msgstr "正在录制屏幕"
+
+#: aurora/shell/panel.py:180
+msgid "Not connected"
+msgstr "未连接"
+
+#: aurora/shell/panel.py:198
+msgid "Aurora Menu"
+msgstr "Aurora 菜单"
+
+#: aurora/shell/panel.py:202
+msgid "About This Computer"
+msgstr "关于本机"
+
+#: aurora/shell/panel.py:203
+msgid "System Settings…"
+msgstr "系统设置…"
+
+#: aurora/shell/panel.py:204
+msgid "App Center…"
+msgstr "应用中心…"
+
+#: aurora/shell/panel.py:205
+msgid "Dev Hub…"
+msgstr "Dev Hub…"
+
+#: aurora/shell/panel.py:206
+msgid "System Health…"
+msgstr "系统健康…"
+
+#: aurora/shell/panel.py:206
+msgid "Force Quit…"
+msgstr "强制退出…"
+
+#: aurora/shell/panel.py:207
+msgid "Sleep"
+msgstr "睡眠"
+
+#: aurora/shell/panel.py:207 aurora/shell/quicksettings.py:287
+msgid "Restart…"
+msgstr "重新启动…"
+
+#: aurora/shell/panel.py:208
+msgid "Shut Down…"
+msgstr "关机…"
+
+#: aurora/shell/panel.py:209 aurora/shell/quicksettings.py:288
+msgid "Log Out"
+msgstr "注销"
+
+#: aurora/shell/panel.py:246
+msgid "Aurora Assistant (Super+Shift+Space)"
+msgstr "Aurora 助手（Super+Shift+空格）"
+
+#: aurora/shell/quicksettings.py:166
+msgid "Wired"
+msgstr "有线"
+
+#: aurora/shell/quicksettings.py:170 aurora/shell/quicksettings.py:189
+msgid "Power Mode"
+msgstr "电源模式"
+
+#: aurora/shell/quicksettings.py:175
+msgid "Dark Style"
+msgstr "深色样式"
+
+#: aurora/shell/quicksettings.py:178
+msgid "Airplane Mode"
+msgstr "飞行模式"
+
+#: aurora/shell/quicksettings.py:188
+msgid "Wi-Fi Networks"
+msgstr "Wi-Fi 网络"
+
+#: aurora/shell/quicksettings.py:188
+msgid "Bluetooth Devices"
+msgstr "蓝牙设备"
+
+#: aurora/shell/quicksettings.py:189
+msgid "Sound Output"
+msgstr "声音输出"
+
+#: aurora/shell/quicksettings.py:190
+msgid "Sound Input"
+msgstr "声音输入"
+
+#: aurora/shell/quicksettings.py:194
+msgid "Network Settings"
+msgstr "网络设置"
+
+#: aurora/shell/quicksettings.py:196
+msgid "Bluetooth Settings"
+msgstr "蓝牙设置"
+
+#: aurora/shell/quicksettings.py:198
+msgid "Power Settings"
+msgstr "电源设置"
+
+#: aurora/shell/quicksettings.py:199 aurora/shell/quicksettings.py:200
+msgid "Sound Settings"
+msgstr "声音设置"
+
+#: aurora/shell/quicksettings.py:234
+msgid "Screenshot"
+msgstr "截图"
+
+#: aurora/shell/quicksettings.py:237
+msgid "Lock"
+msgstr "锁定"
+
+#: aurora/shell/quicksettings.py:243
+msgid "Power Off / Log Out"
+msgstr "关机 / 注销"
+
+#: aurora/shell/quicksettings.py:287
+msgid "Suspend"
+msgstr "睡眠"
+
+#: aurora/shell/quicksettings.py:288
+msgid "Power Off…"
+msgstr "关机…"
+
+#: aurora/shell/quicksettings.py:317
+msgid "No networks found"
+msgstr "未找到网络"
+
+#: aurora/shell/quicksettings.py:318
+msgid "Wi-Fi is off"
+msgstr "Wi-Fi 已关闭"
+
+#: aurora/shell/quicksettings.py:324
+msgid "No paired devices"
+msgstr "没有已配对的设备"
+
+#: aurora/shell/quicksettings.py:325
+msgid "Bluetooth is off"
+msgstr "蓝牙已关闭"
+
+#: aurora/shell/quicksettings.py:425
+msgid "Recording…"
+msgstr "正在录制…"
+
+#: aurora/shell/search.py:128 aurora/shell/search.py:158
+msgid "Press Enter to copy the result"
+msgstr "按回车键复制结果"
+
+#: aurora/shell/search.py:147
+msgid "Getting today’s exchange rates…"
+msgstr "正在获取今日汇率…"
+
+#: aurora/shell/search.py:147
+msgid "European Central Bank"
+msgstr "欧洲中央银行"
+
+#: aurora/shell/search.py:150
+msgid "Exchange rate: European Central Bank"
+msgstr "汇率：欧洲中央银行"
+
+#: aurora/shell/search.py:153
+msgid "Unit conversion"
+msgstr "单位换算"
+
+#: aurora/shell/search.py:217
+msgid "Emoji · Press Enter to copy"
+msgstr "表情 · 回车复制"
+
+#: aurora/shell/search.py:237
+msgid "Clipboard · {n} lines"
+msgstr "剪贴板 · {n} 条"
+
+#: aurora/shell/search.py:238
+msgid "Clipboard"
+msgstr "剪贴板"
+
+#: aurora/shell/search.py:242
+msgid "Clipboard history is empty"
+msgstr "剪贴板历史为空"
+
+#: aurora/shell/search.py:242
+msgid "No matches"
+msgstr "无匹配项"
+
+#: aurora/shell/search.py:243
+msgid "Copied text shows up here. Turn it off in Settings → Privacy."
+msgstr "复制的文本会显示在这里。可在“设置 → 隐私”中关闭。"
+
+#: aurora/shell/search.py:318
+msgid "Project · {where}"
+msgstr "项目 · {where}"
+
+#: aurora/shell/search.py:339
+msgid "Type a question after the ?"
+msgstr "在 ? 后输入问题"
+
+#: aurora/shell/search.py:341
+msgid "Ask Aurora: “{q}”"
+msgstr "问问 Aurora：“{q}”"
+
+#: aurora/shell/search.py:341
+msgid "Aurora AI · opens the Assistant"
+msgstr "Aurora AI · 打开助手"
+
+#: aurora/shell/search.py:371
+msgid "By meaning · {where} · “{excerpt}…”"
+msgstr "按含义 · {where} · “{excerpt}…”"
+
+#: aurora/shell/search.py:387
+msgid "background wallpaper dark light theme accent color style"
+msgstr "背景 壁纸 深色 浅色 主题 强调色 样式 外观"
+
+#: aurora/shell/search.py:389
+msgid "monitor screen resolution scale refresh"
+msgstr "显示器 屏幕 分辨率 缩放 刷新率"
+
+#: aurora/shell/search.py:391
+msgid "audio volume speaker microphone output input"
+msgstr "音频 音量 扬声器 麦克风 输出 输入 声音"
+
+#: aurora/shell/search.py:393
+msgid "wifi wireless ethernet internet proxy vpn"
+msgstr "wifi 无线 以太网 互联网 代理 vpn 网络"
+
+#: aurora/shell/search.py:395
+msgid "language keyboard layout input region format locale"
+msgstr "语言 键盘 布局 输入法 地区 格式 区域设置"
+
+#: aurora/shell/search.py:397
+msgid "clock time zone timezone date"
+msgstr "时钟 时间 时区 日期"
+
+#: aurora/shell/search.py:399
+msgid "battery sleep suspend screen blank lock"
+msgstr "电池 睡眠 屏幕 关闭 锁定 电源"
+
+#: aurora/shell/search.py:401
+msgid "doctor diagnostics problems disk space smart firmware drivers repair check"
+msgstr "诊断 医生 问题 磁盘空间 smart 固件 驱动 修复 检查 健康"
+
+#: aurora/shell/search.py:403
+msgid "artificial intelligence assistant chat model dictation voice speech read aloud"
+msgstr "人工智能 ai 助手 聊天 模型 语音输入 语音 朗读"
+
+#: aurora/shell/search.py:405
+msgid "system information version hardware memory disk"
+msgstr "系统信息 版本 硬件 内存 磁盘 关于"
+
+#: aurora/shell/search.py:436
+msgid "Recent file"
+msgstr "最近的文件"
+
+#: aurora/shell/search.py:449
+msgid "Run “{cmd}”"
+msgstr "运行“{cmd}”"
+
+#: aurora/shell/search.py:449
+msgid "Command"
+msgstr "命令"
+
+#: aurora/shell/search.py:454
+msgid "Search the web for “{q}”"
+msgstr "在网上搜索“{q}”"
+
+#: aurora/shell/services.py:177
+msgid "{t} until full"
+msgstr "{t} 后充满"
+
+#: aurora/shell/services.py:178
+msgid "{t} left"
+msgstr "剩余 {t}"
+
+#: aurora/shell/services.py:180
+msgid "charging"
+msgstr "正在充电"
+
+#: aurora/shell/sysnotify.py:60
+msgid "Software updates available"
+msgstr "有软件更新可用"
+
+#: aurora/shell/sysnotify.py:61
+#, python-brace-format
+msgid "{n} update is ready to install."
+msgid_plural "{n} updates are ready to install."
+msgstr[0] "{n} 个更新可以安装。"
+
+#: aurora/shell/sysnotify.py:64
+msgid "Later"
+msgstr "稍后"
+
+#: aurora/shell/sysnotify.py:80
+msgid "Battery low"
+msgstr "电量低"
+
+#: aurora/shell/sysnotify.py:80
+msgid "Battery critically low"
+msgstr "电量极低"
+
+#: aurora/shell/sysnotify.py:81
+msgid "{p}% remaining. Plug in your computer."
+msgstr "剩余 {p}%。请接通电源。"
+
+#: aurora/shell/sysnotify.py:104
+msgid "{name} connected"
+msgstr "已连接 {name}"
+
+#: aurora/shell/sysnotify.py:105
+msgid "The drive is ready to use."
+msgstr "驱动器已可使用。"
+
+#: aurora/shell/sysnotify.py:106
+msgid "Eject"
+msgstr "弹出"
+
+#: aurora/shell/wallpaper.py:56
+msgid "Open Terminal"
+msgstr "打开终端"
+
+#: aurora/shell/wallpaper.py:57 aurora/welcome.py:19
+msgid "Open Files"
+msgstr "打开“文件”"
+
+#: aurora/shell/wallpaper.py:60
+msgid "Change Background…"
+msgstr "更换背景…"
+
+#: aurora/shell/wallpaper.py:61
+msgid "Display Settings"
+msgstr "显示器设置"
+
+#: aurora/weather.py:22
+msgid "Clear sky"
+msgstr "晴"
+
+#: aurora/weather.py:23
+msgid "Mainly clear"
+msgstr "大部分晴朗"
+
+#: aurora/weather.py:24
+msgid "Partly cloudy"
+msgstr "局部多云"
+
+#: aurora/weather.py:25
+msgid "Overcast"
+msgstr "阴"
+
+#: aurora/weather.py:26
+msgid "Fog"
+msgstr "雾"
+
+#: aurora/weather.py:27
+msgid "Light drizzle"
+msgstr "小毛毛雨"
+
+#: aurora/weather.py:28
+msgid "Drizzle"
+msgstr "毛毛雨"
+
+#: aurora/weather.py:29
+msgid "Heavy drizzle"
+msgstr "大毛毛雨"
+
+#: aurora/weather.py:30
+msgid "Freezing drizzle"
+msgstr "冻毛毛雨"
+
+#: aurora/weather.py:31
+msgid "Light rain"
+msgstr "小雨"
+
+#: aurora/weather.py:31
+msgid "Rain"
+msgstr "雨"
+
+#: aurora/weather.py:32
+msgid "Heavy rain"
+msgstr "大雨"
+
+#: aurora/weather.py:33
+msgid "Freezing rain"
+msgstr "冻雨"
+
+#: aurora/weather.py:34
+msgid "Light snow"
+msgstr "小雪"
+
+#: aurora/weather.py:34
+msgid "Snow"
+msgstr "雪"
+
+#: aurora/weather.py:35
+msgid "Heavy snow"
+msgstr "大雪"
+
+#: aurora/weather.py:35
+msgid "Snow grains"
+msgstr "雪粒"
+
+#: aurora/weather.py:36
+msgid "Rain showers"
+msgstr "阵雨"
+
+#: aurora/weather.py:37
+msgid "Violent rain showers"
+msgstr "强阵雨"
+
+#: aurora/weather.py:38
+msgid "Snow showers"
+msgstr "阵雪"
+
+#: aurora/weather.py:39
+msgid "Thunderstorm"
+msgstr "雷暴"
+
+#: aurora/weather.py:39 aurora/weather.py:40
+msgid "Thunderstorm with hail"
+msgstr "雷暴伴有冰雹"
+
+#: aurora/welcome.py:17
+msgid "Open the app launcher and search"
+msgstr "打开应用启动器和搜索"
+
+#: aurora/welcome.py:18
+msgid "Open a terminal"
+msgstr "打开终端"
+
+#: aurora/welcome.py:20
+msgid "Snap a window to the left or right half"
+msgstr "将窗口贴靠到左半或右半屏"
+
+#: aurora/welcome.py:21
+msgid "Maximize the window"
+msgstr "最大化窗口"
+
+#: aurora/welcome.py:22
+msgid "Switch between windows"
+msgstr "在窗口间切换"
+
+#: aurora/welcome.py:23
+msgid "Switch workspace"
+msgstr "切换工作区"
+
+#: aurora/welcome.py:24
+msgid "Screenshot of the screen / an area"
+msgstr "截图 / 区域截图"
+
+#: aurora/welcome.py:25
+msgid "Lock the screen"
+msgstr "锁定屏幕"
+
+#: aurora/welcome.py:39
+msgid "Welcome"
+msgstr "欢迎"
+
+#: aurora/welcome.py:73
+msgid "Welcome to Aurora OS"
+msgstr "欢迎使用 Aurora OS"
+
+#: aurora/welcome.py:74
+msgid "A calm, fast desktop built on Debian. Let's take a minute to make it yours."
+msgstr "基于 Debian 的安静、快速的桌面。花一分钟把它变成你的。"
+
+#: aurora/welcome.py:95
+msgid "Light or Dark?"
+msgstr "浅色还是深色？"
+
+#: aurora/welcome.py:96
+msgid "You can change this, the accent color and the background at any time in Settings → Appearance."
+msgstr "你可以随时在“设置 → 外观”中更改它、强调色和背景。"
+
+#: aurora/welcome.py:108
+msgid "Handy Shortcuts"
+msgstr "实用快捷键"
+
+#: aurora/welcome.py:115
+msgid "Install Aurora OS…"
+msgstr "安装 Aurora OS…"
+
+#: aurora/welcome.py:120
+msgid "Open Settings"
+msgstr "打开设置"
+
+#: aurora/welcome.py:124
+msgid "You're All Set"
+msgstr "一切就绪"
+
+#: aurora/welcome.py:125
+msgid "Press the Super key to find apps, files and settings."
+msgstr "按 Super 键查找应用、文件和设置。"
