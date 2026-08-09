@@ -987,8 +987,9 @@ set up a feature, and every place it appears has its own switch.
 
 ### Internationalization
 - **gettext** for every Aurora string, including the AI's messages (template in
-  `desktop/po/aurora.pot`). Italian is complete; Spanish and French are nearly complete;
-  more are on the way. Translations are kept as JSON keyed by the English text in
+  `desktop/po/aurora.pot`). Aurora's own apps are fully translated into Italian, Spanish,
+  French, German, Portuguese, Russian, Chinese (Simplified), Japanese, Arabic and Hindi,
+  with the correct plural forms for each language. Translations are kept as JSON keyed by the English text in
   `desktop/po/sources/` and turned into `.po` files by `tools/po-from-json.py`, which
   rejects any translation whose `{placeholders}` differ from the English, so a typo can't
   crash the app.
@@ -1149,8 +1150,11 @@ LibreOffice translations.
 - **Live:** pick a language in the boot menu.
 - **Installed:** Settings → Language & Region (language, formats, keyboard layouts,
   switch layouts with <kbd>Alt</kbd>+<kbd>Shift</kbd>).
-- **Aurora's own apps** are translated into English, Italian (complete), Spanish and
-  French (nearly complete). Other languages show Aurora's own apps in English for now.
+- **Aurora's own apps** (shell, Settings, Files, Dev Hub, Game Hub, the Assistant and
+  every AI message) are fully translated into English, Italian, Spanish, French, German,
+  Portuguese, Russian, Chinese (Simplified), Japanese, Arabic and Hindi. The remaining
+  bundled languages (Dutch, Polish, Swedish, Turkish, Ukrainian, Chinese (Traditional),
+  Korean) show Aurora's own apps in English for now.
 - **Translating Aurora's own apps:** strings use gettext (domain `aurora`). Run
   `make -C desktop pot` to regenerate `desktop/po/aurora.pot`. Add translations to
   `desktop/po/sources/<lang>.json` (English text → translation) and run
@@ -1208,9 +1212,9 @@ screenshots, features, download and the install guide.
   (`make debs && make repo`); installed systems switch the source on by themselves as
   soon as it is online on GitHub Pages.
 - **Translations of Aurora's own apps.** The system, Firefox and LibreOffice come in 20
-  languages. Aurora's own apps are complete in English and Italian and nearly complete in
-  Spanish and French; German, Portuguese, Russian, Chinese, Japanese, Arabic and Hindi
-  are next (see [Languages](#languages)).
+  languages. Aurora's own apps are complete in 11 of them; Dutch, Polish, Swedish,
+  Turkish, Ukrainian, Traditional Chinese and Korean are next (see
+  [Languages](#languages)).
 - **Claude or ChatGPT subscriptions inside Aurora AI.** Their terms only allow
   subscriptions in the providers' own apps, so Aurora AI uses API keys (billed per use)
   and Dev Hub installs Claude Code and Codex for subscription users. *Idea:* an Aurora MCP
