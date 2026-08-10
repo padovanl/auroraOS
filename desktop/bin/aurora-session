@@ -28,6 +28,9 @@ export SDL_VIDEODRIVER="wayland,x11"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export GTK_USE_PORTAL=1
 
+# Renderers that draw correctly on this machine (software ones in VMs).
+. /usr/libexec/aurora-render-env
+
 # Seed the user's compositor config the first time, so it can be edited.
 cfg="$HOME/.config/labwc"
 if [ ! -f "$cfg/rc.xml" ]; then

@@ -277,7 +277,14 @@ class Panel(LayerWindow):
         self.app_name.set_tooltip_text(active.title)
 
     def open_quick_settings(self):
-        self.status.popup()
+        # Toggle, like the other shell commands: a second press closes it.
+        if self.status.get_active():
+            self.status.popdown()
+        else:
+            self.status.popup()
 
     def open_notifications(self):
-        self.clock.popup()
+        if self.clock.get_active():
+            self.clock.popdown()
+        else:
+            self.clock.popup()

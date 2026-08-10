@@ -32,6 +32,11 @@ PRESET = ("python3 -c \"import sys; sys.path.insert(0, '/usr/lib/aurora'); "
           "else s.set_double(k, x) if isinstance(x, float) else s.set_string(k, x) for k, x in v.items()]; "
           "s.set_string('layout', '{name}'); look.apply()\"")
 
+# Close every app between scenes, so no window is left behind the next one
+# (the [x] keeps pkill from matching its own command line).
+CLEAN = ("pkill -f '[a]urora-files|[a]urora-settings|[a]urora-devhub|[a]urora-gamehub|"
+         "[p]tyxis|[g]nome-text-editor|[a]urora-quicklook'; sleep 1")
+
 # (screenshot name or None, shell command run in the session, seconds to wait)
 STEPS = [
     # No screen blanking while the screenshots are taken.
@@ -40,52 +45,58 @@ STEPS = [
     (None, "pkill -f [a]urora-welcome; mkdir -p ~/Desktop; "
            "printf 'Welcome to Aurora' > ~/Desktop/Welcome.txt", 2),
     (None, "gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
-    (None, "notify-send -a Aurora -i software-update-available 'Updates installed' "
-           "'Security updates were installed in the background. No restart needed.'", 1),
     ("desktop", None, 2),
-    (None, "aurora-shell search disp", 2),
+    (None, "aurora-shell search disp", 3),
     ("spotlight-search", None, 0),
-    (None, "aurora-shell search '10 km in mi'", 2),
+    (None, "aurora-shell search '10 km in mi'", 3),
     ("spotlight-convert", None, 0),
     (None, "aurora-shell launcher spotlight; aurora-shell launcher grid", 3),
     ("launchpad", None, 0),
     (None, "aurora-shell launcher grid; aurora-shell quick-settings", 3),
     ("control-center", None, 0),
-    (None, "pkill -f [a]urora-files; gio launch /usr/share/applications/org.aurora.Settings.desktop; "
-           "sleep 3; aurora-settings --page desktop", 4),
+    (None, "aurora-shell quick-settings; " + CLEAN + "; "
+           "gio launch /usr/share/applications/org.aurora.Settings.desktop; "
+           "sleep 3; aurora-settings --page desktop", 5),
     ("settings-desktop", None, 0),
-    (None, "aurora-settings --page appearance", 3),
+    (None, "aurora-settings --page appearance", 5),
     ("settings-appearance", None, 0),
-    (None, "aurora-settings --page keyboard", 3),
+    (None, "aurora-settings --page keyboard", 5),
     ("settings-keyboard", None, 0),
-    (None, "pkill -f [a]urora-settings; gio launch /usr/share/applications/org.aurora.DevHub.desktop", 6),
+    (None, "aurora-settings --page health", 10),
+    ("settings-health", None, 0),
+    (None, "aurora-settings --page ai", 6),
+    ("settings-ai", None, 0),
+    (None, CLEAN + "; gio launch /usr/share/applications/org.aurora.DevHub.desktop", 7),
     ("devhub", None, 0),
-    (None, "pkill -f [a]urora-devhub; gio launch /usr/share/applications/org.gnome.Ptyxis.desktop", 5),
+    (None, CLEAN + "; gio launch /usr/share/applications/org.aurora.GameHub.desktop", 7),
+    ("gamehub", None, 0),
+    (None, CLEAN + "; gio launch /usr/share/applications/org.gnome.Ptyxis.desktop", 5),
     ("terminal", None, 0),
     (None, "gio launch /usr/share/applications/org.gnome.TextEditor.desktop; "
            "gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
     (None, "aurora-shell overview", 3),
     ("overview", None, 0),
-    (None, "aurora-shell overview; pkill -f [g]nome-text-editor; "
-           "aurora-quicklook /usr/lib/aurora/aurora/sun.py >/dev/null 2>&1 &", 4),
+    (None, "aurora-shell overview; " + CLEAN + "; "
+           "aurora-quicklook /usr/lib/aurora/aurora/sun.py >/dev/null 2>&1 &", 5),
     ("quicklook", None, 0),
-    (None, "pkill -f [a]urora-quicklook", 1),
-    (None, "pkill -f [p]tyxis; gio launch /usr/share/applications/org.aurora.Files.desktop", 4),
-    (None, "pkill -f [a]urora-quicklook; aurora-settings --page health", 6),
-    ("settings-health", None, 0),
-    (None, "aurora-settings --page ai", 3),
-    ("settings-ai", None, 0),
-    (None, "pkill -f [a]urora-settings; gio launch /usr/share/applications/org.aurora.GameHub.desktop", 6),
-    ("gamehub", None, 0),
-    (None, "pkill -f [a]urora-gamehub", 1),
-    (None, PRESET.format(name="studio"), 4),
+    (None, CLEAN + "; gio launch /usr/share/applications/org.aurora.Files.desktop", 5),
+    (None, PRESET.format(name="studio"), 5),
     ("layout-studio", None, 0),
-    (None, PRESET.format(name="classic"), 4),
+    (None, PRESET.format(name="classic"), 5),
     ("layout-classic", None, 0),
-    (None, PRESET.format(name="minimal"), 4),
+    (None, PRESET.format(name="minimal"), 5),
     ("layout-minimal", None, 0),
-    (None, PRESET.format(name="aurora"), 3),
+    (None, PRESET.format(name="aurora") + "; " + CLEAN, 3),
 ]
+
+
+def park_pointer(mon):
+    """Move the pointer onto empty desktop, away from icons, tooltips and hot corners."""
+    bt.monitor(mon, "mouse_move 4000 -4000")   # clamps in the top-right corner
+    time.sleep(0.3)
+    for _ in range(10):
+        bt.monitor(mon, "mouse_move -20 40")
+        time.sleep(0.05)
 
 
 def main():
@@ -119,6 +130,7 @@ def main():
         agent.run("for i in $(seq 180); do test -f /run/user/1000/aurora-shell.ready && exit 0; sleep 1; done",
                   timeout=100)
         time.sleep(8)
+        park_pointer(mon)
         for name, command, wait in STEPS:
             if command:
                 code, out = agent.run(f"{U} sh -c {sh_quote(command)}", timeout=60)
@@ -126,6 +138,8 @@ def main():
                     print(f"step failed ({code}): {command}\n{out}")
             time.sleep(wait)
             if name:
+                park_pointer(mon)
+                time.sleep(0.5)
                 bt.screenshot(mon, os.path.join(args.out, f"{name}.png"))
                 print(f"saved {name}.png")
     finally:

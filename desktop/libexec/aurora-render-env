@@ -1,0 +1,28 @@
+#!/bin/sh
+# Sourced by aurora-session and aurora-greeter-launch: pick renderers that draw
+# correctly on this machine.
+#
+# Without a real GPU (virtual machines, simpledrm) the compositor's GLES renderer
+# and GTK's GL/Vulkan renderers run on Mesa's software rasterizers, and their
+# partial redraws leave stale regions on screen (half-erased windows, a top bar
+# that is only partly repainted). There, the compositor uses wlroots' pixman
+# renderer and GTK its cairo renderer, which are correct and fast enough. Real
+# GPUs keep hardware rendering. Variables that are already set always win.
+
+aurora_software_gpu() {
+    ls /dev/dri/renderD* >/dev/null 2>&1 || return 0
+    for vendor in /sys/class/drm/card[0-9]*/device/vendor; do
+        [ -r "$vendor" ] || continue
+        case "$(cat "$vendor")" in
+            # virtio, VMware, QEMU std VGA, QXL, VirtualBox, Hyper-V, Cirrus
+            0x1af4|0x15ad|0x1234|0x1b36|0x80ee|0x1414|0x1013) ;;
+            *) return 1 ;;
+        esac
+    done
+    return 0
+}
+
+if aurora_software_gpu; then
+    : "${WLR_RENDERER:=pixman}" "${GSK_RENDERER:=cairo}"
+    export WLR_RENDERER GSK_RENDERER
+fi

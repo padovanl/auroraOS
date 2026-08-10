@@ -11,6 +11,7 @@ fi
 export XDG_CURRENT_DESKTOP=Aurora:wlroots
 export HOME=/var/lib/aurora-greeter
 mkdir -p "$HOME" 2>/dev/null
+. /usr/libexec/aurora-render-env
 
 labwc -C /usr/share/aurora/greeter -s aurora-greeter && exit 0
 exec agreety --cmd aurora-session

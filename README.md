@@ -51,7 +51,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   center, settings, file manager, login screen and welcome app are written from scratch for
   Aurora (Python + GTK 4 on Wayland), about 10,000 lines you can read and change.
 - **Beautiful by default.** A macOS-inspired layout: a menu bar, a floating dock with
-  magnification, Spotlight-style search, a Launchpad grid and round colored window buttons.
+  magnification, Spotlight-style search, a Launchpad grid and round colored window buttons
+  that always show what they do (close, minimize, expand/restore).
   All of it uses our own artwork.
 - **A private AI assistant, built in, off until you want it.** Aurora AI runs a language
   model **on your computer** (nothing leaves it) or uses Claude or any OpenAI-compatible
@@ -122,7 +123,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right). |
-| **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons (or monochrome), server-side and GTK decorations styled alike. |
+| **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons whose symbols are always visible (×, −, and arrows to expand or restore; or monochrome), server-side and GTK decorations styled alike. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
 | **One look everywhere** | libadwaita apps, GTK 3 apps (adw-gtk3), plain GTK 4 apps, Qt apps (QGnomePlatform), window decorations and icons all follow the light/dark style and accent color you pick. |

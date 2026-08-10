@@ -1,25 +1,43 @@
-/* Aurora: round colored window buttons for GTK 3 apps. */
+/* Aurora: round colored window buttons for GTK 3 apps. Each button always shows
+   its symbol (softer until hovered), like the GTK 4 and window-border ones: Aurora's
+   own icons drawn as the circle's background; the app's own icon is hidden. */
 
 headerbar button.titlebutton,
 .titlebar button.titlebutton {
-  min-width: 14px;
-  min-height: 14px;
+  min-width: 16px;
+  min-height: 16px;
   padding: 0;
   margin: 0 3px;
   border-radius: 999px;
   border: none;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-  background-image: none;
-  color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 9px 9px;
+  color: rgba(61, 34, 48, 0.7);
   -gtk-icon-shadow: none;
 }
+headerbar button.titlebutton image, .titlebar button.titlebutton image { -gtk-icon-transform: scale(0); }
 
-headerbar button.titlebutton.close, .titlebar button.titlebutton.close { background-color: #ff6b6b; }
-headerbar button.titlebutton.minimize, .titlebar button.titlebutton.minimize { background-color: #ffc24b; }
-headerbar button.titlebutton.maximize, .titlebar button.titlebutton.maximize { background-color: #3ccb5a; }
+headerbar button.titlebutton.close, .titlebar button.titlebutton.close {
+  background-color: #ff6b6b;
+  background-image: -gtk-icontheme("aurora-window-close-symbolic");
+}
+headerbar button.titlebutton.minimize, .titlebar button.titlebutton.minimize {
+  background-color: #ffc24b;
+  background-image: -gtk-icontheme("aurora-window-minimize-symbolic");
+}
+headerbar button.titlebutton.maximize, .titlebar button.titlebutton.maximize {
+  background-color: #3ccb5a;
+  background-image: -gtk-icontheme("aurora-window-expand-symbolic");
+}
+.maximized headerbar button.titlebutton.maximize, .maximized .titlebar button.titlebutton.maximize {
+  background-image: -gtk-icontheme("aurora-window-restore-symbolic");
+}
 
-headerbar button.titlebutton:hover, .titlebar button.titlebutton:hover { color: rgba(61, 34, 48, 0.85); }
+headerbar button.titlebutton:hover, .titlebar button.titlebutton:hover { color: rgba(61, 34, 48, 1); }
 
 headerbar:backdrop button.titlebutton, .titlebar:backdrop button.titlebutton {
   background-color: rgba(128, 128, 128, 0.35);
+  color: rgba(128, 128, 140, 0.95);
 }

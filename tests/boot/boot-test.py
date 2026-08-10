@@ -30,6 +30,12 @@ CHECKS = [
     ("greetd running", "systemctl is-active greetd"),
     ("live user created", "id aurora"),
     ("compositor running", "pgrep -x labwc"),
+    # QEMU has no real GPU: software-safe renderers, or partial redraws leave
+    # stale regions on screen.
+    ("VM uses the pixman and cairo renderers",
+     "tr '\\0' '\\n' < /proc/$(pgrep -o -u aurora -x labwc)/environ | grep -x WLR_RENDERER=pixman && "
+     "tr '\\0' '\\n' < /proc/$(pgrep -o -u aurora -f [/]usr/bin/aurora-shell)/environ "
+     "| grep -x GSK_RENDERER=cairo"),
     ("aurora shell running", "pgrep -f [/]usr/bin/aurora-shell"),
     ("no shell exceptions",
      "! grep -q Traceback /run/user/$(id -u aurora)/aurora-shell.log"),

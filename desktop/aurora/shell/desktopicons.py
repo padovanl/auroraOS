@@ -62,7 +62,24 @@ class DesktopIcons(Gtk.FlowBox):
         if s:
             s.connect("changed::desktop-icons", lambda *a: self.reload())
             s.connect("changed::desktop-icons-position", lambda *a: self.reload())
+            for key in ("panel-position", "dock-position", "dock-icon-size", "dock-autohide"):
+                s.connect(f"changed::{key}", lambda *a: self._fit_margins())
+        self._fit_margins()
         self.reload()
+
+    def _fit_margins(self):
+        """Keep the icons clear of the top bar and the dock, wherever they are."""
+        s = settings.get()
+        if s is None:
+            return
+        bar = 46
+        dock = 0 if s.get_boolean("dock-autohide") else s.get_int("dock-icon-size") + 40
+        panel_top = s.get_string("panel-position") != "bottom"
+        where = s.get_string("dock-position")
+        self.set_margin_top((bar if panel_top else 16) + (dock if where == "top" else 0))
+        self.set_margin_bottom(max(16, (0 if panel_top else bar) + (dock if where == "bottom" else 16)))
+        self.set_margin_start(16 + (dock if where == "left" else 0))
+        self.set_margin_end(16 + (dock if where == "right" else 0))
 
     def reload(self):
         self.remove_all()
