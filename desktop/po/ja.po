@@ -66,7 +66,7 @@ msgid "speech synthesis failed"
 msgstr "音声を合成できませんでした"
 
 #: aurora/assistant.py:97 aurora/assistant.py:262 aurora/assistant.py:340
-#: aurora/files/window.py:669
+#: aurora/files/window.py:692
 msgid "Copy"
 msgstr "コピー"
 
@@ -103,7 +103,7 @@ msgid "Ask anything, or pick an action for the text you copied."
 msgstr "何でも聞いてください。コピーしたテキストに対する操作を選ぶこともできます。"
 
 #: aurora/assistant.py:144 aurora/assistant.py:295
-#: aurora/shell/notifications.py:291
+#: aurora/shell/notifications.py:300
 msgid "Summarize"
 msgstr "要約"
 
@@ -184,7 +184,7 @@ msgid "Writing Tools"
 msgstr "文章ツール"
 
 #: aurora/assistant.py:321 aurora/settingsapp/ai.py:69
-#: aurora/settingsapp/ai.py:75 aurora/shell/app.py:265
+#: aurora/settingsapp/ai.py:75 aurora/shell/app.py:279
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -200,7 +200,7 @@ msgstr "処理中…"
 msgid "Installed"
 msgstr "インストール済み"
 
-#: aurora/devhub/app.py:65 aurora/settingsapp/system.py:570
+#: aurora/devhub/app.py:65 aurora/settingsapp/system.py:579
 msgid "Install"
 msgstr "インストール"
 
@@ -220,11 +220,11 @@ msgstr "開発ツール一式をワンクリックで"
 msgid "Everything installs from its official source, so you always get the latest release. Git, Python, Node.js, Docker, Podman and more are already on your system."
 msgstr "すべて公式ソースからインストールされるため、常に最新版です。Git、Python、Node.js、Docker、Podman などは最初からシステムに入っています。"
 
-#: aurora/devhub/app.py:143
+#: aurora/devhub/app.py:172
 msgid "Installing…"
 msgstr "インストール中…"
 
-#: aurora/devhub/app.py:151
+#: aurora/devhub/app.py:180
 msgid "{name} installed"
 msgstr "{name} をインストールしました"
 
@@ -312,133 +312,469 @@ msgstr "データベースと API ツール"
 msgid "AI Assistants"
 msgstr "AI アシスタント"
 
-#: aurora/devhub/recipes.py:42
+#: aurora/devhub/recipes.py:25
+msgid "Shells & Terminals"
+msgstr "シェルとターミナル"
+
+#: aurora/devhub/recipes.py:26
+msgid "Command-Line Tools"
+msgstr "コマンドラインツール"
+
+#: aurora/devhub/recipes.py:27
+msgid "Version Control"
+msgstr "バージョン管理"
+
+#: aurora/devhub/recipes.py:28
+msgid "Containers & Virtual Machines"
+msgstr "コンテナと仮想マシン"
+
+#: aurora/devhub/recipes.py:29
+msgid "Web Development"
+msgstr "Web 開発"
+
+#: aurora/devhub/recipes.py:30
+msgid "Mobile"
+msgstr "モバイル"
+
+#: aurora/devhub/recipes.py:31
+msgid "Debugging & Performance"
+msgstr "デバッグとパフォーマンス"
+
+#: aurora/devhub/recipes.py:32
+msgid "Data Science"
+msgstr "データサイエンス"
+
+#: aurora/devhub/recipes.py:33
+msgid "Game Development"
+msgstr "ゲーム開発"
+
+#: aurora/devhub/recipes.py:34
+msgid "Embedded & Hardware"
+msgstr "組み込みとハードウェア"
+
+#: aurora/devhub/recipes.py:35
+msgid "Design & Documentation"
+msgstr "デザインとドキュメント"
+
+#: aurora/devhub/recipes.py:36
+msgid "Security & Networking"
+msgstr "セキュリティとネットワーク"
+
+#: aurora/devhub/recipes.py:61
 msgid "Microsoft's popular code editor, from the official apt repository."
 msgstr "Microsoft の人気コードエディター。公式 apt リポジトリから。"
 
-#: aurora/devhub/recipes.py:53
+#: aurora/devhub/recipes.py:72
 msgid "VS Code built from source without telemetry."
 msgstr "ソースからビルドされた、テレメトリーなしの VS Code。"
 
-#: aurora/devhub/recipes.py:64
+#: aurora/devhub/recipes.py:83
 msgid "A very fast, collaborative editor written in Rust."
 msgstr "Rust 製の高速な共同編集エディター。"
 
-#: aurora/devhub/recipes.py:68
+#: aurora/devhub/recipes.py:87
 msgid "The JetBrains IDE for Java and Kotlin (Flathub)."
 msgstr "JetBrains の Java・Kotlin 向け IDE（Flathub）。"
 
-#: aurora/devhub/recipes.py:72
+#: aurora/devhub/recipes.py:91
 msgid "The JetBrains IDE for Python (Flathub)."
 msgstr "JetBrains の Python 向け IDE（Flathub）。"
 
-#: aurora/devhub/recipes.py:76
+#: aurora/devhub/recipes.py:95
 msgid "Google's IDE for Android apps (Flathub)."
 msgstr "Google の Android アプリ向け IDE（Flathub）。"
 
-#: aurora/devhub/recipes.py:82
+#: aurora/devhub/recipes.py:101
 msgid "rustup, cargo and the stable toolchain."
 msgstr "rustup、cargo、安定版ツールチェーン。"
 
-#: aurora/devhub/recipes.py:86
+#: aurora/devhub/recipes.py:105
 msgid "The latest Go release from go.dev, in /usr/local/go."
 msgstr "go.dev の最新 Go を /usr/local/go に。"
 
-#: aurora/devhub/recipes.py:96
+#: aurora/devhub/recipes.py:115
 msgid "OpenJDK 21 LTS with Maven and Gradle."
 msgstr "OpenJDK 21 LTS と Maven、Gradle。"
 
-#: aurora/devhub/recipes.py:99
+#: aurora/devhub/recipes.py:118
 msgid "Node.js versions (fnm)"
 msgstr "Node.js のバージョン（fnm）"
 
-#: aurora/devhub/recipes.py:100
+#: aurora/devhub/recipes.py:119
 msgid "Install and switch any Node.js version, including the latest LTS."
 msgstr "最新の LTS を含む任意の Node.js バージョンをインストール・切り替え。"
 
-#: aurora/devhub/recipes.py:104
+#: aurora/devhub/recipes.py:123
 msgid "Astral's extremely fast Python package and project manager."
 msgstr "Astral 製の超高速な Python パッケージ・プロジェクトマネージャー。"
 
-#: aurora/devhub/recipes.py:108
+#: aurora/devhub/recipes.py:127
 msgid "All-in-one JavaScript runtime, bundler and test runner."
 msgstr "JavaScript のランタイム、バンドラー、テストランナーをひとつに。"
 
-#: aurora/devhub/recipes.py:112
+#: aurora/devhub/recipes.py:131
 msgid "Secure JavaScript and TypeScript runtime."
 msgstr "安全な JavaScript・TypeScript ランタイム。"
 
-#: aurora/devhub/recipes.py:118
+#: aurora/devhub/recipes.py:137
 msgid "Work with GitHub issues, pull requests and Actions from the terminal."
 msgstr "GitHub の Issue、プルリクエスト、Actions をターミナルから操作。"
 
-#: aurora/devhub/recipes.py:127
+#: aurora/devhub/recipes.py:146
 msgid "The Kubernetes command-line tool, latest stable."
 msgstr "Kubernetes のコマンドラインツール、最新安定版。"
 
-#: aurora/devhub/recipes.py:136
+#: aurora/devhub/recipes.py:155
 msgid "Infrastructure as code by HashiCorp, latest release."
 msgstr "HashiCorp の Infrastructure as Code、最新版。"
 
-#: aurora/devhub/recipes.py:146
+#: aurora/devhub/recipes.py:165
 msgid "Amazon Web Services command-line interface v2."
 msgstr "Amazon Web Services コマンドラインインターフェース v2。"
 
-#: aurora/devhub/recipes.py:155
+#: aurora/devhub/recipes.py:174
 msgid "PostgreSQL (Docker)"
 msgstr "PostgreSQL（Docker）"
 
-#: aurora/devhub/recipes.py:156
+#: aurora/devhub/recipes.py:175
 msgid "PostgreSQL 17 in a container. User and password: postgres."
 msgstr "コンテナ内の PostgreSQL 17。ユーザー名とパスワード: postgres。"
 
-#: aurora/devhub/recipes.py:159
+#: aurora/devhub/recipes.py:178
 msgid "MariaDB (Docker)"
 msgstr "MariaDB（Docker）"
 
-#: aurora/devhub/recipes.py:160
+#: aurora/devhub/recipes.py:179
 msgid "MariaDB in a container. Root password: mariadb."
 msgstr "コンテナ内の MariaDB。root パスワード: mariadb。"
 
-#: aurora/devhub/recipes.py:163
+#: aurora/devhub/recipes.py:182
 msgid "Redis (Docker)"
 msgstr "Redis（Docker）"
 
-#: aurora/devhub/recipes.py:164
+#: aurora/devhub/recipes.py:183
 msgid "Redis key-value store in a container."
 msgstr "コンテナ内の Redis キーバリューストア。"
 
-#: aurora/devhub/recipes.py:167
+#: aurora/devhub/recipes.py:186
 msgid "MongoDB (Docker)"
 msgstr "MongoDB（Docker）"
 
-#: aurora/devhub/recipes.py:168
+#: aurora/devhub/recipes.py:187
 msgid "MongoDB document database in a container."
 msgstr "コンテナ内の MongoDB ドキュメントデータベース。"
 
-#: aurora/devhub/recipes.py:172
+#: aurora/devhub/recipes.py:191
 msgid "Universal database client (Flathub)."
 msgstr "汎用データベースクライアント（Flathub）。"
 
-#: aurora/devhub/recipes.py:176
+#: aurora/devhub/recipes.py:195
 msgid "API development and testing (Flathub)."
 msgstr "API の開発とテスト（Flathub）。"
 
-#: aurora/devhub/recipes.py:182
+#: aurora/devhub/recipes.py:201
 msgid "Anthropic's coding agent in the terminal. Sign in with your Claude subscription or an API key."
 msgstr "Anthropic のターミナル用コーディングエージェント。Claude のサブスクリプションか API キーでサインインします。"
 
-#: aurora/devhub/recipes.py:188
+#: aurora/devhub/recipes.py:207
 msgid "OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an API key."
 msgstr "OpenAI のターミナル用コーディングエージェント。ChatGPT のプランか API キーでサインインします。"
 
-#: aurora/devhub/recipes.py:194
+#: aurora/devhub/recipes.py:213
 msgid "Run many more open models locally; Aurora AI can use it as its provider."
 msgstr "多くのオープンモデルをローカルで実行。Aurora AI のプロバイダーとして使えます。"
 
+#: aurora/devhub/recipes.py:219
+msgid "The Z shell, with autosuggestions and syntax highlighting."
+msgstr "自動候補表示と構文ハイライト付きの Z シェル。"
+
+#: aurora/devhub/recipes.py:227
+msgid "Themes and hundreds of plugins for Zsh (installs Zsh too)."
+msgstr "Zsh 用のテーマと数百のプラグイン（Zsh もインストールします）。"
+
+#: aurora/devhub/recipes.py:234
+msgid "A friendly shell with suggestions and colors out of the box."
+msgstr "候補表示と色付けが最初から使える、親しみやすいシェル。"
+
+#: aurora/devhub/recipes.py:237
+msgid "Zsh as default shell"
+msgstr "Zsh をデフォルトのシェルにする"
+
+#: aurora/devhub/recipes.py:239
+msgid "Open new terminals in Zsh (installs it if needed)."
+msgstr "新しいターミナルを Zsh で開きます（必要ならインストールします）。"
+
+#: aurora/devhub/recipes.py:242
+msgid "fish as default shell"
+msgstr "fish をデフォルトのシェルにする"
+
+#: aurora/devhub/recipes.py:244
+msgid "Open new terminals in fish (installs it if needed)."
+msgstr "新しいターミナルを fish で開きます（必要ならインストールします）。"
+
+#: aurora/devhub/recipes.py:247
+msgid "Bash as default shell"
+msgstr "Bash をデフォルトのシェルにする"
+
+#: aurora/devhub/recipes.py:249
+msgid "Go back to Bash, Aurora's standard shell."
+msgstr "Aurora の標準シェルである Bash に戻します。"
+
+#: aurora/devhub/recipes.py:254
+msgid "A fast, informative prompt for Bash, Zsh and fish."
+msgstr "Bash、Zsh、fish 用の高速で情報豊富なプロンプト。"
+
+#: aurora/devhub/recipes.py:266
+msgid "A terminal workspace with panes, tabs and plugins, an alternative to tmux."
+msgstr "ペイン、タブ、プラグインを備えたターミナルのワークスペース。tmux の代わりに。"
+
+#: aurora/devhub/recipes.py:273
+msgid "A fast, GPU-accelerated terminal with tabs, splits and images."
+msgstr "タブ、分割、画像表示に対応した GPU 高速化ターミナル。"
+
+#: aurora/devhub/recipes.py:278
+msgid "A minimal, very fast GPU-accelerated terminal."
+msgstr "ミニマルでとても速い GPU 高速化ターミナル。"
+
+#: aurora/devhub/recipes.py:283
+msgid "A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."
+msgstr "Lua で設定する GPU 高速化ターミナル兼マルチプレクサ（Flathub）。"
+
+#: aurora/devhub/recipes.py:288
+msgid "A tiling terminal: split one window into many terminals."
+msgstr "タイル型ターミナル：1 つのウインドウを複数のターミナルに分割。"
+
+#: aurora/devhub/recipes.py:293
+msgid "Several terminals in a grid, with broadcast typing."
+msgstr "複数のターミナルをグリッド表示し、同時入力もできます。"
+
+#: aurora/devhub/recipes.py:296
+msgid "GNOME Console"
+msgstr "GNOME コンソール"
+
+#: aurora/devhub/recipes.py:298
+msgid "A simple terminal, GNOME's default."
+msgstr "シンプルなターミナル。GNOME の標準です。"
+
+#: aurora/devhub/recipes.py:322
+msgid "More CLI tools"
+msgstr "その他のコマンドラインツール"
+
+#: aurora/devhub/recipes.py:323
+msgid "eza (a modern ls), yq (jq for YAML), just (a command runner), tldr pages, ncdu and duf for disk usage."
+msgstr "eza（モダンな ls）、yq（YAML 用の jq）、just（コマンドランナー）、tldr ページ、ディスク使用量を見る ncdu と duf。"
+
+#: aurora/devhub/recipes.py:328
+msgid "A smarter cd that remembers the folders you use."
+msgstr "よく使うフォルダーを覚える、賢い cd。"
+
+#: aurora/devhub/recipes.py:332
+msgid "Searchable shell history, synced across your machines if you want."
+msgstr "検索できるシェル履歴。必要ならマシン間で同期も。"
+
+#: aurora/devhub/recipes.py:336
+msgid "Readable, syntax-highlighted git diffs."
+msgstr "読みやすく構文ハイライトされた git の差分。"
+
+#: aurora/devhub/recipes.py:341
+msgid "Read Markdown beautifully in the terminal."
+msgstr "ターミナルで Markdown をきれいに読めます。"
+
+#: aurora/devhub/recipes.py:346
+msgid "Compare and merge files and folders visually."
+msgstr "ファイルやフォルダーを見ながら比較・マージ。"
+
+#: aurora/devhub/recipes.py:348
+msgid "Merge requests, issues and pipelines from the terminal."
+msgstr "マージリクエスト、Issue、パイプラインをターミナルから。"
+
+#: aurora/devhub/recipes.py:351
+msgid "GitHub's Git client (community build, Flathub)."
+msgstr "GitHub の Git クライアント（コミュニティ版、Flathub）。"
+
+#: aurora/devhub/recipes.py:354
+msgid "A visual Git client with a commit graph (Flathub)."
+msgstr "コミットグラフ付きのビジュアル Git クライアント（Flathub）。"
+
+#: aurora/devhub/recipes.py:357
+msgid "A fast Git client from the makers of Sublime Text (Flathub)."
+msgstr "Sublime Text の開発元による高速な Git クライアント（Flathub）。"
+
+#: aurora/devhub/recipes.py:362
+msgid "Manage containers, images and Kubernetes from a window (Flathub)."
+msgstr "コンテナ、イメージ、Kubernetes をウインドウで管理（Flathub）。"
+
+#: aurora/devhub/recipes.py:366
+msgid "Full KVM virtual machines with QEMU and libvirt."
+msgstr "QEMU と libvirt による本格的な KVM 仮想マシン。"
+
+#: aurora/devhub/recipes.py:371
+msgid "Simple virtual machines: pick an OS and go."
+msgstr "シンプルな仮想マシン：OS を選ぶだけ。"
+
+#: aurora/devhub/recipes.py:374
+msgid "Local Kubernetes clusters running in Docker."
+msgstr "Docker 上で動くローカルの Kubernetes クラスター。"
+
+#: aurora/devhub/recipes.py:376
+msgid "A terminal UI for Kubernetes clusters."
+msgstr "Kubernetes クラスター用のターミナル UI。"
+
+#: aurora/devhub/recipes.py:382
+msgid "The package manager for Kubernetes."
+msgstr "Kubernetes のパッケージマネージャー。"
+
+#: aurora/devhub/recipes.py:385
+msgid "A terminal UI for Docker."
+msgstr "Docker 用のターミナル UI。"
+
+#: aurora/devhub/recipes.py:393
+msgid "Chrome and its developer tools, for testing sites (Flathub)."
+msgstr "サイトのテスト用に Chrome と開発者ツール（Flathub）。"
+
+#: aurora/devhub/recipes.py:396
+msgid "The open-source browser behind Chrome."
+msgstr "Chrome のもとになったオープンソースのブラウザー。"
+
+#: aurora/devhub/recipes.py:399
+msgid "Trusted HTTPS certificates for localhost."
+msgstr "localhost 用の信頼された HTTPS 証明書。"
+
+#: aurora/devhub/recipes.py:402
+msgid "A web server with automatic HTTPS."
+msgstr "HTTPS を自動で設定する Web サーバー。"
+
+#: aurora/devhub/recipes.py:404
+msgid "The popular web server and reverse proxy."
+msgstr "定番の Web サーバー兼リバースプロキシ。"
+
+#: aurora/devhub/recipes.py:407
+msgid "Android platform tools"
+msgstr "Android プラットフォームツール"
+
+#: aurora/devhub/recipes.py:408
+msgid "adb and fastboot to talk to Android phones."
+msgstr "Android スマートフォンと通信する adb と fastboot。"
+
+#: aurora/devhub/recipes.py:411
+msgid "Google's SDK for mobile, web and desktop apps."
+msgstr "モバイル、Web、デスクトップアプリ向けの Google の SDK。"
+
+#: aurora/devhub/recipes.py:421
+msgid "Debugging toolkit"
+msgstr "デバッグツール一式"
+
+#: aurora/devhub/recipes.py:422
+msgid "gdb, valgrind, strace and perf."
+msgstr "gdb、valgrind、strace、perf。"
+
+#: aurora/devhub/recipes.py:425
+msgid "Benchmark commands with statistics."
+msgstr "コマンドを統計付きでベンチマーク。"
+
+#: aurora/devhub/recipes.py:427
+msgid "Capture and inspect network traffic."
+msgstr "ネットワークトラフィックをキャプチャして調べます。"
+
+#: aurora/devhub/recipes.py:432
+msgid "An offline API client that keeps collections as files (Flathub)."
+msgstr "コレクションをファイルとして保存するオフライン API クライアント（Flathub）。"
+
+#: aurora/devhub/recipes.py:435
+msgid "Design and test REST, GraphQL and gRPC APIs (Flathub)."
+msgstr "REST、GraphQL、gRPC の API を設計・テスト（Flathub）。"
+
+#: aurora/devhub/recipes.py:438
+msgid "JSON, Base64, JWT, regex, hashes and other converters (Flathub)."
+msgstr "JSON、Base64、JWT、正規表現、ハッシュなどの変換ツール（Flathub）。"
+
+#: aurora/devhub/recipes.py:443
+msgid "Notebooks for Python, with pandas and matplotlib."
+msgstr "pandas と matplotlib 入りの Python ノートブック。"
+
+#: aurora/devhub/recipes.py:447
+msgid "conda and mamba with the conda-forge packages."
+msgstr "conda-forge のパッケージを使う conda と mamba。"
+
+#: aurora/devhub/recipes.py:453
+msgid "The R language for statistics."
+msgstr "統計のための R 言語。"
+
+#: aurora/devhub/recipes.py:456
+msgid "A MATLAB-compatible numerical environment."
+msgstr "MATLAB 互換の数値計算環境。"
+
+#: aurora/devhub/recipes.py:461
+msgid "The open-source 2D and 3D game engine (Flathub)."
+msgstr "オープンソースの 2D・3D ゲームエンジン（Flathub）。"
+
+#: aurora/devhub/recipes.py:464
+msgid "3D modeling, animation and rendering (Flathub)."
+msgstr "3D モデリング、アニメーション、レンダリング（Flathub）。"
+
+#: aurora/devhub/recipes.py:466
+msgid "Make 2D games in Lua."
+msgstr "Lua で 2D ゲームを作れます。"
+
+#: aurora/devhub/recipes.py:471
+msgid "Program Arduino and compatible boards (Flathub)."
+msgstr "Arduino と互換ボードのプログラミング（Flathub）。"
+
+#: aurora/devhub/recipes.py:475
+msgid "Build and flash firmware for many boards."
+msgstr "多くのボード向けにファームウェアをビルドして書き込み。"
+
+#: aurora/devhub/recipes.py:477
+msgid "Design schematics and circuit boards."
+msgstr "回路図とプリント基板を設計。"
+
+#: aurora/devhub/recipes.py:479
+msgid "Serial consoles"
+msgstr "シリアルコンソール"
+
+#: aurora/devhub/recipes.py:480
+msgid "picocom and minicom for serial ports."
+msgstr "シリアルポート用の picocom と minicom。"
+
+#: aurora/devhub/recipes.py:485
+msgid "Vector graphics: icons, diagrams, illustrations."
+msgstr "ベクターグラフィックス：アイコン、図、イラスト。"
+
+#: aurora/devhub/recipes.py:487
+msgid "Edit photos and images."
+msgstr "写真や画像を編集。"
+
+#: aurora/devhub/recipes.py:490
+msgid "Diagrams: flowcharts, architecture, UML (Flathub)."
+msgstr "図：フローチャート、アーキテクチャ、UML（Flathub）。"
+
+#: aurora/devhub/recipes.py:493
+msgid "Notes in Markdown files, linked together (Flathub)."
+msgstr "互いにリンクした Markdown ファイルのノート（Flathub）。"
+
+#: aurora/devhub/recipes.py:496
+msgid "Offline documentation for hundreds of languages and libraries."
+msgstr "数百の言語とライブラリのオフラインドキュメント。"
+
+#: aurora/devhub/recipes.py:500
+msgid "Scan networks and ports."
+msgstr "ネットワークとポートをスキャン。"
+
+#: aurora/devhub/recipes.py:503
+msgid "Find vulnerabilities in web apps (Flathub)."
+msgstr "Web アプリの脆弱性を見つけます（Flathub）。"
+
+#: aurora/devhub/recipes.py:506
+msgid "A private network between your devices, built on WireGuard."
+msgstr "WireGuard ベースの、デバイス間のプライベートネットワーク。"
+
+#: aurora/devhub/recipes.py:510
+msgid "SSH that survives sleep and changing networks."
+msgstr "スリープやネットワークの切り替えにも耐える SSH。"
+
 #: aurora/files/app.py:56 aurora/files/window.py:168 aurora/files/window.py:273
 #: aurora/files/window.py:274 aurora/settingsapp/ai.py:158
-#: aurora/settingsapp/applications.py:14
+#: aurora/settingsapp/applications.py:16
 msgid "Files"
 msgstr "ファイル"
 
@@ -458,8 +794,8 @@ msgstr "フォルダーをそれ自身の中にはコピーできません"
 msgid "Cancelled"
 msgstr "キャンセルしました"
 
-#: aurora/files/properties.py:28 aurora/files/window.py:676
-#: aurora/files/window.py:688
+#: aurora/files/properties.py:28 aurora/files/window.py:699
+#: aurora/files/window.py:711
 msgid "Properties"
 msgstr "プロパティ"
 
@@ -515,17 +851,17 @@ msgstr "アクセス権"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} 項目"
 
-#: aurora/files/window.py:84 aurora/files/window.py:422
+#: aurora/files/window.py:84 aurora/files/window.py:423
 #: aurora/settingsapp/health.py:40
 msgid "Home"
 msgstr "ホーム"
 
-#: aurora/files/window.py:96 aurora/files/window.py:419
+#: aurora/files/window.py:96 aurora/files/window.py:420
 #: aurora/settingsapp/system.py:93 aurora/shell/dock.py:166
 msgid "Trash"
 msgstr "ゴミ箱"
 
-#: aurora/files/window.py:110 aurora/files/window.py:424
+#: aurora/files/window.py:110 aurora/files/window.py:425
 msgid "Computer"
 msgstr "コンピューター"
 
@@ -537,11 +873,11 @@ msgstr "戻る"
 msgid "Forward"
 msgstr "進む"
 
-#: aurora/files/window.py:195 aurora/files/window.py:873
+#: aurora/files/window.py:195 aurora/files/window.py:896
 msgid "New Folder"
 msgstr "新規フォルダー"
 
-#: aurora/files/window.py:196 aurora/files/window.py:687
+#: aurora/files/window.py:196 aurora/files/window.py:710
 msgid "Open in Terminal"
 msgstr "ターミナルで開く"
 
@@ -562,16 +898,16 @@ msgid "About Files"
 msgstr "「ファイル」について"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:252
+#: aurora/shell/panel.py:257
 msgid "Search"
 msgstr "検索"
 
-#: aurora/files/window.py:238 aurora/files/window.py:530
+#: aurora/files/window.py:238 aurora/files/window.py:553
 msgid "Folder is Empty"
 msgstr "フォルダーは空です"
 
-#: aurora/files/window.py:254 aurora/files/window.py:679
-#: aurora/files/window.py:815 aurora/shell/dock.py:188
+#: aurora/files/window.py:254 aurora/files/window.py:702
+#: aurora/files/window.py:838 aurora/shell/dock.py:188
 msgid "Empty Trash"
 msgstr "ゴミ箱を空にする"
 
@@ -579,119 +915,119 @@ msgstr "ゴミ箱を空にする"
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "ゴミ箱を空にすると項目は完全に削除されます"
 
-#: aurora/files/window.py:528
+#: aurora/files/window.py:551
 msgid "No Results Found"
 msgstr "結果がありません"
 
-#: aurora/files/window.py:529
+#: aurora/files/window.py:552
 msgid "Trash is Empty"
 msgstr "ゴミ箱は空です"
 
-#: aurora/files/window.py:651
+#: aurora/files/window.py:674
 msgid "Restore"
 msgstr "元に戻す"
 
-#: aurora/files/window.py:652
+#: aurora/files/window.py:675
 msgid "Delete Permanently"
 msgstr "完全に削除"
 
-#: aurora/files/window.py:654 aurora/quicklook.py:141 aurora/shell/app.py:389
-#: aurora/shell/dock.py:187 aurora/shell/sysnotify.py:106
+#: aurora/files/window.py:677 aurora/quicklook.py:141 aurora/shell/app.py:403
+#: aurora/shell/dock.py:187 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "開く"
 
-#: aurora/files/window.py:655
+#: aurora/files/window.py:678
 msgid "Open With…"
 msgstr "このアプリで開く…"
 
-#: aurora/files/window.py:656
+#: aurora/files/window.py:679
 msgid "Quick Look"
 msgstr "クイックルック"
 
-#: aurora/files/window.py:658
+#: aurora/files/window.py:681
 msgid "Send to Nearby Device…"
 msgstr "近くのデバイスに送信…"
 
-#: aurora/files/window.py:662
+#: aurora/files/window.py:685
 msgid "Summarize with Aurora"
 msgstr "Aurora で要約"
 
-#: aurora/files/window.py:663
+#: aurora/files/window.py:686
 msgid "Ask Aurora About This File…"
 msgstr "このファイルについて Aurora に質問…"
 
-#: aurora/files/window.py:668
+#: aurora/files/window.py:691
 msgid "Cut"
 msgstr "切り取り"
 
-#: aurora/files/window.py:670
+#: aurora/files/window.py:693
 msgid "Rename…"
 msgstr "名前を変更…"
 
-#: aurora/files/window.py:673
+#: aurora/files/window.py:696
 msgid "Move to Trash"
 msgstr "ゴミ箱に入れる"
 
-#: aurora/files/window.py:682
+#: aurora/files/window.py:705
 msgid "New Folder…"
 msgstr "新規フォルダー…"
 
-#: aurora/files/window.py:683
+#: aurora/files/window.py:706
 msgid "Paste"
 msgstr "貼り付け"
 
-#: aurora/files/window.py:686
+#: aurora/files/window.py:709
 msgid "Select All"
 msgstr "すべて選択"
 
-#: aurora/files/window.py:711
+#: aurora/files/window.py:734
 msgid "{n} item(s) cut"
 msgstr "{n} 項目を切り取りました"
 
-#: aurora/files/window.py:711
+#: aurora/files/window.py:734
 msgid "{n} item(s) copied"
 msgstr "{n} 項目をコピーしました"
 
-#: aurora/files/window.py:762
+#: aurora/files/window.py:785
 msgid "{n} item(s) moved to the Trash"
 msgstr "{n} 項目をゴミ箱に入れました"
 
-#: aurora/files/window.py:775
+#: aurora/files/window.py:798
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "{n} 項目を完全に削除しますか？"
 
-#: aurora/files/window.py:776
+#: aurora/files/window.py:799
 msgid "Deleted items cannot be restored."
 msgstr "削除した項目は元に戻せません。"
 
-#: aurora/files/window.py:777 aurora/files/window.py:814
-#: aurora/files/window.py:835 aurora/settingsapp/inputs.py:166
-#: aurora/settingsapp/system.py:391 aurora/settingsapp/system.py:460
-#: aurora/settingsapp/system.py:478
+#: aurora/files/window.py:800 aurora/files/window.py:837
+#: aurora/files/window.py:858 aurora/settingsapp/inputs.py:182
+#: aurora/settingsapp/system.py:400 aurora/settingsapp/system.py:469
+#: aurora/settingsapp/system.py:487
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: aurora/files/window.py:778 aurora/settingsapp/ai.py:329
+#: aurora/files/window.py:801 aurora/settingsapp/ai.py:329
 msgid "Delete"
 msgstr "削除"
 
-#: aurora/files/window.py:812
+#: aurora/files/window.py:835
 msgid "Empty Trash?"
 msgstr "ゴミ箱を空にしますか？"
 
-#: aurora/files/window.py:813
+#: aurora/files/window.py:836
 msgid "All items in the Trash will be permanently deleted."
 msgstr "ゴミ箱内のすべての項目が完全に削除されます。"
 
-#: aurora/files/window.py:861
+#: aurora/files/window.py:884
 msgid "Rename"
 msgstr "名前を変更"
 
-#: aurora/files/window.py:873
+#: aurora/files/window.py:896
 msgid "Untitled Folder"
 msgstr "新規フォルダー"
 
-#: aurora/files/window.py:873
+#: aurora/files/window.py:896
 msgid "Create"
 msgstr "作成"
 
@@ -700,12 +1036,12 @@ msgid "Other…"
 msgstr "その他…"
 
 #: aurora/greeter/app.py:108 aurora/settingsapp/system.py:309
-#: aurora/settingsapp/system.py:449
+#: aurora/settingsapp/system.py:458
 msgid "Username"
 msgstr "ユーザー名"
 
 #: aurora/greeter/app.py:111 aurora/settingsapp/system.py:155
-#: aurora/settingsapp/system.py:450 aurora/shell/quicksettings.py:349
+#: aurora/settingsapp/system.py:459 aurora/shell/quicksettings.py:349
 msgid "Password"
 msgstr "パスワード"
 
@@ -717,7 +1053,7 @@ msgstr "ログイン"
 msgid "Restart"
 msgstr "再起動"
 
-#: aurora/greeter/app.py:133
+#: aurora/greeter/app.py:133 aurora/settingsapp/power.py:29
 msgid "Power Off"
 msgstr "シャットダウン"
 
@@ -788,7 +1124,7 @@ msgstr "プロセッサー"
 msgid "Memory"
 msgstr "メモリー"
 
-#: aurora/settingsapp/about.py:84 aurora/settingsapp/system.py:517
+#: aurora/settingsapp/about.py:84 aurora/settingsapp/system.py:526
 msgid "Graphics"
 msgstr "グラフィックス"
 
@@ -809,7 +1145,7 @@ msgid "Based on"
 msgstr "ベース"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:272
+#: aurora/shell/panel.py:277
 msgid "Desktop"
 msgstr "デスクトップ"
 
@@ -949,8 +1285,8 @@ msgstr "スクリーンショット"
 msgid "“Ask Aurora” on the screenshot notification explains what's on screen"
 msgstr "スクリーンショット通知の「Aurora に質問」で画面の内容を説明"
 
-#: aurora/settingsapp/ai.py:162 aurora/settingsapp/applications.py:125
-#: aurora/shell/notifications.py:289
+#: aurora/settingsapp/ai.py:162 aurora/settingsapp/applications.py:127
+#: aurora/shell/notifications.py:298
 msgid "Notifications"
 msgstr "通知"
 
@@ -1194,7 +1530,7 @@ msgstr "アイコン"
 msgid "Pointer"
 msgstr "カーソル"
 
-#: aurora/settingsapp/appearance.py:122
+#: aurora/settingsapp/appearance.py:122 aurora/settingsapp/applications.py:217
 msgid "Pointer size"
 msgstr "カーソルのサイズ"
 
@@ -1202,237 +1538,393 @@ msgstr "カーソルのサイズ"
 msgid "Animations"
 msgstr "アニメーション"
 
-#: aurora/settingsapp/appearance.py:129
+#: aurora/settingsapp/appearance.py:134
+msgid "Window animations"
+msgstr "ウインドウのアニメーション"
+
+#: aurora/settingsapp/appearance.py:136
+msgid "Windows fade in as they open; files and folders float in as a folder opens"
+msgstr "ウインドウは開くときにフェードイン、フォルダーを開くとファイルが浮かび上がります"
+
+#: aurora/settingsapp/appearance.py:139
 msgid "Fonts"
 msgstr "フォント"
 
-#: aurora/settingsapp/appearance.py:131
+#: aurora/settingsapp/appearance.py:141
 msgid "Interface"
 msgstr "インターフェース"
 
-#: aurora/settingsapp/appearance.py:131
+#: aurora/settingsapp/appearance.py:141
 msgid "Documents"
 msgstr "ドキュメント"
 
-#: aurora/settingsapp/appearance.py:132
+#: aurora/settingsapp/appearance.py:142
 msgid "Monospace"
 msgstr "等幅"
 
-#: aurora/settingsapp/appearance.py:134
+#: aurora/settingsapp/appearance.py:144
 msgid "Scaling"
 msgstr "拡大率"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:156
 msgid "Anti-aliasing"
 msgstr "アンチエイリアス"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:156
 msgid "Standard (grayscale)"
 msgstr "標準（グレースケール）"
 
-#: aurora/settingsapp/appearance.py:147
+#: aurora/settingsapp/appearance.py:157
 msgid "Subpixel (for LCD screens)"
 msgstr "サブピクセル（液晶画面向け）"
 
-#: aurora/settingsapp/appearance.py:147 aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:157 aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/inputs.py:113
 msgid "None"
 msgstr "なし"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:162
 msgid "Hinting"
 msgstr "ヒンティング"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:162
 msgid "Slight"
 msgstr "弱"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:162 aurora/settingsapp/applications.py:172
 msgid "Medium"
 msgstr "中"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:162
 msgid "Full"
 msgstr "強"
 
-#: aurora/settingsapp/appearance.py:157
+#: aurora/settingsapp/appearance.py:167
 msgid "Background"
 msgstr "背景"
 
-#: aurora/settingsapp/appearance.py:159
+#: aurora/settingsapp/appearance.py:169
 msgid "Add Picture…"
 msgstr "画像を追加…"
 
-#: aurora/settingsapp/appearance.py:170 aurora/settingsapp/appearance.py:171
+#: aurora/settingsapp/appearance.py:180 aurora/settingsapp/appearance.py:181
 #: aurora/shell/quicksettings.py:173
 msgid "Night Light"
 msgstr "夜間モード"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:180
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "暖色は夜の目にやさしくなります。"
 
-#: aurora/settingsapp/appearance.py:175
+#: aurora/settingsapp/appearance.py:185
 msgid "Schedule"
 msgstr "スケジュール"
 
-#: aurora/settingsapp/appearance.py:175
+#: aurora/settingsapp/appearance.py:185
 msgid "Sunset to Sunrise"
 msgstr "日没から日の出まで"
 
-#: aurora/settingsapp/appearance.py:175
+#: aurora/settingsapp/appearance.py:185
 msgid "Manual"
 msgstr "手動"
 
-#: aurora/settingsapp/appearance.py:176
+#: aurora/settingsapp/appearance.py:186
 msgid "All the Time"
 msgstr "常時"
 
-#: aurora/settingsapp/appearance.py:178
+#: aurora/settingsapp/appearance.py:188
 msgid "Sunset and sunrise follow your time zone"
 msgstr "日没と日の出はタイムゾーンから計算されます"
 
-#: aurora/settingsapp/appearance.py:181
+#: aurora/settingsapp/appearance.py:191
 msgid "From"
 msgstr "開始"
 
-#: aurora/settingsapp/appearance.py:181
+#: aurora/settingsapp/appearance.py:191
 msgid "To"
 msgstr "終了"
 
-#: aurora/settingsapp/appearance.py:188
+#: aurora/settingsapp/appearance.py:198
 msgid "Color temperature"
 msgstr "色温度"
 
-#: aurora/settingsapp/appearance.py:262
+#: aurora/settingsapp/appearance.py:272
 msgid "Dynamic"
 msgstr "ダイナミック"
 
-#: aurora/settingsapp/appearance.py:269
+#: aurora/settingsapp/appearance.py:279
 msgid "Changes with the time of day: dawn, day, dusk and night"
 msgstr "時刻に合わせて変化：夜明け、昼、夕暮れ、夜"
 
-#: aurora/settingsapp/appearance.py:295
+#: aurora/settingsapp/appearance.py:305
 msgid "Choose a Background"
 msgstr "背景を選択"
 
-#: aurora/settingsapp/appearance.py:296 aurora/settingsapp/system.py:365
+#: aurora/settingsapp/appearance.py:306 aurora/settingsapp/system.py:374
 msgid "Images"
 msgstr "画像"
 
-#: aurora/settingsapp/applications.py:12
+#: aurora/settingsapp/applications.py:14
 msgid "Web"
 msgstr "Web"
 
-#: aurora/settingsapp/applications.py:13
+#: aurora/settingsapp/applications.py:15
 msgid "Mail"
 msgstr "メール"
 
-#: aurora/settingsapp/applications.py:15
+#: aurora/settingsapp/applications.py:17
 msgid "Text Editor"
 msgstr "テキストエディター"
 
-#: aurora/settingsapp/applications.py:16
+#: aurora/settingsapp/applications.py:18
 msgid "Music"
 msgstr "音楽"
 
-#: aurora/settingsapp/applications.py:17
+#: aurora/settingsapp/applications.py:19
 msgid "Video"
 msgstr "ビデオ"
 
-#: aurora/settingsapp/applications.py:18
+#: aurora/settingsapp/applications.py:20
 msgid "Photos"
 msgstr "写真"
 
-#: aurora/settingsapp/applications.py:19
+#: aurora/settingsapp/applications.py:21
 msgid "PDF"
 msgstr "PDF"
 
-#: aurora/settingsapp/applications.py:25
+#: aurora/settingsapp/applications.py:27 aurora/settingsapp/desktop.py:125
 msgid "Apps"
 msgstr "アプリ"
 
-#: aurora/settingsapp/applications.py:29
+#: aurora/settingsapp/applications.py:31
 msgid "Default Apps"
 msgstr "デフォルトのアプリ"
 
-#: aurora/settingsapp/applications.py:51
+#: aurora/settingsapp/applications.py:53
 msgid "Startup Apps"
 msgstr "自動起動アプリ"
 
-#: aurora/settingsapp/applications.py:52
+#: aurora/settingsapp/applications.py:54
 msgid "Apps that open automatically when you log in."
 msgstr "ログイン時に自動で開くアプリ。"
 
-#: aurora/settingsapp/applications.py:54
+#: aurora/settingsapp/applications.py:56
 msgid "Add Startup App"
 msgstr "自動起動アプリを追加"
 
-#: aurora/settingsapp/applications.py:70
+#: aurora/settingsapp/applications.py:72
 msgid "No startup apps"
 msgstr "自動起動アプリはありません"
 
-#: aurora/settingsapp/applications.py:81 aurora/settingsapp/inputs.py:146
-#: aurora/settingsapp/language.py:180 aurora/settingsapp/system.py:479
+#: aurora/settingsapp/applications.py:83 aurora/settingsapp/inputs.py:162
+#: aurora/settingsapp/language.py:210 aurora/settingsapp/system.py:488
 msgid "Remove"
 msgstr "削除"
 
-#: aurora/settingsapp/applications.py:132 aurora/shell/notifications.py:304
+#: aurora/settingsapp/applications.py:134 aurora/shell/notifications.py:313
 #: aurora/shell/quicksettings.py:176
 msgid "Do Not Disturb"
 msgstr "おやすみモード"
 
-#: aurora/settingsapp/applications.py:134
+#: aurora/settingsapp/applications.py:136
 msgid "Only urgent notifications will pop up. Everything still appears in the notification center."
 msgstr "緊急の通知だけが表示されます。それ以外は通知センターに残ります。"
 
-#: aurora/settingsapp/applications.py:136
+#: aurora/settingsapp/applications.py:138
 msgid "Where to find them"
 msgstr "確認する場所"
 
-#: aurora/settingsapp/applications.py:137
+#: aurora/settingsapp/applications.py:139
 msgid "Click the clock in the top bar"
 msgstr "トップバーの時計をクリックすると"
 
-#: aurora/settingsapp/applications.py:138
+#: aurora/settingsapp/applications.py:140
 msgid "to see past notifications and the calendar."
 msgstr "過去の通知とカレンダーが表示されます。"
 
-#: aurora/settingsapp/applications.py:143
+#: aurora/settingsapp/applications.py:144
+msgid "App Notifications"
+msgstr "アプリの通知"
+
+#: aurora/settingsapp/applications.py:145
+msgid "Apps appear here after their first notification."
+msgstr "アプリは最初の通知のあとにここに表示されます。"
+
+#: aurora/settingsapp/applications.py:148
+msgid "No notifications yet"
+msgstr "まだ通知はありません"
+
+#: aurora/settingsapp/applications.py:158
+msgid "Removable Media"
+msgstr "リムーバブルメディア"
+
+#: aurora/settingsapp/applications.py:159
+msgid "Show a notification"
+msgstr "通知を表示"
+
+#: aurora/settingsapp/applications.py:159
+msgid "Open in Files"
+msgstr "「ファイル」で開く"
+
+#: aurora/settingsapp/applications.py:160
+msgid "Do nothing"
+msgstr "何もしない"
+
+#: aurora/settingsapp/applications.py:163
+msgid "When a drive is connected"
+msgstr "ドライブを接続したとき"
+
+#: aurora/settingsapp/applications.py:171
+#: aurora/settingsapp/applications.py:172 aurora/settingsapp/devices.py:140
+msgid "Default"
+msgstr "デフォルト"
+
+#: aurora/settingsapp/applications.py:171
+#: aurora/settingsapp/applications.py:172
+msgid "Large"
+msgstr "大"
+
+#: aurora/settingsapp/applications.py:171
+#: aurora/settingsapp/applications.py:173
+msgid "Larger"
+msgstr "特大"
+
+#: aurora/settingsapp/applications.py:173
+msgid "Largest"
+msgstr "最大"
+
+#: aurora/settingsapp/applications.py:175
+msgid "Fast"
+msgstr "速い"
+
+#: aurora/settingsapp/applications.py:175 aurora/settingsapp/display.py:18
+msgid "Normal"
+msgstr "標準"
+
+#: aurora/settingsapp/applications.py:175
+msgid "Slow"
+msgstr "遅い"
+
+#: aurora/settingsapp/applications.py:175
+msgid "Slowest"
+msgstr "とても遅い"
+
+#: aurora/settingsapp/applications.py:198
 msgid "Accessibility"
 msgstr "アクセシビリティ"
 
-#: aurora/settingsapp/applications.py:149
+#: aurora/settingsapp/applications.py:208
 msgid "Seeing"
 msgstr "視覚"
 
-#: aurora/settingsapp/applications.py:151
+#: aurora/settingsapp/applications.py:210
 msgid "High contrast"
 msgstr "ハイコントラスト"
 
-#: aurora/settingsapp/applications.py:154
-msgid "Large text"
-msgstr "大きな文字"
+#: aurora/settingsapp/applications.py:213
+msgid "Text size"
+msgstr "文字のサイズ"
 
-#: aurora/settingsapp/applications.py:157
-msgid "Large pointer"
-msgstr "大きなカーソル"
-
-#: aurora/settingsapp/applications.py:159
+#: aurora/settingsapp/applications.py:221
 msgid "Reduce animation"
 msgstr "アニメーションを減らす"
 
-#: aurora/settingsapp/applications.py:169
+#: aurora/settingsapp/applications.py:223
+msgid "Always show scrollbars"
+msgstr "スクロールバーを常に表示"
+
+#: aurora/settingsapp/applications.py:234
 msgid "Screen reader"
 msgstr "スクリーンリーダー"
 
-#: aurora/settingsapp/applications.py:171
+#: aurora/settingsapp/applications.py:236
 msgid "Reads the screen aloud (Orca)"
 msgstr "画面を読み上げます（Orca）"
 
+#: aurora/settingsapp/applications.py:238
+msgid "Zoom"
+msgstr "ズーム"
+
+#: aurora/settingsapp/applications.py:238
+msgid "Super+Alt+8 turns zoom on and off; Super+Alt+= and Super+Alt+− zoom in and out."
+msgstr "Super+Alt+8 でズームのオン/オフ、Super+Alt+= と Super+Alt+− で拡大・縮小します。"
+
+#: aurora/settingsapp/applications.py:241
+msgid "Magnification"
+msgstr "拡大率"
+
+#: aurora/settingsapp/applications.py:245
+msgid "Zoom area"
+msgstr "ズームの範囲"
+
+#: aurora/settingsapp/applications.py:245
+msgid "Whole screen"
+msgstr "画面全体"
+
+#: aurora/settingsapp/applications.py:245
+msgid "Lens around the pointer"
+msgstr "ポインターの周りのレンズ"
+
+#: aurora/settingsapp/applications.py:250
+msgid "Hearing"
+msgstr "聴覚"
+
+#: aurora/settingsapp/applications.py:253
+msgid "Alert sounds"
+msgstr "警告音"
+
+#: aurora/settingsapp/applications.py:255
+msgid "Captions"
+msgstr "字幕"
+
+#: aurora/settingsapp/applications.py:256
+msgid "Firefox and Videos show subtitles when a video has them; Aurora AI can dictate what you say."
+msgstr "動画に字幕があれば Firefox と「ビデオ」で表示されます。Aurora AI は話した内容を文字にできます。"
+
+#: aurora/settingsapp/applications.py:259 aurora/settingsapp/inputs.py:97
+msgid "Typing"
+msgstr "入力"
+
+#: aurora/settingsapp/applications.py:261
+msgid "Screen keyboard"
+msgstr "スクリーンキーボード"
+
+#: aurora/settingsapp/applications.py:263
+msgid "A keyboard on the screen, for touch screens or when a keyboard is hard to use"
+msgstr "画面上のキーボード。タッチスクリーンや、キーボードが使いにくいときに"
+
+#: aurora/settingsapp/applications.py:266
+msgid "Blinking text cursor"
+msgstr "テキストカーソルを点滅"
+
+#: aurora/settingsapp/applications.py:268
+msgid "Repeat keys"
+msgstr "キーのリピート"
+
+#: aurora/settingsapp/applications.py:269
+msgid "Repeat delay and speed are in Keyboard."
+msgstr "リピートの遅延と速度は「キーボード」にあります。"
+
+#: aurora/settingsapp/applications.py:271
+msgid "Pointing & Clicking"
+msgstr "ポインティングとクリック"
+
+#: aurora/settingsapp/applications.py:274
+msgid "Double-click delay"
+msgstr "ダブルクリックの間隔"
+
+#: aurora/settingsapp/applications.py:277 aurora/settingsapp/inputs.py:70
+msgid "Pointer speed"
+msgstr "ポインターの速度"
+
+#: aurora/settingsapp/applications.py:278
+msgid "Speed, left-handed use and gestures are in Mouse & Touchpad."
+msgstr "速度、左利き用、ジェスチャーは「マウスとタッチパッド」にあります。"
+
 #: aurora/settingsapp/app.py:43 aurora/settingsapp/app.py:65
 #: aurora/settingsapp/app.py:77 aurora/settingsapp/app.py:78
-#: aurora/shell/quicksettings.py:236 aurora/shell/search.py:421
-#: aurora/shell/wallpaper.py:62
+#: aurora/settingsapp/desktop.py:126 aurora/shell/quicksettings.py:236
+#: aurora/shell/search.py:421 aurora/shell/wallpaper.py:62
 msgid "Settings"
 msgstr "設定"
 
@@ -1513,7 +2005,7 @@ msgid "Clock"
 msgstr "時計"
 
 #: aurora/settingsapp/desktop.py:92 aurora/settingsapp/desktop.py:98
-#: aurora/settingsapp/desktop.py:109
+#: aurora/settingsapp/desktop.py:109 aurora/settingsapp/sound.py:123
 msgid "Right"
 msgstr "右"
 
@@ -1534,6 +2026,7 @@ msgid "Dock"
 msgstr "Dock"
 
 #: aurora/settingsapp/desktop.py:98 aurora/settingsapp/desktop.py:109
+#: aurora/settingsapp/sound.py:121
 msgid "Left"
 msgstr "左"
 
@@ -1565,7 +2058,7 @@ msgstr "自動的に隠す"
 msgid "Show Trash"
 msgstr "ゴミ箱を表示"
 
-#: aurora/settingsapp/desktop.py:107 aurora/settingsapp/inputs.py:254
+#: aurora/settingsapp/desktop.py:107 aurora/settingsapp/inputs.py:270
 msgid "Windows"
 msgstr "ウインドウ"
 
@@ -1601,11 +2094,11 @@ msgstr "「デスクトップ」フォルダーのファイルを表示"
 msgid "Icon position"
 msgstr "アイコンの位置"
 
-#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:245
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:261
 msgid "Top left"
 msgstr "左上"
 
-#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:245
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:261
 msgid "Top right"
 msgstr "右上"
 
@@ -1624,6 +2117,38 @@ msgstr "Spotlight 検索"
 #: aurora/settingsapp/desktop.py:122
 msgid "Launchpad (all apps)"
 msgstr "Launchpad（すべてのアプリ）"
+
+#: aurora/settingsapp/desktop.py:124
+msgid "Search Results"
+msgstr "検索結果"
+
+#: aurora/settingsapp/desktop.py:124
+msgid "What Spotlight shows as you type."
+msgstr "入力中に Spotlight が表示する内容。"
+
+#: aurora/settingsapp/desktop.py:125
+msgid "Recent files"
+msgstr "最近使ったファイル"
+
+#: aurora/settingsapp/desktop.py:126
+msgid "Code projects"
+msgstr "コードプロジェクト"
+
+#: aurora/settingsapp/desktop.py:127
+msgid "Calculator"
+msgstr "電卓"
+
+#: aurora/settingsapp/desktop.py:128
+msgid "Unit and currency conversion"
+msgstr "単位と通貨の換算"
+
+#: aurora/settingsapp/desktop.py:129
+msgid "Ask Aurora AI"
+msgstr "Aurora AI に質問"
+
+#: aurora/settingsapp/desktop.py:129
+msgid "Web search"
+msgstr "Web 検索"
 
 #: aurora/settingsapp/devices.py:16 aurora/settingsapp/devices.py:38
 #: aurora/shell/quicksettings.py:168
@@ -1678,10 +2203,6 @@ msgstr "ほとんどのネットワークプリンターと USB プリンター�
 msgid "No printers"
 msgstr "プリンターはありません"
 
-#: aurora/settingsapp/devices.py:140
-msgid "Default"
-msgstr "デフォルト"
-
 #: aurora/settingsapp/devices.py:143
 msgid "Make Default"
 msgstr "デフォルトに設定"
@@ -1693,10 +2214,6 @@ msgstr "デフォルトのプリンターを変更しました"
 #: aurora/settingsapp/devices.py:149
 msgid "Add or Configure Printers…"
 msgstr "プリンターを追加または設定…"
-
-#: aurora/settingsapp/display.py:18
-msgid "Normal"
-msgstr "標準"
 
 #: aurora/settingsapp/display.py:18
 msgid "90° Clockwise"
@@ -1927,7 +2444,7 @@ msgstr "NVIDIA ドライバーはインストール済みです"
 msgid "An NVIDIA graphics card could use its own driver ({pkg})"
 msgstr "NVIDIA のグラフィックカードには専用ドライバー（{pkg}）が使えます"
 
-#: aurora/settingsapp/health.py:150 aurora/settingsapp/system.py:515
+#: aurora/settingsapp/health.py:150 aurora/settingsapp/system.py:524
 msgid "Additional Drivers"
 msgstr "追加のドライバー"
 
@@ -1959,7 +2476,7 @@ msgstr "Timeshift を開く"
 msgid "Snapshots before updates are turned off"
 msgstr "アップデート前のスナップショットはオフです"
 
-#: aurora/settingsapp/health.py:175 aurora/settingsapp/system.py:495
+#: aurora/settingsapp/health.py:175 aurora/settingsapp/system.py:504
 msgid "Software Updates"
 msgstr "ソフトウェアアップデート"
 
@@ -2016,7 +2533,7 @@ msgstr "ファイアウォール"
 msgid "System snapshots"
 msgstr "システムスナップショット"
 
-#: aurora/settingsapp/health.py:218 aurora/settingsapp/power.py:73
+#: aurora/settingsapp/health.py:218 aurora/settingsapp/power.py:125
 msgid "Battery"
 msgstr "バッテリー"
 
@@ -2033,7 +2550,7 @@ msgid "Checks your computer for common problems. Nothing is changed without you 
 msgstr "よくある問題がないかコンピューターを確認します。クリックしない限り何も変更しません。"
 
 #: aurora/settingsapp/health.py:232 aurora/settingsapp/health.py:246
-#: aurora/settingsapp/system.py:509 aurora/settingsapp/system.py:517
+#: aurora/settingsapp/system.py:518 aurora/settingsapp/system.py:526
 msgid "Checking…"
 msgstr "確認中…"
 
@@ -2131,17 +2648,9 @@ msgstr "ジェスチャー"
 msgid "Three fingers: up for all windows, down for the desktop, sideways to change workspace. Pinch with four fingers for Launchpad."
 msgstr "3 本指：上ですべてのウインドウ、下でデスクトップ、左右でワークスペース切り替え。4 本指でピンチすると Launchpad。"
 
-#: aurora/settingsapp/inputs.py:70
-msgid "Pointer speed"
-msgstr "ポインターの速度"
-
-#: aurora/settingsapp/inputs.py:92 aurora/settingsapp/language.py:113
+#: aurora/settingsapp/inputs.py:92 aurora/settingsapp/language.py:142
 msgid "Keyboard"
 msgstr "キーボード"
-
-#: aurora/settingsapp/inputs.py:97
-msgid "Typing"
-msgstr "入力"
 
 #: aurora/settingsapp/inputs.py:98
 msgid "Keyboard layouts are in Language & Region."
@@ -2159,151 +2668,191 @@ msgstr "リピート速度（毎秒）"
 msgid "Num Lock on at login"
 msgstr "ログイン時に Num Lock をオン"
 
-#: aurora/settingsapp/inputs.py:108
+#: aurora/settingsapp/inputs.py:110
+msgid "Special Characters"
+msgstr "特殊文字"
+
+#: aurora/settingsapp/inputs.py:111
+msgid "Press the Compose key, then a sequence: ' then e gives é, o then c gives ©, = then e gives €."
+msgstr "Compose キーを押してから続けて入力します：' と e で é、o と c で ©、= と e で €。"
+
+#: aurora/settingsapp/inputs.py:113
+msgid "Right Alt"
+msgstr "右 Alt"
+
+#: aurora/settingsapp/inputs.py:114
+msgid "Right Super"
+msgstr "右 Super"
+
+#: aurora/settingsapp/inputs.py:114
+msgid "Menu key"
+msgstr "メニューキー"
+
+#: aurora/settingsapp/inputs.py:115
+msgid "Right Ctrl"
+msgstr "右 Ctrl"
+
+#: aurora/settingsapp/inputs.py:115
+msgid "Caps Lock"
+msgstr "Caps Lock"
+
+#: aurora/settingsapp/inputs.py:118
+msgid "Compose key"
+msgstr "Compose キー"
+
+#: aurora/settingsapp/inputs.py:121
+msgid "Emoji"
+msgstr "絵文字"
+
+#: aurora/settingsapp/inputs.py:122
+msgid "Super+. opens the emoji picker in any app."
+msgstr "Super+. でどのアプリでも絵文字ピッカーを開きます。"
+
+#: aurora/settingsapp/inputs.py:124
 msgid "Shortcuts"
 msgstr "ショートカット"
 
-#: aurora/settingsapp/inputs.py:109
+#: aurora/settingsapp/inputs.py:125
 msgid "Built-in shortcuts, plus your own commands."
 msgstr "組み込みのショートカットと、あなた独自のコマンド。"
 
-#: aurora/settingsapp/inputs.py:111 aurora/settingsapp/inputs.py:158
+#: aurora/settingsapp/inputs.py:127 aurora/settingsapp/inputs.py:174
 msgid "Add Custom Shortcut"
 msgstr "カスタムショートカットを追加"
 
-#: aurora/settingsapp/inputs.py:159
+#: aurora/settingsapp/inputs.py:175
 msgid "Press the key combination, then enter the command to run."
 msgstr "キーの組み合わせを押してから、実行するコマンドを入力してください。"
 
-#: aurora/settingsapp/inputs.py:161
+#: aurora/settingsapp/inputs.py:177
 msgid "Press keys…"
 msgstr "キーを押してください…"
 
-#: aurora/settingsapp/inputs.py:162
+#: aurora/settingsapp/inputs.py:178
 msgid "Command, e.g. firefox-esr --private-window"
 msgstr "コマンド（例: firefox-esr --private-window）"
 
-#: aurora/settingsapp/inputs.py:167 aurora/settingsapp/system.py:461
+#: aurora/settingsapp/inputs.py:183 aurora/settingsapp/system.py:470
 msgid "Add"
 msgstr "追加"
 
-#: aurora/settingsapp/inputs.py:220
+#: aurora/settingsapp/inputs.py:236
 msgid "Multitasking"
 msgstr "マルチタスク"
 
-#: aurora/settingsapp/inputs.py:225
+#: aurora/settingsapp/inputs.py:241
 msgid "Workspaces"
 msgstr "ワークスペース"
 
-#: aurora/settingsapp/inputs.py:226
+#: aurora/settingsapp/inputs.py:242
 msgid "Switch with Super+1…9 or Ctrl+Alt+Left/Right."
 msgstr "Super+1…9 または Ctrl+Alt+左/右 で切り替えます。"
 
-#: aurora/settingsapp/inputs.py:229
+#: aurora/settingsapp/inputs.py:245
 msgid "Number of workspaces"
 msgstr "ワークスペースの数"
 
-#: aurora/settingsapp/inputs.py:236
+#: aurora/settingsapp/inputs.py:252
 msgid "Hot Corners"
 msgstr "ホットコーナー"
 
-#: aurora/settingsapp/inputs.py:237
+#: aurora/settingsapp/inputs.py:253
 msgid "Push the pointer into a corner of the screen to…"
 msgstr "画面の隅にポインターを移動して…"
 
-#: aurora/settingsapp/inputs.py:238
+#: aurora/settingsapp/inputs.py:254
 msgid "Do Nothing"
 msgstr "何もしない"
 
-#: aurora/settingsapp/inputs.py:238
+#: aurora/settingsapp/inputs.py:254
 msgid "Show All Windows"
 msgstr "すべてのウインドウを表示"
 
-#: aurora/settingsapp/inputs.py:239
+#: aurora/settingsapp/inputs.py:255
 msgid "Show Apps (Launchpad)"
 msgstr "アプリを表示（Launchpad）"
 
-#: aurora/settingsapp/inputs.py:240 aurora/shell/overview.py:95
+#: aurora/settingsapp/inputs.py:256 aurora/shell/overview.py:95
 msgid "Show Desktop"
 msgstr "デスクトップを表示"
 
-#: aurora/settingsapp/inputs.py:241
+#: aurora/settingsapp/inputs.py:257
 msgid "Open Control Center"
 msgstr "コントロールセンターを開く"
 
-#: aurora/settingsapp/inputs.py:242
+#: aurora/settingsapp/inputs.py:258
 msgid "Open Notifications"
 msgstr "通知を開く"
 
-#: aurora/settingsapp/inputs.py:243 aurora/shell/panel.py:209
+#: aurora/settingsapp/inputs.py:259 aurora/shell/panel.py:214
 msgid "Lock Screen"
 msgstr "画面をロック"
 
-#: aurora/settingsapp/inputs.py:243
+#: aurora/settingsapp/inputs.py:259
 msgid "Turn Screen Off"
 msgstr "画面をオフ"
 
-#: aurora/settingsapp/inputs.py:246
+#: aurora/settingsapp/inputs.py:262
 msgid "Bottom left"
 msgstr "左下"
 
-#: aurora/settingsapp/inputs.py:247
+#: aurora/settingsapp/inputs.py:263
 msgid "Bottom right"
 msgstr "右下"
 
-#: aurora/settingsapp/inputs.py:255
+#: aurora/settingsapp/inputs.py:271
 msgid "Super+W shows all windows. Super+Left/Right fills half the screen, Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. Hold Super while dragging a window to drop it into a quarter or third."
 msgstr "Super+W ですべてのウインドウを表示。Super+左/右 で画面の半分、Super+Ctrl+U/I/J/K で 4 分の 1、Super+Ctrl+D/F/G で 3 分の 1。ウインドウをドラッグ中に Super を押すと 4 分の 1 や 3 分の 1 に配置できます。"
 
-#: aurora/settingsapp/inputs.py:258
+#: aurora/settingsapp/inputs.py:274
 msgid "Snap windows to screen edges"
 msgstr "ウインドウを画面の端にスナップ"
 
-#: aurora/settingsapp/inputs.py:261
+#: aurora/settingsapp/inputs.py:277
 msgid "Drag a window to an edge to fill half the screen"
 msgstr "ウインドウを端にドラッグすると画面の半分を占めます"
 
-#: aurora/settingsapp/inputs.py:262
+#: aurora/settingsapp/inputs.py:278
 msgid "Drag to the top to maximize"
 msgstr "上にドラッグして最大化"
 
-#: aurora/settingsapp/inputs.py:265
+#: aurora/settingsapp/inputs.py:281
 msgid "Focus follows the pointer"
 msgstr "フォーカスがポインターに追従"
 
-#: aurora/settingsapp/language.py:90 aurora/shell/search.py:394
+#: aurora/settingsapp/language.py:119 aurora/shell/search.py:394
 msgid "Language & Region"
 msgstr "言語と地域"
 
-#: aurora/settingsapp/language.py:98 aurora/settingsapp/language.py:102
+#: aurora/settingsapp/language.py:127 aurora/settingsapp/language.py:131
 msgid "Language"
 msgstr "言語"
 
-#: aurora/settingsapp/language.py:99
+#: aurora/settingsapp/language.py:128
 msgid "Changes take effect the next time you log in."
 msgstr "変更は次回ログイン時に反映されます。"
 
-#: aurora/settingsapp/language.py:105
+#: aurora/settingsapp/language.py:134
 msgid "Formats"
 msgstr "書式"
 
-#: aurora/settingsapp/language.py:106
+#: aurora/settingsapp/language.py:135
 msgid "Dates, times, numbers and units"
 msgstr "日付、時刻、数値、単位"
 
-#: aurora/settingsapp/language.py:109
+#: aurora/settingsapp/language.py:138
 msgid "Log Out Now"
 msgstr "今すぐログアウト"
 
-#: aurora/settingsapp/language.py:114
+#: aurora/settingsapp/language.py:143
 msgid "Add several layouts and switch with Alt+Shift."
 msgstr "複数のレイアウトを追加し、Alt+Shift で切り替えます。"
 
-#: aurora/settingsapp/language.py:118
+#: aurora/settingsapp/language.py:147
 msgid "Add layout"
 msgstr "レイアウトを追加"
 
-#: aurora/settingsapp/language.py:141
+#: aurora/settingsapp/language.py:170
 msgid "Language will change after you log out."
 msgstr "言語はログアウト後に変更されます。"
 
@@ -2368,135 +2917,196 @@ msgstr "スマートフォンのカメラをコードに向けると「{ssid}」
 msgid "Password: {p}"
 msgstr "パスワード: {p}"
 
-#: aurora/settingsapp/power.py:27 aurora/shell/quicksettings.py:17
+#: aurora/settingsapp/power.py:29 aurora/settingsapp/power.py:31
+#: aurora/shell/quicksettings.py:287
+msgid "Suspend"
+msgstr "スリープ"
+
+#: aurora/settingsapp/power.py:30
+msgid "Hibernate"
+msgstr "ハイバネート"
+
+#: aurora/settingsapp/power.py:30 aurora/settingsapp/power.py:31
+msgid "Nothing"
+msgstr "何もしない"
+
+#: aurora/settingsapp/power.py:48 aurora/shell/quicksettings.py:17
 msgid "Power Saver"
 msgstr "省電力"
 
-#: aurora/settingsapp/power.py:27 aurora/shell/quicksettings.py:16
+#: aurora/settingsapp/power.py:48 aurora/shell/quicksettings.py:16
 msgid "Balanced"
 msgstr "バランス"
 
-#: aurora/settingsapp/power.py:28 aurora/shell/quicksettings.py:16
+#: aurora/settingsapp/power.py:49 aurora/shell/quicksettings.py:16
 msgid "Performance"
 msgstr "パフォーマンス"
 
-#: aurora/settingsapp/power.py:38 aurora/shell/search.py:398
+#: aurora/settingsapp/power.py:59 aurora/shell/search.py:398
 msgid "Power"
 msgstr "電源"
 
-#: aurora/settingsapp/power.py:43
+#: aurora/settingsapp/power.py:64
 msgid "Screen"
 msgstr "画面"
 
-#: aurora/settingsapp/power.py:45
+#: aurora/settingsapp/power.py:66 aurora/settingsapp/power.py:86
 #, python-brace-format
 msgid "{n} minute"
 msgid_plural "{n} minutes"
 msgstr[0] "{n} 分"
 
-#: aurora/settingsapp/power.py:45
+#: aurora/settingsapp/power.py:66 aurora/settingsapp/power.py:86
 msgid "Never"
 msgstr "しない"
 
-#: aurora/settingsapp/power.py:58
+#: aurora/settingsapp/power.py:79
 msgid "Screen blank"
 msgstr "画面をオフ"
 
-#: aurora/settingsapp/power.py:59
+#: aurora/settingsapp/power.py:80
 msgid "Turn the screen off after a period of inactivity"
 msgstr "操作がない状態が続いたら画面をオフにする"
 
-#: aurora/settingsapp/power.py:60
+#: aurora/settingsapp/power.py:81
 msgid "Automatic screen lock"
 msgstr "画面を自動でロック"
 
-#: aurora/settingsapp/power.py:64 aurora/settingsapp/power.py:67
+#: aurora/settingsapp/power.py:84
+msgid "Automatic Suspend"
+msgstr "自動サスペンド"
+
+#: aurora/settingsapp/power.py:85
+msgid "Suspend the computer when it has not been used for a while."
+msgstr "しばらく使われていないときにコンピューターをサスペンドします。"
+
+#: aurora/settingsapp/power.py:99
+msgid "On battery"
+msgstr "バッテリー駆動時"
+
+#: aurora/settingsapp/power.py:100
+msgid "When plugged in"
+msgstr "電源接続時"
+
+#: aurora/settingsapp/power.py:102
+msgid "Power Button and Lid"
+msgstr "電源ボタンとふた"
+
+#: aurora/settingsapp/power.py:105
+msgid "Power button"
+msgstr "電源ボタン"
+
+#: aurora/settingsapp/power.py:111
+msgid "Closing the lid"
+msgstr "ふたを閉じたとき"
+
+#: aurora/settingsapp/power.py:116 aurora/settingsapp/power.py:119
 msgid "Power mode"
 msgstr "電源モード"
 
-#: aurora/settingsapp/power.py:74
+#: aurora/settingsapp/power.py:126
 msgid "Charge"
 msgstr "充電"
 
-#: aurora/settingsapp/power.py:77
+#: aurora/settingsapp/power.py:128
+msgid "Show battery percentage"
+msgstr "バッテリー残量をパーセントで表示"
+
+#: aurora/settingsapp/power.py:131
+msgid "Next to the battery icon in the top bar"
+msgstr "トップバーのバッテリーアイコンの横に"
+
+#: aurora/settingsapp/power.py:134
 msgid "Battery health"
 msgstr "バッテリーの状態"
 
-#: aurora/settingsapp/power.py:79
+#: aurora/settingsapp/power.py:136
 msgid "Limit charging to 80%"
 msgstr "充電を 80% に制限"
 
-#: aurora/settingsapp/power.py:80
+#: aurora/settingsapp/power.py:137
 msgid "Keeping a battery below full makes it last years longer. Turn off before a trip for a full charge."
 msgstr "満充電を避けるとバッテリーが何年も長持ちします。旅行の前にはオフにして満充電してください。"
 
-#: aurora/settingsapp/power.py:88
+#: aurora/settingsapp/power.py:151
 msgid "{pct} of its original capacity"
 msgstr "元の容量の {pct}"
 
-#: aurora/settingsapp/power.py:94
+#: aurora/settingsapp/power.py:157
 msgid "Charging stops at 80%"
 msgstr "充電は 80% で停止します"
 
-#: aurora/settingsapp/power.py:94
+#: aurora/settingsapp/power.py:157
 msgid "Charging to 100%"
 msgstr "100% まで充電"
 
-#: aurora/settingsapp/sound.py:18 aurora/shell/search.py:390
+#: aurora/settingsapp/sound.py:19 aurora/shell/search.py:390
 msgid "Sound"
 msgstr "サウンド"
 
-#: aurora/settingsapp/sound.py:22
+#: aurora/settingsapp/sound.py:23
 msgid "Output"
 msgstr "出力"
 
-#: aurora/settingsapp/sound.py:23
+#: aurora/settingsapp/sound.py:24
 msgid "Input"
 msgstr "入力"
 
-#: aurora/settingsapp/sound.py:29
+#: aurora/settingsapp/sound.py:31
+msgid "Over-amplification"
+msgstr "音量の増幅"
+
+#: aurora/settingsapp/sound.py:34
+msgid "Allow the volume above 100%. Sound may be distorted."
+msgstr "音量を 100% 以上にできます。音が歪むことがあります。"
+
+#: aurora/settingsapp/sound.py:36
 msgid "System Sounds"
 msgstr "システムサウンド"
 
-#: aurora/settingsapp/sound.py:30
+#: aurora/settingsapp/sound.py:37
 msgid "Startup and shutdown sounds"
 msgstr "起動音と終了音"
 
-#: aurora/settingsapp/sound.py:32
+#: aurora/settingsapp/sound.py:39
 msgid "The Aurora sound when you log in, shut down, restart or log out"
 msgstr "ログイン、シャットダウン、再起動、ログアウト時に Aurora のサウンドを鳴らす"
 
-#: aurora/settingsapp/sound.py:35
+#: aurora/settingsapp/sound.py:42
 msgid "Startup sound"
 msgstr "起動音"
 
-#: aurora/settingsapp/sound.py:36
+#: aurora/settingsapp/sound.py:43
 msgid "Shutdown sound"
 msgstr "終了音"
 
-#: aurora/settingsapp/sound.py:39
+#: aurora/settingsapp/sound.py:46
 msgid "Play"
 msgstr "再生"
 
-#: aurora/settingsapp/sound.py:52
+#: aurora/settingsapp/sound.py:59
 msgid "Output device"
 msgstr "出力デバイス"
 
-#: aurora/settingsapp/sound.py:54
+#: aurora/settingsapp/sound.py:61
 msgid "Input device"
 msgstr "入力デバイス"
 
-#: aurora/settingsapp/sound.py:62 aurora/shell/quicksettings.py:339
+#: aurora/settingsapp/sound.py:69 aurora/shell/quicksettings.py:339
 msgid "No devices found"
 msgstr "デバイスが見つかりません"
 
-#: aurora/settingsapp/sound.py:73
+#: aurora/settingsapp/sound.py:80
 msgid "Volume"
 msgstr "音量"
 
-#: aurora/settingsapp/sound.py:76
+#: aurora/settingsapp/sound.py:83
 msgid "Mute"
 msgstr "ミュート"
+
+#: aurora/settingsapp/sound.py:106
+msgid "Balance"
+msgstr "バランス"
 
 #: aurora/settingsapp/system.py:29
 msgid "Authorization was cancelled"
@@ -2726,7 +3336,7 @@ msgstr "あなたのアカウント"
 msgid "Change Picture…"
 msgstr "画像を変更…"
 
-#: aurora/settingsapp/system.py:304 aurora/settingsapp/system.py:448
+#: aurora/settingsapp/system.py:304 aurora/settingsapp/system.py:457
 msgid "Full name"
 msgstr "フルネーム"
 
@@ -2734,180 +3344,188 @@ msgstr "フルネーム"
 msgid "Change Password…"
 msgstr "パスワードを変更…"
 
-#: aurora/settingsapp/system.py:318
+#: aurora/settingsapp/system.py:319 aurora/settingsapp/system.py:322
+msgid "Online Accounts"
+msgstr "オンラインアカウント"
+
+#: aurora/settingsapp/system.py:320
+msgid "Sign in to Google, Microsoft, Nextcloud and others: Calendar, Contacts, Files and Mail use them."
+msgstr "Google、Microsoft、Nextcloud などにサインイン：カレンダー、連絡先、ファイル、メールで使われます。"
+
+#: aurora/settingsapp/system.py:327
 msgid "Login"
 msgstr "ログイン"
 
-#: aurora/settingsapp/system.py:320
+#: aurora/settingsapp/system.py:329
 msgid "Log in automatically"
 msgstr "自動ログイン"
 
-#: aurora/settingsapp/system.py:322
+#: aurora/settingsapp/system.py:331
 msgid "Skip the login screen when the computer starts"
 msgstr "コンピューターの起動時にログイン画面を省略"
 
-#: aurora/settingsapp/system.py:324
+#: aurora/settingsapp/system.py:333
 msgid "Other Users"
 msgstr "ほかのユーザー"
 
-#: aurora/settingsapp/system.py:326 aurora/settingsapp/system.py:446
+#: aurora/settingsapp/system.py:335 aurora/settingsapp/system.py:455
 msgid "Add User"
 msgstr "ユーザーを追加"
 
-#: aurora/settingsapp/system.py:357 aurora/settingsapp/system.py:419
-#: aurora/settingsapp/system.py:589
+#: aurora/settingsapp/system.py:366 aurora/settingsapp/system.py:428
+#: aurora/settingsapp/system.py:598
 msgid "Saved"
 msgstr "保存しました"
 
-#: aurora/settingsapp/system.py:364
+#: aurora/settingsapp/system.py:373
 msgid "Choose a Picture"
 msgstr "画像を選択"
 
-#: aurora/settingsapp/system.py:383
+#: aurora/settingsapp/system.py:392
 msgid "Change Password"
 msgstr "パスワードを変更"
 
-#: aurora/settingsapp/system.py:385
+#: aurora/settingsapp/system.py:394
 msgid "Current password"
 msgstr "現在のパスワード"
 
-#: aurora/settingsapp/system.py:386
+#: aurora/settingsapp/system.py:395
 msgid "New password"
 msgstr "新しいパスワード"
 
-#: aurora/settingsapp/system.py:387
+#: aurora/settingsapp/system.py:396
 msgid "Confirm new password"
 msgstr "新しいパスワードの確認"
 
-#: aurora/settingsapp/system.py:392
+#: aurora/settingsapp/system.py:401
 msgid "Change"
 msgstr "変更"
 
-#: aurora/settingsapp/system.py:399
+#: aurora/settingsapp/system.py:408
 msgid "The new passwords do not match"
 msgstr "新しいパスワードが一致しません"
 
-#: aurora/settingsapp/system.py:402
+#: aurora/settingsapp/system.py:411
 msgid "Password changed"
 msgstr "パスワードを変更しました"
 
-#: aurora/settingsapp/system.py:402
+#: aurora/settingsapp/system.py:411
 msgid "Could not change password"
 msgstr "パスワードを変更できませんでした"
 
-#: aurora/settingsapp/system.py:431 aurora/settingsapp/system.py:451
+#: aurora/settingsapp/system.py:440 aurora/settingsapp/system.py:460
 msgid "Administrator"
 msgstr "管理者"
 
-#: aurora/settingsapp/system.py:432
+#: aurora/settingsapp/system.py:441
 msgid "Standard"
 msgstr "標準"
 
-#: aurora/settingsapp/system.py:435
+#: aurora/settingsapp/system.py:444
 msgid "Remove User"
 msgstr "ユーザーを削除"
 
-#: aurora/settingsapp/system.py:441
+#: aurora/settingsapp/system.py:450
 msgid "No other users"
 msgstr "ほかのユーザーはいません"
 
-#: aurora/settingsapp/system.py:470
+#: aurora/settingsapp/system.py:479
 msgid "User added"
 msgstr "ユーザーを追加しました"
 
-#: aurora/settingsapp/system.py:470
+#: aurora/settingsapp/system.py:479
 msgid "Could not add user"
 msgstr "ユーザーを追加できませんでした"
 
-#: aurora/settingsapp/system.py:476
+#: aurora/settingsapp/system.py:485
 msgid "Remove {user}?"
 msgstr "{user} を削除しますか？"
 
-#: aurora/settingsapp/system.py:477
+#: aurora/settingsapp/system.py:486
 msgid "Their home folder and all their files will be deleted."
 msgstr "ホームフォルダーとすべてのファイルが削除されます。"
 
-#: aurora/settingsapp/system.py:485
+#: aurora/settingsapp/system.py:494
 msgid "User removed"
 msgstr "ユーザーを削除しました"
 
-#: aurora/settingsapp/system.py:499
+#: aurora/settingsapp/system.py:508
 msgid "Updates"
 msgstr "アップデート"
 
-#: aurora/settingsapp/system.py:499
+#: aurora/settingsapp/system.py:508
 msgid "Aurora keeps itself secure by installing security updates automatically in the background."
 msgstr "Aurora はバックグラウンドでセキュリティアップデートを自動インストールし、安全を保ちます。"
 
-#: aurora/settingsapp/system.py:507
+#: aurora/settingsapp/system.py:516
 msgid "Install security updates automatically"
 msgstr "セキュリティアップデートを自動でインストール"
 
-#: aurora/settingsapp/system.py:509
+#: aurora/settingsapp/system.py:518
 msgid "Available updates"
 msgstr "利用可能なアップデート"
 
-#: aurora/settingsapp/system.py:511
+#: aurora/settingsapp/system.py:520
 msgid "Open App Center to Update…"
 msgstr "アップデートするためにアプリセンターを開く…"
 
-#: aurora/settingsapp/system.py:516
+#: aurora/settingsapp/system.py:525
 msgid "Proprietary drivers for hardware that needs them."
 msgstr "必要なハードウェア向けのプロプライエタリドライバー。"
 
-#: aurora/settingsapp/system.py:523
+#: aurora/settingsapp/system.py:532
 msgid "System Snapshots"
 msgstr "システムスナップショット"
 
-#: aurora/settingsapp/system.py:524
+#: aurora/settingsapp/system.py:533
 msgid "Aurora takes a snapshot of the system before every update. If something breaks, pick “Aurora OS snapshots” in the boot menu to start yesterday’s system, then restore it in Timeshift. Your files in Home are never rolled back."
 msgstr "Aurora はアップデートのたびにシステムのスナップショットを撮ります。何か問題が起きたら、起動メニューで「Aurora OS snapshots」を選んで昨日のシステムを起動し、Timeshift で復元してください。ホームフォルダーのファイルは巻き戻されません。"
 
-#: aurora/settingsapp/system.py:528
+#: aurora/settingsapp/system.py:537
 msgid "Automatic snapshots need the btrfs file system (the installer’s default). On this system, Timeshift can still make copies."
 msgstr "自動スナップショットには btrfs ファイルシステム（インストーラーの既定）が必要です。このシステムでも Timeshift でコピーは作成できます。"
 
-#: aurora/settingsapp/system.py:531
+#: aurora/settingsapp/system.py:540
 msgid "Snapshot before every update"
 msgstr "アップデート前にスナップショットを撮る"
 
-#: aurora/settingsapp/system.py:534
+#: aurora/settingsapp/system.py:543
 msgid "Keeps the last 10, plus daily and weekly ones"
 msgstr "最新の 10 個と、日次・週次のものを保持"
 
-#: aurora/settingsapp/system.py:535
+#: aurora/settingsapp/system.py:544
 msgid "Take a Snapshot Now"
 msgstr "今すぐスナップショットを撮る"
 
-#: aurora/settingsapp/system.py:538
+#: aurora/settingsapp/system.py:547
 msgid "Open Timeshift…"
 msgstr "Timeshift を開く…"
 
-#: aurora/settingsapp/system.py:550
+#: aurora/settingsapp/system.py:559
 msgid "Taking a snapshot…"
 msgstr "スナップショットを作成中…"
 
-#: aurora/settingsapp/system.py:554
+#: aurora/settingsapp/system.py:563
 msgid "Snapshot saved"
 msgstr "スナップショットを保存しました"
 
-#: aurora/settingsapp/system.py:560
+#: aurora/settingsapp/system.py:569
 msgid "Your system is up to date"
 msgstr "システムは最新です"
 
-#: aurora/settingsapp/system.py:561
+#: aurora/settingsapp/system.py:570
 msgid "{n} updates available"
 msgstr "{n} 件のアップデートがあります"
 
-#: aurora/settingsapp/system.py:569
+#: aurora/settingsapp/system.py:578
 msgid "NVIDIA card found. Recommended driver: {pkg}"
 msgstr "NVIDIA のグラフィックカードが見つかりました。推奨ドライバー: {pkg}"
 
-#: aurora/settingsapp/system.py:575
+#: aurora/settingsapp/system.py:584
 msgid "Your graphics use open-source drivers that are already installed."
 msgstr "グラフィックスはインストール済みのフリードライバーを使用しています。"
 
-#: aurora/settingsapp/system.py:585
+#: aurora/settingsapp/system.py:594
 msgid "Installing graphics driver"
 msgstr "グラフィックドライバーをインストール中"
 
@@ -2935,87 +3553,87 @@ msgstr "タイムゾーン"
 msgid "24-hour clock"
 msgstr "24 時間表示"
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:227
 msgid "Writing tools are off"
 msgstr "文章ツールはオフです"
 
-#: aurora/shell/app.py:266
+#: aurora/shell/app.py:280
 msgid "Set it up in Settings → AI."
 msgstr "「設定 → AI」で設定してください。"
 
-#: aurora/shell/app.py:272
+#: aurora/shell/app.py:286
 msgid "Dictation is off"
 msgstr "音声入力はオフです"
 
-#: aurora/shell/app.py:279
+#: aurora/shell/app.py:293
 msgid "Dictation isn't installed yet"
 msgstr "音声入力はまだインストールされていません"
 
-#: aurora/shell/app.py:283
+#: aurora/shell/app.py:297
 msgid "Listening… press Super+H to stop"
 msgstr "聞き取り中… Super+H で停止"
 
-#: aurora/shell/app.py:285
+#: aurora/shell/app.py:299
 msgid "Writing it down…"
 msgstr "文字起こし中…"
 
-#: aurora/shell/app.py:299
+#: aurora/shell/app.py:313
 msgid "Nothing was heard"
 msgstr "何も聞こえませんでした"
 
-#: aurora/shell/app.py:308
+#: aurora/shell/app.py:322
 msgid "Read aloud is off"
 msgstr "読み上げはオフです"
 
-#: aurora/shell/app.py:315
+#: aurora/shell/app.py:329
 msgid "Select some text first"
 msgstr "先にテキストを選択してください"
 
-#: aurora/shell/app.py:383
+#: aurora/shell/app.py:397
 msgid "Screenshot captured"
 msgstr "スクリーンショットを撮りました"
 
-#: aurora/shell/app.py:384
+#: aurora/shell/app.py:398
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "{path} に保存し、クリップボードにコピーしました。"
 
-#: aurora/shell/app.py:389
+#: aurora/shell/app.py:403
 msgid "Annotate"
 msgstr "注釈"
 
-#: aurora/shell/app.py:389
+#: aurora/shell/app.py:403
 msgid "Copy Text"
 msgstr "テキストをコピー"
 
-#: aurora/shell/app.py:392
+#: aurora/shell/app.py:406
 msgid "Ask Aurora"
 msgstr "Aurora に質問"
 
-#: aurora/shell/app.py:438 aurora/shell/app.py:445
+#: aurora/shell/app.py:452 aurora/shell/app.py:459
 msgid "Text Recognition"
 msgstr "テキスト認識"
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:452
 msgid "No text found"
 msgstr "テキストが見つかりません"
 
-#: aurora/shell/app.py:439
+#: aurora/shell/app.py:453
 msgid "Try a larger or sharper area."
 msgstr "もっと大きい、または鮮明な範囲で試してください。"
 
-#: aurora/shell/app.py:445
+#: aurora/shell/app.py:459
 msgid "Text copied"
 msgstr "テキストをコピーしました"
 
-#: aurora/shell/app.py:479 aurora/shell/quicksettings.py:179
+#: aurora/shell/app.py:493 aurora/shell/quicksettings.py:179
 msgid "Screen Recording"
 msgstr "画面収録"
 
-#: aurora/shell/app.py:479
+#: aurora/shell/app.py:493
 msgid "Screen recording saved"
 msgstr "画面収録を保存しました"
 
-#: aurora/shell/app.py:480
+#: aurora/shell/app.py:494
 msgid "Saved to {path}."
 msgstr "{path} に保存しました。"
 
@@ -3047,15 +3665,15 @@ msgstr "Launchpad"
 msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
 msgstr "アプリ、ファイル、プロジェクト、計算、10 km in mi、:emoji、clip:、? で Aurora に質問"
 
-#: aurora/shell/notifications.py:292
+#: aurora/shell/notifications.py:301
 msgid "Aurora AI summarizes your notifications"
 msgstr "Aurora AI が通知を要約します"
 
-#: aurora/shell/notifications.py:311
+#: aurora/shell/notifications.py:320
 msgid "Clear"
 msgstr "消去"
 
-#: aurora/shell/notifications.py:342
+#: aurora/shell/notifications.py:351
 msgid "No Notifications"
 msgstr "通知はありません"
 
@@ -3091,55 +3709,55 @@ msgstr "コントロールセンター"
 msgid "Recording the screen"
 msgstr "画面を収録中"
 
-#: aurora/shell/panel.py:180
+#: aurora/shell/panel.py:183
 msgid "Not connected"
 msgstr "未接続"
 
-#: aurora/shell/panel.py:198
+#: aurora/shell/panel.py:203
 msgid "Aurora Menu"
 msgstr "Aurora メニュー"
 
-#: aurora/shell/panel.py:202
+#: aurora/shell/panel.py:207
 msgid "About This Computer"
 msgstr "このコンピューターについて"
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:208
 msgid "System Settings…"
 msgstr "システム設定…"
 
-#: aurora/shell/panel.py:204
+#: aurora/shell/panel.py:209
 msgid "App Center…"
 msgstr "アプリセンター…"
 
-#: aurora/shell/panel.py:205
+#: aurora/shell/panel.py:210
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:206
+#: aurora/shell/panel.py:211
 msgid "System Health…"
 msgstr "システムの健康状態…"
 
-#: aurora/shell/panel.py:206
+#: aurora/shell/panel.py:211
 msgid "Force Quit…"
 msgstr "強制終了…"
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:212
 msgid "Sleep"
 msgstr "スリープ"
 
-#: aurora/shell/panel.py:207 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
 msgid "Restart…"
 msgstr "再起動…"
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:213
 msgid "Shut Down…"
 msgstr "シャットダウン…"
 
-#: aurora/shell/panel.py:209 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
 msgid "Log Out"
 msgstr "ログアウト"
 
-#: aurora/shell/panel.py:246
+#: aurora/shell/panel.py:251
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora アシスタント（Super+Shift+Space）"
 
@@ -3202,10 +3820,6 @@ msgstr "ロック"
 #: aurora/shell/quicksettings.py:243
 msgid "Power Off / Log Out"
 msgstr "電源 / ログアウト"
-
-#: aurora/shell/quicksettings.py:287
-msgid "Suspend"
-msgstr "スリープ"
 
 #: aurora/shell/quicksettings.py:288
 msgid "Power Off…"
@@ -3389,15 +4003,15 @@ msgstr "バッテリー残量がわずかです"
 msgid "{p}% remaining. Plug in your computer."
 msgstr "残り {p}%。電源につないでください。"
 
-#: aurora/shell/sysnotify.py:104
+#: aurora/shell/sysnotify.py:111
 msgid "{name} connected"
 msgstr "{name} を接続しました"
 
-#: aurora/shell/sysnotify.py:105
+#: aurora/shell/sysnotify.py:112
 msgid "The drive is ready to use."
 msgstr "ドライブを使用できます。"
 
-#: aurora/shell/sysnotify.py:106
+#: aurora/shell/sysnotify.py:113
 msgid "Eject"
 msgstr "取り出す"
 

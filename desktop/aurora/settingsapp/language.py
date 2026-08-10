@@ -85,6 +85,35 @@ def current_locale():
     return user.get("LANG") or system.get("LANG") or os.environ.get("LANG", "en_US.UTF-8")
 
 
+
+def xkb_options(current, prefix, value):
+    """Replace the XKB options starting with prefix (e.g. "grp:", "compose:") by value."""
+    opts = [o for o in current.split(",") if o and not o.startswith(prefix)]
+    if value:
+        opts.append(value)
+    return ",".join(opts)
+
+
+def labwc_env_path():
+    return os.path.join(os.path.expanduser("~/.config/labwc"), "environment")
+
+
+def set_xkb_option(prefix, value):
+    """Change one kind of XKB option in the compositor's environment and apply it."""
+    path = labwc_env_path()
+    env = read_conf(path)
+    env["XKB_DEFAULT_OPTIONS"] = xkb_options(env.get("XKB_DEFAULT_OPTIONS", ""), prefix, value)
+    write_conf(path, env)
+    subprocess.Popen(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL)
+
+
+def xkb_option(prefix):
+    env = read_conf(labwc_env_path())
+    for o in env.get("XKB_DEFAULT_OPTIONS", "").split(","):
+        if o.startswith(prefix):
+            return o
+    return ""
+
 class Language(Page):
     page_id = "language"
     title = _("Language & Region")
@@ -161,7 +190,8 @@ class Language(Page):
         path = self._env_path()
         env = read_conf(path)
         env["XKB_DEFAULT_LAYOUT"] = ",".join(codes)
-        env["XKB_DEFAULT_OPTIONS"] = "grp:alt_shift_toggle" if len(codes) > 1 else ""
+        env["XKB_DEFAULT_OPTIONS"] = xkb_options(env.get("XKB_DEFAULT_OPTIONS", ""), "grp:",
+                                                 "grp:alt_shift_toggle" if len(codes) > 1 else "")
         write_conf(path, env)
         subprocess.Popen(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL)
         self._refresh_layouts()

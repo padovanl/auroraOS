@@ -64,10 +64,14 @@ def sync_gtk_theme():
     if os.path.isdir(os.path.join("/usr/share/themes", theme)) and \
             iface.get_string("gtk-theme") != theme:
         iface.set_string("gtk-theme", theme)
-    # Papirus has light and dark variants; keep them in step with the style.
+    # Aurora and Papirus have light and dark variants; keep them in step with the style.
     icons = iface.get_string("icon-theme")
-    if icons in ("Papirus", "Papirus-Dark", "Papirus-Light"):
-        wanted = "Papirus-Dark" if is_dark() else "Papirus"
+    variants = {"Aurora": ("Aurora", "Aurora-Dark"),
+                "Papirus": ("Papirus", "Papirus-Dark")}
+    family = "Aurora" if icons.startswith("Aurora") else \
+        "Papirus" if icons.startswith("Papirus") else None
+    if family:
+        wanted = variants[family][1 if is_dark() else 0]
         if icons != wanted:
             iface.set_string("icon-theme", wanted)
     accent = ACCENT_HEX.get(iface.get_string("accent-color"), ACCENT_HEX["purple"])
@@ -87,6 +91,8 @@ def apply_gtk(s):
                    data_path("gtk", f"gtk{version}-base.css")]
         if traffic:
             imports.append(data_path("gtk", f"gtk{version}-traffic.css"))
+        if version == "4" and s.get_boolean("window-animations"):
+            imports.append(data_path("gtk", "gtk4-animations.css"))
         _write_gtk_css(version, [i for i in imports if os.path.exists(i) or "gtk-accent" in i])
 
     wm = settings.get("org.gnome.desktop.wm.preferences")

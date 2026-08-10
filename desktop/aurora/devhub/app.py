@@ -13,7 +13,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk, Pango  # noqa: E402
 
 from aurora import VERSION  # noqa: E402
 from aurora.devhub.recipes import CATEGORIES, RECIPES  # noqa: E402
@@ -111,11 +111,31 @@ class DevHub(Adw.ApplicationWindow):
             content.append(flow)
             self.sections.append((label, flow))
 
-        self.toasts = Adw.ToastOverlay(child=Gtk.ScrolledWindow(
-            child=Adw.Clamp(child=content, maximum_size=1200),
-            hscrollbar_policy=Gtk.PolicyType.NEVER))
+        self.content = content
+        self.scroller = Gtk.ScrolledWindow(child=Adw.Clamp(child=content, maximum_size=1200),
+                                           hscrollbar_policy=Gtk.PolicyType.NEVER)
+        self.toasts = Adw.ToastOverlay(child=self.scroller)
         view.set_content(self.toasts)
-        self.set_content(view)
+
+        # Categories in a sidebar: click one to jump to it.
+        nav = Gtk.ListBox(css_classes=["navigation-sidebar"])
+        for (cat, title), (label, _flow) in zip(hub["categories"], self.sections):
+            row = Gtk.ListBoxRow(child=Gtk.Label(label=_(title), xalign=0, margin_start=6,
+                                                 ellipsize=Pango.EllipsizeMode.END))
+            row.target = label
+            nav.append(row)
+        nav.connect("row-activated", lambda _l, row: self._jump(row.target))
+        side = Adw.ToolbarView()
+        side.add_top_bar(Adw.HeaderBar(show_title=False))
+        side.set_content(Gtk.ScrolledWindow(child=nav, hscrollbar_policy=Gtk.PolicyType.NEVER))
+        split = Adw.OverlaySplitView(sidebar=side, content=view,
+                                     min_sidebar_width=200, max_sidebar_width=240)
+        self.set_content(split)
+
+    def _jump(self, label):
+        ok, point = label.compute_point(self.content, Graphene.Point())
+        if ok:
+            self.scroller.get_vadjustment().set_value(max(0.0, point.y - 12))
 
     def _filter(self):
         q = self.search.get_text().lower()
@@ -123,6 +143,15 @@ class DevHub(Adw.ApplicationWindow):
             r = card.recipe
             match = not q or q in _(r["name"]).lower() or q in _(r["desc"]).lower()
             card.get_parent().set_visible(match)
+        # Hide categories with nothing left to show.
+        for label, flow in self.sections:
+            child = flow.get_first_child()
+            any_visible = False
+            while child is not None:
+                any_visible = any_visible or child.get_visible()
+                child = child.get_next_sibling()
+            label.set_visible(any_visible)
+            flow.set_visible(any_visible)
 
     def install(self, card):
         r = card.recipe

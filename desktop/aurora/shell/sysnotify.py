@@ -6,7 +6,7 @@ import subprocess
 
 from gi.repository import Gio, GLib
 
-from aurora import apps
+from aurora import apps, settings
 from aurora.i18n import _, ngettext
 
 UPDATE_CHECK_FIRST_S = 5 * 60        # first check a few minutes after login
@@ -101,6 +101,13 @@ class SystemNotifications:
         if mount.is_shadowed() or not mount.can_unmount():
             return
         root = mount.get_root()
+        s = settings.get()
+        action = s.get_string("removable-media-action") if s is not None else "notify"
+        if action == "nothing":
+            return
+        if action == "open":
+            apps.spawn(["aurora-files", root.get_uri()])
+            return
         self.notify(_("{name} connected").format(name=mount.get_name()),
                      _("The drive is ready to use."), "drive-removable-media",
                      [("open", _("Open")), ("eject", _("Eject"))],

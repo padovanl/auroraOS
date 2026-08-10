@@ -121,6 +121,17 @@ class Desktop(Page):
         self._combo(search, _("Super opens"), "launcher-style",
                     [("spotlight", _("Spotlight search")), ("grid", _("Launchpad (all apps)"))])
 
+        results = self.group(_("Search Results"), _("What Spotlight shows as you type."))
+        for key, title in (("apps", _("Apps")), ("files", _("Recent files")),
+                           ("settings", _("Settings")), ("projects", _("Code projects")),
+                           ("calculator", _("Calculator")),
+                           ("convert", _("Unit and currency conversion")),
+                           ("ai", _("Ask Aurora AI")), ("web", _("Web search"))):
+            def toggle(on, key=key):
+                off = [k for k in self.s.get_strv("search-disabled") if k != key]
+                self.s.set_strv("search-disabled", off if on else off + [key])
+            results.add(switch_row(title, key not in self.s.get_strv("search-disabled"), toggle))
+
         self._sync_presets()
 
     # --- helpers ---

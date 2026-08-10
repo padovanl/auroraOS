@@ -290,5 +290,44 @@
       <default>true</default>
       <summary>Lock the screen when it turns off</summary>
     </key>
+    <key name="suspend-battery-minutes" type="i">
+      <range min="0" max="240"/>
+      <default>20</default>
+      <summary>Minutes of inactivity on battery before the computer suspends (0 = never)</summary>
+    </key>
+    <key name="suspend-ac-minutes" type="i">
+      <range min="0" max="240"/>
+      <default>0</default>
+      <summary>Minutes of inactivity when plugged in before the computer suspends (0 = never)</summary>
+    </key>
+    <key name="show-battery-percentage" type="b">
+      <default>true</default>
+      <summary>Show the battery percentage in the top bar</summary>
+    </key>
+    <key name="notifications-muted-apps" type="as">
+      <default>[]</default>
+      <summary>Apps whose notifications are not shown</summary>
+    </key>
+    <key name="notifications-seen-apps" type="as">
+      <default>[]</default>
+      <summary>Apps that have sent notifications, listed in Settings</summary>
+    </key>
+    <key name="removable-media-action" type="s">
+      <choices><choice value="notify"/><choice value="open"/><choice value="nothing"/></choices>
+      <default>'notify'</default>
+      <summary>What to do when a drive is connected</summary>
+    </key>
+    <key name="window-animations" type="b">
+      <default>true</default>
+      <summary>Animate windows as they open and items as folders fill</summary>
+    </key>
+    <key name="volume-overamplify" type="b">
+      <default>false</default>
+      <summary>Allow raising the volume above 100%</summary>
+    </key>
+    <key name="search-disabled" type="as">
+      <default>[]</default>
+      <summary>Spotlight result categories that are turned off</summary>
+    </key>
   </schema>
 </schemalist>

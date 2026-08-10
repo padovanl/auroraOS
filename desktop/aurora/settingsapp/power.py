@@ -8,7 +8,7 @@ import subprocess
 from gi.repository import Adw
 
 from aurora import settings
-from aurora.i18n import _, ngettext
+from aurora.i18n import N_, _, ngettext
 from aurora.settingsapp.util import Page, combo_row, run, switch_row, toast
 
 LIMIT_FILE = "/etc/aurora/battery-limit"
@@ -24,6 +24,27 @@ def charge_limit_on():
     return os.path.exists(LIMIT_FILE)
 
 BLANK_MINUTES = [1, 2, 3, 5, 10, 15, 30, 0]
+SUSPEND_MINUTES = [5, 10, 15, 20, 30, 45, 60, 90, 120, 0]
+LOGIND_CONF = "/etc/systemd/logind.conf.d/50-aurora.conf"
+POWER_KEY = [("poweroff", N_("Power Off")), ("suspend", N_("Suspend")),
+             ("hibernate", N_("Hibernate")), ("ignore", N_("Nothing"))]
+LID = [("suspend", N_("Suspend")), ("ignore", N_("Nothing"))]
+
+
+def logind_value(key, default):
+    try:
+        with open(LOGIND_CONF) as f:
+            for line in f:
+                k, sep, v = line.strip().partition("=")
+                if sep and k == key:
+                    return v
+    except OSError:
+        pass
+    return default
+
+
+def has_lid():
+    return bool(glob.glob("/proc/acpi/button/lid/*"))
 PROFILES = [("power-saver", _("Power Saver")), ("balanced", _("Balanced")),
             ("performance", _("Performance"))]
 
@@ -60,6 +81,37 @@ class Power(Page):
             g.add(switch_row(_("Automatic screen lock"), aurora.get_boolean("idle-lock"),
                              set_lock))
 
+            sus = self.group(_("Automatic Suspend"),
+                             _("Suspend the computer when it has not been used for a while."))
+            labels = [ngettext("{n} minute", "{n} minutes", m).format(n=m) if m else _("Never")
+                      for m in SUSPEND_MINUTES]
+
+            def suspend_row(title, key):
+                cur = aurora.get_int(key)
+
+                def changed(i):
+                    aurora.set_int(key, SUSPEND_MINUTES[i])
+                    restart_idle()
+                return combo_row(title, labels, SUSPEND_MINUTES.index(cur)
+                                 if cur in SUSPEND_MINUTES else len(SUSPEND_MINUTES) - 1,
+                                 on_change=changed)
+            if self._battery():
+                sus.add(suspend_row(_("On battery"), "suspend-battery-minutes"))
+            sus.add(suspend_row(_("When plugged in"), "suspend-ac-minutes"))
+
+        buttons = self.group(_("Power Button and Lid"))
+        ids = [k for k, _l in POWER_KEY]
+        cur = logind_value("HandlePowerKey", "poweroff")
+        buttons.add(combo_row(_("Power button"), [_(label) for _k, label in POWER_KEY],
+                              ids.index(cur) if cur in ids else 0,
+                              on_change=lambda i: self._logind("power-key", ids[i])))
+        if has_lid():
+            lid_ids = [k for k, _l in LID]
+            cur = logind_value("HandleLidSwitch", "suspend")
+            buttons.add(combo_row(_("Closing the lid"), [_(label) for _k, label in LID],
+                                  lid_ids.index(cur) if cur in lid_ids else 0,
+                                  on_change=lambda i: self._logind("lid", lid_ids[i])))
+
         if shutil.which("powerprofilesctl"):
             p = self.group(_("Power mode"))
             cur = run(["powerprofilesctl", "get"]).strip()
@@ -72,6 +124,11 @@ class Power(Page):
         if bat:
             b = self.group(_("Battery"))
             b.add(Adw.ActionRow(title=_("Charge"), subtitle=bat))
+            if aurora:
+                b.add(switch_row(_("Show battery percentage"),
+                                 aurora.get_boolean("show-battery-percentage"),
+                                 lambda v: aurora.set_boolean("show-battery-percentage", v),
+                                 subtitle=_("Next to the battery icon in the top bar")))
             health = self._health()
             if health:
                 b.add(Adw.ActionRow(title=_("Battery health"), subtitle=health))
@@ -79,6 +136,12 @@ class Power(Page):
                 b.add(switch_row(_("Limit charging to 80%"), charge_limit_on(), self._set_limit,
                                  subtitle=_("Keeping a battery below full makes it last years "
                                             "longer. Turn off before a trip for a full charge.")))
+
+    def _logind(self, what, value):
+        from aurora.settingsapp.system import admin
+        ok, err = admin(what, value)
+        if not ok:
+            toast(self, err)
 
     def _health(self):
         out = run(["upower", "-i", "/org/freedesktop/UPower/devices/battery_BAT0"])

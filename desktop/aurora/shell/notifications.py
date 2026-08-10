@@ -211,13 +211,22 @@ class NotificationServer:
             nid = self._next_id
             self._next_id += 1
         note = Notification(nid, app_name, icon, summary, body, actions, hints, timeout)
+        s = settings.get()
+        # Remember who sends notifications, so Settings can list them; muted apps
+        # are dropped (critical ones still come through).
+        if s is not None and app_name:
+            seen = list(s.get_strv("notifications-seen-apps"))
+            if app_name not in seen:
+                s.set_strv("notifications-seen-apps", (seen + [app_name])[-60:])
+            if app_name in s.get_strv("notifications-muted-apps") and \
+                    note.urgency != URGENCY_CRITICAL:
+                return nid
         self.history = [n for n in self.history if n.id != nid]
         if not hints.get("transient"):
             self.history.insert(0, note)
             del self.history[HISTORY_LIMIT:]
             self._refresh_history()
 
-        s = settings.get()
         dnd = s is not None and s.get_boolean("do-not-disturb")
         if dnd and note.urgency != URGENCY_CRITICAL:
             return nid

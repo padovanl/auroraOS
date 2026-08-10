@@ -89,10 +89,23 @@ EOF
         valid_user "$user" || exit 2
         [ "$(id -u "$user")" -ge 1000 ] || exit 2
         userdel --remove "$user" ;;
+    power-key|lid)
+        # What the power button and closing the lid do (systemd-logind).
+        case "${1:-}" in suspend|poweroff|hibernate|ignore|lock) ;; *) exit 2 ;; esac
+        key=HandlePowerKey
+        [ "$cmd" = lid ] && key=HandleLidSwitch
+        conf=/etc/systemd/logind.conf.d/50-aurora.conf
+        mkdir -p "${conf%/*}"
+        touch "$conf"
+        grep -q '^\[Login\]' "$conf" || echo "[Login]" >> "$conf"
+        sed -i "/^$key=/d" "$conf"
+        echo "$key=$1" >> "$conf"
+        # logind rereads its configuration on SIGHUP.
+        systemctl kill -s HUP systemd-logind ;;
     set-admin)
         user="${1:-}"; valid_user "$user" || exit 2
         if [ "${2:-}" = yes ]; then usermod -aG sudo "$user"; else gpasswd -d "$user" sudo; fi ;;
     *)
-        echo "usage: aurora-admin firewall|phone|vnc|nearby|battery-limit|snapshots|snapshot-now|ssh|auto-updates|autologin|add-user|delete-user|set-admin ..." >&2
+        echo "usage: aurora-admin firewall|phone|vnc|nearby|battery-limit|snapshots|snapshot-now|ssh|auto-updates|autologin|add-user|delete-user|set-admin|power-key|lid ..." >&2
         exit 2 ;;
 esac

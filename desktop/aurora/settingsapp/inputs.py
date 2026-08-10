@@ -105,6 +105,22 @@ class Keyboard(Page):
                               lambda v: self._save(("keyboard", "numlock"),
                                                    "on" if v else "off")))
 
+        # Compose key: type accents and symbols as sequences (Compose, ', e → é).
+        from aurora.settingsapp.language import set_xkb_option, xkb_option
+        compose = self.group(_("Special Characters"),
+                             _("Press the Compose key, then a sequence: ' then e gives é, "
+                               "o then c gives ©, = then e gives €."))
+        keys = [("", _("None")), ("compose:ralt", _("Right Alt")),
+                ("compose:rwin", _("Right Super")), ("compose:menu", _("Menu key")),
+                ("compose:rctrl", _("Right Ctrl")), ("compose:caps", _("Caps Lock"))]
+        cur = xkb_option("compose:")
+        ids = [k for k, _l in keys]
+        compose.add(combo_row(_("Compose key"), [label for _k, label in keys],
+                              ids.index(cur) if cur in ids else 0,
+                              on_change=lambda i: set_xkb_option("compose:", ids[i])))
+        compose.add(Adw.ActionRow(title=_("Emoji"),
+                                  subtitle=_("Super+. opens the emoji picker in any app.")))
+
         self.shortcuts = self.group(_("Shortcuts"),
                                     _("Built-in shortcuts, plus your own commands."))
         add = Gtk.Button(icon_name="list-add-symbolic", css_classes=["flat"],

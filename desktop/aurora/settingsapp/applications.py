@@ -1,12 +1,14 @@
 """Apps (default applications, startup apps), Notifications and Accessibility."""
 
 import os
+import shutil
+import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gio, GLib, Gtk
 
-from aurora import apps, settings
+from aurora import apps, labwcconf, settings
 from aurora.i18n import N_, _
-from aurora.settingsapp.util import Page, switch_row
+from aurora.settingsapp.util import Page, combo_row, switch_row
 
 DEFAULTS = [
     (N_("Web"), "x-scheme-handler/https", ["x-scheme-handler/http", "text/html"]),
@@ -136,6 +138,59 @@ class Notifications(Page):
         info = self.group(_("Where to find them"))
         info.add(Adw.ActionRow(title=_("Click the clock in the top bar"),
                                subtitle=_("to see past notifications and the calendar.")))
+        if not s:
+            return
+
+        per_app = self.group(_("App Notifications"),
+                             _("Apps appear here after their first notification."))
+        seen = sorted(s.get_strv("notifications-seen-apps"), key=str.lower)
+        if not seen:
+            per_app.add(Adw.ActionRow(title=_("No notifications yet")))
+        for name in seen:
+            def toggle(on, name=name):
+                muted = [a for a in s.get_strv("notifications-muted-apps") if a != name]
+                if not on:
+                    muted.append(name)
+                s.set_strv("notifications-muted-apps", muted)
+            per_app.add(switch_row(name, name not in s.get_strv("notifications-muted-apps"),
+                                   toggle))
+
+        media = self.group(_("Removable Media"))
+        actions = [("notify", _("Show a notification")), ("open", _("Open in Files")),
+                   ("nothing", _("Do nothing"))]
+        ids = [a for a, _l in actions]
+        cur = s.get_string("removable-media-action")
+        media.add(combo_row(_("When a drive is connected"), [label for _a, label in actions],
+                            ids.index(cur) if cur in ids else 0,
+                            on_change=lambda i: s.set_string("removable-media-action", ids[i])))
+
+
+SCREEN_KEYBOARD = "wvkbd-mobintl"
+SCREEN_KEYBOARD_AUTOSTART = os.path.join(GLib.get_user_config_dir(), "autostart",
+                                         "aurora-screen-keyboard.desktop")
+TEXT_SIZES = [(1.0, N_("Default")), (1.25, N_("Large")), (1.5, N_("Larger"))]
+POINTER_SIZES = [(24, N_("Default")), (32, N_("Medium")), (48, N_("Large")),
+                 (64, N_("Larger")), (96, N_("Largest"))]
+ZOOM_LEVELS = [1.5, 2.0, 3.0, 4.0]
+DOUBLE_CLICK = [(250, N_("Fast")), (400, N_("Normal")), (600, N_("Slow")), (900, N_("Slowest"))]
+# labwc's magnifier, bound like GNOME's zoom shortcuts.
+ZOOM_KEYS = [("W-A-8", "ToggleMagnify"), ("W-A-equal", "ZoomIn"), ("W-A-minus", "ZoomOut")]
+
+
+def ensure_zoom_keys(cfg):
+    """Add the magnifier shortcuts to configs made before they existed."""
+    have = {key for key, *_rest in cfg.keybinds()}
+    changed = False
+    for key, action in ZOOM_KEYS:
+        if key not in have:
+            kb = ET.SubElement(cfg.node("keyboard"), "keybind", key=key)
+            ET.SubElement(kb, "action", name=action)
+            changed = True
+    return changed
+
+
+def nearest(options, value):
+    return min(range(len(options)), key=lambda i: abs(options[i][0] - value))
 
 
 class Accessibility(Page):
@@ -146,18 +201,28 @@ class Accessibility(Page):
     def build(self):
         iface = settings.interface()
         a11y = settings.get("org.gnome.desktop.a11y.interface")
+        cfg = labwcconf.Config()
+        if ensure_zoom_keys(cfg):
+            cfg.save()
+
         seeing = self.group(_("Seeing"))
         if a11y:
             seeing.add(switch_row(_("High contrast"), a11y.get_boolean("high-contrast"),
                                   lambda v: a11y.set_boolean("high-contrast", v)))
         if iface:
-            seeing.add(switch_row(_("Large text"), iface.get_double("text-scaling-factor") > 1.1,
-                                  lambda v: iface.set_double("text-scaling-factor",
-                                                             1.3 if v else 1.0)))
-            seeing.add(switch_row(_("Large pointer"), iface.get_int("cursor-size") >= 48,
-                                  lambda v: iface.set_int("cursor-size", 48 if v else 24)))
+            seeing.add(combo_row(_("Text size"), [_(t[1]) for t in TEXT_SIZES],
+                                 nearest(TEXT_SIZES, iface.get_double("text-scaling-factor")),
+                                 on_change=lambda i: iface.set_double("text-scaling-factor",
+                                                                      TEXT_SIZES[i][0])))
+            seeing.add(combo_row(_("Pointer size"), [_(t[1]) for t in POINTER_SIZES],
+                                 nearest(POINTER_SIZES, iface.get_int("cursor-size")),
+                                 on_change=lambda i: iface.set_int("cursor-size",
+                                                                   POINTER_SIZES[i][0])))
             seeing.add(switch_row(_("Reduce animation"), not iface.get_boolean("enable-animations"),
                                   lambda v: iface.set_boolean("enable-animations", not v)))
+            seeing.add(switch_row(_("Always show scrollbars"),
+                                  not iface.get_boolean("overlay-scrolling"),
+                                  lambda v: iface.set_boolean("overlay-scrolling", not v)))
         apps_settings = settings.get("org.gnome.desktop.a11y.applications")
         if apps_settings:
             def toggle_reader(v):
@@ -169,3 +234,74 @@ class Accessibility(Page):
             seeing.add(switch_row(_("Screen reader"),
                                   apps_settings.get_boolean("screen-reader-enabled"),
                                   toggle_reader, subtitle=_("Reads the screen aloud (Orca)")))
+
+        zoom = self.group(_("Zoom"), _("Super+Alt+8 turns zoom on and off; Super+Alt+= and "
+                                       "Super+Alt+− zoom in and out."))
+        level = float(cfg.get("magnifier", "initScale", default="2.0") or 2.0)
+        zoom.add(combo_row(_("Magnification"), [f"{z:g}×" for z in ZOOM_LEVELS],
+                           min(range(len(ZOOM_LEVELS)), key=lambda i: abs(ZOOM_LEVELS[i] - level)),
+                           on_change=lambda i: self._magnifier(initScale=ZOOM_LEVELS[i])))
+        full = cfg.get("magnifier", "width", default="-1") == "-1"
+        zoom.add(combo_row(_("Zoom area"), [_("Whole screen"), _("Lens around the pointer")],
+                           0 if full else 1,
+                           on_change=lambda i: self._magnifier(width=-1 if i == 0 else 500,
+                                                               height=-1 if i == 0 else 300)))
+
+        hearing = self.group(_("Hearing"))
+        sounds = settings.get("org.gnome.desktop.sound")
+        if sounds:
+            hearing.add(switch_row(_("Alert sounds"), sounds.get_boolean("event-sounds"),
+                                   lambda v: sounds.set_boolean("event-sounds", v)))
+        hearing.add(Adw.ActionRow(title=_("Captions"),
+                                  subtitle=_("Firefox and Videos show subtitles when a video "
+                                             "has them; Aurora AI can dictate what you say.")))
+
+        typing = self.group(_("Typing"))
+        if shutil.which(SCREEN_KEYBOARD):
+            typing.add(switch_row(_("Screen keyboard"), os.path.exists(SCREEN_KEYBOARD_AUTOSTART),
+                                  self._screen_keyboard,
+                                  subtitle=_("A keyboard on the screen, for touch screens or "
+                                             "when a keyboard is hard to use")))
+        if iface:
+            typing.add(switch_row(_("Blinking text cursor"), iface.get_boolean("cursor-blink"),
+                                  lambda v: iface.set_boolean("cursor-blink", v)))
+        typing.add(Adw.ActionRow(title=_("Repeat keys"),
+                                 subtitle=_("Repeat delay and speed are in Keyboard.")))
+
+        pointing = self.group(_("Pointing & Clicking"))
+        mouse = settings.get("org.gnome.desktop.peripherals.mouse")
+        cur = int(cfg.get("mouse", "doubleClickTime", default="400") or 400)
+        pointing.add(combo_row(_("Double-click delay"), [_(t[1]) for t in DOUBLE_CLICK],
+                               nearest(DOUBLE_CLICK, cur),
+                               on_change=lambda i: self._double_click(DOUBLE_CLICK[i][0], mouse)))
+        pointing.add(Adw.ActionRow(title=_("Pointer speed"),
+                                   subtitle=_("Speed, left-handed use and gestures are in "
+                                              "Mouse & Touchpad.")))
+
+    def _magnifier(self, **values):
+        cfg = labwcconf.Config()
+        for key, value in values.items():
+            cfg.set("magnifier", key, value=value)
+        cfg.save()
+
+    def _double_click(self, ms, mouse):
+        cfg = labwcconf.Config()
+        cfg.set("mouse", "doubleClickTime", value=ms)
+        cfg.save()
+        if mouse:
+            mouse.set_int("double-click", ms)
+
+    def _screen_keyboard(self, on):
+        if on:
+            os.makedirs(os.path.dirname(SCREEN_KEYBOARD_AUTOSTART), exist_ok=True)
+            with open(SCREEN_KEYBOARD_AUTOSTART, "w") as f:
+                f.write("[Desktop Entry]\nType=Application\nName=Screen Keyboard\n"
+                        f"Exec={SCREEN_KEYBOARD} -L 260\nNoDisplay=true\n")
+            apps.spawn([SCREEN_KEYBOARD, "-L", "260"])
+        else:
+            try:
+                os.remove(SCREEN_KEYBOARD_AUTOSTART)
+            except FileNotFoundError:
+                pass
+            apps.spawn(["pkill", "-x", SCREEN_KEYBOARD])
+

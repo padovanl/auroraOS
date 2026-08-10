@@ -1,5 +1,6 @@
 """Sound: output/input devices and volumes via PipeWire (pw-dump + wpctl)."""
 
+import shutil
 import subprocess
 
 from gi.repository import Adw, GLib, Gtk
@@ -26,6 +27,12 @@ class Sound(Page):
 
         aurora = settings.get()
         if aurora is not None:
+            loud = self.group()
+            loud.add(switch_row(_("Over-amplification"), aurora.get_boolean("volume-overamplify"),
+                                lambda v: (aurora.set_boolean("volume-overamplify", v),
+                                           self.refresh()),
+                                subtitle=_("Allow the volume above 100%. Sound may be "
+                                           "distorted.")))
             alerts = self.group(_("System Sounds"))
             row = switch_row(_("Startup and shutdown sounds"), aurora.get_boolean("session-sounds"),
                              lambda v: aurora.set_boolean("session-sounds", v),
@@ -76,7 +83,11 @@ class Sound(Page):
                                 tooltip_text=_("Mute"))
         mute.connect("toggled", lambda b: run(["wpctl", "set-mute", target,
                                                "1" if b.get_active() else "0"]))
-        scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 1.0, 0.01)
+        aurora = settings.get()
+        top = 1.5 if aurora is not None and aurora.get_boolean("volume-overamplify") else 1.0
+        scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, top, 0.01)
+        if top > 1.0:
+            scale.add_mark(1.0, Gtk.PositionType.BOTTOM, None)
         scale.set_value(vol)
         scale.set_hexpand(True)
         scale.set_size_request(260, -1)
@@ -87,3 +98,27 @@ class Sound(Page):
         row.add_suffix(scale)
         row.add_suffix(mute)
         self._add(group, row)
+        if target == "@DEFAULT_AUDIO_SINK@" and shutil.which("pactl"):
+            self._add(group, self._balance_row(scale))
+
+    def _balance_row(self, volume):
+        """Left/right balance, applied as per-channel volumes (pactl)."""
+        row = Adw.ActionRow(title=_("Balance"))
+        bal = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -1.0, 1.0, 0.05)
+        bal.set_value(0.0)
+        bal.add_mark(0.0, Gtk.PositionType.BOTTOM, None)
+        bal.set_hexpand(True)
+        bal.set_size_request(260, -1)
+        bal.set_draw_value(False)
+
+        def apply(*_a):
+            v, b = volume.get_value(), bal.get_value()
+            left = v * (1 - max(0.0, b))
+            right = v * (1 + min(0.0, b))
+            run(["pactl", "set-sink-volume", "@DEFAULT_SINK@",
+                 f"{left * 100:.0f}%", f"{right * 100:.0f}%"])
+        bal.connect("value-changed", apply)
+        row.add_prefix(Gtk.Label(label=_("Left"), css_classes=["dim-label"]))
+        row.add_suffix(bal)
+        row.add_suffix(Gtk.Label(label=_("Right"), css_classes=["dim-label"]))
+        return row

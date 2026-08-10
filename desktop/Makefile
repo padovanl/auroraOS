@@ -31,6 +31,8 @@ install: protocols translations wallpapers sounds
 	install -m 644 data/style/* $(DATADIR)/style/
 	install -d $(SHAREDIR)/themes
 	$(PYTHON) data/themes/generate.py $(SHAREDIR)/themes
+	install -d $(SHAREDIR)/icons
+	$(PYTHON) $(BRANDING)/icons/generate.py $(SHAREDIR)/icons
 	install -d $(SHAREDIR)/wayland-sessions $(SHAREDIR)/applications
 	install -m 644 data/wayland-sessions/*.desktop $(SHAREDIR)/wayland-sessions/
 	install -m 644 data/applications/*.desktop $(SHAREDIR)/applications/

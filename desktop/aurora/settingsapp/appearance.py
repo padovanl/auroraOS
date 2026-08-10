@@ -104,7 +104,7 @@ class Appearance(Page):
 
         icons = installed_themes("icons") or [("Adwaita", "Adwaita")]
         icon_ids = [t[0] for t in icons]
-        cur_icons = iface.get_string("icon-theme") if iface else "Papirus-Dark"
+        cur_icons = iface.get_string("icon-theme") if iface else "Aurora-Dark"
         style.add(combo_row(_("Icons"), [t[1] for t in icons],
                             icon_ids.index(cur_icons) if cur_icons in icon_ids else 0,
                             on_change=lambda i: iface and iface.set_string(
@@ -125,6 +125,16 @@ class Appearance(Page):
         if iface:
             style.add(switch_row(_("Animations"), iface.get_boolean("enable-animations"),
                                  lambda v: iface.set_boolean("enable-animations", v)))
+        aurora = settings.get()
+        if aurora is not None:
+            def set_window_animations(v):
+                from aurora import look
+                aurora.set_boolean("window-animations", v)
+                look.apply()
+            style.add(switch_row(_("Window animations"), aurora.get_boolean("window-animations"),
+                                 set_window_animations,
+                                 subtitle=_("Windows fade in as they open; files and folders "
+                                            "float in as a folder opens")))
 
         fonts = self.group(_("Fonts"))
         if iface:

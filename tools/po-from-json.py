@@ -19,6 +19,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POT = os.path.join(ROOT, "desktop", "po", "aurora.pot")
 
 PLURALS = {
+    "it": "nplurals=2; plural=(n != 1);",
     "es": "nplurals=2; plural=(n != 1);",
     "de": "nplurals=2; plural=(n != 1);",
     "pt": "nplurals=2; plural=(n != 1);",
@@ -31,7 +32,7 @@ PLURALS = {
     "ar": "nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : "
           "n%100>=11 ? 4 : 5);",
 }
-NAMES = {"es": "Spanish", "de": "German", "pt": "Portuguese", "hi": "Hindi", "fr": "French",
+NAMES = {"it": "Italian", "es": "Spanish", "de": "German", "pt": "Portuguese", "hi": "Hindi", "fr": "French",
          "ru": "Russian", "zh_CN": "Chinese (Simplified)", "ja": "Japanese", "ar": "Arabic"}
 FIELD = re.compile(r"\{[a-z_]+(?::[^}]*)?\}")
 

@@ -24,8 +24,19 @@ install -Dm644 "$SRC/config/keys/aurora-archive-keyring.gpg" \
     "$ROOTFS/usr/share/keyrings/aurora-archive-keyring.gpg"
 
 in_chroot glib-compile-schemas /usr/share/glib-2.0/schemas
-in_chroot gtk-update-icon-cache -f -t /usr/share/icons/hicolor || true
+for theme in hicolor Aurora Aurora-Dark; do
+    in_chroot gtk-update-icon-cache -f -t "/usr/share/icons/$theme" || true
+done
 in_chroot update-desktop-database -q /usr/share/applications || true
 
 # Ptyxis is the default terminal (foot stays for scripted terminal windows).
 in_chroot update-alternatives --set x-terminal-emulator /usr/bin/ptyxis || true
+
+# Keep Launchpad tidy: hide duplicates and helper entries that come with packages
+# (foot's extra entries, Evince next to Papers, KDE Connect's secondary windows,
+# terminal editors that open from the terminal).
+for id in foot footclient foot-server org.gnome.Evince org.kde.kdeconnect.nonplasma \
+          org.kde.kdeconnect-settings org.kde.kdeconnect.sms vim nvim; do
+    f="$ROOTFS/usr/share/applications/$id.desktop"
+    [ -f "$f" ] && ! grep -q '^NoDisplay=true' "$f" && sed -i '0,/^\[Desktop Entry\]/s//[Desktop Entry]\nNoDisplay=true/' "$f" || true
+done

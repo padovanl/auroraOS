@@ -5,6 +5,8 @@
 minutes=$(gsettings get org.aurora.desktop idle-dim-minutes 2>/dev/null | awk '{print $NF}')
 lock=$(gsettings get org.aurora.desktop idle-lock 2>/dev/null)
 minutes=${minutes:-5}
+suspend_battery=$(gsettings get org.aurora.desktop suspend-battery-minutes 2>/dev/null | awk '{print $NF}')
+suspend_ac=$(gsettings get org.aurora.desktop suspend-ac-minutes 2>/dev/null | awk '{print $NF}')
 # The live user has no password; locking would only get in the way.
 grep -qw boot=live /proc/cmdline && lock=false
 
@@ -18,5 +20,15 @@ if [ "$minutes" -gt 0 ]; then
         set -- "$@" timeout "$secs" "aurora-lock"
     fi
     set -- "$@" timeout "$((secs + 15))" "wlopm --off '*'" resume "wlopm --on '*'"
+fi
+# Automatic suspend, separately on battery and when plugged in (Settings → Power).
+# Not in the live session, where suspending would only interrupt an installation.
+if ! grep -qw boot=live /proc/cmdline; then
+    if [ "${suspend_battery:-0}" -gt 0 ]; then
+        set -- "$@" timeout "$((suspend_battery * 60))" "aurora-idle-suspend battery"
+    fi
+    if [ "${suspend_ac:-0}" -gt 0 ]; then
+        set -- "$@" timeout "$((suspend_ac * 60))" "aurora-idle-suspend ac"
+    fi
 fi
 exec "$@"

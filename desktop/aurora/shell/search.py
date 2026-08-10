@@ -10,7 +10,7 @@ from typing import Callable
 
 from gi.repository import Gdk, Gio
 
-from aurora import apps
+from aurora import apps, settings
 from aurora.i18n import N_, _
 
 
@@ -467,8 +467,14 @@ def search(query, open_settings, refresh=None):
         return search_emoji(stripped)
     if stripped.startswith("?"):
         return search_ai(stripped)
-    results = (search_calculator(query) + search_convert(query, refresh) + search_apps(query)
-               + search_settings(query, open_settings) + search_projects(query)
-               + search_recent(query) + search_ai(query))
+    off = set(settings.get().get_strv("search-disabled")) if settings.get() else set()
+    providers = [("calculator", lambda: search_calculator(query)),
+                 ("convert", lambda: search_convert(query, refresh)),
+                 ("apps", lambda: search_apps(query)),
+                 ("settings", lambda: search_settings(query, open_settings)),
+                 ("projects", lambda: search_projects(query)),
+                 ("files", lambda: search_recent(query)),
+                 ("ai", lambda: search_ai(query))]
+    results = [r for name, provider in providers if name not in off for r in provider()]
     results.sort(key=lambda r: -r.score)
-    return results[:30] + fallback_results(query)
+    return results[:30] + ([] if "web" in off else fallback_results(query))

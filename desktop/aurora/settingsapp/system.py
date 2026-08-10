@@ -315,6 +315,15 @@ class Users(Page):
         self._refresh_fingerprint = lambda: GLib.idle_add(self._fill_fingerprint)
         self._fill_fingerprint()
 
+        if shutil.which("gnome-online-accounts-gtk"):
+            online = self.group(_("Online Accounts"),
+                                _("Sign in to Google, Microsoft, Nextcloud and others: Calendar, "
+                                  "Contacts, Files and Mail use them."))
+            row = Adw.ActionRow(title=_("Online Accounts"), activatable=True)
+            row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
+            row.connect("activated", lambda *_a: apps.spawn(["gnome-online-accounts-gtk"]))
+            online.add(row)
+
         login = self.group(_("Login"))
         autologin = self._current_autologin()
         login.add(switch_row(_("Log in automatically"), autologin == me.pw_name,

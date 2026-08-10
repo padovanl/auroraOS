@@ -405,6 +405,7 @@ class FilesWindow(Adw.ApplicationWindow):
             self.forward_stack.clear()
         self.current = gfile
         self.dirlist.set_file(gfile)
+        self._animate_items()
         self.search_btn.set_active(False)
         self._update_path()
         self._update_nav()
@@ -512,6 +513,28 @@ class FilesWindow(Adw.ApplicationWindow):
     def set_list_view(self, value):
         self._view_name = "list" if value else "grid"
         self._update_empty()
+
+    def _animate_items(self):
+        """Let the items float in (gtk4-animations.css) while the folder fills; the
+        class is removed afterwards so scrolling does not replay it."""
+        views = (self.grid, self.list)
+        for v in views:
+            v.remove_css_class("appear")
+        if getattr(self, "_appear_source", 0):
+            GLib.source_remove(self._appear_source)
+
+        def start():
+            for v in views:
+                v.add_css_class("appear")
+            self._appear_source = GLib.timeout_add(700, stop)
+            return GLib.SOURCE_REMOVE
+
+        def stop():
+            self._appear_source = 0
+            for v in views:
+                v.remove_css_class("appear")
+            return GLib.SOURCE_REMOVE
+        GLib.idle_add(start)
 
     def _on_loading(self, *_a):
         if not self.dirlist.is_loading():

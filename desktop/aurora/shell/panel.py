@@ -172,6 +172,9 @@ class StatusArea(Gtk.MenuButton):
         shell.battery.connect("changed", lambda *a: self._update())
         shell.bluetooth.connect("changed", lambda *a: self._update())
         shell.recorder.connect("changed", lambda *a: self._update())
+        s = settings.get()
+        if s:
+            s.connect("changed::show-battery-percentage", lambda *a: self._update())
         self._update()
 
     def _update(self):
@@ -184,7 +187,9 @@ class StatusArea(Gtk.MenuButton):
         self.rec_icon.set_visible(self.shell.recorder.recording)
         bat = self.shell.battery
         self.bat_icon.set_visible(bat.present)
-        self.bat_label.set_visible(bat.present)
+        s = settings.get()
+        show_pct = s is None or s.get_boolean("show-battery-percentage")
+        self.bat_label.set_visible(bat.present and show_pct)
         if bat.present:
             self.bat_icon.set_from_icon_name(bat.icon_name)
             self.bat_label.set_label(f"{bat.percentage:.0f}%")
