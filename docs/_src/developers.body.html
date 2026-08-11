@@ -31,7 +31,7 @@
         <span>Python 3 + pip, venv, pipx</span><span>Node.js + npm</span><span>Docker + Compose</span>
         <span>Podman</span><span>distrobox</span><span>neovim</span><span>tmux</span><span>ripgrep</span>
         <span>fd</span><span>fzf</span><span>bat</span><span>btop</span><span>jq</span><span>httpie</span>
-        <span>direnv</span><span>starship</span><span>shellcheck</span><span>portop</span>
+        <span>direnv</span><span>starship</span><span>zsh</span><span>shellcheck</span><span>portop</span><span>pkgtui</span>
         <span>JetBrains Mono</span><span>Fira Code</span>
       </div>
       <p><strong>Ptyxis</strong>, the terminal, has tabs, profiles and one-click shells inside your
@@ -39,18 +39,37 @@
         versions, command duration), <kbd>Ctrl</kbd>+<kbd>R</kbd> fuzzy history and sensible aliases.
         Docker starts on first use, so it costs nothing at boot.</p>
       <p><strong>portop</strong> shows what's using every port (process, systemd service or
-        Docker container) and stops it with one key.</p>
+        Docker container) and stops it with one key. <strong>pkgtui</strong> searches, installs,
+        removes and upgrades apt, Flatpak and Snap packages from one terminal UI.</p>
     </div>
   </div>
 
   <div class="feature reveal">
     <div class="feature-text">
       <h3>Dev Hub: your toolbox in one click</h3>
-      <p>VS Code, VSCodium, Zed, IntelliJ, PyCharm, Android Studio, Rust, Go, Java, uv, Bun, Deno,
-        GitHub CLI, kubectl, Terraform, AWS CLI, PostgreSQL, MariaDB, Redis, MongoDB, DBeaver,
-        Postman, and the AI coding agents Claude Code and Codex (sign in with your subscription),
-        plus Ollama for more local models. Each one installs from its <em>official</em> source, so you always get the newest
+      <p>About 90 tools in 17 categories, with a sidebar to jump between them and a search
+        box. Each one installs from its <em>official</em> source, so you always get the newest
         release, and you see every step in a terminal.</p>
+      <ul>
+        <li><strong>Editors, languages, cloud, databases:</strong> VS Code, VSCodium, Zed,
+          JetBrains IDEs, Android Studio, Rust, Go, Java, uv, Bun, Deno, GitHub CLI, kubectl,
+          Terraform, AWS CLI, PostgreSQL, MariaDB, Redis, MongoDB, DBeaver, Postman.</li>
+        <li><strong>AI assistants:</strong> Claude Code and Codex (sign in with your
+          subscription), Ollama for more local models.</li>
+        <li><strong>Shells &amp; terminals:</strong> Zsh with Oh My Zsh, fish, a one-click switch
+          of the default shell (and back to Bash), Starship, Zellij, kitty, Alacritty, WezTerm,
+          Tilix, Terminator, GNOME Console.</li>
+        <li><strong>Command line and version control:</strong> eza, yq, just, zoxide, Atuin,
+          delta, Glow, Meld, GitLab CLI, GitHub Desktop, GitKraken, Sublime Merge.</li>
+        <li><strong>Containers &amp; VMs:</strong> Podman Desktop, Virtual Machine Manager,
+          GNOME Boxes, kind, k9s, Helm, lazydocker.</li>
+        <li><strong>Web, mobile, debugging:</strong> Chrome, Chromium, mkcert, Caddy, nginx,
+          Android platform tools, Flutter, gdb/valgrind/strace/perf, hyperfine, Wireshark,
+          Bruno, Insomnia, Dev Toolbox.</li>
+        <li><strong>Data, games, hardware, design, security:</strong> JupyterLab, Miniforge, R,
+          Octave, Godot, Blender, LÖVE, Arduino IDE, PlatformIO, KiCad, serial consoles,
+          Inkscape, GIMP, draw.io, Obsidian, Zeal, Nmap, ZAP, Tailscale, Mosh.</li>
+      </ul>
     </div>
     <div class="feature-media">
       <img src="screenshots/devhub.png" alt="Dev Hub with one-click installers" data-zoom>

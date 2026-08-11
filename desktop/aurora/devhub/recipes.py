@@ -252,7 +252,7 @@ aws --version
     {"id": "starship", "cat": "shells", "name": "Starship", "icon": "starship",
      "fallback_icon": "utilities-terminal",
      "desc": N_("A fast, informative prompt for Bash, Zsh and fish."),
-     "check": "test -x ~/.local/bin/starship",
+     "check": "command -v starship",
      "script": "mkdir -p ~/.local/bin\n"
                "curl -sS https://starship.rs/install.sh | sh -s -- -y -b ~/.local/bin\n"
                "grep -q 'starship init bash' ~/.bashrc || "

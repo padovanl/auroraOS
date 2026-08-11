@@ -124,18 +124,36 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right). |
 | **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons whose symbols are always visible (×, −, and arrows to expand or restore; or monochrome), server-side and GTK decorations styled alike. |
+| **Animations** | Windows fade and settle in as they open, and files float in, row by row, as a folder opens in Files. Switch them off in Settings → Appearance. |
+| **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
 | **One look everywhere** | libadwaita apps, GTK 3 apps (adw-gtk3), plain GTK 4 apps, Qt apps (QGnomePlatform), window decorations and icons all follow the light/dark style and accent color you pick. |
 
 ### Apps written for Aurora
-- **Settings**: Network (share Wi-Fi with a QR code), Bluetooth, Displays, Sound (session
-  sounds), Power (battery health, 80% charge limit), Appearance, Desktop & Dock,
-  Multitasking, Notifications, Apps (default and startup apps), Mouse & Touchpad (gestures),
-  Keyboard (repeat and custom shortcuts), Printers, Accessibility, Privacy & Security
-  (screen lock, file history, clipboard history, weather, firewall), Sharing (screen
-  sharing, nearby sharing, phone, SSH), **AI**, Users (fingerprint), Language & Region,
-  Date & Time, Software Updates (system snapshots), **System Health**, About.
+- **Settings**: everything Ubuntu's Settings has, and more:
+  - **Network** (share Wi-Fi with a QR code, VPNs), **Bluetooth**, **Displays** (resolution
+    and refresh rate, scale, rotation).
+  - **Sound**: devices, volume, left/right balance, over-amplification, session sounds.
+  - **Power**: screen blank, automatic suspend on battery and when plugged in, what the
+    power button and the lid do, power mode, battery percentage, battery health, 80%
+    charge limit.
+  - **Appearance**: style, accent, wallpaper, icons, pointer, fonts, Night Light,
+    animations and window animations. **Desktop & Dock** (layouts, top bar, dock, window
+    buttons, desktop icons, what Spotlight shows), **Multitasking**.
+  - **Notifications**: Do Not Disturb, notifications per app, what happens when a drive is
+    connected. **Apps**: default and startup apps.
+  - **Mouse & Touchpad** (gestures), **Keyboard** (repeat, Compose key for special
+    characters, custom shortcuts), **Printers**.
+  - **Accessibility**: high contrast, text size, pointer size, reduced animation, always
+    visible scrollbars, screen reader, **zoom** (whole screen or a lens,
+    <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>8</kbd>), alert sounds, **screen keyboard**,
+    blinking cursor, double-click delay.
+  - **Privacy & Security** (screen lock, file history, clipboard history, weather,
+    firewall), **Sharing** (screen sharing, nearby sharing, phone, SSH), **AI**.
+  - **Users** (fingerprint, **online accounts** for Google, Microsoft, Nextcloud…),
+    Language & Region, Date & Time, Software Updates (system snapshots), **System
+    Health**, About.
 - **Aurora Assistant**: chat with the AI, with quick actions on copied text (summarize,
   improve, translate, explain), code blocks you can copy, answers read aloud, and
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
@@ -143,8 +161,13 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   with progress, trash with restore, rename, new folder, "Open With", properties, open in
   terminal, **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
   "Summarize" and "Ask About This File".
-- **Dev Hub**: one-click installers for editors, languages, cloud tools, databases and AI
-  assistants (Claude Code, Codex, Ollama).
+- **Dev Hub**: about 90 one-click installers in 17 categories, with a category sidebar
+  and search: editors and IDEs, languages and runtimes, cloud and DevOps, databases and
+  API tools, AI assistants (Claude Code, Codex, Ollama), **shells and terminals** (Zsh,
+  Oh My Zsh, fish, default-shell switch, Starship, Zellij, kitty, Alacritty, WezTerm,
+  Tilix, Terminator, GNOME Console), command-line tools, version control, containers and
+  virtual machines, web, mobile, debugging and performance, data science, game
+  development, embedded and hardware, design and documentation, security and networking.
 - **Game Hub**: Steam, Heroic, Lutris, Bottles, ProtonUp-Qt, GameMode, MangoHud, Waydroid.
 - **Welcome**: first-run tour (light or dark, shortcuts, install).
 
@@ -152,8 +175,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 - **Developers:** git, git-lfs, lazygit, delta, build-essential, gdb, cmake, shellcheck,
   Python (pip, venv, pipx), Node.js and npm, Docker (+ compose, buildx), Podman, distrobox,
   neovim, tmux, ripgrep, fd, fzf, bat, btop, jq, httpie, direnv, tldr, starship, zsh,
-  JetBrains Mono and Fira Code, and **[portop](https://github.com/padovanl/portop)** (see
-  which process holds a port and stop it with one key).
+  JetBrains Mono and Fira Code, **[portop](https://github.com/padovanl/portop)** (see
+  which process holds a port and stop it with one key) and
+  **[pkgtui](https://github.com/padovanl/pkgtui)** (search, install, remove and upgrade
+  apt, Flatpak and Snap packages from one terminal UI).
 - **Everyday** (the same set of apps Ubuntu ships): Firefox, Geary Mail, LibreOffice
   (Writer, Calc, Impress), Calendar, Contacts, Weather, Maps, Clocks, Calculator, Text
   Editor, Image Viewer, Document Viewer (PDF), Music (Rhythmbox), Videos (Celluloid, with
@@ -891,8 +916,24 @@ set up a feature, and every place it appears has its own switch.
   isn't in Debian. The build downloads its upstream release, pinned by SHA-256, and the
   shell switches it between light and dark and writes the accent color.
 - **Qt apps** use **QGnomePlatform** with Adwaita-Qt, so they follow the same settings.
-- **Icons:** Papirus. It covers the most apps with a consistent look, switches between
-  light and dark with the style, and includes brand icons for developer tools.
+- **Icons:** Aurora's own theme (`Aurora` and `Aurora-Dark`), generated by
+  `branding/icons/generate.py`: about 45 app icons (rounded squares with a gradient and a
+  white glyph), folders with emblems, drives, and some 150 file types as pages with a
+  glyph and a colored label. It inherits **Papirus** for symbolic icons (panel, sidebars,
+  buttons) and for apps it doesn't draw, and leaves brand icons (Firefox, LibreOffice,
+  Steam, VS Code…) to their apps: those are recognized by their logo.
+- **Window buttons:** the round colored buttons always show their symbol (×, −, and two
+  arrows to expand or restore) instead of hiding it until hover as on a Mac, softer until
+  the pointer is over them. The same design is drawn for labwc's borders, GTK 4 and
+  GTK 3 apps.
+- **Animations:** labwc doesn't animate windows, so Aurora does it in GTK: a short fade and
+  settle as a window opens, and items floating in, row by row, as a folder opens in Files
+  (`gtk4-animations.css`, loaded only when Window animations are on; GTK skips it when
+  animations are off system-wide).
+- **Rendering in virtual machines:** without a real GPU the session uses wlroots'
+  **pixman** renderer and GTK's **cairo** renderer (`aurora-render-env`). The software GL
+  paths (llvmpipe) left stale regions on screen after partial redraws. Real GPUs keep
+  hardware rendering.
 - **Fonts:** Inter for the interface (highly legible on screens), JetBrains Mono for code,
   Noto for every script (CJK, Arabic, Devanagari, emoji) so 20 languages render
   correctly.
@@ -1127,9 +1168,14 @@ future GitHub release workflow will run the same targets.
 - **Settings → Desktop & Dock**: layout presets and every panel, dock, window and launcher
   option.
 - **Settings → Appearance**: light, dark or automatic (sunset/sunrise), accent color,
-  background (dynamic or a picture, add your own), icons, pointer and size, animations,
-  fonts, scaling, anti-aliasing, hinting, Night Light and its schedule.
+  background (dynamic or a picture, add your own), icons (Aurora, Papirus or any installed
+  theme), pointer and size, animations, window animations, fonts, scaling, anti-aliasing,
+  hinting, Night Light and its schedule.
 - **Settings → Multitasking**: workspaces, hot corners, window snapping.
+- **Settings → Accessibility**: text and pointer size, zoom, screen keyboard, scrollbars,
+  screen reader, double-click delay.
+- **Dev Hub → Shells & Terminals**: install Zsh, fish or another terminal and switch the
+  default shell in one click.
 - **Config files** (safe to edit; Settings keeps your changes):
   - `~/.config/labwc/rc.xml`: compositor, keybindings, input devices (see the
     [labwc docs](https://labwc.github.io/labwc-config.5.html));
