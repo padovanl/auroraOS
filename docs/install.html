@@ -145,6 +145,33 @@
   <figure class="layout-shot reveal"><img src="screenshots/settings-health.png" alt="Settings → System Health" data-zoom></figure>
 </section>
 
+<section class="section" id="qemu">
+  <div class="section-head">
+    <p class="eyebrow">No USB stick needed</p>
+    <h2>Try it in a virtual machine.</h2>
+    <p class="lead">Boot the ISO in QEMU/KVM on any Linux computer. Install
+      <code>qemu-system-x86 qemu-utils ovmf</code> first.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card reveal"><h4>▶️ Live system</h4>
+      <pre><code>qemu-system-x86_64 -enable-kvm -machine q35 -cpu host \
+  -smp 4 -m 4G -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -device virtio-vga-gl -display gtk,gl=on \
+  -device intel-hda -device hda-duplex \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet</code></pre>
+      <p>From the repository: <code>make run</code> (BIOS) or <code>make run-uefi</code>. Without 3D
+        on the host, use <code>-device virtio-vga -display gtk</code>: Aurora switches to its software
+        renderers by itself.</p></div>
+    <div class="card reveal"><h4>💾 Install on a virtual disk</h4>
+      <pre><code>qemu-img create -f qcow2 aurora.qcow2 40G
+# add to the command on the left:
+  -drive file=aurora.qcow2,if=virtio
+# after installing, boot again without -cdrom</code></pre>
+      <p>Prefer a window? GNOME Boxes and virt-manager open the ISO directly (choose Debian 13,
+        4 GB of memory). VirtualBox and VMware work too.</p></div>
+  </div>
+</section>
+
 <section class="section faq">
   <div class="section-head">
     <p class="eyebrow">Troubleshooting</p>

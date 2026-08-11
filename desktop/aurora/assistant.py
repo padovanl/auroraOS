@@ -24,6 +24,8 @@ from aurora import VERSION, ai, apps  # noqa: E402
 from aurora.i18n import N_, _  # noqa: E402
 
 CSS = """
+window.assistant-float { border-radius: 20px; }
+window.assistant-float headerbar { min-height: 40px; }
 .bubble { border-radius: 16px; padding: 10px 14px; }
 .bubble.user { background-color: alpha(@accent_bg_color, 0.85); color: @accent_fg_color; }
 .bubble.assistant { background-color: alpha(currentColor, 0.06); }
@@ -102,17 +104,35 @@ class Message(Gtk.Box):
         return frame
 
 
+COMPACT = (400, 580)
+
+
 class AssistantWindow(Adw.ApplicationWindow):
+    """A floating assistant, like a picture-in-picture video: it stays above other
+    windows and on every workspace (a labwc window rule), in a corner, so it can stay
+    open while you work elsewhere. Drag it by its bar; expand it for long answers."""
+
     def __init__(self, app):
         super().__init__(application=app, title=_("Aurora Assistant"),
-                         default_width=560, default_height=700)
+                         default_width=COMPACT[0], default_height=COMPACT[1])
+        self.add_css_class("assistant-float")
         self.history = []
         self.busy = False
         self.title = Adw.WindowTitle(title=_("Aurora Assistant"))
-        header = Adw.HeaderBar(title_widget=self.title)
+        header = Adw.HeaderBar(title_widget=self.title, show_start_title_buttons=False,
+                               show_end_title_buttons=False, css_classes=["flat"])
         new = Gtk.Button(icon_name="list-add-symbolic", tooltip_text=_("New Chat"))
         new.connect("clicked", lambda *_: self.new_chat())
         header.pack_start(new)
+        close = Gtk.Button(icon_name="window-close-symbolic", tooltip_text=_("Close"),
+                           css_classes=["circular"])
+        close.connect("clicked", lambda *_: self.close())
+        header.pack_end(close)
+        self.expand_btn = Gtk.Button(icon_name="aurora-window-expand-symbolic",
+                                     tooltip_text=_("Expand"))
+        self.expand_btn.connect("clicked", lambda *_: self.toggle_size())
+        self.connect("notify::maximized", self._on_maximized)
+        header.pack_end(self.expand_btn)
         prefs = Gtk.Button(icon_name="emblem-system-symbolic", tooltip_text=_("AI Settings"))
         prefs.connect("clicked", lambda *_: apps.spawn(["aurora-settings", "--page", "ai"]))
         header.pack_end(prefs)
@@ -169,6 +189,19 @@ class AssistantWindow(Adw.ApplicationWindow):
         view.add_top_bar(header)
         self.set_content(view)
         self.refresh()
+
+    def toggle_size(self):
+        # The compositor remembers the corner and size, and puts it back.
+        if self.is_maximized():
+            self.unmaximize()
+        else:
+            self.maximize()
+
+    def _on_maximized(self, *_a):
+        big = self.is_maximized()
+        self.expand_btn.set_icon_name("aurora-window-restore-symbolic" if big
+                                      else "aurora-window-expand-symbolic")
+        self.expand_btn.set_tooltip_text(_("Make Smaller") if big else _("Expand"))
 
     def refresh(self):
         on = ai.enabled()
@@ -405,6 +438,7 @@ class AssistantApp(Adw.Application):
 
     def do_startup(self):
         Adw.Application.do_startup(self)
+        ensure_float_rule()
         provider = Gtk.CssProvider()
         provider.load_from_string(CSS)
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider,
@@ -426,6 +460,33 @@ class AssistantApp(Adw.Application):
         elif args[:1] == ["--file"] and len(args) > 1:
             self.window.attach_file(args[1], summarize="--summarize" in args)
         return 0
+
+
+# labwc keeps the Assistant above other windows and on every workspace, in the
+# bottom-right corner, like a picture-in-picture video.
+FLOAT_ACTIONS = [("ToggleAlwaysOnTop", {}), ("ToggleOmnipresent", {}),
+                 ("MoveToEdge", {"direction": "right", "snapWindows": "no"}),
+                 ("MoveToEdge", {"direction": "down", "snapWindows": "no"})]
+
+
+def ensure_float_rule():
+    """Add the window rule to configs made before it existed (it must be there before
+    the window maps)."""
+    import xml.etree.ElementTree as ET
+
+    from aurora import labwcconf
+    try:
+        cfg = labwcconf.Config()
+    except (OSError, ET.ParseError):
+        return
+    rules = cfg.node("windowRules")
+    if any(r.get("identifier") == "org.aurora.Assistant" for r in rules.findall("windowRule")):
+        return
+    rule = ET.SubElement(rules, "windowRule", identifier="org.aurora.Assistant",
+                         skipWindowSwitcher="yes")
+    for name, attrs in FLOAT_ACTIONS:
+        ET.SubElement(rule, "action", name=name, **attrs)
+    cfg.save()
 
 
 def main():

@@ -96,6 +96,10 @@ STEPS = [
     (None, CLEAN, 1),
     (None, launch("org.aurora.Files.desktop"), 6),
     ("files", None, 0),
+    # The Assistant floats over the window you are working in, like picture-in-picture.
+    (None, "setsid -f aurora-assistant >/dev/null 2>&1", 6),
+    ("assistant-pip", None, 0),
+    (None, "pkill -f '[a]urora-assistant'", 1),
     (None, PRESET.format(name="studio"), 5),
     ("layout-studio", None, 0),
     (None, PRESET.format(name="classic"), 5),

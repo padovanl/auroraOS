@@ -10,6 +10,17 @@
     <reuseOutputMode>yes</reuseOutputMode>
   </core>
 
+  <!-- The Aurora Assistant floats like a picture-in-picture video: above other
+       windows, on every workspace, in the bottom-right corner. -->
+  <windowRules>
+    <windowRule identifier="org.aurora.Assistant" skipWindowSwitcher="yes">
+      <action name="ToggleAlwaysOnTop" />
+      <action name="ToggleOmnipresent" />
+      <action name="MoveToEdge" direction="right" snapWindows="no" />
+      <action name="MoveToEdge" direction="down" snapWindows="no" />
+    </windowRule>
+  </windowRules>
+
   <placement>
     <policy>cascade</policy>
   </placement>

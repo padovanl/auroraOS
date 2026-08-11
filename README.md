@@ -18,7 +18,7 @@ preinstalled, and the rock-solid Debian 13 base underneath.
 1. [What Aurora OS is](#what-aurora-os-is)
 2. [Why Aurora is different](#why-aurora-is-different)
 3. [Features](#features)
-4. [Get started (users)](#get-started-users)
+4. [Get started (users)](#get-started-users) · [try it in QEMU](#try-it-in-a-virtual-machine-qemu)
 5. [Using Aurora](#using-aurora)
 6. [Build it yourself](#build-it-yourself)
 7. [How it works (architecture)](#how-it-works-architecture)
@@ -155,7 +155,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
     Language & Region, Date & Time, Software Updates (system snapshots), **System
     Health**, About.
 - **Aurora Assistant**: chat with the AI, with quick actions on copied text (summarize,
-  improve, translate, explain), code blocks you can copy, answers read aloud, and
+  improve, translate, explain), code blocks you can copy, answers read aloud. It floats
+  **like a picture-in-picture video**: a compact card in the bottom-right corner, above
+  your other windows and on every workspace, so it stays open while you work. Drag it by
+  its bar, expand it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
 - **Files**: places and drives, grid and list views, search, hidden files, cut/copy/paste
   with progress, trash with restore, rename, new folder, "Open With", properties, open in
@@ -226,6 +229,55 @@ published. Check the download:
 ```sh
 sha256sum -c aurora-os-0.1-amd64.iso.sha256
 ```
+
+### Try it in a virtual machine (QEMU)
+No USB stick needed: boot the ISO in QEMU/KVM on any Linux computer.
+
+```sh
+sudo apt install qemu-system-x86 qemu-utils ovmf   # Debian/Ubuntu; "qemu-kvm edk2-ovmf" on Fedora
+```
+
+**From this repository**, the quickest way:
+```sh
+make run          # live system in a QEMU window (BIOS)
+make run-uefi     # the same with UEFI firmware
+```
+
+**Just the ISO**, with no repository:
+```sh
+qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
+  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -device virtio-vga-gl -display gtk,gl=on \
+  -device intel-hda -device hda-duplex \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet
+```
+- `-device virtio-vga-gl -display gtk,gl=on` gives the VM 3D acceleration. If your host
+  can't do that (for example over SSH), use `-device virtio-vga -display gtk`: Aurora
+  notices there is no GPU and switches to its software renderers, which draw correctly.
+- `usb-tablet` makes the pointer follow your mouse without capturing it.
+- Add `-drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd` to
+  boot with UEFI (on Fedora the file is `/usr/share/edk2/ovmf/OVMF_CODE.fd`).
+
+**Install it on a virtual disk** and boot the installed system:
+```sh
+qemu-img create -f qcow2 aurora.qcow2 40G
+# 1. boot the ISO with the disk attached, then run "Install Aurora OS" from the dock
+qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
+  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -drive file=aurora.qcow2,if=virtio \
+  -device virtio-vga-gl -display gtk,gl=on -nic user,model=virtio-net-pci -usb -device usb-tablet
+# 2. after the installer finishes, start from the disk (no -cdrom)
+qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
+  -drive file=aurora.qcow2,if=virtio \
+  -device virtio-vga-gl -display gtk,gl=on -nic user,model=virtio-net-pci -usb -device usb-tablet
+```
+Keep the same firmware (BIOS or UEFI, with the same `-drive if=pflash…` line) for the
+installation and for later boots.
+
+**Prefer a window to a command?** GNOME Boxes and Virtual Machine Manager (virt-manager)
+open the ISO directly: choose "Debian 13" as the operating system, give it 4 GB of memory
+and 2 or more CPUs. VirtualBox and VMware work too (enable EFI for UEFI); Aurora includes
+their guest tools.
 
 ### 2. Write it to a USB stick (4 GB or more)
 - **Any OS:** [balenaEtcher](https://etcher.balena.io/), Fedora Media Writer, or Ventoy
