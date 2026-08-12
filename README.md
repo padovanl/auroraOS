@@ -1267,7 +1267,8 @@ LibreOffice translations.
 choose *Deploy from a branch* → `main` → `/docs`). It is aimed at users: what Aurora is,
 screenshots, features, download and the install guide.
 
-- Preview it locally: `tools/serve-site.py --open` (then http://127.0.0.1:8000).
+- Preview it locally: `make site` to rebuild the pages, then `tools/serve-site.py --open`
+  (http://127.0.0.1:8000; `--port 8080` if 8000 is busy).
 - Set the repository URL and version once in `docs/assets/site.js` (`REPO`, `VERSION`);
   download buttons point to `<REPO>/releases/latest/download/aurora-os-<VERSION>-amd64.iso`.
 - Refresh the screenshots from the real ISO with `make vm-screenshots` (boots it in QEMU

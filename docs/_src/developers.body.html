@@ -102,4 +102,27 @@
   </figure>
 </section>
 
+<section class="section" id="build">
+  <div class="section-head">
+    <p class="eyebrow">From the repository</p>
+    <h2>Build it, run it, preview the site.</h2>
+    <p class="lead">Everything runs in Docker; QEMU/KVM boots the result. Install
+      <code>docker.io qemu-system-x86 qemu-utils ovmf</code> first.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card reveal"><h4>💿 Build and boot the ISO</h4>
+      <pre><code>make iso        # out/aurora-os-0.1-amd64.iso
+make run        # boot it in a QEMU window (BIOS)
+make run-uefi   # the same with UEFI firmware
+make test       # static, unit and smoke tests</code></pre>
+      <p>No repository? Boot the ISO alone with the command in the
+        <a href="install.html#qemu">install guide</a>.</p></div>
+    <div class="card reveal"><h4>🌐 Preview this website</h4>
+      <pre><code>make site                  # rebuild the pages
+tools/serve-site.py --open # http://127.0.0.1:8000</code></pre>
+      <p>It serves <code>docs/</code>, the same folder GitHub Pages publishes. Use
+        <code>--port 8080</code> if 8000 is busy.</p></div>
+  </div>
+</section>
+
 </main>
