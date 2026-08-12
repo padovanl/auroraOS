@@ -90,7 +90,14 @@ class VM:
         path = os.path.join(self.out, f"{self.name}-{self.step:02d}-{label}.png")
         return bt.screenshot(self.mon, path)
 
+    def alive(self):
+        """Raise with QEMU's own error message if it has exited."""
+        if self.qemu.poll() is not None:
+            err = self.qemu.stderr.read().decode(errors="replace").strip()
+            raise RuntimeError(f"QEMU exited ({self.qemu.returncode}): {err}")
+
     def keys(self, *names, delay=0.15):
+        self.alive()
         for name in names:
             bt.monitor(self.mon, f"sendkey {name}")
             time.sleep(delay)
