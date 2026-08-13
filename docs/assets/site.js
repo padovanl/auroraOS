@@ -73,3 +73,204 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+// ---------------------------------------------------------------------------
+// Motion: the aurora sky, hero tilt, counters, rotating words, pointer glow,
+// staggered reveals, the typing terminal and the scroll progress bar.
+// Everything stays still for people who prefer reduced motion.
+// ---------------------------------------------------------------------------
+const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Scroll progress.
+const bar = document.createElement("div");
+bar.className = "progress";
+document.body.prepend(bar);
+const onScroll = () => {
+  const h = document.documentElement;
+  bar.style.transform = `scaleX(${h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)})`;
+};
+document.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+// The aurora sky: drifting ribbons and twinkling stars.
+function sky(host) {
+  const el = document.createElement("div");
+  el.className = "sky";
+  el.setAttribute("aria-hidden", "true");
+  el.innerHTML = '<canvas></canvas><div class="ribbon"></div><div class="ribbon"></div><div class="ribbon"></div>';
+  host.prepend(el);
+  const canvas = el.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  let stars = [];
+  const resize = () => {
+    const r = window.devicePixelRatio || 1;
+    canvas.width = el.clientWidth * r;
+    canvas.height = el.clientHeight * r;
+    ctx.setTransform(r, 0, 0, r, 0, 0);
+    stars = Array.from({ length: Math.round(el.clientWidth * el.clientHeight / 9000) }, () => ({
+      x: Math.random() * el.clientWidth, y: Math.random() * el.clientHeight * 0.8,
+      r: Math.random() * 1.2 + 0.2, p: Math.random() * Math.PI * 2, s: 0.4 + Math.random() * 1.4,
+    }));
+  };
+  const draw = (t) => {
+    ctx.clearRect(0, 0, el.clientWidth, el.clientHeight);
+    for (const s of stars) {
+      const a = still ? 0.7 : 0.35 + 0.65 * Math.abs(Math.sin(s.p + t / 1000 * s.s));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (!still) requestAnimationFrame(draw);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+  requestAnimationFrame(draw);
+}
+const hero = document.querySelector(".hero");
+if (hero) sky(hero);
+else {
+  const first = document.querySelector("main > .section");
+  if (first) { first.classList.add("page-sky"); sky(first); }
+}
+document.querySelectorAll(".final-cta").forEach(sky);
+
+// The hero screenshot straightens up as you scroll and leans toward the pointer.
+const shot = document.querySelector(".hero-stage .hero-shot");
+if (shot && !still) {
+  let turn = 0;
+  const update = () => {
+    const p = Math.min(1, window.scrollY / (window.innerHeight * 0.6));
+    shot.style.setProperty("--tilt", `${18 * (1 - p)}deg`);
+    shot.style.setProperty("--zoom", `${0.94 + 0.06 * p}`);
+    shot.style.setProperty("--turn", `${turn}deg`);
+  };
+  document.addEventListener("scroll", update, { passive: true });
+  document.querySelector(".hero").addEventListener("pointermove", (e) => {
+    turn = (e.clientX / window.innerWidth - 0.5) * 6;
+    update();
+  });
+  update();
+}
+
+// Rotating words in the headline.
+document.querySelectorAll("[data-rotate]").forEach((el) => {
+  const words = el.dataset.rotate.split("|");
+  let i = 0;
+  if (still) return;
+  setInterval(() => {
+    i = (i + 1) % words.length;
+    el.innerHTML = `<span class="word">${words[i]}</span>`;
+  }, 2600);
+});
+
+// Numbers count up when they come into view.
+const counter = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    counter.unobserve(e.target);
+    const el = e.target;
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || "";
+    if (still) { el.textContent = target + suffix; return; }
+    const start = performance.now();
+    const tick = (now) => {
+      const k = Math.min(1, (now - start) / 1400);
+      const eased = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll("[data-count]").forEach((el) => counter.observe(el));
+
+// A soft glow follows the pointer over cards and tiles.
+document.querySelectorAll(".card, .tile, .download-card").forEach((el) => {
+  el.addEventListener("pointermove", (e) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  });
+});
+
+// Items in the same group appear one after another.
+document.querySelectorAll(".app-groups, .bento, .grid-2, .steps, .faq").forEach((group) => {
+  group.querySelectorAll(":scope > .reveal").forEach((el, i) => el.style.setProperty("--i", i % 8));
+});
+
+// The terminal types its session when it comes into view.
+document.querySelectorAll(".terminal pre").forEach((pre) => {
+  if (still) return;
+  const lines = pre.innerHTML.split("\n");
+  pre.innerHTML = lines.map((l) => `<span class="line" hidden>${l || " "}</span>`).join("");
+  const spans = [...pre.querySelectorAll(".line")];
+  const caret = document.createElement("span");
+  caret.className = "caret";
+  const run = () => {
+    let i = 0;
+    const next = () => {
+      if (i >= spans.length) { spans[spans.length - 1].append(caret); return; }
+      const line = spans[i++];
+      line.hidden = false;
+      line.append(caret);
+      const typed = line.textContent.includes("❯");
+      setTimeout(next, typed ? 650 : 140);
+    };
+    next();
+  };
+  const seen = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) { seen.disconnect(); run(); }
+  }, { threshold: 0.4 });
+  seen.observe(pre);
+});
+
+// The icon marquees on the home page (each row twice, for a seamless loop).
+const MARQUEE = {
+  apps: ["org.gnome.Geary", "org.gnome.Calendar", "org.gnome.Weather", "aurora-assistant",
+    "org.gnome.Maps", "org.gnome.clocks", "org.gnome.Calculator", "aurora-devhub",
+    "org.gnome.Loupe", "org.gnome.Rhythmbox3", "io.github.celluloid_player.Celluloid",
+    "org.gnome.Snapshot", "org.gnome.Software", "org.gnome.Ptyxis", "aurora-gamehub",
+    "system-file-manager", "preferences-system", "org.gnome.SystemMonitor", "org.gnome.baobab",
+    "org.gnome.seahorse.Application", "org.gnome.Characters", "org.gnome.font-viewer",
+    "timeshift", "org.gnome.DejaDup", "org.gnome.Firmware", "org.gnome.TextEditor",
+    "org.gnome.Papers", "org.gnome.SoundRecorder"],
+  files: ["folder", "application-pdf", "user-home", "text-x-python", "folder-download",
+    "image-x-generic", "folder-music", "package-x-generic", "folder-pictures",
+    "x-office-document", "folder-videos", "x-office-spreadsheet", "folder-documents",
+    "text-html", "folder-development", "application-json", "text-markdown", "application-x-deb",
+    "audio-x-generic", "video-x-generic", "text-x-rust", "text-x-go", "application-javascript",
+    "user-trash"],
+};
+document.querySelectorAll("[data-marquee]").forEach((row) => {
+  const names = MARQUEE[row.dataset.marquee] || [];
+  const html = names.map((n) => `<img src="assets/icons/${n}.svg" alt="" loading="lazy">`).join("");
+  row.innerHTML = html + html;
+});
+
+// Documentation: filter topics on the index, and highlight the section in view.
+const docSearch = document.querySelector("[data-doc-search]");
+if (docSearch) {
+  const results = document.querySelector("[data-doc-results]");
+  const cards = document.querySelector(".doc-cards");
+  docSearch.addEventListener("input", () => {
+    const q = docSearch.value.trim().toLowerCase();
+    results.hidden = !q;
+    cards.style.display = q ? "none" : "";
+    results.querySelectorAll("a").forEach((a) => {
+      a.hidden = !a.dataset.topic.includes(q) && !a.textContent.toLowerCase().includes(q);
+    });
+  });
+}
+const docHeads = [...document.querySelectorAll(".doc-body h2[id]")];
+if (docHeads.length) {
+  const links = [...document.querySelectorAll(".doc-toc a, .doc-sub a")];
+  const spy = () => {
+    let current = docHeads[0].id;
+    for (const h of docHeads) if (h.getBoundingClientRect().top < 140) current = h.id;
+    links.forEach((a) => a.classList.toggle("current", a.getAttribute("href") === `#${current}`));
+  };
+  document.addEventListener("scroll", spy, { passive: true });
+  spy();
+}

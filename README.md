@@ -1159,9 +1159,15 @@ set up a feature, and every place it appears has its own switch.
     so Calamares couldn't copy the system to the disk.
 
 ### Website
-- **Choice:** hand-written HTML, CSS and a few lines of JavaScript in `docs/`, served by
-  GitHub Pages, with no framework or build step. `tools/build-site.py` turns this section
-  of the README into the site's technical page, so the two never disagree.
+- **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub
+  Pages, with no framework. `tools/build-site.py` turns this section of the README into
+  the site's documentation, one page per chapter (`technical-*.html`, with a chapter list,
+  "On this page", previous/next, and an index with a topic search), so the two never
+  disagree. It also copies Aurora's real icons from the icon generator for the home page.
+- **Motion:** an animated aurora sky with twinkling stars, a 3D hero screenshot that
+  straightens as you scroll, marquees of Aurora's icons, counters, a typing terminal and
+  glows that follow the pointer. All of it is CSS and a few hundred lines of JavaScript,
+  and it stays still for visitors who ask their system for reduced motion.
 
 <!-- tech:end -->
 

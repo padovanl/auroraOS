@@ -36,7 +36,8 @@
   <div class="hero-bg"></div>
   <div class="hero-inner">
     <img class="hero-logo" src="aurora-boot.gif" alt="Aurora OS logo animation" width="140" height="140">
-    <h1>The Linux desktop<br><span class="gradient-text">developers deserve.</span></h1>
+    <a class="badge" href="#why"><b>New</b> Aurora icons, a floating AI assistant, 90 dev tools <i>→</i></a>
+    <h1>The Linux desktop<br><span class="gradient-text"><span class="rotator" data-rotate="developers deserve.|you'll love.|that just works.|made for creators.">developers deserve.</span></span></h1>
     <p class="lead">Aurora OS is a beautiful, macOS‑inspired desktop on the rock‑solid Debian base,
       with your tools ready on day one. Free, open source, and yours to shape.</p>
     <div class="cta">
@@ -45,18 +46,79 @@
     </div>
     <p class="meta">Version <span data-version>0.1</span> · 64-bit PC · Free forever</p>
   </div>
-  <figure class="hero-shot reveal">
-    <img src="screenshots/desktop.png" alt="The Aurora OS desktop with the menu bar, dock and Files app" data-zoom>
-  </figure>
+  <div class="hero-stage">
+    <div class="float-chip"><img src="assets/icons/aurora-assistant.svg" alt=""> Private AI, built in</div>
+    <div class="float-chip"><img src="assets/icons/timeshift.svg" alt=""> Undo any update</div>
+    <div class="float-chip"><img src="assets/icons/aurora-devhub.svg" alt=""> 90 dev tools, one click</div>
+    <div class="float-chip"><img src="assets/icons/aurora-gamehub.svg" alt=""> Steam, Windows &amp; Android apps</div>
+    <figure class="hero-shot">
+      <img src="screenshots/desktop.png" alt="The Aurora OS desktop with the menu bar, dock and Files app" data-zoom>
+    </figure>
+  </div>
 </section>
 
 <!-- Quick facts -->
-<section class="facts">
-  <div><strong>Debian 13</strong><span>stable base &amp; security</span></div>
-  <div><strong>Linux 6.12</strong><span>long-term kernel</span></div>
-  <div><strong>48 apps</strong><span>ready out of the box</span></div>
-  <div><strong>20 languages</strong><span>from the boot menu</span></div>
-  <div><strong>BIOS &amp; UEFI</strong><span>laptops, desktops, VMs</span></div>
+<section class="facts reveal">
+  <div><strong>Debian <span data-count="13">13</span></strong><span>stable base &amp; security</span></div>
+  <div><strong><span data-count="49">49</span> apps</strong><span>ready out of the box</span></div>
+  <div><strong><span data-count="90">90</span> tools</strong><span>one click in Dev Hub</span></div>
+  <div><strong><span data-count="20">20</span> languages</strong><span>from the boot menu</span></div>
+  <div><strong><span data-count="0">0</span> telemetry</strong><span>your data stays yours</span></div>
+</section>
+
+<!-- Icon marquee -->
+<section class="marquee-wrap">
+  <div class="section-head reveal">
+    <p class="eyebrow">Designed down to the icon</p>
+    <h2>Every app, folder and file,<br><span class="shimmer">drawn for Aurora.</span></h2>
+  </div>
+  <div class="marquee-mask">
+    <div class="marquee" data-marquee="apps"></div>
+  </div>
+  <div class="marquee-mask">
+    <div class="marquee reverse" data-marquee="files"></div>
+  </div>
+</section>
+
+<!-- Why Aurora: bento -->
+<section id="why" class="section">
+  <div class="section-head reveal">
+    <p class="eyebrow">Why people switch</p>
+    <h2>Calm on the surface.<br>Powerful underneath.</h2>
+    <p>Everything a daily desktop needs, the things other distros leave you to set up, and a few
+      you won't find anywhere else.</p>
+  </div>
+  <div class="bento">
+    <a class="tile ai w4 tall reveal zoom" href="ai.html">
+      <img class="shot" src="screenshots/assistant-pip.png" alt="The Assistant floating over Files">
+      <img class="icon" src="assets/icons/aurora-assistant.svg" alt="">
+      <h3>A private AI that floats beside your work</h3>
+      <p>Chat, writing tools, dictation and read-aloud, on your computer and in your language. It
+        stays in a corner like picture-in-picture while you keep working.</p>
+    </a>
+    <a class="tile snap w2 reveal zoom" href="install.html#snapshots">
+      <img class="icon" src="assets/icons/timeshift.svg" alt="">
+      <div class="big shimmer">Undo</div>
+      <h3>any update</h3>
+      <p>A snapshot before every update. Pick yesterday's system from the boot menu.</p>
+    </a>
+    <a class="tile dev w2 reveal zoom" href="developers.html">
+      <img class="icon" src="assets/icons/aurora-devhub.svg" alt="">
+      <div class="big"><span data-count="90">90</span>+</div>
+      <h3>developer tools</h3>
+      <p>Editors, languages, shells, terminals, containers, databases: one click, official sources.</p>
+    </a>
+    <a class="tile game w3 reveal zoom" href="developers.html#games">
+      <img class="icon" src="assets/icons/aurora-gamehub.svg" alt="">
+      <h3>Play anything</h3>
+      <p>Steam with Proton, Epic and GOG, Windows programs and Android apps. Game Hub sets each up in one click.</p>
+    </a>
+    <a class="tile priv w3 reveal zoom" href="technical.html">
+      <img class="icon" src="assets/icons/org.gnome.seahorse.Application.svg" alt="">
+      <h3>Secure, private, yours</h3>
+      <p>Firewall on, automatic security updates, full-disk encryption, no telemetry, ever. Free and open source.</p>
+    </a>
+  </div>
 </section>
 
 <!-- Features -->
@@ -174,10 +236,10 @@
     <div class="cta"><a class="btn btn-ghost" href="ai.html">Discover Aurora AI →</a></div>
   </div>
   <div class="grid-2">
-    <figure class="reveal"><img src="screenshots/assistant.png" alt="Aurora Assistant" data-zoom>
-      <figcaption>The Assistant: one click in the top bar or the dock</figcaption></figure>
-    <figure class="reveal"><img src="screenshots/writing-tools.png" alt="Writing Tools" data-zoom>
-      <figcaption>Writing Tools on any selected text</figcaption></figure>
+    <figure class="reveal"><img src="screenshots/assistant-pip.png" alt="The Assistant floating in the corner over Files" data-zoom>
+      <figcaption>The Assistant floats beside your work, like picture-in-picture</figcaption></figure>
+    <figure class="reveal"><img src="screenshots/settings-ai.png" alt="Settings → AI" data-zoom>
+      <figcaption>Choose where it helps, which model, and which languages</figcaption></figure>
   </div>
 </section>
 
@@ -239,7 +301,7 @@
         <span>Python 3 + pip, venv, pipx</span><span>Node.js + npm</span><span>Docker + Compose</span>
         <span>Podman</span><span>distrobox</span><span>neovim</span><span>tmux</span><span>ripgrep</span>
         <span>fd</span><span>fzf</span><span>bat</span><span>btop</span><span>jq</span><span>httpie</span>
-        <span>direnv</span><span>starship</span><span>shellcheck</span><span>portop</span>
+        <span>direnv</span><span>starship</span><span>zsh</span><span>shellcheck</span><span>portop</span><span>pkgtui</span>
         <span>JetBrains Mono</span><span>Fira Code</span>
       </div>
       <p><strong>Ptyxis</strong>, the terminal, has tabs, profiles and one-click shells inside your
@@ -254,10 +316,11 @@
   <div class="feature reveal">
     <div class="feature-text">
       <h3>Dev Hub: your toolbox in one click</h3>
-      <p>VS Code, VSCodium, Zed, IntelliJ, PyCharm, Android Studio, Rust, Go, Java, uv, Bun, Deno,
-        GitHub CLI, kubectl, Terraform, AWS CLI, PostgreSQL, MariaDB, Redis, MongoDB, DBeaver and
-        Postman. Each one installs from its <em>official</em> source, so you always get the newest
-        release, and you see every step in a terminal.</p>
+      <p>About 90 tools in 17 categories: editors and IDEs, languages, shells and terminals, Git
+        clients, containers and virtual machines, databases, web and mobile, debugging, data
+        science, game engines, embedded, design and security. Each one installs from its
+        <em>official</em> source, so you always get the newest release, and you see every step in
+        a terminal. <a href="developers.html">See them all →</a></p>
     </div>
     <div class="feature-media">
       <img src="screenshots/devhub.png" alt="Dev Hub with one-click installers" data-zoom>
@@ -458,6 +521,18 @@
   <details class="reveal"><summary>Does it look like a Mac? Is that allowed?</summary>
     <p>Aurora is <em>inspired</em> by macOS's layout. Every icon, font, wallpaper and line of code is
       our own or comes from open-source projects. Aurora isn't affiliated with Apple.</p></details>
+</section>
+
+<!-- Final call to action -->
+<section class="final-cta">
+  <p class="eyebrow">Ready when you are</p>
+  <h2>Your next desktop<br><span class="shimmer">is one download away.</span></h2>
+  <p class="lead">Try it live from a USB stick or a virtual machine. Nothing changes on your
+    computer until you decide to install.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="#download">Download Aurora OS</a>
+    <a class="btn btn-ghost" href="install.html#qemu">Try it in a virtual machine</a>
+  </div>
 </section>
 
 </main>
