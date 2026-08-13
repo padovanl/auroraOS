@@ -142,11 +142,11 @@ make test       # static, unit and smoke tests</code></pre>
         <a href="install.html#qemu">install guide</a>.</p></div>
     <div class="card reveal"><h4>🌐 Preview this website</h4>
       <pre><code>make site                  # rebuild the pages
-tools/serve-site.py --open # http://127.0.0.1:8000
+tools/serve-site.py --open # http://127.0.0.1:4173
 tools/serve-site.py --lan  # also for other devices on your network</code></pre>
       <p>It serves <code>docs/</code>, the same folder GitHub Pages publishes. With
         <code>--lan</code> it prints the address to open from a phone or another PC. If the port
-        is taken it tells you; choose another with <code>--port 8080</code>.</p></div>
+        is taken it moves to the next free one; <code>--port</code> picks another.</p></div>
   </div>
 </section>
 

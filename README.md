@@ -1268,10 +1268,10 @@ choose *Deploy from a branch* → `main` → `/docs`). It is aimed at users: wha
 screenshots, features, download and the install guide.
 
 - Preview it locally: `make site` to rebuild the pages, then `tools/serve-site.py --open`
-  (http://127.0.0.1:8000). To open it from another device on your network (a phone,
+  (http://127.0.0.1:4173). To open it from another device on your network (a phone,
   another PC), run `tools/serve-site.py --lan`: it prints the address to use, such as
-  `http://192.168.1.20:8000/`. If the port is taken, it says so; pick another with
-  `--port 8080`.
+  `http://192.168.1.20:4173/`. If the port is taken it moves to the next free one;
+  `--port` picks another.
 - Set the repository URL and version once in `docs/assets/site.js` (`REPO`, `VERSION`);
   download buttons point to `<REPO>/releases/latest/download/aurora-os-<VERSION>-amd64.iso`.
 - Refresh the screenshots from the real ISO with `make vm-screenshots` (boots it in QEMU

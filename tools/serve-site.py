@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Serve the Aurora OS website (docs/) locally.
 
-Usage: tools/serve-site.py [--port 8000] [--lan] [--open]
+Usage: tools/serve-site.py [--port 4173] [--lan] [--open]
 
 GitHub Pages publishes the same docs/ folder, so what you see here is what
 visitors will see. By default only this computer can open it; --lan makes it
-reachable from other devices on your network (phones, another PC).
+reachable from other devices on your network (phones, another PC). If the port is
+taken, the next free one is used.
 """
 
 import argparse
@@ -32,7 +33,8 @@ def lan_address():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--port", type=int, default=4173,
+                    help="port to use (the next free one if it is taken)")
     ap.add_argument("--bind", default="127.0.0.1", help="address to listen on")
     ap.add_argument("--lan", action="store_true",
                     help="listen on every interface, for other devices on your network")
@@ -41,19 +43,23 @@ def main():
     bind = "0.0.0.0" if args.lan else args.bind
 
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=SITE)
-    try:
-        server = http.server.ThreadingHTTPServer((bind, args.port), handler)
-    except OSError as err:
-        if err.errno == errno.EADDRINUSE:
-            sys.exit(f"Port {args.port} is already used by another program. "
-                     f"Pick a free one, e.g. --port {args.port + 80}.")
-        raise
+    server = None
+    for port in range(args.port, args.port + 50):
+        try:
+            server = http.server.ThreadingHTTPServer((bind, port), handler)
+            break
+        except OSError as err:
+            if err.errno != errno.EADDRINUSE:
+                raise
+            print(f"Port {port} is used by another program, trying {port + 1}.")
+    if server is None:
+        sys.exit(f"No free port between {args.port} and {args.port + 49}; choose one with --port.")
     with server:
-        url = f"http://{'127.0.0.1' if bind == '0.0.0.0' else bind}:{args.port}/"
+        url = f"http://{'127.0.0.1' if bind == '0.0.0.0' else bind}:{port}/"
         print(f"Serving {SITE}")
         print(f"  on this computer: {url}")
         if bind == "0.0.0.0":
-            print(f"  on your network:  http://{lan_address()}:{args.port}/")
+            print(f"  on your network:  http://{lan_address()}:{port}/")
         print("Ctrl+C to stop.")
         if args.open:
             webbrowser.open(url)
