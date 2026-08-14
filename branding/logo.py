@@ -8,7 +8,8 @@ the sun glows).
 
 Usage:
   logo.py frames OUT_DIR [SIZE]   -> OUT_DIR/intro-NN.png, loop-NN.png
-  logo.py gif OUT.gif [SIZE]      -> animated GIF (needs Pillow)
+  logo.py gif OUT.gif [SIZE]      -> animated GIF on a dark tile (needs Pillow)
+  logo.py webp OUT.webp [SIZE]    -> animated WebP with transparency, for the website
   logo.py png OUT.png [SIZE]      -> static logo with wordmark on a dark tile
   logo.py static OUT.png [SIZE]   -> static logo with wordmark, transparent
   logo.py mark OUT.png [SIZE]     -> the mark alone, transparent
@@ -191,6 +192,20 @@ def write_gif(path, size):
                    optimize=True)
 
 
+def write_webp(path, size):
+    """The same animation with real transparency (the glow blends into any page)."""
+    from PIL import Image
+    images = []
+    for kind, n in (("intro", INTRO_FRAMES), ("loop", LOOP_FRAMES), ("loop", LOOP_FRAMES)):
+        for i in range(n):
+            s = frame(size, kind, i)
+            # cairo stores premultiplied BGRA; Pillow's "RGBa" mode undoes the premultiply.
+            images.append(Image.frombuffer("RGBa", (size, size), bytes(s.get_data()),
+                                           "raw", "BGRa", s.get_stride(), 1).convert("RGBA"))
+    images[0].save(path, save_all=True, append_images=images[1:], duration=33, loop=0,
+                   quality=90, method=6, lossless=False, allow_mixed=True)
+
+
 def main():
     cmd, out = sys.argv[1], sys.argv[2]
     size = int(sys.argv[3]) if len(sys.argv) > 3 else 256
@@ -198,6 +213,8 @@ def main():
         write_frames(out, size)
     elif cmd == "gif":
         write_gif(out, size)
+    elif cmd == "webp":
+        write_webp(out, size)
     elif cmd == "png":
         frame(size, "static", 0, background=True).write_to_png(out)
     elif cmd == "static":

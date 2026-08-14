@@ -225,6 +225,10 @@ def write_icons():
             for name in names:
                 src = os.path.realpath(os.path.join(tmp, "Aurora", "scalable", context, name + ".svg"))
                 shutil.copyfile(src, os.path.join(dest, name + ".svg"))
+    # The animated logo of the home page, with real transparency.
+    import subprocess
+    subprocess.run([sys.executable, os.path.join(ROOT, "branding", "logo.py"), "webp",
+                    os.path.join(ROOT, "docs", "assets", "aurora-logo.webp"), "280"], check=True)
     for name in ("aurora-devhub", "aurora-gamehub", "aurora-assistant", "aurora-logo"):
         shutil.copyfile(os.path.join(ROOT, "desktop", "data", "icons", "scalable", "apps",
                                      name + ".svg"), os.path.join(dest, name + ".svg"))
