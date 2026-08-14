@@ -274,3 +274,34 @@ if (docHeads.length) {
   document.addEventListener("scroll", spy, { passive: true });
   spy();
 }
+
+// Expandable answers open and close smoothly.
+document.querySelectorAll("details").forEach((d) => {
+  const summary = d.querySelector("summary");
+  if (!summary || still) return;
+  let anim = null;
+  const finish = (open) => {
+    d.open = open;
+    d.style.height = d.style.overflow = "";
+    anim = null;
+  };
+  summary.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (anim) anim.cancel();
+    const start = `${d.offsetHeight}px`;
+    if (!d.open) {
+      d.open = true;
+      d.classList.add("opening");
+      const end = `${d.offsetHeight}px`;
+      requestAnimationFrame(() => d.classList.remove("opening"));
+      anim = d.animate({ height: [start, end] }, { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" });
+      anim.onfinish = () => finish(true);
+    } else {
+      const end = `${summary.offsetHeight + parseFloat(getComputedStyle(d).paddingTop) +
+        parseFloat(getComputedStyle(d).paddingBottom) + 2}px`;
+      d.classList.add("opening");
+      anim = d.animate({ height: [start, end] }, { duration: 300, easing: "ease-in-out" });
+      anim.onfinish = () => { d.classList.remove("opening"); finish(false); };
+    }
+  });
+});

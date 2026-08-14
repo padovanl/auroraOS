@@ -516,3 +516,38 @@ h1 .gradient-text, .shimmer {
 html { overflow-x: clip; }
 .page-sky > .sky { left: calc(50% - 50vw); right: calc(50% - 50vw); }
 .doc-search input::placeholder { color: #9c93b3; }
+
+/* Buttons line up side by side (overflow: hidden moves an inline-block's baseline). */
+.btn { vertical-align: middle; }
+.download-card h3 { font-size: 1.8rem; margin-bottom: 14px; }
+.dl-meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; }
+.dl-meta span { padding: 5px 12px; border-radius: 999px; font-size: .88rem; color: #e6dcff;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); }
+.dl-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.download-card .dl-actions .btn { margin: 0; }
+.dl-alt { margin: 18px 0 0; font-size: .95rem; }
+.dl-alt a { color: #cdb2ff; text-decoration: none; font-weight: 600; }
+.dl-alt a:hover { text-decoration: underline; }
+.download-card .req { background: rgba(0,0,0,.18); border: 1px solid var(--card-border); border-radius: 20px; padding: 22px 26px; }
+.download-card .req .ticks { margin-top: 12px; }
+.download-card .req .ticks li { color: #d8d0e8; }
+.verify { max-width: none; }
+
+/* --- expandable answers (FAQ, verify your download): smooth open and close --- */
+details { overflow: hidden; transition: border-color .3s, background .3s, box-shadow .3s; }
+details summary { list-style: none; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 2px 0; user-select: none; }
+details summary::-webkit-details-marker { display: none; }
+details summary::after {
+  content: "+"; flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%;
+  font-size: 1.25rem; font-weight: 500; line-height: 1; color: var(--text);
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), background .3s;
+}
+details summary:hover::after { background: rgba(255,255,255,.14); }
+details[open] summary::after { transform: rotate(135deg); background: var(--grad); border-color: transparent; }
+details:hover { border-color: rgba(255,255,255,.18); }
+details[open] { border-color: rgba(169,112,255,.45); background: rgba(169,112,255,.06);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+details > :not(summary) { transition: opacity .35s ease, transform .35s ease; }
+details.opening > :not(summary) { opacity: 0; transform: translateY(-6px); }
