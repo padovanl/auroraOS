@@ -21,7 +21,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk  # noqa: E402
 
 from aurora import apps, data_path, settings  # noqa: E402
 from aurora.i18n import _  # noqa: E402
@@ -47,6 +47,20 @@ def search_prefix_clipboard():
     return CLIPBOARD_PREFIX + " "
 BRIGHTNESS_STEP = 0.05
 
+
+
+def _service(cls):
+    """Create a hardware service; if it fails, log why and return an unavailable one
+    (its class-level defaults: nothing present, nothing to control)."""
+    try:
+        return cls()
+    except Exception:  # noqa: BLE001 - the desktop matters more than one indicator
+        import traceback
+        print(f"aurora-shell: {cls.__name__} unavailable:", file=sys.stderr)
+        traceback.print_exc()
+        obj = cls.__new__(cls)
+        GObject.Object.__init__(obj)
+        return obj
 
 class Shell(Adw.Application):
     def __init__(self):
@@ -86,14 +100,16 @@ class Shell(Adw.Application):
         self.hold()
         import time
         t0 = time.monotonic()
-        self.audio = Audio()
-        self.brightness = Brightness()
-        self.battery = Battery()
+        # Hardware services: on unusual (virtual) hardware one may fail; the shell
+        # must start anyway, with that service shown as unavailable.
+        self.audio = _service(Audio)
+        self.brightness = _service(Brightness)
+        self.battery = _service(Battery)
         self.network = Network()
         self.power = Power()
-        self.microphone = Microphone()
+        self.microphone = _service(Microphone)
         self.bluetooth = Bluetooth()
-        self.power_profiles = PowerProfiles()
+        self.power_profiles = _service(PowerProfiles)
         self.recorder = Recorder()
         self.recorder.connect("saved", self._on_recording_saved)
         self.media = Media()

@@ -64,6 +64,7 @@ class Audio(GObject.Object):
 
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
     SINK = "@DEFAULT_AUDIO_SINK@"
+    available, volume, muted = False, 0.0, False
 
     def __init__(self):
         super().__init__()
@@ -111,6 +112,7 @@ class Brightness(GObject.Object):
     """Backlight control through brightnessctl (uses logind, no root needed)."""
 
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
+    level, available = 1.0, False
 
     def __init__(self):
         super().__init__()
@@ -122,7 +124,7 @@ class Brightness(GObject.Object):
     def refresh(self):
         out = _run(["brightnessctl", "--class=backlight", "-m"]).strip()
         parts = out.split(",")
-        if len(parts) >= 5 and parts[4].isdigit():
+        if len(parts) >= 5 and parts[2].isdigit() and parts[4].isdigit():
             self.available = True
             self.level = int(parts[2]) / max(1, int(parts[4]))
             self.emit("changed")
@@ -137,6 +139,10 @@ class Brightness(GObject.Object):
 
 
 class Battery(GObject.Object):
+    present, percentage, charging, remaining = False, 0.0, False, 0
+    icon_name = "battery-missing-symbolic"
+    _device = None
+
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
 
     def __init__(self):
@@ -154,17 +160,24 @@ class Battery(GObject.Object):
             self._device = client.get_display_device()
             self._device.connect("notify", lambda *a: self._update())
             self._update()
-        except (ValueError, ImportError, GLib.Error) as err:
+        except Exception as err:  # noqa: BLE001 - no battery info must never stop the shell
             print(f"aurora: battery status unavailable ({err})")
 
     def _update(self):
         d = self._device
-        self.present = bool(d.props.is_present) and d.props.type == 2  # UP_DEVICE_KIND_BATTERY
-        self.percentage = d.props.percentage
-        self.icon_name = d.props.icon_name or "battery-missing-symbolic"
-        self.charging = d.props.state in (1, 4)  # charging, fully charged
-        seconds = d.props.time_to_full if self.charging else d.props.time_to_empty
-        self.remaining = seconds or 0
+        try:
+            p = d.props
+            # UPowerGlib calls the device kind "kind" (older bindings: "type").
+            kind = p.kind if hasattr(p, "kind") else getattr(p, "type", 0)
+            self.present = bool(p.is_present) and kind == 2  # UP_DEVICE_KIND_BATTERY
+            self.percentage = p.percentage
+            self.icon_name = p.icon_name or "battery-missing-symbolic"
+            self.charging = p.state in (1, 4)  # charging, fully charged
+            seconds = p.time_to_full if self.charging else p.time_to_empty
+            self.remaining = seconds or 0
+        except Exception as err:  # noqa: BLE001 - odd virtual hardware (e.g. Hyper-V)
+            print(f"aurora: battery status unreadable ({err})")
+            self.present = False
         self.emit("changed")
 
     def describe(self):
@@ -194,7 +207,7 @@ class Network(GObject.Object):
             from gi.repository import NM
             self.NM = NM
             self.client = NM.Client.new(None)
-        except (ValueError, ImportError, GLib.Error) as err:
+        except Exception as err:  # noqa: BLE001 - a missing service must never stop the shell
             print(f"aurora: NetworkManager unavailable ({err})")
             return
         for sig in ("notify::primary-connection", "notify::state",
@@ -397,6 +410,7 @@ class Microphone(GObject.Object):
 
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
     SOURCE = "@DEFAULT_AUDIO_SOURCE@"
+    volume, muted, available = 0.0, False, False
 
     def __init__(self):
         super().__init__()
@@ -511,6 +525,7 @@ class PowerProfiles(GObject.Object):
 
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
     PROFILES = ["performance", "balanced", "power-saver"]
+    available, current = False, "balanced"
 
     def __init__(self):
         super().__init__()
