@@ -175,6 +175,9 @@ def main():
     ap.add_argument("--firmware", choices=["bios", "uefi"], default="bios")
     ap.add_argument("--out", default="boot-test-out")
     ap.add_argument("--timeout", type=int, default=240)
+    ap.add_argument("--vga", default="virtio-vga",
+                    help="QEMU display device: virtio-vga, VGA, bochs-display (no render node, "
+                         "like Hyper-V and many firmware framebuffers)")
     ap.add_argument("--no-apps", action="store_true",
                     help="skip starting every default app from config/apps.manifest")
     args = ap.parse_args()
@@ -184,7 +187,7 @@ def main():
     qga, mon = os.path.join(tmp, "qga.sock"), os.path.join(tmp, "mon.sock")
     serial = os.path.join(args.out, f"serial-{args.firmware}.log")
     cmd = ["qemu-system-x86_64", "-machine", "q35", "-smp", "2", "-m", "4096",
-           "-cdrom", args.iso, "-boot", "d", "-device", "virtio-vga", "-display", "none",
+           "-cdrom", args.iso, "-boot", "d", "-device", args.vga, "-display", "none",
            "-nic", "user,model=virtio-net-pci",
            "-monitor", f"unix:{mon},server,nowait", "-serial", f"file:{serial}",
            "-device", "virtio-serial",
