@@ -554,3 +554,23 @@ details.opening > :not(summary) { opacity: 0; transform: translateY(-6px); }
 
 /* The logo floats on the sky: transparent, with a soft glow. */
 .hero-logo { border-radius: 0; filter: drop-shadow(0 0 28px rgba(169,112,255,.35)); }
+
+/* Tables outside the documentation pages (e.g. the models on the AI page). */
+.table-wrap table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+.table-wrap th, .table-wrap td { text-align: left; vertical-align: top; padding: 11px 14px;
+  border-bottom: 1px solid var(--card-border); }
+.table-wrap th { background: rgba(255,255,255,.05); font-weight: 600; white-space: nowrap; }
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap td:nth-child(-n+3) { white-space: nowrap; }
+.table-wrap tbody tr { transition: background .2s; }
+.table-wrap tbody tr:hover { background: rgba(169,112,255,.08); }
+
+/* Documentation: the section you're reading stands out in both menus. */
+.doc-sub a.current { color: var(--text); font-weight: 600; box-shadow: -2px 0 0 var(--rose);
+  background: linear-gradient(90deg, rgba(255,111,145,.12), transparent); border-radius: 0 8px 8px 0; }
+.doc-toc a { padding: 4px 10px; border-radius: 8px; transition: background .2s, color .2s; }
+.doc-toc a.current { background: rgba(169,112,255,.16); box-shadow: inset 2px 0 0 var(--violet); }
+
+/* Expandable answers: a clearer open and close. */
+details > :not(summary) { transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1); }
+details.opening > :not(summary) { opacity: 0; transform: translateY(-12px); }

@@ -266,13 +266,31 @@ if (docSearch) {
 const docHeads = [...document.querySelectorAll(".doc-body h2[id]")];
 if (docHeads.length) {
   const links = [...document.querySelectorAll(".doc-toc a, .doc-sub a")];
+  let pinned = null;  // the section just clicked, until the scroll settles
+  let settle = 0;
+  const mark = (id) => links.forEach((a) => a.classList.toggle("current", a.getAttribute("href") === `#${id}`));
   const spy = () => {
+    if (pinned) return mark(pinned);
     let current = docHeads[0].id;
-    for (const h of docHeads) if (h.getBoundingClientRect().top < 140) current = h.id;
-    links.forEach((a) => a.classList.toggle("current", a.getAttribute("href") === `#${current}`));
+    for (const h of docHeads) if (h.getBoundingClientRect().top < 160) current = h.id;
+    // At the very bottom the last sections can't reach the top: pick the last one.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      current = docHeads[docHeads.length - 1].id;
+    }
+    mark(current);
   };
-  document.addEventListener("scroll", spy, { passive: true });
+  links.forEach((a) => a.addEventListener("click", () => {
+    pinned = a.getAttribute("href").slice(1);
+    mark(pinned);
+  }));
+  document.addEventListener("scroll", () => {
+    clearTimeout(settle);
+    settle = setTimeout(() => { pinned = null; }, 250);
+    spy();
+  }, { passive: true });
+  if (location.hash) pinned = location.hash.slice(1);
   spy();
+  setTimeout(() => { pinned = null; }, 1200);
 }
 
 // Expandable answers open and close smoothly.
@@ -294,13 +312,13 @@ document.querySelectorAll("details").forEach((d) => {
       d.classList.add("opening");
       const end = `${d.offsetHeight}px`;
       requestAnimationFrame(() => d.classList.remove("opening"));
-      anim = d.animate({ height: [start, end] }, { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" });
+      anim = d.animate({ height: [start, end] }, { duration: 480, easing: "cubic-bezier(.2,.8,.2,1)" });
       anim.onfinish = () => finish(true);
     } else {
       const end = `${summary.offsetHeight + parseFloat(getComputedStyle(d).paddingTop) +
         parseFloat(getComputedStyle(d).paddingBottom) + 2}px`;
       d.classList.add("opening");
-      anim = d.animate({ height: [start, end] }, { duration: 300, easing: "ease-in-out" });
+      anim = d.animate({ height: [start, end] }, { duration: 360, easing: "cubic-bezier(.4,0,.2,1)" });
       anim.onfinish = () => { d.classList.remove("opening"); finish(false); };
     }
   });

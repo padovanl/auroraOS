@@ -15,23 +15,43 @@ def desktop_dir():
         or os.path.expanduser("~/Desktop")
 
 
+def is_live():
+    try:
+        with open("/proc/cmdline") as f:
+            return "boot=live" in f.read().split()
+    except OSError:
+        return False
+
+
 class DesktopIcon(Gtk.Button):
-    def __init__(self, gfile, info):
+    """A file on the desktop. App launchers (.desktop files) show the app's name and
+    icon and start the app; everything else opens with its default app."""
+
+    def __init__(self, gfile, info=None, app=None):
         super().__init__(css_classes=["flat", "desktop-icon"])
         self.gfile = gfile
+        self.app = app
+        if app is None and gfile is not None and gfile.get_basename().endswith(".desktop"):
+            self.app = Gio.DesktopAppInfo.new_from_filename(gfile.get_path() or "")
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        thumb = info.get_attribute_byte_string("thumbnail::path")
         img = Gtk.Image(pixel_size=56)
-        if thumb:
-            img.set_from_file(thumb)
-        elif info.get_icon():
-            img.set_from_gicon(info.get_icon())
+        if self.app is not None:
+            name = self.app.get_display_name()
+            if self.app.get_icon():
+                img.set_from_gicon(self.app.get_icon())
+        else:
+            name = info.get_display_name()
+            thumb = info.get_attribute_byte_string("thumbnail::path")
+            if thumb:
+                img.set_from_file(thumb)
+            elif info.get_icon():
+                img.set_from_gicon(info.get_icon())
         box.append(img)
-        box.append(Gtk.Label(label=info.get_display_name(), wrap=True, lines=2,
+        box.append(Gtk.Label(label=name, wrap=True, lines=2,
                              ellipsize=Pango.EllipsizeMode.MIDDLE, max_width_chars=12,
                              justify=Gtk.Justification.CENTER, css_classes=["desktop-icon-label"]))
         self.set_child(box)
-        self.set_tooltip_text(info.get_display_name())
+        self.set_tooltip_text(name)
         # Single click selects (focus), double click opens, like a file manager.
         click = Gtk.GestureClick()
         click.connect("pressed", self._on_press)
@@ -40,6 +60,10 @@ class DesktopIcon(Gtk.Button):
     def _on_press(self, _gesture, n_press, _x, _y):
         self.grab_focus()
         if n_press == 2:
+            if self.app is not None:
+                from aurora import apps
+                apps.launch(self.app)
+                return
             launcher = Gtk.FileLauncher(file=self.gfile)
             launcher.launch(self.get_root(), None, None)
 
@@ -99,8 +123,15 @@ class DesktopIcons(Gtk.FlowBox):
             pass
         infos.sort(key=lambda i: (i.get_file_type() != Gio.FileType.DIRECTORY,
                                   i.get_display_name().lower()))
+        shown = 0
+        # The live system offers the installer on the desktop, like Ubuntu's.
+        installer = Gio.DesktopAppInfo.new("aurora-installer.desktop") if is_live() else None
+        if installer is not None:
+            self.append(DesktopIcon(None, app=installer))
+            shown += 1
         for info in infos[:MAX_ITEMS]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
             self.append(icon)
-        self.set_visible(bool(infos))
+            shown += 1
+        self.set_visible(shown > 0)
         return GLib.SOURCE_REMOVE
