@@ -296,7 +296,7 @@ if (docHeads.length) {
 // Expandable answers open and close smoothly.
 document.querySelectorAll("details").forEach((d) => {
   const summary = d.querySelector("summary");
-  if (!summary || still) return;
+  if (!summary) return;  // user-triggered and short: animated even with reduced motion
   let anim = null;
   const finish = (open) => {
     d.open = open;
@@ -322,4 +322,34 @@ document.querySelectorAll("details").forEach((d) => {
       anim.onfinish = () => { d.classList.remove("opening"); finish(false); };
     }
   });
+});
+
+// Links to a place on the same page glide there (user-triggered, so even with
+// reduced motion), stopping just under the sticky navigation bar.
+function glideTo(target, hash) {
+  const nav = document.querySelector(".nav");
+  const offset = (nav ? nav.offsetHeight : 0) + 12;
+  const startY = window.scrollY;
+  const endY = Math.max(0, target.getBoundingClientRect().top + startY - offset);
+  const distance = endY - startY;
+  const duration = Math.min(1100, 380 + Math.abs(distance) * 0.25);
+  const t0 = performance.now();
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const step = (now) => {
+    const k = Math.min(1, (now - t0) / duration);
+    window.scrollTo(0, startY + distance * ease(k));
+    if (k < 1) requestAnimationFrame(step);
+    else history.replaceState(null, "", hash);
+  };
+  requestAnimationFrame(step);
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href*="#"]');
+  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  const url = new URL(a.href, location.href);
+  if (url.pathname !== location.pathname || !url.hash || url.hash === "#") return;
+  const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+  if (!target) return;
+  e.preventDefault();
+  glideTo(target, url.hash);
 });
