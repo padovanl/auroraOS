@@ -515,18 +515,23 @@ class FilesWindow(Adw.ApplicationWindow):
         self._update_empty()
 
     def _animate_items(self):
-        """Let the items float in (gtk4-animations.css) while the folder fills; the
-        class is removed afterwards so scrolling does not replay it."""
+        """Let the items float in (gtk4-animations.css) as the folder fills. They are
+        hidden in the same frame the folder changes ("pre"), and the animation starts
+        on the next frame, so nothing flashes at full opacity first. The class is
+        removed afterwards so scrolling does not replay it."""
         views = (self.grid, self.list)
-        for v in views:
-            v.remove_css_class("appear")
         if getattr(self, "_appear_source", 0):
             GLib.source_remove(self._appear_source)
+            self._appear_source = 0
+        for v in views:
+            v.remove_css_class("appear")
+            v.add_css_class("pre")
 
-        def start():
+        def start(*_a):
             for v in views:
+                v.remove_css_class("pre")
                 v.add_css_class("appear")
-            self._appear_source = GLib.timeout_add(700, stop)
+            self._appear_source = GLib.timeout_add(900, stop)
             return GLib.SOURCE_REMOVE
 
         def stop():
@@ -534,7 +539,7 @@ class FilesWindow(Adw.ApplicationWindow):
             for v in views:
                 v.remove_css_class("appear")
             return GLib.SOURCE_REMOVE
-        GLib.idle_add(start)
+        self.add_tick_callback(lambda *_a: start())
 
     def _on_loading(self, *_a):
         if not self.dirlist.is_loading():
@@ -712,7 +717,8 @@ class FilesWindow(Adw.ApplicationWindow):
             menu.append_section(None, s)
 
         self.context_menu.set_menu_model(menu)
-        ok, px, py = view.translate_coordinates(self.view_stack, x, y)
+        # (x, y), or (ok, x, y) with older PyGObject.
+        px, py = view.translate_coordinates(self.view_stack, x, y)[-2:]
         rect = Gdk.Rectangle()
         rect.x, rect.y, rect.width, rect.height = int(px), int(py), 1, 1
         self.context_menu.set_pointing_to(rect)

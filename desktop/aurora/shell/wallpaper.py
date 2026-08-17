@@ -27,9 +27,15 @@ class Wallpaper(LayerWindow):
         overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
         # Files from ~/Desktop, on the primary monitor only.
+        self._icons = None
         if monitor == app.get_primary_monitor():
             from aurora.shell.desktopicons import DesktopIcons
-            overlay.add_overlay(DesktopIcons())
+            self._icons = DesktopIcons()
+            overlay.add_overlay(self._icons)
+            # A click on empty desktop clears the selection.
+            clear = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY)
+            clear.connect("pressed", self._on_background_click)
+            overlay.add_controller(clear)
         self._menu = self._build_menu(overlay)
 
         click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
@@ -39,6 +45,14 @@ class Wallpaper(LayerWindow):
         self._handler = app.daycycle.connect("wallpaper-changed", lambda *a: self.reload())
         self.connect("destroy", lambda *a: app.daycycle.disconnect(self._handler))
         self.reload()
+
+    def _on_background_click(self, _gesture, _n, x, y):
+        widget = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
+        while widget is not None:
+            if widget.has_css_class("desktop-icon"):
+                return  # the icon handles its own click
+            widget = widget.get_parent()
+        self._icons.select(None)
 
     def reload(self):
         path = self.app.daycycle.wallpaper()

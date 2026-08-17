@@ -43,8 +43,8 @@ printf '[Desktop Entry]\nType=Application\nName=x\nNoDisplay=true\n' > ~/.local/
 sed -e 's/#.*//' -e '/^[[:space:]]*$/d' /src/config/renamed-apps.list | while IFS='|' read -r id name icon; do
     id=$(echo $id); name=$(echo $name); icon=$(echo $icon)
     [ -f "/usr/share/applications/$id" ] || continue
-    sed -e "s|^Name=.*|Name=$name|" "/usr/share/applications/$id" > ~/.local/share/applications/$id
-    if [ "$icon" != "-" ]; then sed -i "s|^Icon=.*|Icon=$icon|" ~/.local/share/applications/$id; fi
+    sed -e "/^\[Desktop Entry\]/,/^\[/ s|^Name=.*|Name=$name|" "/usr/share/applications/$id" > ~/.local/share/applications/$id
+    if [ "$icon" != "-" ]; then sed -i "/^\[Desktop Entry\]/,/^\[/ s|^Icon=.*|Icon=$icon|" ~/.local/share/applications/$id; fi
 done
 cp -r /opt/aurora/share/themes/* /usr/share/themes/ 2>/dev/null || true
 

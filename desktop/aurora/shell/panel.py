@@ -1,6 +1,6 @@
 """Top bar: Aurora menu, focused app, status indicators, clock."""
 
-from gi.repository import Gio, GLib, Gtk
+from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
 from aurora.i18n import _
@@ -242,6 +242,9 @@ class Panel(LayerWindow):
         self.app_name = Gtk.Label(css_classes=["panel-app-name"], ellipsize=3,
                                   max_width_chars=40, margin_start=6)
         left.append(self.app_name)
+        # Minimized windows, one icon each: a click brings the window back.
+        self.minimized = Gtk.Box(spacing=2, margin_start=10, css_classes=["panel-minimized"])
+        left.append(self.minimized)
         bar.set_start_widget(left)
 
         right = Gtk.Box(spacing=2)
@@ -270,8 +273,56 @@ class Panel(LayerWindow):
         self.set_child(bar)
         shell.toplevels.connect("changed", lambda *a: self._update_app())
         self._update_app()
+        # A menu opened from a shortcut must get the keyboard (Esc, arrows),
+        # and give it back when it closes.
+        self._menus = (left.get_first_child(), self.status, clock)
+        for button in self._menus:
+            button.connect("notify::active", self._on_menu_active)
+        # Opened from a shortcut, a menu has no pointer grab: its keys arrive at
+        # the bar, so the bar closes it on Esc.
+        keys = Gtk.EventControllerKey()
+        keys.connect("key-pressed", self._on_key)
+        self.add_controller(keys)
+
+    def _on_key(self, _ctrl, keyval, _code, _state):
+        if keyval != Gdk.KEY_Escape:
+            return False
+        for button in self._menus:
+            if button.get_active():
+                button.popdown()
+                return True
+        return False
+
+    def _on_menu_active(self, button, _pspec):
+        if button.get_active():
+            self.set_keyboard(Keyboard.EXCLUSIVE)
+            return
+        # NONE first, so the compositor gives the keyboard back to the window
+        # (on-demand alone would keep it on the bar), then on-demand again.
+        self.set_keyboard(Keyboard.NONE)
+        GLib.timeout_add(150, lambda: self.set_keyboard(Keyboard.ON_DEMAND) or False)
+
+    def _update_minimized(self):
+        while (c := self.minimized.get_first_child()) is not None:
+            self.minimized.remove(c)
+        windows = [t for t in self.shell.toplevels.toplevels if t.minimized]
+        for t in sorted(windows, key=lambda w: w.serial):
+            app = apps.find_app(t.app_id)
+            icon = Gtk.Image(pixel_size=16)
+            if app and app.get_icon():
+                icon.set_from_gicon(app.get_icon())
+            else:
+                icon.set_from_icon_name("application-x-executable")
+            name = app.get_display_name() if app else (t.app_id or "")
+            b = Gtk.Button(child=icon, css_classes=["flat", "panel-button", "panel-minimized-item"],
+                           tooltip_text=_("{title} (minimized) — click to restore").format(
+                               title=t.title or name))
+            b.connect("clicked", lambda _b, t=t: t.activate())
+            self.minimized.append(b)
+        self.minimized.set_visible(bool(windows))
 
     def _update_app(self):
+        self._update_minimized()
         active = self.shell.toplevels.active()
         if active is None:
             self.app_name.set_label(_("Desktop"))
@@ -281,15 +332,18 @@ class Panel(LayerWindow):
                                 (active.app_id or active.title or ""))
         self.app_name.set_tooltip_text(active.title)
 
+    def _toggle_menu(self, button):
+        """Open or close a bar menu from a shortcut. The bar takes the keyboard
+        first: a menu opened before that gets no keys (not even Esc)."""
+        if button.get_active():
+            button.popdown()
+            return
+        self.set_keyboard(Keyboard.EXCLUSIVE)
+        GLib.timeout_add(120, lambda: button.popup() or False)
+
     def open_quick_settings(self):
         # Toggle, like the other shell commands: a second press closes it.
-        if self.status.get_active():
-            self.status.popdown()
-        else:
-            self.status.popup()
+        self._toggle_menu(self.status)
 
     def open_notifications(self):
-        if self.clock.get_active():
-            self.clock.popdown()
-        else:
-            self.clock.popup()
+        self._toggle_menu(self.clock)

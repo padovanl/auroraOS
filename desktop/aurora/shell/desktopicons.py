@@ -53,12 +53,17 @@ class DesktopIcon(Gtk.Button):
         self.set_child(box)
         self.set_tooltip_text(name)
         # Single click selects (focus), double click opens, like a file manager.
-        click = Gtk.GestureClick()
+        # Capture phase: the button's own gesture would otherwise claim the
+        # presses and the second one of a double click never arrives here.
+        click = Gtk.GestureClick(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         click.connect("pressed", self._on_press)
         self.add_controller(click)
 
     def _on_press(self, _gesture, n_press, _x, _y):
-        self.grab_focus()
+        # One selected icon at a time; a click on empty desktop clears it.
+        parent = self.get_ancestor(DesktopIcons)
+        if parent is not None:
+            parent.select(self)
         if n_press == 2:
             if self.app is not None:
                 from aurora import apps
@@ -69,6 +74,14 @@ class DesktopIcon(Gtk.Button):
 
 
 class DesktopIcons(Gtk.FlowBox):
+    def select(self, icon=None):
+        child = self.get_first_child()
+        while child is not None:
+            button = child.get_child() if isinstance(child, Gtk.FlowBoxChild) else child
+            if button is not None:
+                (button.add_css_class if button is icon else button.remove_css_class)("selected")
+            child = child.get_next_sibling()
+
     def __init__(self):
         super().__init__(selection_mode=Gtk.SelectionMode.NONE,
                          orientation=Gtk.Orientation.VERTICAL,

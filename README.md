@@ -105,8 +105,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 ### Desktop
 | | |
 |---|---|
-| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, the Aurora Assistant button, Spotlight, status icons, clock. |
-| **Dock** | Pinned and running apps, running indicators, right-click menus (windows, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Magnification, autohide, bottom/left/right, floating or full-width. |
+| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
+| **Dock** | Pinned and running apps with one dot per open window (up to three), right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, floating or full-width. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
 | **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
@@ -122,7 +122,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
-| **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right). |
+| **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right): click to select, double-click to open, click the empty desktop to clear the selection. App launchers (`.desktop` files) show the app's name and icon. |
 | **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons whose symbols are always visible (×, −, and arrows to expand or restore; or monochrome), server-side and GTK decorations styled alike. |
 | **Animations** | Windows fade and settle in as they open, and files float in, row by row, as a folder opens in Files. Switch them off in Settings → Appearance. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
@@ -306,7 +306,7 @@ The Aurora boot menu offers:
 | **Language · Lingua · Sprache · Idioma** | Starts the live system in one of 20 languages, with the matching keyboard layout. |
 | **Boot from hard disk** | Skips the USB stick. |
 
-From the live desktop you can install at any time with **Install Aurora OS** in the dock.
+The live desktop works like Ubuntu's "Try": use it as much as you like, nothing is written to the disk. To install, double-click **Install Aurora OS** on the desktop (or use its icon in the dock). If the installer is already open, this brings it forward; after you close it, it opens again.
 
 ### 5. Install, step by step
 1. **Welcome**: choose the installer language and check the requirements (20 GB disk,
@@ -1215,9 +1215,10 @@ never fails before it is published. To publish: `make debs && make repo`, commit
 | `make test` | Docker | All three above. |
 | `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
 | `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. Logs and screenshots are kept in `work/boot-test/`. |
+| `make test-interact` | ISO + QEMU/KVM | **Uses the live desktop like a person**: a USB tablet and QMP move the pointer, click, double-click and type, and the shell reports which windows exist and their state (`aurora-shell windows`). It checks that desktop icons select and clear, that Install Aurora OS opens the installer, brings it forward and reopens it after closing, that <kbd>Super</kbd>+<kbd>Return</kbd>, <kbd>Super</kbd>+<kbd>M</kbd> and restore work, that <kbd>Esc</kbd> closes the Control Center and gives the keyboard back, that hot corners fire, that Files' context menu and every Settings page open without errors, and that no text is lost to markup. `--push` tries the checkout's code without rebuilding the ISO. Screenshots are kept in `work/interact-test/`; `tests/interact/serve.py` and `do.py` drive the same VM step by step by hand. |
 | `make test-install` | ISO + QEMU/KVM + OVMF | **Installs Aurora for real**, once with BIOS and once with UEFI. It boots the ISO with an empty 24 GB disk, starts the installer and drives it with key presses sent through QEMU, just like a person at the keyboard: welcome, location, keyboard, "Erase disk" on btrfs, a user with a strong password, Install. Then it boots the installed disk alone and checks the user, the login screen, the live user and live-only files being gone, the btrfs subvolumes and compression, Timeshift's configuration, the "Fresh install" snapshot, a "Before: apt" snapshot after installing a package, and the snapshots entry in the boot menu. Screenshots of every installer step, and of GRUB's snapshot menu, are kept in `work/install-test/`. |
 
-Run `make test && make iso && make test-image && make test-boot && make test-install` before
+Run `make test && make iso && make test-image && make test-boot && make test-interact && make test-install` before
 every release. The
 future GitHub release workflow will run the same targets.
 

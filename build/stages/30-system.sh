@@ -79,9 +79,12 @@ while IFS='|' read -r id name icon; do
     id=$(echo $id); name=$(echo $name); icon=$(echo $icon)
     src="$ROOTFS/usr/share/applications/$id"
     [ -f "$src" ] || die "renamed-apps.list: $id is not installed"
-    # Replace the untranslated Name only; translations (Name[xx]) stay as they are.
-    sed -e "s|^Name=.*|Name=$name|" "$src" > "$ROOTFS/usr/local/share/applications/$id"
+    # Replace the untranslated Name of the app only (the [Desktop Entry] group), not
+    # the names of its actions (New Window, New Tab…); translations stay as they are.
+    sed -e "/^\[Desktop Entry\]/,/^\[/ s|^Name=.*|Name=$name|" "$src" \
+        > "$ROOTFS/usr/local/share/applications/$id"
     if [ "$icon" != "-" ]; then
-        sed -i "s|^Icon=.*|Icon=$icon|" "$ROOTFS/usr/local/share/applications/$id"
+        sed -i "/^\[Desktop Entry\]/,/^\[/ s|^Icon=.*|Icon=$icon|" \
+            "$ROOTFS/usr/local/share/applications/$id"
     fi
 done

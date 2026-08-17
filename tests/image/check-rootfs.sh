@@ -93,6 +93,10 @@ while IFS='|' read -r cat name id launch; do
     fi
 done < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/apps.manifest")
 expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/share/applications/org.gnome.Ptyxis.desktop"
+# Only the app is renamed: its actions (New Window, Preferences…) keep their names,
+# or the dock menu lists "Terminal" three times.
+expect "Terminal actions keep their own names" \
+    test "$(grep -c '^Name=Terminal$' "$ROOTFS/usr/local/share/applications/org.gnome.Ptyxis.desktop")" = 1
 
 echo "== installer"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"

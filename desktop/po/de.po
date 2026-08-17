@@ -66,11 +66,12 @@ msgid "speech synthesis failed"
 msgstr "Sprachausgabe fehlgeschlagen"
 
 #: aurora/assistant.py:99 aurora/assistant.py:295 aurora/assistant.py:373
-#: aurora/files/window.py:692
+#: aurora/files/window.py:697
 msgid "Copy"
 msgstr "Kopieren"
 
 #: aurora/assistant.py:116 aurora/assistant.py:121
+#: aurora/settingsapp/inputs.py:26
 msgid "Aurora Assistant"
 msgstr "Aurora Assistent"
 
@@ -78,7 +79,7 @@ msgstr "Aurora Assistent"
 msgid "New Chat"
 msgstr "Neuer Chat"
 
-#: aurora/assistant.py:127
+#: aurora/assistant.py:127 aurora/shell/dock.py:282
 msgid "Close"
 msgstr "Schließen"
 
@@ -196,7 +197,7 @@ msgid "Writing Tools"
 msgstr "Schreibwerkzeuge"
 
 #: aurora/assistant.py:354 aurora/settingsapp/ai.py:69
-#: aurora/settingsapp/ai.py:75 aurora/shell/app.py:279
+#: aurora/settingsapp/ai.py:75 aurora/shell/app.py:311
 msgid "Aurora AI"
 msgstr "Aurora KI"
 
@@ -786,7 +787,7 @@ msgstr "SSH, das Ruhezustand und Netzwerkwechsel übersteht."
 
 #: aurora/files/app.py:56 aurora/files/window.py:168 aurora/files/window.py:273
 #: aurora/files/window.py:274 aurora/settingsapp/ai.py:158
-#: aurora/settingsapp/applications.py:16
+#: aurora/settingsapp/applications.py:16 aurora/settingsapp/inputs.py:38
 msgid "Files"
 msgstr "Dateien"
 
@@ -806,8 +807,8 @@ msgstr "Ein Ordner kann nicht in sich selbst kopiert werden"
 msgid "Cancelled"
 msgstr "Abgebrochen"
 
-#: aurora/files/properties.py:28 aurora/files/window.py:699
-#: aurora/files/window.py:711
+#: aurora/files/properties.py:28 aurora/files/window.py:704
+#: aurora/files/window.py:716
 msgid "Properties"
 msgstr "Eigenschaften"
 
@@ -869,7 +870,7 @@ msgid "Home"
 msgstr "Persönlicher Ordner"
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:166
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -885,11 +886,11 @@ msgstr "Zurück"
 msgid "Forward"
 msgstr "Vorwärts"
 
-#: aurora/files/window.py:195 aurora/files/window.py:896
+#: aurora/files/window.py:195 aurora/files/window.py:902
 msgid "New Folder"
 msgstr "Neuer Ordner"
 
-#: aurora/files/window.py:196 aurora/files/window.py:710
+#: aurora/files/window.py:196 aurora/files/window.py:715
 msgid "Open in Terminal"
 msgstr "Im Terminal öffnen"
 
@@ -901,7 +902,7 @@ msgstr "Versteckte Dateien anzeigen"
 msgid "List View"
 msgstr "Listenansicht"
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:127
+#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
 msgid "New Window"
 msgstr "Neues Fenster"
 
@@ -910,16 +911,16 @@ msgid "About Files"
 msgstr "Info zu Dateien"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:257
+#: aurora/shell/panel.py:260
 msgid "Search"
 msgstr "Suchen"
 
-#: aurora/files/window.py:238 aurora/files/window.py:553
+#: aurora/files/window.py:238 aurora/files/window.py:558
 msgid "Folder is Empty"
 msgstr "Der Ordner ist leer"
 
-#: aurora/files/window.py:254 aurora/files/window.py:702
-#: aurora/files/window.py:838 aurora/shell/dock.py:188
+#: aurora/files/window.py:254 aurora/files/window.py:707
+#: aurora/files/window.py:844 aurora/shell/dock.py:309
 msgid "Empty Trash"
 msgstr "Papierkorb leeren"
 
@@ -927,119 +928,119 @@ msgstr "Papierkorb leeren"
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "Elemente im Papierkorb werden beim Leeren endgültig gelöscht"
 
-#: aurora/files/window.py:551
+#: aurora/files/window.py:556
 msgid "No Results Found"
 msgstr "Keine Ergebnisse gefunden"
 
-#: aurora/files/window.py:552
+#: aurora/files/window.py:557
 msgid "Trash is Empty"
 msgstr "Der Papierkorb ist leer"
 
-#: aurora/files/window.py:674
+#: aurora/files/window.py:679 aurora/shell/dock.py:282
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: aurora/files/window.py:675
+#: aurora/files/window.py:680
 msgid "Delete Permanently"
 msgstr "Endgültig löschen"
 
-#: aurora/files/window.py:677 aurora/quicklook.py:141 aurora/shell/app.py:403
-#: aurora/shell/dock.py:187 aurora/shell/sysnotify.py:113
+#: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
+#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "Öffnen"
 
-#: aurora/files/window.py:678
+#: aurora/files/window.py:683
 msgid "Open With…"
 msgstr "Öffnen mit …"
 
-#: aurora/files/window.py:679
+#: aurora/files/window.py:684
 msgid "Quick Look"
 msgstr "Übersicht"
 
-#: aurora/files/window.py:681
+#: aurora/files/window.py:686
 msgid "Send to Nearby Device…"
 msgstr "An ein Gerät in der Nähe senden …"
 
-#: aurora/files/window.py:685
+#: aurora/files/window.py:690
 msgid "Summarize with Aurora"
 msgstr "Mit Aurora zusammenfassen"
 
-#: aurora/files/window.py:686
+#: aurora/files/window.py:691
 msgid "Ask Aurora About This File…"
 msgstr "Aurora zu dieser Datei fragen …"
 
-#: aurora/files/window.py:691
+#: aurora/files/window.py:696
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: aurora/files/window.py:693
+#: aurora/files/window.py:698
 msgid "Rename…"
 msgstr "Umbenennen …"
 
-#: aurora/files/window.py:696
+#: aurora/files/window.py:701
 msgid "Move to Trash"
 msgstr "In den Papierkorb verschieben"
 
-#: aurora/files/window.py:705
+#: aurora/files/window.py:710
 msgid "New Folder…"
 msgstr "Neuer Ordner …"
 
-#: aurora/files/window.py:706
+#: aurora/files/window.py:711
 msgid "Paste"
 msgstr "Einfügen"
 
-#: aurora/files/window.py:709
+#: aurora/files/window.py:714
 msgid "Select All"
 msgstr "Alles auswählen"
 
-#: aurora/files/window.py:734
+#: aurora/files/window.py:740
 msgid "{n} item(s) cut"
 msgstr "{n} Element(e) ausgeschnitten"
 
-#: aurora/files/window.py:734
+#: aurora/files/window.py:740
 msgid "{n} item(s) copied"
 msgstr "{n} Element(e) kopiert"
 
-#: aurora/files/window.py:785
+#: aurora/files/window.py:791
 msgid "{n} item(s) moved to the Trash"
 msgstr "{n} Element(e) in den Papierkorb verschoben"
 
-#: aurora/files/window.py:798
+#: aurora/files/window.py:804
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "{n} Element(e) endgültig löschen?"
 
-#: aurora/files/window.py:799
+#: aurora/files/window.py:805
 msgid "Deleted items cannot be restored."
 msgstr "Gelöschte Elemente können nicht wiederhergestellt werden."
 
-#: aurora/files/window.py:800 aurora/files/window.py:837
-#: aurora/files/window.py:858 aurora/settingsapp/inputs.py:182
+#: aurora/files/window.py:806 aurora/files/window.py:843
+#: aurora/files/window.py:864 aurora/settingsapp/inputs.py:266
 #: aurora/settingsapp/system.py:400 aurora/settingsapp/system.py:469
 #: aurora/settingsapp/system.py:487
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: aurora/files/window.py:801 aurora/settingsapp/ai.py:329
+#: aurora/files/window.py:807 aurora/settingsapp/ai.py:329
 msgid "Delete"
 msgstr "Löschen"
 
-#: aurora/files/window.py:835
+#: aurora/files/window.py:841
 msgid "Empty Trash?"
 msgstr "Papierkorb leeren?"
 
-#: aurora/files/window.py:836
+#: aurora/files/window.py:842
 msgid "All items in the Trash will be permanently deleted."
 msgstr "Alle Elemente im Papierkorb werden endgültig gelöscht."
 
-#: aurora/files/window.py:884
+#: aurora/files/window.py:890
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: aurora/files/window.py:896
+#: aurora/files/window.py:902
 msgid "Untitled Folder"
 msgstr "Unbenannter Ordner"
 
-#: aurora/files/window.py:896
+#: aurora/files/window.py:902
 msgid "Create"
 msgstr "Erstellen"
 
@@ -1158,7 +1159,7 @@ msgid "Based on"
 msgstr "Basiert auf"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:277
+#: aurora/shell/panel.py:328
 msgid "Desktop"
 msgstr "Schreibtisch"
 
@@ -1218,10 +1219,6 @@ msgstr "Modell auf diesem Computer"
 msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "Größere Modelle antworten besser, brauchen aber mehr Arbeitsspeicher. Dieser Computer hat {ram:.0f} GB."
 
-#: aurora/settingsapp/ai.py:96
-msgid "needs {n} GB of memory"
-msgstr "braucht {n} GB Arbeitsspeicher"
-
 #: aurora/settingsapp/ai.py:101
 msgid "Cloud Provider"
 msgstr "Cloud-Anbieter"
@@ -1278,7 +1275,7 @@ msgstr "Wo Aurora KI hilft"
 msgid "Turn off anything you don't want. Features with a download are set up the first time you switch them on."
 msgstr "Schalte aus, was du nicht willst. Funktionen mit Download werden beim ersten Einschalten eingerichtet."
 
-#: aurora/settingsapp/ai.py:155
+#: aurora/settingsapp/ai.py:155 aurora/settingsapp/inputs.py:27
 msgid "Writing tools"
 msgstr "Schreibwerkzeuge"
 
@@ -1323,7 +1320,7 @@ msgstr "Terminal-Befehle"
 msgid "ask \"what to do\" suggests a command; why explains the last error"
 msgstr "ask \"was zu tun ist\" schlägt einen Befehl vor; why erklärt den letzten Fehler"
 
-#: aurora/settingsapp/ai.py:177
+#: aurora/settingsapp/ai.py:177 aurora/settingsapp/inputs.py:24
 msgid "Dictation"
 msgstr "Diktat"
 
@@ -1592,7 +1589,7 @@ msgid "Subpixel (for LCD screens)"
 msgstr "Subpixel (für LCD-Bildschirme)"
 
 #: aurora/settingsapp/appearance.py:157 aurora/settingsapp/appearance.py:162
-#: aurora/settingsapp/inputs.py:113
+#: aurora/settingsapp/inputs.py:181
 msgid "None"
 msgstr "Keine"
 
@@ -1729,7 +1726,7 @@ msgstr "Autostart-App hinzufügen"
 msgid "No startup apps"
 msgstr "Keine Autostart-Apps"
 
-#: aurora/settingsapp/applications.py:83 aurora/settingsapp/inputs.py:162
+#: aurora/settingsapp/applications.py:83 aurora/settingsapp/inputs.py:246
 #: aurora/settingsapp/language.py:210 aurora/settingsapp/system.py:488
 msgid "Remove"
 msgstr "Entfernen"
@@ -1894,7 +1891,7 @@ msgstr "Untertitel"
 msgid "Firefox and Videos show subtitles when a video has them; Aurora AI can dictate what you say."
 msgstr "Firefox und Videos zeigen Untertitel, wenn ein Video welche hat; Aurora KI kann aufschreiben, was du sagst."
 
-#: aurora/settingsapp/applications.py:259 aurora/settingsapp/inputs.py:97
+#: aurora/settingsapp/applications.py:259 aurora/settingsapp/inputs.py:165
 msgid "Typing"
 msgstr "Tippen"
 
@@ -1926,7 +1923,7 @@ msgstr "Zeigen und Klicken"
 msgid "Double-click delay"
 msgstr "Doppelklick-Verzögerung"
 
-#: aurora/settingsapp/applications.py:277 aurora/settingsapp/inputs.py:70
+#: aurora/settingsapp/applications.py:277 aurora/settingsapp/inputs.py:138
 msgid "Pointer speed"
 msgstr "Zeigergeschwindigkeit"
 
@@ -1936,8 +1933,9 @@ msgstr "Geschwindigkeit, Linkshändermodus und Gesten findest du unter Maus und 
 
 #: aurora/settingsapp/app.py:43 aurora/settingsapp/app.py:65
 #: aurora/settingsapp/app.py:77 aurora/settingsapp/app.py:78
-#: aurora/settingsapp/desktop.py:126 aurora/shell/quicksettings.py:236
-#: aurora/shell/search.py:421 aurora/shell/wallpaper.py:62
+#: aurora/settingsapp/desktop.py:126 aurora/settingsapp/inputs.py:39
+#: aurora/shell/quicksettings.py:236 aurora/shell/search.py:421
+#: aurora/shell/wallpaper.py:76
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -2071,7 +2069,7 @@ msgstr "Automatisch ausblenden"
 msgid "Show Trash"
 msgstr "Papierkorb anzeigen"
 
-#: aurora/settingsapp/desktop.py:107 aurora/settingsapp/inputs.py:270
+#: aurora/settingsapp/desktop.py:107 aurora/settingsapp/inputs.py:354
 msgid "Windows"
 msgstr "Fenster"
 
@@ -2107,11 +2105,11 @@ msgstr "Dateien aus dem Ordner Schreibtisch anzeigen"
 msgid "Icon position"
 msgstr "Position der Symbole"
 
-#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:261
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:345
 msgid "Top left"
 msgstr "Oben links"
 
-#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:261
+#: aurora/settingsapp/desktop.py:118 aurora/settingsapp/inputs.py:345
 msgid "Top right"
 msgstr "Oben rechts"
 
@@ -2584,255 +2582,419 @@ msgid_plural "{n} things need attention"
 msgstr[0] "{n} Punkt braucht Aufmerksamkeit"
 msgstr[1] "{n} Punkte brauchen Aufmerksamkeit"
 
-#: aurora/settingsapp/inputs.py:19
+#: aurora/settingsapp/inputs.py:20
+msgid "Search and Launchpad"
+msgstr "Suche und Launchpad"
+
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+msgid "Control Center"
+msgstr "Kontrollzentrum"
+
+#: aurora/settingsapp/inputs.py:22
+msgid "Clipboard history"
+msgstr "Zwischenablage-Verlauf"
+
+#: aurora/settingsapp/inputs.py:23
+msgid "Emoji picker"
+msgstr "Emoji-Auswahl"
+
+#: aurora/settingsapp/inputs.py:25
+msgid "Read selected text aloud"
+msgstr "Markierten Text vorlesen"
+
+#: aurora/settingsapp/inputs.py:28
+msgid "Show all windows"
+msgstr "Alle Fenster anzeigen"
+
+#: aurora/settingsapp/inputs.py:29
+msgid "Screenshot of the screen"
+msgstr "Bildschirmfoto des Bildschirms"
+
+#: aurora/settingsapp/inputs.py:30
+msgid "Screenshot of an area"
+msgstr "Bildschirmfoto eines Bereichs"
+
+#: aurora/settingsapp/inputs.py:31
+msgid "Copy text from the screen"
+msgstr "Text vom Bildschirm kopieren"
+
+#: aurora/settingsapp/inputs.py:32
+msgid "Volume up"
+msgstr "Lauter"
+
+#: aurora/settingsapp/inputs.py:33
+msgid "Volume down"
+msgstr "Leiser"
+
+#: aurora/settingsapp/inputs.py:34 aurora/settingsapp/sound.py:83
+msgid "Mute"
+msgstr "Stumm"
+
+#: aurora/settingsapp/inputs.py:35
+msgid "Brightness up"
+msgstr "Heller"
+
+#: aurora/settingsapp/inputs.py:36
+msgid "Brightness down"
+msgstr "Dunkler"
+
+#: aurora/settingsapp/inputs.py:37
+msgid "New terminal window"
+msgstr "Neues Terminalfenster"
+
+#: aurora/settingsapp/inputs.py:40
+msgid "Lock screen"
+msgstr "Bildschirm sperren"
+
+#: aurora/settingsapp/inputs.py:43
+msgid "Next window"
+msgstr "Nächstes Fenster"
+
+#: aurora/settingsapp/inputs.py:44
+msgid "Previous window"
+msgstr "Vorheriges Fenster"
+
+#: aurora/settingsapp/inputs.py:45
+msgid "Close window"
+msgstr "Fenster schließen"
+
+#: aurora/settingsapp/inputs.py:46
+msgid "Maximize window"
+msgstr "Fenster maximieren"
+
+#: aurora/settingsapp/inputs.py:47
+msgid "Restore window size"
+msgstr "Fenstergröße wiederherstellen"
+
+#: aurora/settingsapp/inputs.py:48
+msgid "Minimize window"
+msgstr "Fenster minimieren"
+
+#: aurora/settingsapp/inputs.py:49
+msgid "Full screen"
+msgstr "Vollbild"
+
+#: aurora/settingsapp/inputs.py:50
+msgid "Zoom on or off"
+msgstr "Zoom ein- oder ausschalten"
+
+#: aurora/settingsapp/inputs.py:51
+msgid "Zoom in"
+msgstr "Vergrößern"
+
+#: aurora/settingsapp/inputs.py:52
+msgid "Zoom out"
+msgstr "Verkleinern"
+
+#: aurora/settingsapp/inputs.py:53
+msgid "Window menu"
+msgstr "Fenstermenü"
+
+#: aurora/settingsapp/inputs.py:62
+msgid "Snap window left"
+msgstr "Fenster links andocken"
+
+#: aurora/settingsapp/inputs.py:62
+msgid "Snap window right"
+msgstr "Fenster rechts andocken"
+
+#: aurora/settingsapp/inputs.py:64
+msgid "Move window to the top-left quarter"
+msgstr "Fenster ins obere linke Viertel verschieben"
+
+#: aurora/settingsapp/inputs.py:65
+msgid "Move window to the top-right quarter"
+msgstr "Fenster ins obere rechte Viertel verschieben"
+
+#: aurora/settingsapp/inputs.py:66
+msgid "Move window to the bottom-left quarter"
+msgstr "Fenster ins untere linke Viertel verschieben"
+
+#: aurora/settingsapp/inputs.py:67
+msgid "Move window to the bottom-right quarter"
+msgstr "Fenster ins untere rechte Viertel verschieben"
+
+#: aurora/settingsapp/inputs.py:68
+msgid "Move window to the left third"
+msgstr "Fenster ins linke Drittel verschieben"
+
+#: aurora/settingsapp/inputs.py:69
+msgid "Move window to the center third"
+msgstr "Fenster ins mittlere Drittel verschieben"
+
+#: aurora/settingsapp/inputs.py:70
+msgid "Move window to the right third"
+msgstr "Fenster ins rechte Drittel verschieben"
+
+#: aurora/settingsapp/inputs.py:76
+msgid "Previous workspace"
+msgstr "Vorherige Arbeitsfläche"
+
+#: aurora/settingsapp/inputs.py:78
+msgid "Next workspace"
+msgstr "Nächste Arbeitsfläche"
+
+#: aurora/settingsapp/inputs.py:79
+msgid "Go to workspace {n}"
+msgstr "Zu Arbeitsfläche {n} wechseln"
+
+#: aurora/settingsapp/inputs.py:81
+msgid "Move window to workspace {n}"
+msgstr "Fenster auf Arbeitsfläche {n} verschieben"
+
+#: aurora/settingsapp/inputs.py:87
 msgid "Mouse & Touchpad"
 msgstr "Maus und Touchpad"
 
-#: aurora/settingsapp/inputs.py:24
+#: aurora/settingsapp/inputs.py:92
 msgid "General"
 msgstr "Allgemein"
 
-#: aurora/settingsapp/inputs.py:25
+#: aurora/settingsapp/inputs.py:93
 msgid "Left-handed"
 msgstr "Linkshändig"
 
-#: aurora/settingsapp/inputs.py:29
+#: aurora/settingsapp/inputs.py:97
 msgid "Mouse"
 msgstr "Maus"
 
-#: aurora/settingsapp/inputs.py:33
+#: aurora/settingsapp/inputs.py:101
 msgid "Acceleration"
 msgstr "Beschleunigung"
 
-#: aurora/settingsapp/inputs.py:33
+#: aurora/settingsapp/inputs.py:101
 msgid "Adaptive"
 msgstr "Adaptiv"
 
-#: aurora/settingsapp/inputs.py:33
+#: aurora/settingsapp/inputs.py:101
 msgid "Flat"
 msgstr "Flach"
 
-#: aurora/settingsapp/inputs.py:36 aurora/settingsapp/inputs.py:45
+#: aurora/settingsapp/inputs.py:104 aurora/settingsapp/inputs.py:113
 msgid "Natural scrolling"
 msgstr "Natürliches Scrollen"
 
-#: aurora/settingsapp/inputs.py:39
+#: aurora/settingsapp/inputs.py:107
 msgid "Content moves in the direction of the wheel"
 msgstr "Der Inhalt bewegt sich in Richtung des Mausrads"
 
-#: aurora/settingsapp/inputs.py:41
+#: aurora/settingsapp/inputs.py:109
 msgid "Touchpad"
 msgstr "Touchpad"
 
-#: aurora/settingsapp/inputs.py:43
+#: aurora/settingsapp/inputs.py:111
 msgid "Tap to click"
 msgstr "Tippen zum Klicken"
 
-#: aurora/settingsapp/inputs.py:48
+#: aurora/settingsapp/inputs.py:116
 msgid "Disable while typing"
 msgstr "Beim Tippen deaktivieren"
 
-#: aurora/settingsapp/inputs.py:53
+#: aurora/settingsapp/inputs.py:121
 msgid "Scroll method"
 msgstr "Scroll-Methode"
 
-#: aurora/settingsapp/inputs.py:53
+#: aurora/settingsapp/inputs.py:121
 msgid "Two fingers"
 msgstr "Zwei Finger"
 
-#: aurora/settingsapp/inputs.py:53
+#: aurora/settingsapp/inputs.py:121
 msgid "Edge"
 msgstr "Rand"
 
-#: aurora/settingsapp/inputs.py:58
+#: aurora/settingsapp/inputs.py:126
 msgid "Secondary click"
 msgstr "Sekundärklick"
 
-#: aurora/settingsapp/inputs.py:58
+#: aurora/settingsapp/inputs.py:126
 msgid "Two-finger click"
 msgstr "Klick mit zwei Fingern"
 
-#: aurora/settingsapp/inputs.py:58
+#: aurora/settingsapp/inputs.py:126
 msgid "Bottom-right corner"
 msgstr "Untere rechte Ecke"
 
-#: aurora/settingsapp/inputs.py:63
+#: aurora/settingsapp/inputs.py:131
 msgid "Gestures"
 msgstr "Gesten"
 
-#: aurora/settingsapp/inputs.py:65
+#: aurora/settingsapp/inputs.py:133
 msgid "Three fingers: up for all windows, down for the desktop, sideways to change workspace. Pinch with four fingers for Launchpad."
 msgstr "Drei Finger: nach oben für alle Fenster, nach unten für den Schreibtisch, zur Seite zum Arbeitsflächenwechsel. Mit vier Fingern zusammenziehen für das Launchpad."
 
-#: aurora/settingsapp/inputs.py:92 aurora/settingsapp/language.py:142
+#: aurora/settingsapp/inputs.py:160 aurora/settingsapp/language.py:142
 msgid "Keyboard"
 msgstr "Tastatur"
 
-#: aurora/settingsapp/inputs.py:98
+#: aurora/settingsapp/inputs.py:166
 msgid "Keyboard layouts are in Language & Region."
 msgstr "Tastaturbelegungen findest du unter Sprache und Region."
 
-#: aurora/settingsapp/inputs.py:99
+#: aurora/settingsapp/inputs.py:167
 msgid "Repeat delay (ms)"
 msgstr "Verzögerung der Wiederholung (ms)"
 
-#: aurora/settingsapp/inputs.py:101
+#: aurora/settingsapp/inputs.py:169
 msgid "Repeat rate (per second)"
 msgstr "Wiederholrate (pro Sekunde)"
 
-#: aurora/settingsapp/inputs.py:103
+#: aurora/settingsapp/inputs.py:171
 msgid "Num Lock on at login"
 msgstr "Num-Taste bei der Anmeldung an"
 
-#: aurora/settingsapp/inputs.py:110
+#: aurora/settingsapp/inputs.py:178
 msgid "Special Characters"
 msgstr "Sonderzeichen"
 
-#: aurora/settingsapp/inputs.py:111
+#: aurora/settingsapp/inputs.py:179
 msgid "Press the Compose key, then a sequence: ' then e gives é, o then c gives ©, = then e gives €."
 msgstr "Drücke die Compose-Taste, dann eine Folge: ' und e ergibt é, o und c ergibt ©, = und e ergibt €."
 
-#: aurora/settingsapp/inputs.py:113
+#: aurora/settingsapp/inputs.py:181
 msgid "Right Alt"
 msgstr "Rechte Alt-Taste"
 
-#: aurora/settingsapp/inputs.py:114
+#: aurora/settingsapp/inputs.py:182
 msgid "Right Super"
 msgstr "Rechte Super-Taste"
 
-#: aurora/settingsapp/inputs.py:114
+#: aurora/settingsapp/inputs.py:182
 msgid "Menu key"
 msgstr "Menütaste"
 
-#: aurora/settingsapp/inputs.py:115
+#: aurora/settingsapp/inputs.py:183
 msgid "Right Ctrl"
 msgstr "Rechte Strg-Taste"
 
-#: aurora/settingsapp/inputs.py:115
+#: aurora/settingsapp/inputs.py:183
 msgid "Caps Lock"
 msgstr "Feststelltaste"
 
-#: aurora/settingsapp/inputs.py:118
+#: aurora/settingsapp/inputs.py:186
 msgid "Compose key"
 msgstr "Compose-Taste"
 
-#: aurora/settingsapp/inputs.py:121
+#: aurora/settingsapp/inputs.py:189
 msgid "Emoji"
 msgstr "Emoji"
 
-#: aurora/settingsapp/inputs.py:122
+#: aurora/settingsapp/inputs.py:190
 msgid "Super+. opens the emoji picker in any app."
 msgstr "Super+. öffnet die Emoji-Auswahl in jeder App."
 
-#: aurora/settingsapp/inputs.py:124
+#: aurora/settingsapp/inputs.py:192
 msgid "Shortcuts"
 msgstr "Tastenkürzel"
 
-#: aurora/settingsapp/inputs.py:125
+#: aurora/settingsapp/inputs.py:193
 msgid "Built-in shortcuts, plus your own commands."
 msgstr "Eingebaute Tastenkürzel und deine eigenen Befehle."
 
-#: aurora/settingsapp/inputs.py:127 aurora/settingsapp/inputs.py:174
+#: aurora/settingsapp/inputs.py:195 aurora/settingsapp/inputs.py:258
 msgid "Add Custom Shortcut"
 msgstr "Eigenes Tastenkürzel hinzufügen"
 
-#: aurora/settingsapp/inputs.py:175
+#: aurora/settingsapp/inputs.py:232
+msgid "Super"
+msgstr "Super"
+
+#: aurora/settingsapp/inputs.py:259
 msgid "Press the key combination, then enter the command to run."
 msgstr "Drücke die Tastenkombination und gib dann den auszuführenden Befehl ein."
 
-#: aurora/settingsapp/inputs.py:177
+#: aurora/settingsapp/inputs.py:261
 msgid "Press keys…"
 msgstr "Tasten drücken …"
 
-#: aurora/settingsapp/inputs.py:178
+#: aurora/settingsapp/inputs.py:262
 msgid "Command, e.g. firefox-esr --private-window"
 msgstr "Befehl, z. B. firefox-esr --private-window"
 
-#: aurora/settingsapp/inputs.py:183 aurora/settingsapp/system.py:470
+#: aurora/settingsapp/inputs.py:267 aurora/settingsapp/system.py:470
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: aurora/settingsapp/inputs.py:236
+#: aurora/settingsapp/inputs.py:320
 msgid "Multitasking"
 msgstr "Multitasking"
 
-#: aurora/settingsapp/inputs.py:241
+#: aurora/settingsapp/inputs.py:325
 msgid "Workspaces"
 msgstr "Arbeitsflächen"
 
-#: aurora/settingsapp/inputs.py:242
+#: aurora/settingsapp/inputs.py:326
 msgid "Switch with Super+1…9 or Ctrl+Alt+Left/Right."
 msgstr "Wechsel mit Super+1…9 oder Strg+Alt+Links/Rechts."
 
-#: aurora/settingsapp/inputs.py:245
+#: aurora/settingsapp/inputs.py:329
 msgid "Number of workspaces"
 msgstr "Anzahl der Arbeitsflächen"
 
-#: aurora/settingsapp/inputs.py:252
+#: aurora/settingsapp/inputs.py:336
 msgid "Hot Corners"
 msgstr "Aktive Ecken"
 
-#: aurora/settingsapp/inputs.py:253
+#: aurora/settingsapp/inputs.py:337
 msgid "Push the pointer into a corner of the screen to…"
 msgstr "Schiebe den Zeiger in eine Bildschirmecke, um …"
 
-#: aurora/settingsapp/inputs.py:254
+#: aurora/settingsapp/inputs.py:338
 msgid "Do Nothing"
 msgstr "Nichts tun"
 
-#: aurora/settingsapp/inputs.py:254
+#: aurora/settingsapp/inputs.py:338
 msgid "Show All Windows"
 msgstr "Alle Fenster zeigen"
 
-#: aurora/settingsapp/inputs.py:255
+#: aurora/settingsapp/inputs.py:339
 msgid "Show Apps (Launchpad)"
 msgstr "Apps zeigen (Launchpad)"
 
-#: aurora/settingsapp/inputs.py:256 aurora/shell/overview.py:95
+#: aurora/settingsapp/inputs.py:340 aurora/shell/overview.py:95
 msgid "Show Desktop"
 msgstr "Schreibtisch zeigen"
 
-#: aurora/settingsapp/inputs.py:257
+#: aurora/settingsapp/inputs.py:341
 msgid "Open Control Center"
 msgstr "Kontrollzentrum öffnen"
 
-#: aurora/settingsapp/inputs.py:258
+#: aurora/settingsapp/inputs.py:342
 msgid "Open Notifications"
 msgstr "Benachrichtigungen öffnen"
 
-#: aurora/settingsapp/inputs.py:259 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
 msgid "Lock Screen"
 msgstr "Bildschirm sperren"
 
-#: aurora/settingsapp/inputs.py:259
+#: aurora/settingsapp/inputs.py:343
 msgid "Turn Screen Off"
 msgstr "Bildschirm ausschalten"
 
-#: aurora/settingsapp/inputs.py:262
+#: aurora/settingsapp/inputs.py:346
 msgid "Bottom left"
 msgstr "Unten links"
 
-#: aurora/settingsapp/inputs.py:263
+#: aurora/settingsapp/inputs.py:347
 msgid "Bottom right"
 msgstr "Unten rechts"
 
-#: aurora/settingsapp/inputs.py:271
+#: aurora/settingsapp/inputs.py:355
 msgid "Super+W shows all windows. Super+Left/Right fills half the screen, Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. Hold Super while dragging a window to drop it into a quarter or third."
 msgstr "Super+W zeigt alle Fenster. Super+Links/Rechts füllt den halben Bildschirm, Super+Strg+U/I/J/K ein Viertel, Super+Strg+D/F/G ein Drittel. Halte Super beim Ziehen eines Fensters, um es in ein Viertel oder Drittel abzulegen."
 
-#: aurora/settingsapp/inputs.py:274
+#: aurora/settingsapp/inputs.py:358
 msgid "Snap windows to screen edges"
 msgstr "Fenster an Bildschirmränder andocken"
 
-#: aurora/settingsapp/inputs.py:277
+#: aurora/settingsapp/inputs.py:361
 msgid "Drag a window to an edge to fill half the screen"
 msgstr "Ziehe ein Fenster an einen Rand, um den halben Bildschirm zu füllen"
 
-#: aurora/settingsapp/inputs.py:278
+#: aurora/settingsapp/inputs.py:362
 msgid "Drag to the top to maximize"
 msgstr "Nach oben ziehen zum Maximieren"
 
-#: aurora/settingsapp/inputs.py:281
+#: aurora/settingsapp/inputs.py:365
 msgid "Focus follows the pointer"
 msgstr "Fokus folgt dem Zeiger"
 
@@ -3116,10 +3278,6 @@ msgstr "Keine Geräte gefunden"
 #: aurora/settingsapp/sound.py:80
 msgid "Volume"
 msgstr "Lautstärke"
-
-#: aurora/settingsapp/sound.py:83
-msgid "Mute"
-msgstr "Stumm"
 
 #: aurora/settingsapp/sound.py:106
 msgid "Balance"
@@ -3570,111 +3728,116 @@ msgstr "Zeitzone"
 msgid "24-hour clock"
 msgstr "24-Stunden-Uhr"
 
-#: aurora/shell/app.py:227
+#: aurora/shell/app.py:251
 msgid "Writing tools are off"
 msgstr "Die Schreibwerkzeuge sind aus"
 
-#: aurora/shell/app.py:280
+#: aurora/shell/app.py:312
 msgid "Set it up in Settings → AI."
 msgstr "Richte sie in Einstellungen → KI ein."
 
-#: aurora/shell/app.py:286
+#: aurora/shell/app.py:318
 msgid "Dictation is off"
 msgstr "Das Diktat ist aus"
 
-#: aurora/shell/app.py:293
+#: aurora/shell/app.py:325
 msgid "Dictation isn't installed yet"
 msgstr "Das Diktat ist noch nicht installiert"
 
-#: aurora/shell/app.py:297
+#: aurora/shell/app.py:329
 msgid "Listening… press Super+H to stop"
 msgstr "Hört zu … drücke Super+H zum Beenden"
 
-#: aurora/shell/app.py:299
+#: aurora/shell/app.py:331
 msgid "Writing it down…"
 msgstr "Wird aufgeschrieben …"
 
-#: aurora/shell/app.py:313
+#: aurora/shell/app.py:345
 msgid "Nothing was heard"
 msgstr "Es wurde nichts gehört"
 
-#: aurora/shell/app.py:322
+#: aurora/shell/app.py:354
 msgid "Read aloud is off"
 msgstr "Das Vorlesen ist aus"
 
-#: aurora/shell/app.py:329
+#: aurora/shell/app.py:361
 msgid "Select some text first"
 msgstr "Markiere zuerst einen Text"
 
-#: aurora/shell/app.py:397
+#: aurora/shell/app.py:429
 msgid "Screenshot captured"
 msgstr "Bildschirmfoto aufgenommen"
 
-#: aurora/shell/app.py:398
+#: aurora/shell/app.py:430
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "In {path} gespeichert und in die Zwischenablage kopiert."
 
-#: aurora/shell/app.py:403
+#: aurora/shell/app.py:435
 msgid "Annotate"
 msgstr "Kommentieren"
 
-#: aurora/shell/app.py:403
+#: aurora/shell/app.py:435
 msgid "Copy Text"
 msgstr "Text kopieren"
 
-#: aurora/shell/app.py:406
+#: aurora/shell/app.py:438
 msgid "Ask Aurora"
 msgstr "Aurora fragen"
 
-#: aurora/shell/app.py:452 aurora/shell/app.py:459
+#: aurora/shell/app.py:484 aurora/shell/app.py:491
 msgid "Text Recognition"
 msgstr "Texterkennung"
 
-#: aurora/shell/app.py:452
+#: aurora/shell/app.py:484
 msgid "No text found"
 msgstr "Kein Text gefunden"
 
-#: aurora/shell/app.py:453
+#: aurora/shell/app.py:485
 msgid "Try a larger or sharper area."
 msgstr "Versuche einen größeren oder schärferen Bereich."
 
-#: aurora/shell/app.py:459
+#: aurora/shell/app.py:491
 msgid "Text copied"
 msgstr "Text kopiert"
 
-#: aurora/shell/app.py:493 aurora/shell/quicksettings.py:179
+#: aurora/shell/app.py:525 aurora/shell/quicksettings.py:179
 msgid "Screen Recording"
 msgstr "Bildschirmaufnahme"
 
-#: aurora/shell/app.py:493
+#: aurora/shell/app.py:525
 msgid "Screen recording saved"
 msgstr "Bildschirmaufnahme gespeichert"
 
-#: aurora/shell/app.py:494
+#: aurora/shell/app.py:526
 msgid "Saved to {path}."
 msgstr "In {path} gespeichert."
 
-#: aurora/shell/dock.py:123
+#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
+#: aurora/shell/dock.py:269
 msgid "Window"
 msgstr "Fenster"
 
-#: aurora/shell/dock.py:133
+#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+msgid "Minimized"
+msgstr "Minimiert"
+
+#: aurora/shell/dock.py:229
 msgid "Remove from Dock"
 msgstr "Aus dem Dock entfernen"
 
-#: aurora/shell/dock.py:135
+#: aurora/shell/dock.py:231
 msgid "Keep in Dock"
 msgstr "Im Dock behalten"
 
-#: aurora/shell/dock.py:137
+#: aurora/shell/dock.py:233
 msgid "Quit"
 msgstr "Beenden"
 
-#: aurora/shell/dock.py:138
+#: aurora/shell/dock.py:234
 msgid "Quit {n} Windows"
 msgstr "{n} Fenster schließen"
 
-#: aurora/shell/dock.py:355
+#: aurora/shell/dock.py:476
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -3698,10 +3861,6 @@ msgstr "Keine Benachrichtigungen"
 msgid "Close Window"
 msgstr "Fenster schließen"
 
-#: aurora/shell/overview.py:61
-msgid "Minimized"
-msgstr "Minimiert"
-
 #: aurora/shell/overview.py:89
 msgid "Type to filter windows"
 msgstr "Tippen, um Fenster zu filtern"
@@ -3717,10 +3876,6 @@ msgstr "{sky} · H {high:.0f}° T {low:.0f}°"
 #: aurora/shell/panel.py:104
 msgid "Open Calendar"
 msgstr "Kalender öffnen"
-
-#: aurora/shell/panel.py:153
-msgid "Control Center"
-msgstr "Kontrollzentrum"
 
 #: aurora/shell/panel.py:162
 msgid "Recording the screen"
@@ -3774,9 +3929,13 @@ msgstr "Herunterfahren …"
 msgid "Log Out"
 msgstr "Abmelden"
 
-#: aurora/shell/panel.py:251
+#: aurora/shell/panel.py:254
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora Assistent (Super+Umschalt+Leertaste)"
+
+#: aurora/shell/panel.py:318
+msgid "{title} (minimized) — click to restore"
+msgstr "{title} (minimiert) — zum Wiederherstellen klicken"
 
 #: aurora/shell/quicksettings.py:166
 msgid "Wired"
@@ -3982,15 +4141,15 @@ msgstr "Befehl"
 msgid "Search the web for “{q}”"
 msgstr "Im Web nach „{q}“ suchen"
 
-#: aurora/shell/services.py:177
+#: aurora/shell/services.py:190
 msgid "{t} until full"
 msgstr "{t} bis voll"
 
-#: aurora/shell/services.py:178
+#: aurora/shell/services.py:191
 msgid "{t} left"
 msgstr "noch {t}"
 
-#: aurora/shell/services.py:180
+#: aurora/shell/services.py:193
 msgid "charging"
 msgstr "wird geladen"
 
@@ -4033,19 +4192,19 @@ msgstr "Das Laufwerk ist einsatzbereit."
 msgid "Eject"
 msgstr "Auswerfen"
 
-#: aurora/shell/wallpaper.py:56
+#: aurora/shell/wallpaper.py:70
 msgid "Open Terminal"
 msgstr "Terminal öffnen"
 
-#: aurora/shell/wallpaper.py:57 aurora/welcome.py:19
+#: aurora/shell/wallpaper.py:71 aurora/welcome.py:19
 msgid "Open Files"
 msgstr "Dateien öffnen"
 
-#: aurora/shell/wallpaper.py:60
+#: aurora/shell/wallpaper.py:74
 msgid "Change Background…"
 msgstr "Hintergrund ändern …"
 
-#: aurora/shell/wallpaper.py:61
+#: aurora/shell/wallpaper.py:75
 msgid "Display Settings"
 msgstr "Bildschirmeinstellungen"
 

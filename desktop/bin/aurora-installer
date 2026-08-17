@@ -8,7 +8,14 @@ if ! grep -qw 'boot=live' /proc/cmdline; then
     exit 1
 fi
 
-pgrep -x calamares >/dev/null && exit 0
+# Already open: bring its window forward. A leftover process without a window
+# (closed but not quit) is stopped, so the installer can start again.
+if pgrep -x calamares >/dev/null; then
+    aurora-shell focus io.calamares.calamares 2>/dev/null && exit 0
+    sudo -n pkill -x calamares
+    for _ in 1 2 3 4 5 6 7 8 9 10; do pgrep -x calamares >/dev/null || break; sleep 0.3; done
+    sudo -n pkill -9 -x calamares 2>/dev/null
+fi
 
 exec sudo -n env \
     WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \

@@ -14,6 +14,74 @@ def _yes(v):
     return "yes" if v else "no"
 
 
+def describe_shortcut(action, command, element):
+    """What a keybinding does, in words (custom commands show the command)."""
+    commands = {
+        "aurora-shell launcher": _("Search and Launchpad"),
+        "aurora-shell quick-settings": _("Control Center"),
+        "aurora-shell clipboard": _("Clipboard history"),
+        "aurora-shell emoji": _("Emoji picker"),
+        "aurora-shell dictate": _("Dictation"),
+        "aurora-shell read-aloud": _("Read selected text aloud"),
+        "aurora-shell assistant": _("Aurora Assistant"),
+        "aurora-shell writing": _("Writing tools"),
+        "aurora-shell overview": _("Show all windows"),
+        "aurora-shell screenshot": _("Screenshot of the screen"),
+        "aurora-shell screenshot area": _("Screenshot of an area"),
+        "aurora-shell screenshot text": _("Copy text from the screen"),
+        "aurora-shell volume up": _("Volume up"),
+        "aurora-shell volume down": _("Volume down"),
+        "aurora-shell volume mute": _("Mute"),
+        "aurora-shell brightness up": _("Brightness up"),
+        "aurora-shell brightness down": _("Brightness down"),
+        "ptyxis --new-window": _("New terminal window"),
+        "aurora-files": _("Files"),
+        "aurora-settings": _("Settings"),
+        "aurora-lock": _("Lock screen"),
+    }
+    actions = {
+        "NextWindow": _("Next window"),
+        "PreviousWindow": _("Previous window"),
+        "Close": _("Close window"),
+        "Maximize": _("Maximize window"),
+        "UnMaximize": _("Restore window size"),
+        "Iconify": _("Minimize window"),
+        "ToggleFullscreen": _("Full screen"),
+        "ToggleMagnify": _("Zoom on or off"),
+        "ZoomIn": _("Zoom in"),
+        "ZoomOut": _("Zoom out"),
+        "ShowMenu": _("Window menu"),
+    }
+    action_el = element.find("action") if element is not None else None
+    arg = lambda name: action_el.get(name) if action_el is not None else None  # noqa: E731
+    if action == "Execute":
+        if element is not None and element.get("aurora-custom") == "yes":
+            return command or ""
+        return commands.get(command, command or "")
+    if action == "SnapToEdge":
+        return _("Snap window left") if arg("direction") == "left" else _("Snap window right")
+    if action == "SnapToRegion":
+        regions = {"top-left": _("Move window to the top-left quarter"),
+                   "top-right": _("Move window to the top-right quarter"),
+                   "bottom-left": _("Move window to the bottom-left quarter"),
+                   "bottom-right": _("Move window to the bottom-right quarter"),
+                   "left-third": _("Move window to the left third"),
+                   "center-third": _("Move window to the center third"),
+                   "right-third": _("Move window to the right third")}
+        region = arg("region") or ""
+        return regions.get(region, region)
+    if action == "GoToDesktop":
+        to = arg("to") or ""
+        if to == "left":
+            return _("Previous workspace")
+        if to == "right":
+            return _("Next workspace")
+        return _("Go to workspace {n}").format(n=to)
+    if action == "SendToDesktop":
+        return _("Move window to workspace {n}").format(n=arg("to") or "")
+    return actions.get(action, action or "")
+
+
 class Mouse(Page):
     page_id = "mouse"
     title = _("Mouse & Touchpad")
@@ -153,11 +221,27 @@ class Keyboard(Page):
         for r in self._rows:
             self.shortcuts.remove(r)
         self._rows = []
+        built_in = {}  # description -> row, so keys doing the same thing share a row
         for key, action, command, element in self.cfg.keybinds():
-            label = command if action == "Execute" else action
-            row = Adw.ActionRow(title=label or "", subtitle_selectable=True)
-            row.add_suffix(Gtk.ShortcutLabel(accelerator=_to_accel(key), valign=Gtk.Align.CENTER))
-            if element.get("aurora-custom") == "yes":
+            title = describe_shortcut(action, command, element)
+            if key in ("Super_L", "Super_R"):
+                # The Super key on its own ("Super L" as GTK would write it).
+                accel = Gtk.ShortcutLabel(accelerator="Super_L", valign=Gtk.Align.CENTER)
+                keycap = accel.get_first_child()
+                if isinstance(keycap, Gtk.Label):
+                    keycap.set_label(_("Super"))
+            else:
+                accel = Gtk.ShortcutLabel(accelerator=_to_accel(key), valign=Gtk.Align.CENTER)
+            custom = element.get("aurora-custom") == "yes"
+            if not custom and title in built_in:
+                accel.set_margin_start(14)
+                built_in[title].add_suffix(accel)
+                continue
+            row = Adw.ActionRow(title=title, use_markup=False, subtitle_selectable=True)
+            row.add_suffix(accel)
+            if not custom:
+                built_in[title] = row
+            if custom:
                 rm = Gtk.Button(icon_name="user-trash-symbolic", css_classes=["flat"],
                                 valign=Gtk.Align.CENTER, tooltip_text=_("Remove"))
                 rm.connect("clicked", lambda _b, el=element: self._remove(el))

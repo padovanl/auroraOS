@@ -12,7 +12,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot test-install dev-image screenshots site vm-screenshots debs repo
+	test test-static test-unit test-smoke test-image test-boot test-interact test-install dev-image screenshots site vm-screenshots debs repo
 
 all: iso
 
@@ -92,6 +92,11 @@ test-image: builder
 test-boot:
 	python3 tests/boot/boot-test.py $(ISO) --firmware bios --out work/boot-test
 	python3 tests/boot/boot-test.py $(ISO) --firmware uefi --out work/boot-test
+
+# Uses the live desktop like a person (clicks, double-clicks, keys) and checks
+# the result: desktop icons, installer, windows, menus, Settings (~5 min).
+test-interact:
+	python3 tests/interact/scenarios.py $(ISO) --out work/interact-test
 
 # Installs the ISO onto an empty virtual disk with the real installer (driven by
 # key presses), then boots the installed system and checks it (~20 min each).

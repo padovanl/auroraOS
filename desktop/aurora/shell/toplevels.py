@@ -60,6 +60,10 @@ class Toplevel(GObject.Object):
     def minimized(self):
         return STATE_MINIMIZED in self.states
 
+    @property
+    def maximized(self):
+        return STATE_MAXIMIZED in self.states
+
     def _on_title(self, _h, title):
         self.title = title or ""
 

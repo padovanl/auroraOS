@@ -274,9 +274,9 @@ class Accessibility(Page):
         pointing.add(combo_row(_("Double-click delay"), [_(t[1]) for t in DOUBLE_CLICK],
                                nearest(DOUBLE_CLICK, cur),
                                on_change=lambda i: self._double_click(DOUBLE_CLICK[i][0], mouse)))
-        pointing.add(Adw.ActionRow(title=_("Pointer speed"),
-                                   subtitle=_("Speed, left-handed use and gestures are in "
-                                              "Mouse & Touchpad.")))
+        speed = Adw.ActionRow(title=_("Pointer speed"), use_markup=False)
+        speed.set_subtitle(_("Speed, left-handed use and gestures are in Mouse & Touchpad."))
+        pointing.add(speed)
 
     def _magnifier(self, **values):
         cfg = labwcconf.Config()

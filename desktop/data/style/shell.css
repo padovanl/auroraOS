@@ -43,6 +43,10 @@ window.aurora-layer {
   -gtk-icon-shadow: 0 0 6px alpha(@aurora_rose, 0.6);
 }
 
+.panel-minimized { padding-left: 8px; border-left: 1px solid @shell_border; }
+.panel-minimized-item image { opacity: 0.8; }
+.panel-minimized-item:hover image { opacity: 1; }
+
 .panel-app-name {
   font-weight: 700;
   color: @shell_fg;
@@ -130,15 +134,24 @@ window.aurora-layer {
 .dock-launchpad image { color: @shell_fg; }
 
 .dock-dot {
-  min-width: 4px;
-  min-height: 4px;
+  min-width: 6px;
+  min-height: 6px;
   border-radius: 999px;
-  background-color: alpha(@shell_fg, 0.75);
+  background-color: alpha(@shell_fg, 0.85);
+  box-shadow: 0 0 6px alpha(@shell_fg, 0.35);
 }
 
-.dock-item.focused .dock-dot { background-color: @aurora_amber; }
-.dock-bottom .dock-dots { min-height: 4px; }
-.dock-left .dock-dots, .dock-right .dock-dots { min-width: 4px; }
+.dock-dot.active { background-color: @aurora_amber; }
+/* The windows of an app, shown while resting on its icon. */
+.dock-peek > contents { padding: 8px; border-radius: 16px; }
+.dock-peek-card { padding: 10px 12px; border-radius: 12px; }
+.dock-peek-card.active { background-color: alpha(@shell_fg, 0.1); }
+.dock-peek-card label { font-size: 0.9em; }
+.dock-bottom .dock-dots { min-height: 6px; }
+.dock-minimized image:not(.dock-badge) { opacity: 0.85; }
+.dock-badge { background-color: @aurora_violet; color: white; border-radius: 999px; padding: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+.dock-left .dock-dots, .dock-right .dock-dots { min-width: 6px; }
 
 .dock-separator {
   margin: 10px 4px;
@@ -250,7 +263,8 @@ window.aurora-layer {
 }
 
 .desktop-icon:hover { background-color: rgba(255, 255, 255, 0.10); }
-.desktop-icon:focus { background-color: alpha(@aurora_violet, 0.35); }
+.desktop-icon.selected { background-color: alpha(@aurora_violet, 0.35); }
+.desktop-icon:focus:not(.selected) { background-color: transparent; }
 .desktop-icon-label { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); font-size: 10pt; }
 
 /* ---- Tray ---- */
@@ -287,7 +301,10 @@ window.aurora-overview { background: rgba(0, 0, 0, 0.3); }
 .overview-card:hover .overview-close { opacity: 1; }
 
 /* ---- Hot corners: invisible ---- */
-.aurora-hotcorner, .aurora-hotcorner > * { background: transparent; min-width: 0; min-height: 0; }
+/* Not fully transparent: the compositor gives no pointer input to a surface
+   without a single visible pixel, and the corner would never trigger. */
+window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-height: 0; }
+.aurora-hotcorner > * { background: transparent; min-width: 0; min-height: 0; }
 
 /* ---- Weather in the calendar popover ---- */
 .weather-widget { padding: 10px 12px; border-radius: 14px; background-color: alpha(currentColor, 0.06); }

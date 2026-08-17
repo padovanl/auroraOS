@@ -15,6 +15,8 @@ from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell.layer import EDGES, Layer, LayerWindow, LS
 
+MAX_DOTS = 3           # running-window dots under an icon
+PEEK_DELAY_MS = 500    # rest on an icon this long to see its windows
 MAX_SCALE = 1.7        # magnified icon size relative to the resting size
 SPREAD = 2.6           # how many icon widths the magnification reaches
 BAR_PADDING = 28       # bar padding + item padding + running dot around an icon
@@ -66,8 +68,11 @@ class DockItem(Gtk.Button):
         else:
             self.icon.set_from_icon_name("application-x-executable")
         # Running indicator sits between the icon and the screen edge.
+        # One dot per open window (at most MAX_DOTS), side by side along the dock.
         self.dots = Gtk.Box(css_classes=["dock-dots"], halign=Gtk.Align.CENTER,
-                            valign=Gtk.Align.CENTER)
+                            valign=Gtk.Align.CENTER, spacing=3,
+                            orientation=Gtk.Orientation.VERTICAL if dock.vertical
+                            else Gtk.Orientation.HORIZONTAL)
         content = Gtk.Box(spacing=2, orientation=Gtk.Orientation.HORIZONTAL if dock.vertical
                           else Gtk.Orientation.VERTICAL)
         parts = [self.dots, self.icon] if dock.position == "left" else [self.icon, self.dots]
@@ -79,6 +84,13 @@ class DockItem(Gtk.Button):
         right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
         right.connect("pressed", lambda *_: self.show_menu())
         self.add_controller(right)
+        # Resting on an app with several windows shows them, to pick one.
+        self._peek = None
+        self._peek_source = 0
+        hover = Gtk.EventControllerMotion()
+        hover.connect("enter", lambda *_: self._peek_later())
+        hover.connect("leave", lambda *_: self._peek_cancel(close=True))
+        self.add_controller(hover)
         if app is not None:
             self.connect("clicked", self._on_click)
             middle = Gtk.GestureClick(button=Gdk.BUTTON_MIDDLE)
@@ -95,12 +107,85 @@ class DockItem(Gtk.Button):
         self.windows = windows
         while (c := self.dots.get_first_child()) is not None:
             self.dots.remove(c)
-        if windows:
-            self.dots.append(Gtk.Box(css_classes=["dock-dot"]))
+        for w in windows[:MAX_DOTS]:
+            self.dots.append(Gtk.Box(css_classes=["dock-dot", "active"] if w.activated
+                                     else ["dock-dot"]))
         if any(w.activated for w in windows):
             self.add_css_class("focused")
         else:
             self.remove_css_class("focused")
+
+    # --- window picker on hover ---
+
+    def _peek_later(self):
+        self._peek_cancel()
+        if len(self.windows) > 1 and self._peek is None:
+            self._peek_source = GLib.timeout_add(PEEK_DELAY_MS, self._show_peek)
+
+    def _peek_cancel(self, close=False):
+        if self._peek_source:
+            GLib.source_remove(self._peek_source)
+            self._peek_source = 0
+        if close and self._peek is not None:
+            # Time to move the pointer from the icon onto the card.
+            self._peek_source = GLib.timeout_add(350, self._close_peek)
+
+    def _close_peek(self):
+        self._peek_source = 0
+        if self._peek is not None:
+            self._peek.popdown()
+        return GLib.SOURCE_REMOVE
+
+    def _show_peek(self):
+        self._peek_source = 0
+        if len(self.windows) < 2:
+            return GLib.SOURCE_REMOVE
+        pop = Gtk.Popover(has_arrow=True, autohide=False, position=self.dock.popover_side,
+                          css_classes=["dock-peek"])
+        pop.set_parent(self)
+        box = Gtk.Box(spacing=8, orientation=Gtk.Orientation.VERTICAL if self.dock.vertical
+                      else Gtk.Orientation.HORIZONTAL)
+        titles = [w.title or _("Window") for w in self.windows]
+        for w, title in zip(self.windows, titles):
+            # Same title twice (three "Terminal"s): number them, oldest first.
+            if titles.count(title) > 1:
+                older = sorted((x for x in self.windows if (x.title or _("Window")) == title),
+                               key=lambda x: x.serial)
+                title = f"{title} {older.index(w) + 1}"
+            card = Gtk.Button(css_classes=["flat", "dock-peek-card"], tooltip_text=w.title)
+            inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            icon = Gtk.Image(pixel_size=48)
+            if self.app and self.app.get_icon():
+                icon.set_from_gicon(self.app.get_icon())
+            else:
+                icon.set_from_icon_name("application-x-executable")
+            inner.append(icon)
+            inner.append(Gtk.Label(label=title, ellipsize=3,
+                                   max_width_chars=18, width_chars=12))
+            if w.minimized:
+                inner.append(Gtk.Label(label=_("Minimized"), css_classes=["dim-label", "caption"]))
+            if w.activated:
+                card.add_css_class("active")
+            card.set_child(inner)
+            card.connect("clicked", lambda _b, w=w: (pop.popdown(), w.activate()))
+            box.append(card)
+        pop.set_child(box)
+        # Staying on the card keeps it open; leaving it closes it.
+        hover = Gtk.EventControllerMotion()
+        hover.connect("enter", lambda *_: self._peek_cancel())
+        hover.connect("leave", lambda *_: self._peek_cancel(close=True))
+        pop.add_controller(hover)
+
+        def closed(p):
+            self._peek = None
+            self.set_has_tooltip(True)
+            GLib.idle_add(p.unparent)
+        pop.connect("closed", closed)
+        self._peek = pop
+        self.set_has_tooltip(False)  # the card already names the windows
+        self.dock.hold(pop)
+        pop.popup()
+        return GLib.SOURCE_REMOVE
 
     def launch(self):
         if self.app:
@@ -124,8 +209,19 @@ class DockItem(Gtk.Button):
         if self.windows:
             entries.append(None)
         if self.app:
-            entries.append((_("New Window"), self.launch))
-            for action in self.app.list_actions():
+            actions = list(self.app.list_actions())
+            # Single-instance apps (Ptyxis, Files, Text Editor…) only raise their
+            # window when launched again: use their own "new window" action.
+            new_window = next((a for a in actions if a.replace("_", "-").lower()
+                               in ("new-window", "new-window-action", "window")), None)
+            if new_window:
+                entries.append((_("New Window"),
+                                lambda a=new_window: apps.launch(self.app, action=a)))
+            else:
+                entries.append((_("New Window"), self.launch))
+            for action in actions:
+                if action == new_window:
+                    continue
                 entries.append((self.app.get_action_name(action),
                                 lambda a=action: apps.launch(self.app, action=a)))
             entries.append(None)
@@ -140,6 +236,8 @@ class DockItem(Gtk.Button):
         return entries
 
     def show_menu(self):
+        self._peek_cancel()
+        self._close_peek()
         entries = self.menu_entries()
         if not entries:
             return
@@ -159,6 +257,29 @@ class DockItem(Gtk.Button):
         pop.set_child(box)
         self.dock.hold(pop)
         pop.popup()
+
+
+class MinimizedItem(DockItem):
+    """A minimized window, kept at the end of the dock like on a Mac: one click
+    brings it back."""
+
+    def __init__(self, dock, window, app):
+        super().__init__(dock, f"min:{id(window)}", icon=(app.get_icon() if app and app.get_icon()
+                                                        else "application-x-executable"),
+                         tooltip=window.title or (app.get_display_name() if app else _("Window")))
+        self.window = window
+        self.add_css_class("dock-minimized")
+        badge = Gtk.Image(icon_name="go-down-symbolic", pixel_size=12, css_classes=["dock-badge"],
+                          halign=Gtk.Align.END, valign=Gtk.Align.END)
+        overlay = Gtk.Overlay()
+        content = self.get_child()
+        self.set_child(overlay)
+        overlay.set_child(content)
+        overlay.add_overlay(badge)
+        self.connect("clicked", lambda *_: self.window.activate())
+
+    def menu_entries(self):
+        return [(_("Restore"), self.window.activate), None, (_("Close"), self.window.close)]
 
 
 class TrashItem(DockItem):
@@ -370,19 +491,54 @@ class Dock(LayerWindow):
             self._items[key] = item
             self.box.append(item)
 
+        # Minimized windows, each with its own icon, before the Trash.
+        minimized = [t for t in self.shell.toplevels.toplevels if t.minimized]
+        if minimized:
+            self.box.append(self._separator())
+            for t in sorted(minimized, key=lambda w: w.serial):
+                key = f"min:{id(t)}"
+                item = old.get(key) or MinimizedItem(self, t, apps.find_app(t.app_id))
+                self._items[key] = item
+                self.box.append(item)
+
         if self.show_trash:
             self.box.append(self._separator())
             trash = old.get("trash") or TrashItem(self)
             self._items["trash"] = trash
             self.box.append(trash)
+        # The dock changed under the pointer: magnify from where the pointer is
+        # now, or not at all (the leave event may never come).
+        GLib.idle_add(self._refresh_magnification)
         GLib.idle_add(self._update_geometry)
+
+    def _refresh_magnification(self):
+        if self._pointer is not None:
+            ok, box = self.box.compute_bounds(self)
+            x, y = self._pointer
+            if not ok or not (box.get_x() <= x <= box.get_x() + box.get_width()
+                              and box.get_y() <= y <= box.get_y() + box.get_height()):
+                self._pointer = None
+        if self._pointer is not None and self.magnify and not self._hidden:
+            self._magnify_at(*self._pointer)
+        else:
+            for item in self._items.values():
+                item.target = float(self.icon_size)
+            self._animate()
+        return GLib.SOURCE_REMOVE
 
     # --- magnification ---
 
     def _on_motion(self, _ctrl, x, y):
+        # Resizing icons makes GTK report the pointer again where it already
+        # was; reacting to that would animate forever under a still pointer.
+        if self._pointer == (x, y):
+            return
         self._pointer = (x, y)
         if not self.magnify or self._hidden:
             return
+        self._magnify_at(x, y)
+
+    def _magnify_at(self, x, y):
         pos = y if self.vertical else x
         for item in self._items.values():
             ok, bounds = item.compute_bounds(self)
@@ -395,12 +551,13 @@ class Dock(LayerWindow):
             item.target = self.icon_size * (1 + (MAX_SCALE - 1) * f)
         self._animate()
 
-    def _on_enter(self, *_a):
+    def _on_enter(self, ctrl, x, y):
         if self._hide_source:
             GLib.source_remove(self._hide_source)
             self._hide_source = 0
         if self._hidden:
             self._show()
+        self._on_motion(ctrl, x, y)
 
     def _on_leave(self, *_a):
         self._pointer = None

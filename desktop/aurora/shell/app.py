@@ -219,7 +219,15 @@ class Shell(Adw.Application):
                 return 1
             self._start()
         if args:
-            self.handle(args)
+            if args[0] == "windows":
+                # For tests and scripts: the open windows as JSON, one per line.
+                import json
+                for t in self.toplevels.toplevels:
+                    cmdline.print_literal(json.dumps({
+                        "app_id": t.app_id, "title": t.title, "activated": t.activated,
+                        "minimized": t.minimized, "maximized": getattr(t, "maximized", False)}) + "\n")
+                return 0
+            return self.handle(args) or 0
         return 0
 
     def handle(self, args):
@@ -267,6 +275,14 @@ class Shell(Adw.Application):
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
                 panel.open_quick_settings()
+        elif cmd == "focus":
+            # Bring an app's windows forward, newest (a dialog) on top; exit
+            # status 1 if it has none.
+            windows = self.toplevels.for_app(arg)
+            if not windows:
+                return 1
+            for window in windows:
+                window.activate()
         else:
             print(f"aurora-shell: unknown command {cmd}", file=sys.stderr)
 
