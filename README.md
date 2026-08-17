@@ -1167,7 +1167,7 @@ set up a feature, and every place it appears has its own switch.
 - **Motion:** an animated aurora sky with twinkling stars, a 3D hero screenshot that
   straightens as you scroll, marquees of Aurora's icons, counters, a typing terminal and
   glows that follow the pointer. All of it is CSS and a few hundred lines of JavaScript,
-  and it stays still for visitors who ask their system for reduced motion.
+  and it plays the same for every visitor, whatever their browser's motion setting.
 
 <!-- tech:end -->
 

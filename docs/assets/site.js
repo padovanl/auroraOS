@@ -77,9 +77,9 @@ document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 // ---------------------------------------------------------------------------
 // Motion: the aurora sky, hero tilt, counters, rotating words, pointer glow,
 // staggered reveals, the typing terminal and the scroll progress bar.
-// Everything stays still for people who prefer reduced motion.
+// The site animates the same for every visitor, whatever the browser's motion setting.
 // ---------------------------------------------------------------------------
-const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const still = false;
 
 // Scroll progress.
 const bar = document.createElement("div");

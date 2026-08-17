@@ -213,10 +213,7 @@ details p { color: #d8d0e8; }
 /* --- reveal on scroll --- */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.visible { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
-  html { scroll-behavior: auto; }
-}
+
 
 /* --- responsive --- */
 @media (max-width: 900px) {
@@ -258,7 +255,6 @@ details p { color: #d8d0e8; }
 
 /* ======================================================================
    Motion and depth: the aurora sky, icon marquee, bento, glows, typing.
-   Everything static under prefers-reduced-motion.
    ====================================================================== */
 
 /* Scroll progress along the top */
@@ -431,12 +427,7 @@ h1 .gradient-text, .shimmer {
   .marquee img { width: 64px; height: 64px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sky .ribbon, .marquee, .float-chip, .btn-primary, .btn-primary::after, h1 .gradient-text,
-  .shimmer, .caret, .rotator .word { animation: none !important; }
-  .hero-stage .hero-shot { transform: none; transition: none; }
-  .reveal { transition-delay: 0s; }
-}
+
 
 /* ======================================================================
    Documentation ("Under the hood"): an index of chapters and one page per
