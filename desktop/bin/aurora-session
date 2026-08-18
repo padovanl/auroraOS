@@ -38,6 +38,9 @@ if [ ! -f "$cfg/rc.xml" ]; then
     cp -n /usr/share/aurora/labwc/* "$cfg/" 2>/dev/null
 fi
 [ -f "$cfg/rc.xml" ] || cfg=/usr/share/aurora/labwc
+# The session's own startup script is Aurora's, not the user's (their apps go
+# in XDG autostart): keep it current after updates.
+[ "$cfg" = "$HOME/.config/labwc" ] && cp /usr/share/aurora/labwc/autostart "$cfg/autostart" 2>/dev/null
 
 # First login: write the GTK stylesheet imports for the chosen window style.
 [ -f "$HOME/.config/gtk-4.0/gtk.css" ] || aurora-look >/dev/null 2>&1

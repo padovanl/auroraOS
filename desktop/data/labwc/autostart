@@ -10,7 +10,23 @@ xdg-user-dirs-update >/dev/null 2>&1
 # Display layout saved by Settings.
 [ -r "$HOME/.config/aurora/displays.sh" ] && sh "$HOME/.config/aurora/displays.sh"
 
-aurora-shell >"${XDG_RUNTIME_DIR:-/tmp}/aurora-shell.log" 2>&1 &
+# The shell draws the bar, dock and desktop: if it ever crashes, start it again
+# (at most 5 times a minute), until the compositor itself exits.
+(
+    log="${XDG_RUNTIME_DIR:-/tmp}/aurora-shell.log"
+    : >"$log"
+    tries=0 since=$(date +%s)
+    while :; do
+        aurora-shell >>"$log" 2>&1
+        [ -n "$LABWC_PID" ] && ! kill -0 "$LABWC_PID" 2>/dev/null && break
+        now=$(date +%s)
+        [ $((now - since)) -gt 60 ] && tries=0 since=$now
+        tries=$((tries + 1))
+        [ "$tries" -gt 5 ] && break
+        echo "aurora-shell: restarting after exit" >>"$log"
+        sleep 1
+    done
+) &
 
 # Password prompts for administrative actions.
 /usr/libexec/polkit-mate-authentication-agent-1 >/dev/null 2>&1 &

@@ -1,4 +1,4 @@
-"""Windows that share a title are told apart by number, in the dock and the top bar."""
+"""Window names in the dock and top bar, and the order of desktop icons."""
 
 from aurora.shell.toplevels import window_labels
 
@@ -17,3 +17,9 @@ def test_same_titles_are_numbered_oldest_first():
     labels = window_labels([a, b, c, d], "Window")
     assert labels[b] == "Terminal 1" and labels[a] == "Terminal 2"
     assert labels[c] == "Notes" and labels[d] == "Window"
+
+
+def test_desktop_icons_sort_numbers_naturally():
+    from aurora.shell.desktopicons import natural_key
+    names = ["file-10.txt", "File-2.txt", "file-1.txt"]
+    assert sorted(names, key=natural_key) == ["file-1.txt", "File-2.txt", "file-10.txt"]

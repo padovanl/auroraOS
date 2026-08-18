@@ -2,6 +2,7 @@
 (or top right, per the desktop-icons-position setting)."""
 
 import os
+import re
 
 from gi.repository import Gdk, Gio, GLib, Gtk, Pango
 
@@ -15,12 +16,35 @@ def desktop_dir():
         or os.path.expanduser("~/Desktop")
 
 
+def natural_key(name):
+    return [int(p) if p.isdigit() else p for p in re.split(r"(\d+)", name.casefold())]
+
+
 def is_live():
     try:
         with open("/proc/cmdline") as f:
             return "boot=live" in f.read().split()
     except OSError:
         return False
+
+
+def open_file(gfile):
+    """Open a desktop file or folder in its default app. (Gtk.FileLauncher goes
+    through the portal, which does nothing for the shell's layer surfaces.)"""
+    from aurora import apps
+    path = gfile.get_path()
+    try:
+        info = gfile.query_info("standard::content-type,standard::type",
+                                Gio.FileQueryInfoFlags.NONE, None)
+    except GLib.Error:
+        return False
+    if info.get_file_type() == Gio.FileType.DIRECTORY:
+        return apps.spawn(["aurora-files", path])
+    app = Gio.AppInfo.get_default_for_type(info.get_content_type(), False)
+    if app is not None:
+        return apps.launch(app, files=[path])
+    # Nothing registered for it: let Files offer "Open With…".
+    return apps.spawn(["aurora-files", os.path.dirname(path)])
 
 
 class DesktopIcon(Gtk.Button):
@@ -69,8 +93,7 @@ class DesktopIcon(Gtk.Button):
                 from aurora import apps
                 apps.launch(self.app)
                 return
-            launcher = Gtk.FileLauncher(file=self.gfile)
-            launcher.launch(self.get_root(), None, None)
+            open_file(self.gfile)
 
 
 class DesktopIcons(Gtk.FlowBox):
@@ -85,9 +108,9 @@ class DesktopIcons(Gtk.FlowBox):
     def __init__(self):
         super().__init__(selection_mode=Gtk.SelectionMode.NONE,
                          orientation=Gtk.Orientation.VERTICAL,
-                         valign=Gtk.Align.START, margin_top=46, margin_start=16, margin_end=16,
+                         valign=Gtk.Align.FILL, margin_top=46, margin_start=16, margin_end=16,
                          margin_bottom=100, row_spacing=6, column_spacing=6,
-                         max_children_per_line=7, css_classes=["desktop-icons"])
+                         max_children_per_line=40, css_classes=["desktop-icons"])
         self._dir = Gio.File.new_for_path(desktop_dir())
         self._monitor = None
         try:
@@ -134,8 +157,9 @@ class DesktopIcons(Gtk.FlowBox):
                     infos.append(info)
         except GLib.Error:
             pass
+        # Folders first, then by name with numbers in order (file-2 before file-10).
         infos.sort(key=lambda i: (i.get_file_type() != Gio.FileType.DIRECTORY,
-                                  i.get_display_name().lower()))
+                                  natural_key(i.get_display_name())))
         shown = 0
         # The live system offers the installer on the desktop, like Ubuntu's.
         installer = Gio.DesktopAppInfo.new("aurora-installer.desktop") if is_live() else None

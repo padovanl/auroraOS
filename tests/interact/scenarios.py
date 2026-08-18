@@ -64,8 +64,26 @@ def desktop_file(vm):
     check("double-clicking a file on the desktop opens it",
           vm.wait_for(lambda: vm.window("org.gnome.TextEditor"), timeout=20))
     vm.root("pkill -f [g]nome-text-editor")
-    vm.user("rm -f ~/Desktop/notes.txt")
+    vm.user("rm -f ~/Desktop/notes.txt; mkdir -p ~/Desktop/Project")
     vm.wait_for(lambda: not vm.windows(), timeout=10)
+    time.sleep(2)
+    vm.click(INSTALLER_ICON[0], INSTALLER_ICON[1] + 110, double=True)
+    check("double-clicking a folder on the desktop opens it in Files",
+          vm.wait_for(lambda: (vm.window("org.aurora.Files") or {}).get("title") == "Project",
+                      timeout=20))
+    vm.root("pkill -f [a]urora-files")
+    vm.user("rmdir ~/Desktop/Project")
+    vm.wait_for(lambda: not vm.windows(), timeout=10)
+
+
+def shell_recovers(vm):
+    # A crash must not leave the session without its bar and dock.
+    vm.root("pkill -9 -f '^/usr/bin/python3 /usr/bin/[a]urora-shell$'")
+    back = vm.wait_for(lambda: vm.root("pgrep -f '^/usr/bin/python3 /usr/bin/[a]urora-shell$' "
+                                       "&& test -f /run/user/1000/aurora-shell.ready")[0] == 0,
+                       timeout=30)
+    time.sleep(3)
+    check("the shell starts again by itself after a crash", back)
 
 
 def installer(vm):
@@ -165,7 +183,7 @@ def main():
         vm.restart_shell()
     try:
         for scenario in (desktop_icons, desktop_file, installer, terminal, control_center, hot_corner,
-                         files, settings):
+                         files, settings, shell_recovers):
             try:
                 scenario(vm)
             except Exception as err:  # noqa: BLE001 - report and go on with the others
