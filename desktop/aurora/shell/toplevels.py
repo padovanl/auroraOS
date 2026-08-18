@@ -34,6 +34,17 @@ def _decode_states(raw):
     return set(raw)
 
 
+def window_labels(windows, fallback="Window"):
+    """{window: label}: its title, numbered when several share it (oldest is 1),
+    so three "Terminal" windows read Terminal 1, 2 and 3."""
+    titles = {w: w.title or fallback for w in windows}
+    labels = {}
+    for w, title in titles.items():
+        same = sorted((x for x in windows if titles[x] == title), key=lambda x: x.serial)
+        labels[w] = f"{title} {same.index(w) + 1}" if len(same) > 1 else title
+    return labels
+
+
 class Toplevel(GObject.Object):
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
 

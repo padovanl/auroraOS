@@ -79,7 +79,7 @@ msgstr "Assistente Aurora"
 msgid "New Chat"
 msgstr "Nova conversa"
 
-#: aurora/assistant.py:127 aurora/shell/dock.py:282
+#: aurora/assistant.py:127 aurora/shell/dock.py:279
 msgid "Close"
 msgstr "Fechar"
 
@@ -870,7 +870,7 @@ msgid "Home"
 msgstr "Pasta pessoal"
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "Lixeira"
 
@@ -902,7 +902,8 @@ msgstr "Mostrar arquivos ocultos"
 msgid "List View"
 msgstr "Visualização em lista"
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
+#: aurora/files/window.py:203 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "Nova janela"
 
@@ -911,7 +912,7 @@ msgid "About Files"
 msgstr "Sobre o Arquivos"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:260
+#: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "Buscar"
 
@@ -920,7 +921,7 @@ msgid "Folder is Empty"
 msgstr "A pasta está vazia"
 
 #: aurora/files/window.py:254 aurora/files/window.py:707
-#: aurora/files/window.py:844 aurora/shell/dock.py:309
+#: aurora/files/window.py:844 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "Esvaziar a lixeira"
 
@@ -936,7 +937,7 @@ msgstr "Nenhum resultado encontrado"
 msgid "Trash is Empty"
 msgstr "A lixeira está vazia"
 
-#: aurora/files/window.py:679 aurora/shell/dock.py:282
+#: aurora/files/window.py:679 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "Restaurar"
 
@@ -945,7 +946,7 @@ msgid "Delete Permanently"
 msgstr "Excluir permanentemente"
 
 #: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
-#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
+#: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "Abrir"
 
@@ -1159,7 +1160,7 @@ msgid "Based on"
 msgstr "Baseado em"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:328
+#: aurora/shell/panel.py:340
 msgid "Desktop"
 msgstr "Área de trabalho"
 
@@ -2586,7 +2587,7 @@ msgstr[1] "{n} itens precisam de atenção"
 msgid "Search and Launchpad"
 msgstr "Pesquisa e Launchpad"
 
-#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:154
 msgid "Control Center"
 msgstr "Central de controle"
 
@@ -2962,7 +2963,7 @@ msgstr "Abrir a Central de controle"
 msgid "Open Notifications"
 msgstr "Abrir as notificações"
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:215
 msgid "Lock Screen"
 msgstr "Bloquear a tela"
 
@@ -3812,32 +3813,32 @@ msgstr "Gravação de tela salva"
 msgid "Saved to {path}."
 msgstr "Salva em {path}."
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
-#: aurora/shell/dock.py:269
+#: aurora/shell/dock.py:149 aurora/shell/dock.py:205 aurora/shell/dock.py:266
+#: aurora/shell/panel.py:320 aurora/shell/panel.py:367
 msgid "Window"
 msgstr "Janela"
 
-#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:163 aurora/shell/overview.py:61
 msgid "Minimized"
 msgstr "Minimizada"
 
-#: aurora/shell/dock.py:229
+#: aurora/shell/dock.py:226
 msgid "Remove from Dock"
 msgstr "Remover do dock"
 
-#: aurora/shell/dock.py:231
+#: aurora/shell/dock.py:228
 msgid "Keep in Dock"
 msgstr "Manter no dock"
 
-#: aurora/shell/dock.py:233
+#: aurora/shell/dock.py:230
 msgid "Quit"
 msgstr "Sair"
 
-#: aurora/shell/dock.py:234
+#: aurora/shell/dock.py:231 aurora/shell/panel.py:394
 msgid "Quit {n} Windows"
 msgstr "Fechar {n} janelas"
 
-#: aurora/shell/dock.py:476
+#: aurora/shell/dock.py:473
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -3857,7 +3858,7 @@ msgstr "Limpar"
 msgid "No Notifications"
 msgstr "Nenhuma notificação"
 
-#: aurora/shell/overview.py:44
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:392
 msgid "Close Window"
 msgstr "Fechar janela"
 
@@ -3869,73 +3870,81 @@ msgstr "Digite para filtrar as janelas"
 msgid "No open windows"
 msgstr "Nenhuma janela aberta"
 
-#: aurora/shell/panel.py:70
+#: aurora/shell/panel.py:71
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr "{sky} · máx. {high:.0f}° mín. {low:.0f}°"
 
-#: aurora/shell/panel.py:104
+#: aurora/shell/panel.py:105
 msgid "Open Calendar"
 msgstr "Abrir Agenda"
 
-#: aurora/shell/panel.py:162
+#: aurora/shell/panel.py:163
 msgid "Recording the screen"
 msgstr "Gravando a tela"
 
-#: aurora/shell/panel.py:183
+#: aurora/shell/panel.py:184
 msgid "Not connected"
 msgstr "Não conectado"
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:204
 msgid "Aurora Menu"
 msgstr "Menu Aurora"
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:208
 msgid "About This Computer"
 msgstr "Sobre este computador"
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:209
 msgid "System Settings…"
 msgstr "Configurações do sistema…"
 
-#: aurora/shell/panel.py:209
+#: aurora/shell/panel.py:210
 msgid "App Center…"
 msgstr "Central de aplicativos…"
 
-#: aurora/shell/panel.py:210
+#: aurora/shell/panel.py:211
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "System Health…"
 msgstr "Saúde do sistema…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "Force Quit…"
 msgstr "Forçar encerramento…"
 
-#: aurora/shell/panel.py:212
+#: aurora/shell/panel.py:213
 msgid "Sleep"
 msgstr "Suspender"
 
-#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:213 aurora/shell/quicksettings.py:287
 msgid "Restart…"
 msgstr "Reiniciar…"
 
-#: aurora/shell/panel.py:213
+#: aurora/shell/panel.py:214
 msgid "Shut Down…"
 msgstr "Desligar…"
 
-#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:215 aurora/shell/quicksettings.py:288
 msgid "Log Out"
 msgstr "Sair"
 
-#: aurora/shell/panel.py:254
+#: aurora/shell/panel.py:265
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Assistente Aurora (Super+Shift+Espaço)"
 
-#: aurora/shell/panel.py:318
+#: aurora/shell/panel.py:330
 msgid "{title} (minimized) — click to restore"
 msgstr "{title} (minimizada) — clique para restaurar"
+
+#: aurora/shell/panel.py:351
+msgid "Open windows: {n}"
+msgstr "Janelas abertas: {n}"
+
+#: aurora/shell/panel.py:391
+msgid "Minimize"
+msgstr "Minimizar"
 
 #: aurora/shell/quicksettings.py:166
 msgid "Wired"

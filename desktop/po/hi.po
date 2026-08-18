@@ -79,7 +79,7 @@ msgstr "Aurora सहायक"
 msgid "New Chat"
 msgstr "नई चैट"
 
-#: aurora/assistant.py:127 aurora/shell/dock.py:282
+#: aurora/assistant.py:127 aurora/shell/dock.py:279
 msgid "Close"
 msgstr "बंद करें"
 
@@ -870,7 +870,7 @@ msgid "Home"
 msgstr "होम"
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "ट्रैश"
 
@@ -902,7 +902,8 @@ msgstr "छिपी फ़ाइलें दिखाएँ"
 msgid "List View"
 msgstr "सूची दृश्य"
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
+#: aurora/files/window.py:203 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "नई विंडो"
 
@@ -911,7 +912,7 @@ msgid "About Files"
 msgstr "फ़ाइलें के बारे में"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:260
+#: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "खोजें"
 
@@ -920,7 +921,7 @@ msgid "Folder is Empty"
 msgstr "फ़ोल्डर खाली है"
 
 #: aurora/files/window.py:254 aurora/files/window.py:707
-#: aurora/files/window.py:844 aurora/shell/dock.py:309
+#: aurora/files/window.py:844 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "ट्रैश खाली करें"
 
@@ -936,7 +937,7 @@ msgstr "कोई परिणाम नहीं"
 msgid "Trash is Empty"
 msgstr "ट्रैश खाली है"
 
-#: aurora/files/window.py:679 aurora/shell/dock.py:282
+#: aurora/files/window.py:679 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "पुनर्स्थापित करें"
 
@@ -945,7 +946,7 @@ msgid "Delete Permanently"
 msgstr "स्थायी रूप से हटाएँ"
 
 #: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
-#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
+#: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "खोलें"
 
@@ -1159,7 +1160,7 @@ msgid "Based on"
 msgstr "आधारित"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:328
+#: aurora/shell/panel.py:340
 msgid "Desktop"
 msgstr "डेस्कटॉप"
 
@@ -2586,7 +2587,7 @@ msgstr[1] "{n} आइटम पर ध्यान देना है"
 msgid "Search and Launchpad"
 msgstr "खोज और लॉन्चपैड"
 
-#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:154
 msgid "Control Center"
 msgstr "नियंत्रण केंद्र"
 
@@ -2962,7 +2963,7 @@ msgstr "नियंत्रण केंद्र खोलें"
 msgid "Open Notifications"
 msgstr "सूचनाएँ खोलें"
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:215
 msgid "Lock Screen"
 msgstr "स्क्रीन लॉक करें"
 
@@ -3812,32 +3813,32 @@ msgstr "स्क्रीन रिकॉर्डिंग सहेजी ग
 msgid "Saved to {path}."
 msgstr "{path} में सहेजा गया।"
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
-#: aurora/shell/dock.py:269
+#: aurora/shell/dock.py:149 aurora/shell/dock.py:205 aurora/shell/dock.py:266
+#: aurora/shell/panel.py:320 aurora/shell/panel.py:367
 msgid "Window"
 msgstr "विंडो"
 
-#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:163 aurora/shell/overview.py:61
 msgid "Minimized"
 msgstr "छोटा किया गया"
 
-#: aurora/shell/dock.py:229
+#: aurora/shell/dock.py:226
 msgid "Remove from Dock"
 msgstr "डॉक से हटाएँ"
 
-#: aurora/shell/dock.py:231
+#: aurora/shell/dock.py:228
 msgid "Keep in Dock"
 msgstr "डॉक में रखें"
 
-#: aurora/shell/dock.py:233
+#: aurora/shell/dock.py:230
 msgid "Quit"
 msgstr "बंद करें"
 
-#: aurora/shell/dock.py:234
+#: aurora/shell/dock.py:231 aurora/shell/panel.py:394
 msgid "Quit {n} Windows"
 msgstr "{n} विंडो बंद करें"
 
-#: aurora/shell/dock.py:476
+#: aurora/shell/dock.py:473
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -3857,7 +3858,7 @@ msgstr "साफ़ करें"
 msgid "No Notifications"
 msgstr "कोई सूचना नहीं"
 
-#: aurora/shell/overview.py:44
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:392
 msgid "Close Window"
 msgstr "विंडो बंद करें"
 
@@ -3869,73 +3870,81 @@ msgstr "विंडो फ़िल्टर करने के लिए ट�
 msgid "No open windows"
 msgstr "कोई खुली विंडो नहीं"
 
-#: aurora/shell/panel.py:70
+#: aurora/shell/panel.py:71
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr "{sky} · अधिकतम {high:.0f}° न्यूनतम {low:.0f}°"
 
-#: aurora/shell/panel.py:104
+#: aurora/shell/panel.py:105
 msgid "Open Calendar"
 msgstr "कैलेंडर खोलें"
 
-#: aurora/shell/panel.py:162
+#: aurora/shell/panel.py:163
 msgid "Recording the screen"
 msgstr "स्क्रीन रिकॉर्ड हो रही है"
 
-#: aurora/shell/panel.py:183
+#: aurora/shell/panel.py:184
 msgid "Not connected"
 msgstr "कनेक्ट नहीं"
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:204
 msgid "Aurora Menu"
 msgstr "Aurora मेनू"
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:208
 msgid "About This Computer"
 msgstr "इस कंप्यूटर के बारे में"
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:209
 msgid "System Settings…"
 msgstr "सिस्टम सेटिंग्स…"
 
-#: aurora/shell/panel.py:209
+#: aurora/shell/panel.py:210
 msgid "App Center…"
 msgstr "ऐप केंद्र…"
 
-#: aurora/shell/panel.py:210
+#: aurora/shell/panel.py:211
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "System Health…"
 msgstr "सिस्टम स्वास्थ्य…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "Force Quit…"
 msgstr "ज़बरदस्ती बंद करें…"
 
-#: aurora/shell/panel.py:212
+#: aurora/shell/panel.py:213
 msgid "Sleep"
 msgstr "स्लीप"
 
-#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:213 aurora/shell/quicksettings.py:287
 msgid "Restart…"
 msgstr "पुनः आरंभ करें…"
 
-#: aurora/shell/panel.py:213
+#: aurora/shell/panel.py:214
 msgid "Shut Down…"
 msgstr "बंद करें…"
 
-#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:215 aurora/shell/quicksettings.py:288
 msgid "Log Out"
 msgstr "लॉग आउट"
 
-#: aurora/shell/panel.py:254
+#: aurora/shell/panel.py:265
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora सहायक (Super+Shift+Space)"
 
-#: aurora/shell/panel.py:318
+#: aurora/shell/panel.py:330
 msgid "{title} (minimized) — click to restore"
 msgstr "{title} (छोटी की गई) — पुनर्स्थापित करने के लिए क्लिक करें"
+
+#: aurora/shell/panel.py:351
+msgid "Open windows: {n}"
+msgstr "खुली विंडो: {n}"
+
+#: aurora/shell/panel.py:391
+msgid "Minimize"
+msgstr "छोटा करें"
 
 #: aurora/shell/quicksettings.py:166
 msgid "Wired"

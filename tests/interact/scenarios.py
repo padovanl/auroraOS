@@ -55,6 +55,19 @@ def desktop_icons(vm):
           region_diff(before, cleared, box) < 0.5)
 
 
+def desktop_file(vm):
+    # Any icon, not only the installer: a text file below it opens in Text Editor.
+    vm.user("printf 'hello\\n' > ~/Desktop/notes.txt")
+    time.sleep(2)
+    vm.shot("desktop-file")
+    vm.click(INSTALLER_ICON[0], INSTALLER_ICON[1] + 110, double=True)
+    check("double-clicking a file on the desktop opens it",
+          vm.wait_for(lambda: vm.window("org.gnome.TextEditor"), timeout=20))
+    vm.root("pkill -f [g]nome-text-editor")
+    vm.user("rm -f ~/Desktop/notes.txt")
+    vm.wait_for(lambda: not vm.windows(), timeout=10)
+
+
 def installer(vm):
     vm.click(*INSTALLER_ICON, double=True)
     opened = vm.wait_for(lambda: vm.window("io.calamares.calamares"), timeout=30)
@@ -151,7 +164,7 @@ def main():
         vm.push_desktop(REPO)
         vm.restart_shell()
     try:
-        for scenario in (desktop_icons, installer, terminal, control_center, hot_corner,
+        for scenario in (desktop_icons, desktop_file, installer, terminal, control_center, hot_corner,
                          files, settings):
             try:
                 scenario(vm)

@@ -6,6 +6,7 @@ from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 from aurora.shell.quicksettings import QuickSettings
+from aurora.shell.toplevels import window_labels
 from aurora.shell.tray import Tray
 
 
@@ -239,9 +240,19 @@ class Panel(LayerWindow):
 
         left = Gtk.Box(spacing=2)
         left.append(AuroraMenu(shell))
+        # The focused app's name; a click lists its windows (numbered when
+        # they share a title), like the app menu of a Mac.
         self.app_name = Gtk.Label(css_classes=["panel-app-name"], ellipsize=3,
-                                  max_width_chars=40, margin_start=6)
-        left.append(self.app_name)
+                                  max_width_chars=40)
+        self.app_count = Gtk.Label(css_classes=["panel-app-count"], visible=False)
+        name_box = Gtk.Box(spacing=6)
+        name_box.append(self.app_name)
+        name_box.append(self.app_count)
+        self.app_menu = Gtk.MenuButton(child=name_box, always_show_arrow=False,
+                                       css_classes=["flat", "panel-button", "panel-app"],
+                                       margin_start=2)
+        self.app_menu.set_create_popup_func(self._fill_app_menu)
+        left.append(self.app_menu)
         # Minimized windows, one icon each: a click brings the window back.
         self.minimized = Gtk.Box(spacing=2, margin_start=10, css_classes=["panel-minimized"])
         left.append(self.minimized)
@@ -275,7 +286,7 @@ class Panel(LayerWindow):
         self._update_app()
         # A menu opened from a shortcut must get the keyboard (Esc, arrows),
         # and give it back when it closes.
-        self._menus = (left.get_first_child(), self.status, clock)
+        self._menus = (left.get_first_child(), self.app_menu, self.status, clock)
         for button in self._menus:
             button.connect("notify::active", self._on_menu_active)
         # Opened from a shortcut, a menu has no pointer grab: its keys arrive at
@@ -306,6 +317,7 @@ class Panel(LayerWindow):
         while (c := self.minimized.get_first_child()) is not None:
             self.minimized.remove(c)
         windows = [t for t in self.shell.toplevels.toplevels if t.minimized]
+        labels = window_labels(list(self.shell.toplevels.toplevels), _("Window"))
         for t in sorted(windows, key=lambda w: w.serial):
             app = apps.find_app(t.app_id)
             icon = Gtk.Image(pixel_size=16)
@@ -316,7 +328,7 @@ class Panel(LayerWindow):
             name = app.get_display_name() if app else (t.app_id or "")
             b = Gtk.Button(child=icon, css_classes=["flat", "panel-button", "panel-minimized-item"],
                            tooltip_text=_("{title} (minimized) — click to restore").format(
-                               title=t.title or name))
+                               title=labels.get(t) or name))
             b.connect("clicked", lambda _b, t=t: t.activate())
             self.minimized.append(b)
         self.minimized.set_visible(bool(windows))
@@ -326,11 +338,61 @@ class Panel(LayerWindow):
         active = self.shell.toplevels.active()
         if active is None:
             self.app_name.set_label(_("Desktop"))
+            self.app_name.set_tooltip_text(None)
+            self.app_count.set_visible(False)
+            self.app_menu.set_sensitive(False)
             return
         app = apps.find_app(active.app_id)
         self.app_name.set_label(app.get_display_name() if app else
                                 (active.app_id or active.title or ""))
         self.app_name.set_tooltip_text(active.title)
+        count = len(self.shell.toplevels.for_app(active.app_id))
+        self.app_count.set_label(str(count))
+        self.app_count.set_tooltip_text(_("Open windows: {n}").format(n=count))
+        self.app_count.set_visible(count > 1)
+        self.app_menu.set_sensitive(True)
+
+    def _fill_app_menu(self, button):
+        """The focused app's windows (click one to bring it forward), then
+        New Window and Quit."""
+        active = self.shell.toplevels.active()
+        pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        pop.set_child(box)
+        button.set_popover(pop)
+        if active is None:
+            return
+        app = apps.find_app(active.app_id)
+        windows = sorted(self.shell.toplevels.for_app(active.app_id), key=lambda w: w.serial)
+        labels = window_labels(windows, _("Window"))
+
+        def add(label, callback, checked=None):
+            b = Gtk.Button(css_classes=["flat"])
+            row = Gtk.Box(spacing=8)
+            if checked is not None:  # a window: a check mark on the focused one
+                row.append(Gtk.Image(icon_name="object-select-symbolic" if checked else None,
+                                     pixel_size=16, width_request=16))
+            row.append(Gtk.Label(label=label, xalign=0, hexpand=True))
+            b.set_child(row)
+            b.connect("clicked", lambda *_: (pop.popdown(), callback()))
+            box.append(b)
+            return b
+
+        for w in windows:
+            text = labels[w] + (f"  ({_('Minimized')})" if w.minimized else "")
+            add(text, w.activate, checked=w.activated)
+        box.append(Gtk.Separator())
+        if app is not None:
+            actions = list(app.list_actions())
+            new_window = next((a for a in actions if a.replace("_", "-").lower()
+                               in ("new-window", "new-window-action", "window")), None)
+            add(_("New Window"), (lambda: apps.launch(app, action=new_window)) if new_window
+                else (lambda: apps.launch(app)))
+        add(_("Minimize"), active.minimize)
+        add(_("Close Window"), active.close)
+        if len(windows) > 1:
+            add(_("Quit {n} Windows").format(n=len(windows)),
+                lambda: [w.close() for w in windows])
 
     def _toggle_menu(self, button):
         """Open or close a bar menu from a shortcut. The bar takes the keyboard

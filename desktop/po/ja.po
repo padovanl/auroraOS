@@ -79,7 +79,7 @@ msgstr "Aurora アシスタント"
 msgid "New Chat"
 msgstr "新しいチャット"
 
-#: aurora/assistant.py:127 aurora/shell/dock.py:282
+#: aurora/assistant.py:127 aurora/shell/dock.py:279
 msgid "Close"
 msgstr "閉じる"
 
@@ -870,7 +870,7 @@ msgid "Home"
 msgstr "ホーム"
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "ゴミ箱"
 
@@ -902,7 +902,8 @@ msgstr "隠しファイルを表示"
 msgid "List View"
 msgstr "リスト表示"
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
+#: aurora/files/window.py:203 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "新規ウインドウ"
 
@@ -911,7 +912,7 @@ msgid "About Files"
 msgstr "「ファイル」について"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:260
+#: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "検索"
 
@@ -920,7 +921,7 @@ msgid "Folder is Empty"
 msgstr "フォルダーは空です"
 
 #: aurora/files/window.py:254 aurora/files/window.py:707
-#: aurora/files/window.py:844 aurora/shell/dock.py:309
+#: aurora/files/window.py:844 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "ゴミ箱を空にする"
 
@@ -936,7 +937,7 @@ msgstr "結果がありません"
 msgid "Trash is Empty"
 msgstr "ゴミ箱は空です"
 
-#: aurora/files/window.py:679 aurora/shell/dock.py:282
+#: aurora/files/window.py:679 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "元に戻す"
 
@@ -945,7 +946,7 @@ msgid "Delete Permanently"
 msgstr "完全に削除"
 
 #: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
-#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
+#: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "開く"
 
@@ -1158,7 +1159,7 @@ msgid "Based on"
 msgstr "ベース"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:328
+#: aurora/shell/panel.py:340
 msgid "Desktop"
 msgstr "デスクトップ"
 
@@ -2582,7 +2583,7 @@ msgstr[0] "{n} 件の項目に注意が必要です"
 msgid "Search and Launchpad"
 msgstr "検索とLaunchpad"
 
-#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:154
 msgid "Control Center"
 msgstr "コントロールセンター"
 
@@ -2958,7 +2959,7 @@ msgstr "コントロールセンターを開く"
 msgid "Open Notifications"
 msgstr "通知を開く"
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:215
 msgid "Lock Screen"
 msgstr "画面をロック"
 
@@ -3807,32 +3808,32 @@ msgstr "画面収録を保存しました"
 msgid "Saved to {path}."
 msgstr "{path} に保存しました。"
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
-#: aurora/shell/dock.py:269
+#: aurora/shell/dock.py:149 aurora/shell/dock.py:205 aurora/shell/dock.py:266
+#: aurora/shell/panel.py:320 aurora/shell/panel.py:367
 msgid "Window"
 msgstr "ウインドウ"
 
-#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:163 aurora/shell/overview.py:61
 msgid "Minimized"
 msgstr "最小化"
 
-#: aurora/shell/dock.py:229
+#: aurora/shell/dock.py:226
 msgid "Remove from Dock"
 msgstr "Dock から削除"
 
-#: aurora/shell/dock.py:231
+#: aurora/shell/dock.py:228
 msgid "Keep in Dock"
 msgstr "Dock に固定"
 
-#: aurora/shell/dock.py:233
+#: aurora/shell/dock.py:230
 msgid "Quit"
 msgstr "終了"
 
-#: aurora/shell/dock.py:234
+#: aurora/shell/dock.py:231 aurora/shell/panel.py:394
 msgid "Quit {n} Windows"
 msgstr "{n} 個のウインドウを閉じる"
 
-#: aurora/shell/dock.py:476
+#: aurora/shell/dock.py:473
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -3852,7 +3853,7 @@ msgstr "消去"
 msgid "No Notifications"
 msgstr "通知はありません"
 
-#: aurora/shell/overview.py:44
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:392
 msgid "Close Window"
 msgstr "ウインドウを閉じる"
 
@@ -3864,73 +3865,81 @@ msgstr "入力してウインドウを絞り込み"
 msgid "No open windows"
 msgstr "開いているウインドウはありません"
 
-#: aurora/shell/panel.py:70
+#: aurora/shell/panel.py:71
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr "{sky} · 最高 {high:.0f}° 最低 {low:.0f}°"
 
-#: aurora/shell/panel.py:104
+#: aurora/shell/panel.py:105
 msgid "Open Calendar"
 msgstr "カレンダーを開く"
 
-#: aurora/shell/panel.py:162
+#: aurora/shell/panel.py:163
 msgid "Recording the screen"
 msgstr "画面を収録中"
 
-#: aurora/shell/panel.py:183
+#: aurora/shell/panel.py:184
 msgid "Not connected"
 msgstr "未接続"
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:204
 msgid "Aurora Menu"
 msgstr "Aurora メニュー"
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:208
 msgid "About This Computer"
 msgstr "このコンピューターについて"
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:209
 msgid "System Settings…"
 msgstr "システム設定…"
 
-#: aurora/shell/panel.py:209
+#: aurora/shell/panel.py:210
 msgid "App Center…"
 msgstr "アプリセンター…"
 
-#: aurora/shell/panel.py:210
+#: aurora/shell/panel.py:211
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "System Health…"
 msgstr "システムの健康状態…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "Force Quit…"
 msgstr "強制終了…"
 
-#: aurora/shell/panel.py:212
+#: aurora/shell/panel.py:213
 msgid "Sleep"
 msgstr "スリープ"
 
-#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:213 aurora/shell/quicksettings.py:287
 msgid "Restart…"
 msgstr "再起動…"
 
-#: aurora/shell/panel.py:213
+#: aurora/shell/panel.py:214
 msgid "Shut Down…"
 msgstr "シャットダウン…"
 
-#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:215 aurora/shell/quicksettings.py:288
 msgid "Log Out"
 msgstr "ログアウト"
 
-#: aurora/shell/panel.py:254
+#: aurora/shell/panel.py:265
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora アシスタント（Super+Shift+Space）"
 
-#: aurora/shell/panel.py:318
+#: aurora/shell/panel.py:330
 msgid "{title} (minimized) — click to restore"
 msgstr "{title}（最小化）— クリックで元に戻す"
+
+#: aurora/shell/panel.py:351
+msgid "Open windows: {n}"
+msgstr "開いているウインドウ: {n}"
+
+#: aurora/shell/panel.py:391
+msgid "Minimize"
+msgstr "最小化"
 
 #: aurora/shell/quicksettings.py:166
 msgid "Wired"

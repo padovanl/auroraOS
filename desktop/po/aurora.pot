@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aurora\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 19:46+0200\n"
+"POT-Creation-Date: 2026-09-24 20:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,7 +105,7 @@ msgstr ""
 msgid "New Chat"
 msgstr ""
 
-#: aurora/assistant.py:127 aurora/shell/dock.py:282
+#: aurora/assistant.py:127 aurora/shell/dock.py:279
 #, no-python-format
 msgid "Close"
 msgstr ""
@@ -966,7 +966,7 @@ msgid "Home"
 msgstr ""
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 #, no-python-format
 msgid "Trash"
 msgstr ""
@@ -1006,7 +1006,8 @@ msgstr ""
 msgid "List View"
 msgstr ""
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
+#: aurora/files/window.py:203 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/shell/panel.py:389
 #, no-python-format
 msgid "New Window"
 msgstr ""
@@ -1017,7 +1018,7 @@ msgid "About Files"
 msgstr ""
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:260
+#: aurora/shell/panel.py:271
 #, no-python-format
 msgid "Search"
 msgstr ""
@@ -1028,7 +1029,7 @@ msgid "Folder is Empty"
 msgstr ""
 
 #: aurora/files/window.py:254 aurora/files/window.py:707
-#: aurora/files/window.py:844 aurora/shell/dock.py:309
+#: aurora/files/window.py:844 aurora/shell/dock.py:306
 #, no-python-format
 msgid "Empty Trash"
 msgstr ""
@@ -1048,7 +1049,7 @@ msgstr ""
 msgid "Trash is Empty"
 msgstr ""
 
-#: aurora/files/window.py:679 aurora/shell/dock.py:282
+#: aurora/files/window.py:679 aurora/shell/dock.py:279
 #, no-python-format
 msgid "Restore"
 msgstr ""
@@ -1059,7 +1060,7 @@ msgid "Delete Permanently"
 msgstr ""
 
 #: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
-#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
+#: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 #, no-python-format
 msgid "Open"
 msgstr ""
@@ -1323,7 +1324,7 @@ msgid "Based on"
 msgstr ""
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:328
+#: aurora/shell/panel.py:340
 #, no-python-format
 msgid "Desktop"
 msgstr ""
@@ -3105,7 +3106,7 @@ msgstr[1] ""
 msgid "Search and Launchpad"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:154
 #, no-python-format
 msgid "Control Center"
 msgstr ""
@@ -3579,7 +3580,7 @@ msgstr ""
 msgid "Open Notifications"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:215
 #, no-python-format
 msgid "Lock Screen"
 msgstr ""
@@ -4669,38 +4670,38 @@ msgstr ""
 msgid "Saved to {path}."
 msgstr ""
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
-#: aurora/shell/dock.py:269
+#: aurora/shell/dock.py:149 aurora/shell/dock.py:205 aurora/shell/dock.py:266
+#: aurora/shell/panel.py:320 aurora/shell/panel.py:367
 #, no-python-format
 msgid "Window"
 msgstr ""
 
-#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:163 aurora/shell/overview.py:61
 #, no-python-format
 msgid "Minimized"
 msgstr ""
 
-#: aurora/shell/dock.py:229
+#: aurora/shell/dock.py:226
 #, no-python-format
 msgid "Remove from Dock"
 msgstr ""
 
-#: aurora/shell/dock.py:231
+#: aurora/shell/dock.py:228
 #, no-python-format
 msgid "Keep in Dock"
 msgstr ""
 
-#: aurora/shell/dock.py:233
+#: aurora/shell/dock.py:230
 #, no-python-format
 msgid "Quit"
 msgstr ""
 
-#: aurora/shell/dock.py:234
+#: aurora/shell/dock.py:231 aurora/shell/panel.py:394
 #, no-python-format, python-brace-format
 msgid "Quit {n} Windows"
 msgstr ""
 
-#: aurora/shell/dock.py:476
+#: aurora/shell/dock.py:473
 #, no-python-format
 msgid "Launchpad"
 msgstr ""
@@ -4726,7 +4727,7 @@ msgstr ""
 msgid "No Notifications"
 msgstr ""
 
-#: aurora/shell/overview.py:44
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:392
 #, no-python-format
 msgid "Close Window"
 msgstr ""
@@ -4741,89 +4742,99 @@ msgstr ""
 msgid "No open windows"
 msgstr ""
 
-#: aurora/shell/panel.py:70
+#: aurora/shell/panel.py:71
 #, no-python-format, python-brace-format
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr ""
 
-#: aurora/shell/panel.py:104
+#: aurora/shell/panel.py:105
 #, no-python-format
 msgid "Open Calendar"
 msgstr ""
 
-#: aurora/shell/panel.py:162
+#: aurora/shell/panel.py:163
 #, no-python-format
 msgid "Recording the screen"
 msgstr ""
 
-#: aurora/shell/panel.py:183
+#: aurora/shell/panel.py:184
 #, no-python-format
 msgid "Not connected"
 msgstr ""
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:204
 #, no-python-format
 msgid "Aurora Menu"
 msgstr ""
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:208
 #, no-python-format
 msgid "About This Computer"
 msgstr ""
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:209
 #, no-python-format
 msgid "System Settings…"
 msgstr ""
 
-#: aurora/shell/panel.py:209
+#: aurora/shell/panel.py:210
 #, no-python-format
 msgid "App Center…"
 msgstr ""
 
-#: aurora/shell/panel.py:210
+#: aurora/shell/panel.py:211
 #, no-python-format
 msgid "Dev Hub…"
 msgstr ""
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 #, no-python-format
 msgid "System Health…"
 msgstr ""
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 #, no-python-format
 msgid "Force Quit…"
 msgstr ""
 
-#: aurora/shell/panel.py:212
+#: aurora/shell/panel.py:213
 #, no-python-format
 msgid "Sleep"
 msgstr ""
 
-#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:213 aurora/shell/quicksettings.py:287
 #, no-python-format
 msgid "Restart…"
 msgstr ""
 
-#: aurora/shell/panel.py:213
+#: aurora/shell/panel.py:214
 #, no-python-format
 msgid "Shut Down…"
 msgstr ""
 
-#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:215 aurora/shell/quicksettings.py:288
 #, no-python-format
 msgid "Log Out"
 msgstr ""
 
-#: aurora/shell/panel.py:254
+#: aurora/shell/panel.py:265
 #, no-python-format
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr ""
 
-#: aurora/shell/panel.py:318
+#: aurora/shell/panel.py:330
 #, no-python-format, python-brace-format
 msgid "{title} (minimized) — click to restore"
+msgstr ""
+
+#: aurora/shell/panel.py:351
+#, no-python-format, python-brace-format
+msgid "Open windows: {n}"
+msgstr ""
+
+#: aurora/shell/panel.py:391
+#, no-python-format
+msgid "Minimize"
 msgstr ""
 
 #: aurora/shell/quicksettings.py:166

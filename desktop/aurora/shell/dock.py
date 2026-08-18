@@ -14,6 +14,7 @@ from gi.repository import Gdk, Gio, GLib, Gtk
 from aurora import apps, settings
 from aurora.i18n import _
 from aurora.shell.layer import EDGES, Layer, LayerWindow, LS
+from aurora.shell.toplevels import window_labels
 
 MAX_DOTS = 3           # running-window dots under an icon
 PEEK_DELAY_MS = 500    # rest on an icon this long to see its windows
@@ -145,13 +146,9 @@ class DockItem(Gtk.Button):
         pop.set_parent(self)
         box = Gtk.Box(spacing=8, orientation=Gtk.Orientation.VERTICAL if self.dock.vertical
                       else Gtk.Orientation.HORIZONTAL)
-        titles = [w.title or _("Window") for w in self.windows]
-        for w, title in zip(self.windows, titles):
-            # Same title twice (three "Terminal"s): number them, oldest first.
-            if titles.count(title) > 1:
-                older = sorted((x for x in self.windows if (x.title or _("Window")) == title),
-                               key=lambda x: x.serial)
-                title = f"{title} {older.index(w) + 1}"
+        labels = window_labels(self.windows, _("Window"))
+        for w in self.windows:
+            title = labels[w]
             card = Gtk.Button(css_classes=["flat", "dock-peek-card"], tooltip_text=w.title)
             inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
             icon = Gtk.Image(pixel_size=48)

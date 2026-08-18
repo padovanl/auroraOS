@@ -79,7 +79,7 @@ msgstr "Aurora 助手"
 msgid "New Chat"
 msgstr "新对话"
 
-#: aurora/assistant.py:127 aurora/shell/dock.py:282
+#: aurora/assistant.py:127 aurora/shell/dock.py:279
 msgid "Close"
 msgstr "关闭"
 
@@ -870,7 +870,7 @@ msgid "Home"
 msgstr "主文件夹"
 
 #: aurora/files/window.py:96 aurora/files/window.py:420
-#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:287
+#: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "废纸篓"
 
@@ -902,7 +902,8 @@ msgstr "显示隐藏文件"
 msgid "List View"
 msgstr "列表视图"
 
-#: aurora/files/window.py:203 aurora/shell/dock.py:218 aurora/shell/dock.py:221
+#: aurora/files/window.py:203 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "新建窗口"
 
@@ -911,7 +912,7 @@ msgid "About Files"
 msgstr "关于“文件”"
 
 #: aurora/files/window.py:209 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:260
+#: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "搜索"
 
@@ -920,7 +921,7 @@ msgid "Folder is Empty"
 msgstr "文件夹为空"
 
 #: aurora/files/window.py:254 aurora/files/window.py:707
-#: aurora/files/window.py:844 aurora/shell/dock.py:309
+#: aurora/files/window.py:844 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "清空废纸篓"
 
@@ -936,7 +937,7 @@ msgstr "无结果"
 msgid "Trash is Empty"
 msgstr "废纸篓为空"
 
-#: aurora/files/window.py:679 aurora/shell/dock.py:282
+#: aurora/files/window.py:679 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "恢复"
 
@@ -945,7 +946,7 @@ msgid "Delete Permanently"
 msgstr "永久删除"
 
 #: aurora/files/window.py:682 aurora/quicklook.py:141 aurora/shell/app.py:435
-#: aurora/shell/dock.py:308 aurora/shell/sysnotify.py:113
+#: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "打开"
 
@@ -1158,7 +1159,7 @@ msgid "Based on"
 msgstr "基于"
 
 #: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:115
-#: aurora/shell/panel.py:328
+#: aurora/shell/panel.py:340
 msgid "Desktop"
 msgstr "桌面"
 
@@ -2582,7 +2583,7 @@ msgstr[0] "{n} 项需要注意"
 msgid "Search and Launchpad"
 msgstr "搜索和启动台"
 
-#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:153
+#: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:154
 msgid "Control Center"
 msgstr "控制中心"
 
@@ -2958,7 +2959,7 @@ msgstr "打开控制中心"
 msgid "Open Notifications"
 msgstr "打开通知"
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:214
+#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:215
 msgid "Lock Screen"
 msgstr "锁定屏幕"
 
@@ -3807,32 +3808,32 @@ msgstr "屏幕录制已保存"
 msgid "Saved to {path}."
 msgstr "已保存到 {path}。"
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:152 aurora/shell/dock.py:208
-#: aurora/shell/dock.py:269
+#: aurora/shell/dock.py:149 aurora/shell/dock.py:205 aurora/shell/dock.py:266
+#: aurora/shell/panel.py:320 aurora/shell/panel.py:367
 msgid "Window"
 msgstr "窗口"
 
-#: aurora/shell/dock.py:166 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:163 aurora/shell/overview.py:61
 msgid "Minimized"
 msgstr "已最小化"
 
-#: aurora/shell/dock.py:229
+#: aurora/shell/dock.py:226
 msgid "Remove from Dock"
 msgstr "从程序坞中移除"
 
-#: aurora/shell/dock.py:231
+#: aurora/shell/dock.py:228
 msgid "Keep in Dock"
 msgstr "保留在程序坞中"
 
-#: aurora/shell/dock.py:233
+#: aurora/shell/dock.py:230
 msgid "Quit"
 msgstr "退出"
 
-#: aurora/shell/dock.py:234
+#: aurora/shell/dock.py:231 aurora/shell/panel.py:394
 msgid "Quit {n} Windows"
 msgstr "关闭 {n} 个窗口"
 
-#: aurora/shell/dock.py:476
+#: aurora/shell/dock.py:473
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -3852,7 +3853,7 @@ msgstr "清除"
 msgid "No Notifications"
 msgstr "没有通知"
 
-#: aurora/shell/overview.py:44
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:392
 msgid "Close Window"
 msgstr "关闭窗口"
 
@@ -3864,73 +3865,81 @@ msgstr "输入以筛选窗口"
 msgid "No open windows"
 msgstr "没有打开的窗口"
 
-#: aurora/shell/panel.py:70
+#: aurora/shell/panel.py:71
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr "{sky} · 最高 {high:.0f}° 最低 {low:.0f}°"
 
-#: aurora/shell/panel.py:104
+#: aurora/shell/panel.py:105
 msgid "Open Calendar"
 msgstr "打开日历"
 
-#: aurora/shell/panel.py:162
+#: aurora/shell/panel.py:163
 msgid "Recording the screen"
 msgstr "正在录制屏幕"
 
-#: aurora/shell/panel.py:183
+#: aurora/shell/panel.py:184
 msgid "Not connected"
 msgstr "未连接"
 
-#: aurora/shell/panel.py:203
+#: aurora/shell/panel.py:204
 msgid "Aurora Menu"
 msgstr "Aurora 菜单"
 
-#: aurora/shell/panel.py:207
+#: aurora/shell/panel.py:208
 msgid "About This Computer"
 msgstr "关于本机"
 
-#: aurora/shell/panel.py:208
+#: aurora/shell/panel.py:209
 msgid "System Settings…"
 msgstr "系统设置…"
 
-#: aurora/shell/panel.py:209
+#: aurora/shell/panel.py:210
 msgid "App Center…"
 msgstr "应用中心…"
 
-#: aurora/shell/panel.py:210
+#: aurora/shell/panel.py:211
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "System Health…"
 msgstr "系统健康…"
 
-#: aurora/shell/panel.py:211
+#: aurora/shell/panel.py:212
 msgid "Force Quit…"
 msgstr "强制退出…"
 
-#: aurora/shell/panel.py:212
+#: aurora/shell/panel.py:213
 msgid "Sleep"
 msgstr "睡眠"
 
-#: aurora/shell/panel.py:212 aurora/shell/quicksettings.py:287
+#: aurora/shell/panel.py:213 aurora/shell/quicksettings.py:287
 msgid "Restart…"
 msgstr "重新启动…"
 
-#: aurora/shell/panel.py:213
+#: aurora/shell/panel.py:214
 msgid "Shut Down…"
 msgstr "关机…"
 
-#: aurora/shell/panel.py:214 aurora/shell/quicksettings.py:288
+#: aurora/shell/panel.py:215 aurora/shell/quicksettings.py:288
 msgid "Log Out"
 msgstr "注销"
 
-#: aurora/shell/panel.py:254
+#: aurora/shell/panel.py:265
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora 助手（Super+Shift+空格）"
 
-#: aurora/shell/panel.py:318
+#: aurora/shell/panel.py:330
 msgid "{title} (minimized) — click to restore"
 msgstr "{title}（已最小化）— 点击恢复"
+
+#: aurora/shell/panel.py:351
+msgid "Open windows: {n}"
+msgstr "已打开的窗口：{n}"
+
+#: aurora/shell/panel.py:391
+msgid "Minimize"
+msgstr "最小化"
 
 #: aurora/shell/quicksettings.py:166
 msgid "Wired"

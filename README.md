@@ -105,7 +105,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 ### Desktop
 | | |
 |---|---|
-| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name, an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
+| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
 | **Dock** | Pinned and running apps with one dot per open window (up to three), right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, floating or full-width. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
