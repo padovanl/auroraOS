@@ -93,6 +93,9 @@ while IFS='|' read -r cat name id launch; do
     fi
 done < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/apps.manifest")
 expect "Terminal launcher renamed" grep -qx 'Name=Terminal' "$ROOTFS/usr/local/share/applications/org.gnome.Ptyxis.desktop"
+expect "no SSH host keys baked into the image" sh -c "! ls $ROOTFS/etc/ssh/ssh_host_* 2>/dev/null"
+expect "sshd creates its host keys when started" \
+    grep -q 'ssh-keygen -A' "$ROOTFS/etc/systemd/system/ssh.service.d/aurora-host-keys.conf"
 # Only the app is renamed: its actions (New Window, Preferences…) keep their names,
 # or the dock menu lists "Terminal" three times.
 expect "Terminal actions keep their own names" \

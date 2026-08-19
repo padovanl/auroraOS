@@ -21,3 +21,6 @@ find "$ROOTFS/var/log" -type f -delete
 # A fresh machine-id is generated on first boot.
 : > "$ROOTFS/etc/machine-id"
 rm -f "$ROOTFS/var/lib/dbus/machine-id"
+# SSH host keys are per machine: made on the machine when sshd first starts
+# (a drop-in in overlay/etc/systemd/system/ssh.service.d).
+rm -f "$ROOTFS"/etc/ssh/ssh_host_*
