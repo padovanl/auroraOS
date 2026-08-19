@@ -21,15 +21,16 @@ preinstalled, and the rock-solid Debian 13 base underneath.
 4. [Get started (users)](#get-started-users) · [try it in QEMU](#try-it-in-a-virtual-machine-qemu)
 5. [Using Aurora](#using-aurora)
 6. [Build it yourself](#build-it-yourself)
-7. [How it works (architecture)](#how-it-works-architecture)
-8. [Under the hood: every technical choice](#under-the-hood-every-technical-choice)
-9. [Versions, updates and the kernel](#versions-updates-and-the-kernel)
-10. [Testing](#testing)
-11. [Customizing](#customizing)
-12. [Languages](#languages)
-13. [Repository layout](#repository-layout)
-14. [Known limitations and roadmap](#known-limitations-and-roadmap)
-15. [License and credits](#license-and-credits)
+7. [How we built Aurora OS: making a Linux distribution, step by step](#how-we-built-aurora-os-making-a-linux-distribution-step-by-step)
+8. [How it works (architecture)](#how-it-works-architecture)
+9. [Under the hood: every technical choice](#under-the-hood-every-technical-choice)
+10. [Versions, updates and the kernel](#versions-updates-and-the-kernel)
+11. [Testing](#testing)
+12. [Customizing](#customizing)
+13. [Languages](#languages)
+14. [Repository layout](#repository-layout)
+15. [Known limitations and roadmap](#known-limitations-and-roadmap)
+16. [License and credits](#license-and-credits)
 
 ---
 
@@ -494,6 +495,295 @@ seconds instead of minutes.
 `config/aurora.conf` holds the name, version, codename, Debian suite and mirrors, live user
 and default language. Package sets live in `config/packages/*.list` (one package per line,
 `#` comments). Bundled languages are in `config/locales.list`.
+
+## How we built Aurora OS: making a Linux distribution, step by step
+
+This chapter tells the whole story, in the order we did it, so you can build your own
+distribution with it. It explains what each piece is, why it is needed, what we wrote
+ourselves and what we took from others. You need to know how to use a Linux terminal and
+read shell and Python code; everything else is explained here.
+
+### 0. What a "distribution" actually is
+
+The Linux kernel alone can't do anything useful for a person. A distribution is the kernel
+plus everything around it, chosen, configured and packaged so that it works together:
+
+| Layer | What it does | In Aurora |
+|---|---|---|
+| Firmware | Built into the computer. Finds a disk and starts its boot loader. | BIOS (old PCs) or UEFI (every PC since ~2012). We support both. |
+| Boot loader | Shows the boot menu, loads the kernel and the initramfs into memory. | GRUB 2 (with Debian's signed shim for Secure Boot). |
+| Kernel | Drivers, memory, processes, file systems. | Debian's `linux-image-amd64` (6.12 LTS), plus firmware packages. |
+| initramfs | A tiny temporary system in RAM that finds and mounts the real root file system. | `initramfs-tools`, extended by `live-boot` on the USB stick. |
+| init | The first process: starts every service. | systemd. |
+| Userland | Shell, libraries, core tools, package manager. | Debian 13 "trixie" and apt. |
+| Graphics stack | Talks to the GPU and draws windows. | Mesa + a Wayland compositor (labwc). |
+| Desktop | Everything the user sees: bar, dock, launcher, settings, apps. | **Written by us** in Python + GTK 4. |
+| Installer | Copies the system to a disk and makes it bootable. | Calamares, configured and extended by us. |
+
+Making a distribution means deciding each row, then writing the glue that makes them
+behave like one product. Almost nobody writes rows 1 to 7: you build on an existing
+distribution's packages. We chose **Debian stable**: huge package archive, security
+updates for years, and the tooling (`debootstrap`, `live-boot`, apt) is exactly what a
+derivative needs. Ubuntu, Mint and elementary are built the same way.
+
+### 1. The plan
+
+1. **Build a root file system** from Debian packages, inside a container, from scripts, so
+   any machine can reproduce it (no hand-made steps).
+2. **Customize it**: our packages, configuration files, services, branding.
+3. **Turn it into a live ISO**: compress the root file system into one image, add a boot
+   loader for BIOS and UEFI, and make a hybrid ISO that works burned to a DVD or written
+   to a USB stick.
+4. **Make it installable**: an installer that partitions a disk, copies the system and
+   installs a boot loader.
+5. **Write the desktop**: our own shell and apps.
+6. **Test all of it automatically**, including booting and installing in virtual machines.
+
+### 2. The build machine: Docker, stages, and why
+
+Everything runs in a Debian container (`build/Dockerfile`), started by `make`. The host
+only needs Docker (and KVM for tests), so the build is the same on every Linux machine.
+The container is `--privileged` because building a system needs `mount` and `chroot`.
+
+The build is a list of numbered shell scripts in `build/stages/`, run in order by
+`build/build-inner.sh`. Each stage can be re-run on its own (`make stage S="40 90"`), so
+changing the desktop doesn't mean downloading Debian again. `build/lib.sh` holds the
+shared helpers: `log`, `in_chroot` (run a command inside the new system) and the mounts of
+`/proc`, `/sys`, `/dev` and `/run` that programs inside a chroot expect.
+
+Configuration lives in plain files, not in the scripts: `config/aurora.conf` (name,
+version, Debian suite, mirrors, live user), `config/packages/*.list` (what to install),
+`config/locales.list` (boot menu languages), `config/apps.manifest` (default apps).
+
+### 3. Stage 10: an empty Debian (debootstrap)
+
+```sh
+debootstrap --arch=amd64 --variant=minbase trixie /work/rootfs http://deb.debian.org/debian
+```
+
+`debootstrap` downloads the essential Debian packages and unpacks them into a directory:
+the result is a tiny but complete Debian you can `chroot` into. Everything after this
+works *inside* that directory with `chroot /work/rootfs <command>`: apt, systemctl and
+dpkg think they are running on the new system.
+
+### 4. Stage 20 and 25: packages
+
+`20-packages.sh` sets up apt sources (main, contrib, non-free, non-free-firmware and the
+security archive), answers install-time questions ahead of time with
+`debconf-set-selections` (so nothing waits for a keyboard), upgrades, and installs the
+lists in `config/packages/`:
+
+- `base.list`: kernel, firmware, systemd, NetworkManager, `live-boot`, Plymouth, audio
+  (PipeWire), printing, Bluetooth, file systems.
+- `desktop.list`: labwc, greetd, GTK 4, libadwaita, gtk4-layer-shell, fonts, portals and
+  the apps we ship.
+- `installer.list`: Calamares, GRUB for BIOS (`grub-pc-bin`) and UEFI
+  (`grub-efi-amd64-bin`), shim, `efibootmgr`, partitioning tools.
+
+A missing package fails loudly instead of being skipped silently. `locale-gen` builds
+the languages we offer. `25-extras.sh` adds software that isn't in Debian (downloaded
+releases, pinned by version and checksum), for example grub-btrfs and pkgtui.
+
+### 5. Stage 30 and 35: making it Aurora
+
+This is where a Debian becomes a distribution.
+
+- **The overlay.** `overlay/` mirrors the file system: every file in it is copied over
+  the root file system with `rsync` (for example `overlay/etc/calamares/`,
+  `overlay/etc/xdg/mimeapps.list`, systemd units, the live setup script). This is the
+  simplest way to ship configuration.
+- **Identity.** `/etc/os-release`, `/etc/issue`, `lsb-release`: what every program reads
+  to know which system it runs on. We keep `ID_LIKE=debian` so Debian software still
+  recognizes it.
+- **Diversions.** When we must replace a file owned by a Debian package, we use
+  `dpkg-divert`: dpkg then puts future package versions of that file aside instead of
+  overwriting ours. Editing it in place would be undone by the next update.
+- **Hidden and renamed apps** (`config/hidden-apps.list`, `renamed-apps.list`): we copy
+  a package's `.desktop` file to `/usr/local/share/applications`, which wins over
+  `/usr/share`, and change `Name=` or add `NoDisplay=true` (only in the
+  `[Desktop Entry]` group, or app actions like "New Window" get renamed too).
+- **Services**: `systemctl enable` NetworkManager, greetd (the login manager), the live
+  setup, update checks; `systemctl set-default graphical.target`.
+- **Defaults** (`35-defaults.sh`): firewall on (ufw: deny incoming), automatic security
+  updates, Flathub, Docker only on demand (socket activation), SSH off.
+
+### 6. Stage 40: our own software, as real Debian packages
+
+Our code isn't copied loose into the image: `build/package-desktop.sh` builds real
+`.deb` packages (`aurora-desktop`, `aurora-base`…) and stage 40 installs them with apt.
+This matters: installed systems get updates of our own code through apt, from our
+repository on GitHub Pages (`docs/apt/`, signed with our key), the same way they get
+Debian's. After installing, the stage compiles GSettings schemas and icon caches and
+registers `.desktop` files.
+
+### 7. Stage 50: branding
+
+`branding/` holds the logo generator (`logo.py` draws it as SVG, then renders PNG/WebP at
+every size), wallpapers, sounds, the GRUB theme (background, fonts as `.pf2`,
+`theme.txt`), the Plymouth boot splash and the installer slideshow. Generating assets from
+code means one change updates every size and every place.
+
+### 8. Stage 70 and 80: offline packages and cleanup
+
+- `70-pool.sh` downloads (without installing) the packages the installer may need on a
+  machine without internet: GRUB for the other firmware type, signed shim and GRUB for
+  Secure Boot, drivers. They go on the ISO as a small apt repository.
+- `80-finalize.sh` sets the Plymouth theme, regenerates the initramfs (so it contains
+  `live-boot` and the splash), removes caches, logs and machine-specific files such as
+  `/etc/machine-id` and SSH host keys: each installed machine must get its own (systemd
+  makes a new machine-id at first boot; sshd makes its keys when it first starts).
+
+### 9. Stage 90: the live ISO, BIOS and UEFI
+
+This is the part most people find mysterious. The ISO contains:
+
+```
+/live/vmlinuz               the kernel
+/live/initrd.img            the initramfs (with live-boot)
+/live/filesystem.squashfs   the whole root file system, compressed (zstd), read-only
+/boot/grub/grub.cfg         the boot menu
+/boot/grub/themes/aurora/   the menu's look
+/.aurora-live               an empty marker file, to find the right disk
+/pool/                      offline packages for the installer
+```
+
+1. **squashfs.** `mksquashfs` packs the root file system into one compressed, read-only
+   file, a fraction of its size (the whole ISO is about 2.3 GB).
+2. **grub.cfg.** Written by the stage: entries for Try, Install, safe graphics
+   (`nomodeset`), a submenu with 20 languages (it passes `aurora.lang=` and
+   `aurora.kbd=` to the kernel), boot from disk, and UEFI firmware settings. All entries
+   boot `/live/vmlinuz` with `boot=live`.
+3. **grub-mkrescue** (a wrapper around `xorriso`) produces a **hybrid ISO** with *both*
+   boot paths:
+   - **BIOS**: the firmware reads the first sector of the disk (the MBR), which holds a
+     small GRUB boot image; it loads GRUB's core (El Torito boot image for optical
+     media), which reads `grub.cfg`.
+   - **UEFI**: the firmware doesn't run boot sectors. It looks for a FAT partition, the
+     *EFI System Partition*, and runs `\EFI\BOOT\BOOTX64.EFI` from it. grub-mkrescue
+     adds a small FAT image with GRUB built as an EFI program.
+   - **USB sticks**: the ISO also carries an MBR partition table (isohybrid), so the same
+     file written with `dd` or Etcher boots as a hard disk on both kinds of firmware.
+
+   In `grub.cfg`, `$grub_platform` tells which path we came from (UEFI adds the
+   "firmware settings" entry).
+
+### 10. How the live system boots
+
+1. Firmware → GRUB → kernel + initrd, with `boot=live` on the command line.
+2. The initramfs runs `live-boot`'s scripts: they search every disk for
+   `/live/filesystem.squashfs`, mount it read-only, and put a writable layer in RAM on top
+   (**overlayfs**). The result is mounted as `/`: you can install software and save files;
+   everything disappears at shutdown.
+3. systemd starts. `aurora-live-setup` (`overlay/usr/libexec/`, runs only when
+   `boot=live` is on the command line) creates the `aurora` user with no password and
+   sudo, applies the language and keyboard chosen in the boot menu, and turns on
+   automatic login.
+4. greetd starts the session: `aurora-session` → labwc → our shell. With `aurora.install`
+   on the command line ("Install Aurora OS" in the menu), the installer opens right away;
+   otherwise the live desktop shows an **Install Aurora OS** icon, like Ubuntu's "Try".
+
+### 11. The installer: Calamares
+
+We didn't write an installer: Calamares is used by dozens of distributions. We write its
+**configuration** and a few **modules**.
+
+- `overlay/etc/calamares/settings.conf` lists the pages (welcome, location, keyboard,
+  partitions, users, summary) and the **exec** sequence that does the work: partition →
+  mount → `unpackfs` (copies the contents of `filesystem.squashfs` to the new disk) →
+  fstab, locale, keyboard, users → our `aurora-finalize` → services → our
+  `aurora-secureboot` → bootloader → initramfs.
+- `modules/partition.conf`: btrfs by default (for snapshots), a 512 MB EFI partition on
+  UEFI, optional encryption.
+- `modules/bootloader.conf`: runs `grub-install` for the firmware the machine booted
+  with, with `installEFIFallback` (also writes `\EFI\BOOT\BOOTX64.EFI`, because some
+  firmware forgets boot entries).
+- Our Python modules (`overlay/usr/lib/calamares/modules/`):
+  - `aurora-secureboot`: on UEFI, installs Debian's Microsoft-signed **shim** and signed
+    GRUB from the offline pool, so the installed system boots with Secure Boot on.
+  - `aurora-finalize`: greetd autologin if chosen, removes live-only files, sets up
+    Timeshift snapshots on btrfs and the snapshot boot menu.
+- Branding: `branding/calamares/` (colors, logo, slideshow in QML, translations).
+
+The installed system is the same image as the live one, minus the live parts: that's why
+it works the first time.
+
+### 12. The desktop: what we wrote
+
+Most distributions reuse GNOME or KDE. We wrote our own desktop to control every detail,
+about **15,000 lines of Python** (`desktop/aurora/`):
+
+- **Language and toolkit.** Python 3 with PyGObject, GTK 4 and libadwaita: fast to write,
+  and the same widgets the GNOME apps use, so everything looks consistent.
+- **The compositor** is **labwc**, a small Wayland compositor (it draws windows, handles
+  input, keybindings, window rules). We don't write a compositor: we configure it
+  (`desktop/data/labwc/rc.xml`, `autostart`, `themerc`).
+- **The shell** (`desktop/aurora/shell/`) is one process whose windows become **layer
+  surfaces** (the `wlr-layer-shell` protocol, through gtk4-layer-shell): the top bar, dock,
+  wallpaper and desktop icons, launcher, notifications, hot corners. Layer surfaces sit
+  above or below normal windows and can reserve screen space.
+- **Seeing other apps' windows**: GTK can't. The shell opens a second Wayland connection
+  (pywayland) and speaks `wlr-foreign-toplevel-management` to list, focus, minimize and
+  close windows: that powers the dock's dots and window lists, the overview and the top
+  bar's app menu.
+- **Services** it talks to, over D-Bus: NetworkManager, UPower, PipeWire/WirePlumber
+  (`wpctl`), BlueZ, logind, notifications (we implement the
+  `org.freedesktop.Notifications` server).
+- **Apps**: Settings, Files, the Assistant, Dev Hub, Game Hub, Welcome, the greeter (the
+  login screen, a greetd client), lock screen, Quick Look.
+- **The session**: `aurora-session` picks renderers that work on the machine (software
+  ones in VMs), seeds `~/.config/labwc`, and starts labwc; labwc's `autostart` starts the
+  shell and restarts it if it ever crashes.
+- **Look**: our GTK stylesheet on top of libadwaita, our icon theme (drawn by
+  `branding/icons`), labwc theme, cursor, fonts.
+- **Languages**: every string goes through gettext (`_()`); translations live in
+  `desktop/po/` (10 languages, generated from `desktop/po/sources/*.json`).
+
+### 13. What we wrote, what we used
+
+| Written by us | Taken as is (configured) |
+|---|---|
+| Build scripts (Bash, ~2,000 lines) | Debian packages, debootstrap, live-boot |
+| Desktop shell and apps (Python, ~15,000 lines) | labwc, GTK 4, libadwaita, gtk4-layer-shell |
+| Calamares modules and configuration | Calamares, GRUB, shim |
+| Branding generators (logo, icons, wallpapers, sounds) | Plymouth, greetd |
+| Stylesheets (CSS), labwc config (XML) | PipeWire, NetworkManager, systemd |
+| Tests (Python, ~2,400 lines), website generator | QEMU, OVMF (for testing) |
+
+Languages used: **Bash** (build, system scripts), **Python** (desktop, installer modules,
+tests, tools), **CSS** (look), **XML** (compositor config), **QML** (installer
+slideshow), **YAML** (Calamares), **HTML/JS** (website).
+
+### 14. Testing a distribution
+
+A distribution breaks in ways unit tests can't see, so we test at every level
+(details in [Testing](#testing)):
+
+1. **Static and unit tests**: syntax, lint, translations, and pure logic.
+2. **Headless desktop**: the shell runs in a nested compositor in Docker.
+3. **Image checks**: inspect the built root file system (files, services, names).
+4. **Boot tests**: QEMU boots the real ISO with BIOS and with UEFI (OVMF). The QEMU
+   **guest agent** inside the image lets the test run commands in the VM and check
+   services, the session and every default app.
+5. **Interaction tests**: a virtual USB tablet and keyboard click and type like a person;
+   the shell reports which windows exist.
+6. **Install tests**: QEMU installs onto an empty virtual disk by pressing keys in
+   Calamares, then boots the installed disk and checks it.
+
+Always check both firmware types: many bugs appear on only one of them.
+
+### 15. Doing it yourself: the shortest path
+
+1. `debootstrap` a Debian stable into a directory, `chroot` in, install a kernel,
+   `live-boot`, `systemd-sysv`, a desktop and `calamares`.
+2. Add your files (a `/etc/os-release`, a user-creation script, your config).
+3. `mksquashfs` it; copy the kernel and initrd next to it in an ISO folder; write a
+   `grub.cfg` with `boot=live`; run `grub-mkrescue`.
+4. Boot it in QEMU with and without `-bios OVMF.fd`.
+5. Configure Calamares (`settings.conf`, `partition.conf`, `bootloader.conf`) and install
+   into a virtual disk.
+6. Put it all in scripts, then in a container, then add tests. That's a distribution.
+   The rest is taste, and care.
+
 
 ## How it works (architecture)
 
