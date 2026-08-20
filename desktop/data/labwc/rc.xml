@@ -11,13 +11,15 @@
   </core>
 
   <!-- The Aurora Assistant floats like a picture-in-picture video: above other
-       windows, on every workspace, in the bottom-right corner. -->
+       windows, on every workspace, in the bottom-right corner above the dock. -->
   <windowRules>
     <windowRule identifier="org.aurora.Assistant" skipWindowSwitcher="yes">
       <action name="ToggleAlwaysOnTop" />
       <action name="ToggleOmnipresent" />
       <action name="MoveToEdge" direction="right" snapWindows="no" />
       <action name="MoveToEdge" direction="down" snapWindows="no" />
+      <!-- A small gap from the edges ("down" already stops above the dock). -->
+      <action name="MoveRelative" x="-16" y="-16" />
     </windowRule>
   </windowRules>
 

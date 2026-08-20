@@ -32,6 +32,7 @@ window.assistant-float headerbar { min-height: 40px; }
 .codeblock { border-radius: 10px; background-color: alpha(currentColor, 0.08); }
 .codeblock textview { background: transparent; font-family: monospace; }
 .quick-actions button { border-radius: 999px; }
+.quick-actions > flowboxchild { padding: 0; }
 """
 
 CODE = re.compile(r"```[a-zA-Z0-9_+-]*\n(.*?)```", re.S)
@@ -105,6 +106,19 @@ class Message(Gtk.Box):
 
 
 COMPACT = (400, 580)
+# Screen height the window leaves free: the dock and a gap below it (the window
+# rule puts it in the bottom-right corner, above the dock), the top bar above.
+DOCK_ROOM, BAR_ROOM = 110, 46
+
+
+def compact_height():
+    """580 px, or less on a small screen, so the whole window stays visible."""
+    display = Gdk.Display.get_default()
+    monitors = display.get_monitors() if display else None
+    if not monitors or monitors.get_n_items() == 0:
+        return COMPACT[1]
+    height = monitors.get_item(0).get_geometry().height
+    return max(320, min(COMPACT[1], height - DOCK_ROOM - BAR_ROOM))
 
 
 class AssistantWindow(Adw.ApplicationWindow):
@@ -114,7 +128,7 @@ class AssistantWindow(Adw.ApplicationWindow):
 
     def __init__(self, app):
         super().__init__(application=app, title=_("Aurora Assistant"),
-                         default_width=COMPACT[0], default_height=COMPACT[1])
+                         default_width=COMPACT[0], default_height=compact_height())
         self.add_css_class("assistant-float")
         self.history = []
         self.busy = False
@@ -159,7 +173,10 @@ class AssistantWindow(Adw.ApplicationWindow):
                                            hscrollbar_policy=Gtk.PolicyType.NEVER)
         chat.append(self.scroller)
 
-        quick = Gtk.Box(spacing=6, margin_start=12, margin_end=12, css_classes=["quick-actions"])
+        # Wraps onto a second line when the window is narrow, never cut off.
+        quick = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, column_spacing=4,
+                            row_spacing=4, max_children_per_line=4, homogeneous=False,
+                            margin_start=12, margin_end=12, css_classes=["quick-actions"])
         for label, prompt in (
             (_("Summarize"), "Summarize this text in a few bullet points:\n\n{}"),
             (_("Improve Writing"), "Improve the writing of this text; keep its language "
@@ -172,6 +189,12 @@ class AssistantWindow(Adw.ApplicationWindow):
                            tooltip_text=_("Uses the text you copied"))
             b.connect("clicked", lambda _b, p=prompt: self.on_clipboard(p))
             quick.append(b)
+        # FlowBox children take focus and hover highlight of their own; the
+        # buttons already have both.
+        child = quick.get_first_child()
+        while child is not None:
+            child.set_focusable(False)
+            child = child.get_next_sibling()
         chat.append(quick)
 
         bar = Gtk.Box(spacing=8, margin_top=8, margin_bottom=12, margin_start=12, margin_end=12)
