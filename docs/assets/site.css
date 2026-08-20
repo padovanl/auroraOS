@@ -208,7 +208,8 @@ details p { color: #d8d0e8; }
 .lightbox { position: fixed; inset: 0; background: rgba(5,3,10,0.9); display: grid; place-items: center;
   z-index: 50; cursor: zoom-out; padding: 24px; }
 .lightbox[hidden], [hidden] { display: none !important; }
-.lightbox img { max-height: 92vh; border-radius: 12px; box-shadow: 0 30px 90px rgba(0,0,0,.7); }
+.lightbox img { max-height: 92vh; max-width: 100%; border-radius: 12px;
+  box-shadow: 0 30px 90px rgba(0,0,0,.7); transform-origin: center; will-change: transform; }
 
 /* --- reveal on scroll --- */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
@@ -565,3 +566,11 @@ details.opening > :not(summary) { opacity: 0; transform: translateY(-6px); }
 /* Expandable answers: a clearer open and close. */
 details > :not(summary) { transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1); }
 details.opening > :not(summary) { opacity: 0; transform: translateY(-12px); }
+
+/* --- cursor: an arrow over text (no I-beam), a hand on anything clickable --- */
+html, body { cursor: default; }
+a[href], button, summary, label, select, [role="button"], [data-copy], .tab, .btn { cursor: pointer; }
+input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+textarea, [contenteditable="true"] { cursor: text; }
+img[data-zoom], img[src*="screenshots/"] { cursor: zoom-in; }
+.lightbox, .lightbox img { cursor: zoom-out; }

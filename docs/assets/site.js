@@ -56,17 +56,71 @@ document.querySelectorAll("[data-copy]").forEach((btn) => {
   });
 });
 
-// Click a screenshot to see it full size.
-const box = document.querySelector(".lightbox");
-document.querySelectorAll("[data-zoom]").forEach((img) => {
-  img.addEventListener("click", () => {
-    box.querySelector("img").src = img.src;
-    box.querySelector("img").alt = img.alt;
-    box.hidden = false;
-  });
+// Click any screenshot to see it full size: it grows out of its place on the
+// page into the middle of the screen, and shrinks back into place on close.
+const box = document.querySelector(".lightbox") || (() => {
+  const el = document.createElement("div");
+  el.className = "lightbox";
+  el.hidden = true;
+  el.innerHTML = '<img alt="">';
+  document.body.append(el);
+  return el;
+})();
+const big = box.querySelector("img");
+const ZOOM_MS = 420;
+const EASE = "cubic-bezier(.2,.8,.2,1)";
+let source = null;
+
+// The transform that puts the full-size image exactly over the thumbnail.
+function fromThumb(thumb) {
+  const a = thumb.getBoundingClientRect();
+  const b = big.getBoundingClientRect();
+  if (!a.width || !b.width) return "scale(.85)";
+  const dx = a.left + a.width / 2 - (b.left + b.width / 2);
+  const dy = a.top + a.height / 2 - (b.top + b.height / 2);
+  return `translate(${dx}px, ${dy}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+}
+
+function openPhoto(img) {
+  source = img;
+  big.src = img.currentSrc || img.src;
+  big.alt = img.alt;
+  box.hidden = false;
+  const grow = () => {
+    img.style.visibility = "hidden";
+    big.animate([{ transform: fromThumb(img), borderRadius: "6px" }, { transform: "none" }],
+                { duration: ZOOM_MS, easing: EASE });
+    box.animate([{ backgroundColor: "rgba(5,3,10,0)" }, { backgroundColor: "rgba(5,3,10,0.9)" }],
+                { duration: ZOOM_MS, easing: "ease-out" });
+  };
+  if (big.complete && big.naturalWidth) grow(); else big.addEventListener("load", grow, { once: true });
+}
+
+function closePhoto() {
+  if (box.hidden || box.dataset.closing) return;
+  box.dataset.closing = "1";
+  const img = source;
+  const done = () => {
+    box.hidden = true;
+    delete box.dataset.closing;
+    if (img) img.style.visibility = "";
+  };
+  const visible = img && img.getBoundingClientRect().bottom > 0 &&
+    img.getBoundingClientRect().top < innerHeight;
+  const to = visible ? fromThumb(img) : "scale(.85)";
+  const shrink = big.animate([{ transform: "none" }, { transform: to, opacity: visible ? 1 : 0 }],
+                             { duration: ZOOM_MS, easing: EASE, fill: "forwards" });
+  box.animate([{ backgroundColor: "rgba(5,3,10,0.9)" }, { backgroundColor: "rgba(5,3,10,0)" }],
+              { duration: ZOOM_MS, easing: "ease-in", fill: "forwards" });
+  shrink.onfinish = () => { done(); shrink.cancel(); box.getAnimations().forEach((a) => a.cancel()); };
+}
+
+document.addEventListener("click", (e) => {
+  const img = e.target.closest("img[data-zoom], img[src*='screenshots/']");
+  if (img && !box.contains(img)) { e.preventDefault(); openPhoto(img); }
 });
-box.addEventListener("click", () => { box.hidden = true; });
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") box.hidden = true; });
+box.addEventListener("click", closePhoto);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePhoto(); });
 
 // Fade sections in as they scroll into view.
 const io = new IntersectionObserver((entries) => {
