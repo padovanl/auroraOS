@@ -407,3 +407,32 @@ document.addEventListener("click", (e) => {
   e.preventDefault();
   glideTo(target, url.hash);
 });
+
+// Back to top: a round arrow in the bottom-right corner once you have scrolled
+// down a screen or so, gliding smoothly up.
+(() => {
+  const top = document.createElement("button");
+  top.className = "to-top";
+  top.type = "button";
+  top.setAttribute("aria-label", "Back to top");
+  top.title = "Back to top";
+  top.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">' +
+    '<path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" ' +
+    'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.body.append(top);
+  const update = () => top.classList.toggle("shown", window.scrollY > window.innerHeight * 0.8);
+  window.addEventListener("scroll", update, { passive: true });
+  update();
+  top.addEventListener("click", () => {
+    const startY = window.scrollY;
+    const duration = Math.min(1100, 380 + startY * 0.2);
+    const t0 = performance.now();
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / duration);
+      window.scrollTo(0, startY * (1 - ease(k)));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+})();

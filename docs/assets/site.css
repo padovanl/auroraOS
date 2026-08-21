@@ -574,3 +574,16 @@ input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type
 textarea, [contenteditable="true"] { cursor: text; }
 img[data-zoom], img[src*="screenshots/"] { cursor: zoom-in; }
 .lightbox, .lightbox img { cursor: zoom-out; }
+
+/* --- back to top --- */
+.to-top { position: fixed; right: 22px; bottom: 22px; z-index: 40; width: 48px; height: 48px;
+  border-radius: 999px; border: 1px solid var(--card-border); color: #fff; cursor: pointer;
+  background: rgba(20, 16, 34, 0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: grid; place-items: center; box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
+  opacity: 0; transform: translateY(16px) scale(.9); pointer-events: none;
+  transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1), background .25s ease; }
+.to-top.shown { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { background: var(--grad); transform: translateY(-3px); }
+.to-top:hover svg { animation: to-top-nudge .6s ease; }
+@keyframes to-top-nudge { 50% { transform: translateY(-3px); } }
+@media (max-width: 600px) { .to-top { right: 16px; bottom: 16px; width: 44px; height: 44px; } }
