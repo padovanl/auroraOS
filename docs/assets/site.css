@@ -285,9 +285,12 @@ details p { color: #d8d0e8; }
 
 /* Sub-pages: a softer sky behind the first section */
 .page-sky { position: relative; isolation: isolate; }
-.page-sky > .sky { inset: -120px 0 -40px; }
+/* Only behind the page's heading: a long first section (the Under the hood index,
+   whose cards and text are all one section) would otherwise put colors and stars
+   behind every line of text. */
+.page-sky > .sky { inset: -120px 0 auto; height: min(calc(100% + 160px), 720px); }
 .page-sky > .sky::after { content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 40%, var(--bg)); }
+  background: linear-gradient(180deg, transparent 35%, var(--bg) 96%); }
 
 /* --- hero --- */
 .hero { isolation: isolate; padding-top: 88px; }
@@ -470,7 +473,8 @@ h1 .gradient-text, .shimmer {
 .doc-index .section-head { max-width: 820px; }
 .doc-index h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
 .doc-search input { width: 100%; max-width: 560px; padding: 14px 20px; border-radius: 999px; font: inherit;
-  color: var(--text); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
+  color: var(--text); background: rgba(12,9,21,.55); border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   outline: none; transition: border-color .2s, box-shadow .2s; }
 .doc-search input:focus { border-color: var(--violet); box-shadow: 0 0 0 4px rgba(169,112,255,.2); }
 .doc-results { max-width: 720px; margin: 16px auto 0; text-align: left; display: grid; gap: 6px; }
@@ -478,7 +482,7 @@ h1 .gradient-text, .shimmer {
   background: var(--card); border: 1px solid var(--card-border); color: var(--text); text-decoration: none; }
 .doc-results a span { color: var(--muted); font-size: .88rem; white-space: nowrap; }
 .doc-results a:hover { border-color: rgba(169,112,255,.6); }
-.doc-intro { max-width: 820px; margin: 0 auto 50px; color: #d8d0e8; }
+.doc-intro { max-width: 820px; margin: 0 auto 50px; color: #d8d0e8; position: relative; }
 .doc-intro li { margin: 6px 0; }
 .doc-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .doc-card { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 24px; border-radius: 20px;
@@ -507,7 +511,7 @@ h1 .gradient-text, .shimmer {
 /* The sky reaches the edges of the window on every page. */
 html { overflow-x: clip; }
 .page-sky > .sky { left: calc(50% - 50vw); right: calc(50% - 50vw); }
-.doc-search input::placeholder { color: #9c93b3; }
+.doc-search input::placeholder { color: #b3aac6; }
 
 /* Buttons line up side by side (overflow: hidden moves an inline-block's baseline). */
 .btn { vertical-align: middle; }
