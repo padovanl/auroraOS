@@ -436,3 +436,12 @@ document.addEventListener("click", (e) => {
     requestAnimationFrame(step);
   });
 })();
+
+// The home page's first screen is sized to the window minus the menu bar.
+(() => {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+  const set = () => document.documentElement.style.setProperty("--nav-h", `${nav.offsetHeight}px`);
+  set();
+  window.addEventListener("resize", set);
+})();
