@@ -228,7 +228,7 @@ def write_icons():
     # The animated logo of the home page, with real transparency.
     import subprocess
     subprocess.run([sys.executable, os.path.join(ROOT, "branding", "logo.py"), "webp",
-                    os.path.join(ROOT, "docs", "assets", "aurora-logo.webp"), "280"], check=True)
+                    os.path.join(ROOT, "docs", "assets", "aurora-logo.webp"), "480"], check=True)
     for name in ("aurora-devhub", "aurora-gamehub", "aurora-assistant", "aurora-logo"):
         shutil.copyfile(os.path.join(ROOT, "desktop", "data", "icons", "scalable", "apps",
                                      name + ".svg"), os.path.join(dest, name + ".svg"))
