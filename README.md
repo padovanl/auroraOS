@@ -18,7 +18,7 @@ preinstalled, and the rock-solid Debian 13 base underneath.
 1. [What Aurora OS is](#what-aurora-os-is)
 2. [Why Aurora is different](#why-aurora-is-different)
 3. [Features](#features)
-4. [Get started (users)](#get-started-users) · [try it in QEMU](#try-it-in-a-virtual-machine-qemu)
+4. [Get started (users)](#get-started-users) · [try it in QEMU](#try-it-in-a-virtual-machine-qemu) · [on Hyper-V, with your GPU for AI](HYPERV.md)
 5. [Using Aurora](#using-aurora)
 6. [Build it yourself](#build-it-yourself)
 7. [How we built Aurora OS: making a Linux distribution, step by step](#how-we-built-aurora-os-making-a-linux-distribution-step-by-step)
@@ -279,6 +279,13 @@ installation and for later boots.
 open the ISO directly: choose "Debian 13" as the operating system, give it 4 GB of memory
 and 2 or more CPUs. VirtualBox and VMware work too (enable EFI for UEFI); Aurora includes
 their guest tools.
+
+### Try it on Hyper-V (Windows)
+
+Step-by-step instructions, including how to let Aurora AI use your PC's graphics card, are in
+**[HYPERV.md](HYPERV.md)**: creating a Generation 2 VM with the right Secure Boot template,
+installing, running AI models on the GPU from Windows, experimental GPU partitioning, and
+switching the VM to a newer ISO.
 
 ### 2. Write it to a USB stick (4 GB or more)
 - **Any OS:** [balenaEtcher](https://etcher.balena.io/), Fedora Media Writer, or Ventoy
@@ -652,7 +659,11 @@ This is the part most people find mysterious. The ISO contains:
 2. **grub.cfg.** Written by the stage: entries for Try, Install, safe graphics
    (`nomodeset`), a submenu with 20 languages (it passes `aurora.lang=` and
    `aurora.kbd=` to the kernel), boot from disk, and UEFI firmware settings. All entries
-   boot `/live/vmlinuz` with `boot=live`.
+   boot `/live/vmlinuz` with `boot=live`. Each entry has a `--class` (try, install,
+   language…) that the theme turns into an icon; the theme (`branding/grub/theme.txt`,
+   images drawn by `branding/render.py`, fonts converted with `grub-mkfont`) places the
+   logo, a menu card and the countdown in "percent ± pixels", so it stays centered on
+   any screen, and `grub.cfg` picks a BIOS variant with one entry less.
 3. **grub-mkrescue** (a wrapper around `xorriso`) produces a **hybrid ISO** with *both*
    boot paths:
    - **BIOS**: the firmware reads the first sector of the disk (the MBR), which holds a

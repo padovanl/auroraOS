@@ -55,30 +55,34 @@ set gfxmode=1920x1080,1600x900,1280x720,1024x768,auto
 terminal_output gfxterm
 if [ -f /boot/grub/themes/aurora/theme.txt ]; then
 $(for f in "$WORK"/branding/grub/*.pf2; do echo "    loadfont /boot/grub/themes/aurora/$(basename "$f")"; done)
-    set theme=/boot/grub/themes/aurora/theme.txt
+    if [ "\$grub_platform" = "efi" ]; then
+        set theme=/boot/grub/themes/aurora/theme.txt
+    else
+        set theme=/boot/grub/themes/aurora/theme-bios.txt
+    fi
 fi
 
 search --no-floppy --file --set=root /.aurora-live
 
-menuentry "Try $AURORA_NAME" {
+menuentry "Try $AURORA_NAME" --class try {
     linux /live/vmlinuz $BOOT
     initrd /live/initrd.img
 }
-menuentry "Install $AURORA_NAME" {
+menuentry "Install $AURORA_NAME" --class install {
     linux /live/vmlinuz $BOOT aurora.install
     initrd /live/initrd.img
 }
-menuentry "Try $AURORA_NAME (safe graphics)" {
+menuentry "Try $AURORA_NAME (safe graphics)" --class safe {
     linux /live/vmlinuz $BOOT nomodeset
     initrd /live/initrd.img
 }
-submenu "Language  ·  Lingua  ·  Sprache  ·  Idioma" {
+submenu "Language  ·  Lingua  ·  Sprache  ·  Idioma" --class language {
 EOF
     sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SRC/config/locales.list" |
     while IFS='|' read -r loc kbd _ name; do
         loc=$(echo $loc); kbd=$(echo $kbd); name=$(echo $name)
         cat <<EOF
-    menuentry "$name" {
+    menuentry "$name" --class language {
         linux /live/vmlinuz $BOOT aurora.lang=$loc aurora.kbd=$kbd
         initrd /live/initrd.img
     }
@@ -86,12 +90,12 @@ EOF
     done
     cat <<EOF
 }
-menuentry "Boot from hard disk" {
+menuentry "Boot from hard disk" --class disk {
     set root=(hd0)
     chainloader +1
 }
 if [ "\$grub_platform" = "efi" ]; then
-    menuentry "UEFI firmware settings" {
+    menuentry "UEFI firmware settings" --class firmware {
         fwsetup
     }
 fi
