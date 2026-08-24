@@ -145,7 +145,7 @@ def draw_wordmark(ctx, cx, y, size, alpha):
         x += w + spacing
 
 
-def frame(size, kind, i, background=False):
+def frame(size, kind, i, background=False, word_y=0.86):
     """Render one animation frame: a square canvas, mark above wordmark."""
     surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, size, size)
     ctx = cairo.Context(surf)
@@ -167,7 +167,7 @@ def frame(size, kind, i, background=False):
         draw_mark(ctx, mark, glow=0.5)
         word = 1.0
     ctx.restore()
-    draw_wordmark(ctx, size / 2, size * 0.86, size * 0.1, max(0.0, min(1.0, word)))
+    draw_wordmark(ctx, size / 2, size * word_y, size * 0.1, max(0.0, min(1.0, word)))
     return surf
 
 
@@ -198,7 +198,8 @@ def write_webp(path, size):
     images = []
     for kind, n in (("intro", INTRO_FRAMES), ("loop", LOOP_FRAMES), ("loop", LOOP_FRAMES)):
         for i in range(n):
-            s = frame(size, kind, i)
+            # The website shows it large: the name sits closer under the mark.
+            s = frame(size, kind, i, word_y=0.70)
             # cairo stores premultiplied BGRA; Pillow's "RGBa" mode undoes the premultiply.
             images.append(Image.frombuffer("RGBa", (size, size), bytes(s.get_data()),
                                            "raw", "BGRa", s.get_stride(), 1).convert("RGBA"))
