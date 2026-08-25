@@ -25,7 +25,25 @@ In PowerShell **as administrator**, then restart Windows:
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 ```
 
-### Create the VM
+### The quick way: a script
+
+[`tools/hyperv/New-AuroraVM.ps1`](tools/hyperv/New-AuroraVM.ps1) does all of section 1
+from the ISO's path. Download it (on GitHub, open the file and press "Download raw
+file"), then in PowerShell **as administrator**, in the folder where you saved it:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\New-AuroraVM.ps1 -IsoPath "$env:USERPROFILE\Desktop\aurora-os-0.1-amd64.iso"
+```
+
+It creates the VM "Aurora" (Generation 2, 8 GB, 4 processors, 60 GB disk in `C:\VMs`),
+sets Secure Boot, the boot order, the resolution and enhanced session, starts it and
+opens its window. If "Aurora" already exists it keeps it and its disk, and only fixes
+its settings and puts the ISO in its DVD drive: run it again whenever you have a newer
+ISO. Options: `-Name`, `-MemoryGB`, `-Processors`, `-DiskGB`, `-Folder`, `-Switch`,
+`-Width`, `-Height`, `-NoStart`, and `-Recreate` to delete the VM and its disk and start
+over.
+
+### Or by hand
 
 Copy `aurora-os-0.1-amd64.iso` to your PC (for example to `C:\VMs\`). In PowerShell as
 administrator (change the paths and sizes to your liking):
