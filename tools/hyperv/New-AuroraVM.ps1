@@ -11,7 +11,8 @@
 
     If a VM with this name already exists it is kept, disk included: it is
     turned off, its settings are fixed and its DVD drive gets the ISO. Use
-    -Recreate to delete it (and its virtual disk) and start over.
+    -Recreate to delete it (and its virtual disk) and start over. A disk left
+    over from an earlier VM with the same name is reused, or deleted with -Recreate.
 
     Run it in PowerShell as administrator. See HYPERV.md for the whole guide.
 
@@ -74,14 +75,22 @@ if ($vm -and $Recreate) {
 }
 
 if (-not $vm) {
-    Step "Creating '$Name': Generation 2, $MemoryGB GB of memory, $DiskGB GB disk"
     New-Item -ItemType Directory -Force -Path $Folder | Out-Null
     $vhd = Join-Path $Folder "$Name.vhdx"
-    if (Test-Path -LiteralPath $vhd) {
-        throw "$vhd already exists (left over from another VM?). Delete it, or use -Name OTHER."
+    if ((Test-Path -LiteralPath $vhd) -and $Recreate) {
+        Step "Deleting the leftover disk $vhd"
+        Remove-Item -LiteralPath $vhd -Force
     }
-    New-VM -Name $Name -Generation 2 -MemoryStartupBytes ($MemoryGB * 1GB) -Path $Folder `
-           -NewVHDPath $vhd -NewVHDSizeBytes ($DiskGB * 1GB) -SwitchName $Switch | Out-Null
+    if (Test-Path -LiteralPath $vhd) {
+        # A disk from an earlier VM with this name (maybe with Aurora installed): keep it.
+        Step "Creating '$Name' with the existing disk $vhd (use -Recreate for a new, empty one)"
+        New-VM -Name $Name -Generation 2 -MemoryStartupBytes ($MemoryGB * 1GB) -Path $Folder `
+               -VHDPath $vhd -SwitchName $Switch | Out-Null
+    } else {
+        Step "Creating '$Name': Generation 2, $MemoryGB GB of memory, $DiskGB GB disk"
+        New-VM -Name $Name -Generation 2 -MemoryStartupBytes ($MemoryGB * 1GB) -Path $Folder `
+               -NewVHDPath $vhd -NewVHDSizeBytes ($DiskGB * 1GB) -SwitchName $Switch | Out-Null
+    }
 } else {
     Step "Updating the existing VM '$Name' (its disk is kept)"
     if ($vm.Generation -ne 2) {

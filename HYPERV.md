@@ -41,7 +41,8 @@ opens its window. If "Aurora" already exists it keeps it and its disk, and only 
 its settings and puts the ISO in its DVD drive: run it again whenever you have a newer
 ISO. Options: `-Name`, `-MemoryGB`, `-Processors`, `-DiskGB`, `-Folder`, `-Switch`,
 `-Width`, `-Height`, `-NoStart`, and `-Recreate` to delete the VM and its disk and start
-over.
+over. A disk left over in the folder from an earlier VM with the same name is reused
+(with `-Recreate`, replaced by a new empty one).
 
 ### Or by hand
 
