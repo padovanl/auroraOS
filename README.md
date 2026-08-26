@@ -283,7 +283,7 @@ their guest tools.
 ### Try it on Hyper-V (Windows)
 
 Step-by-step instructions, including how to let Aurora AI use your PC's graphics card, are in
-**[HYPERV.md](HYPERV.md)**: creating a Generation 2 VM with the right Secure Boot template,
+**[HYPERV.md](HYPERV.md)**: creating a Generation 2 VM (a script does it from the ISO's path),
 installing, running AI models on the GPU from Windows, experimental GPU partitioning, and
 switching the VM to a newer ISO.
 

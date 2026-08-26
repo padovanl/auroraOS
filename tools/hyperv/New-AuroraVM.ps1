@@ -4,10 +4,10 @@
     existing one at a new ISO.
 
 .DESCRIPTION
-    Generation 2 (UEFI), Secure Boot with the "Microsoft UEFI Certificate
-    Authority" template (the default Windows template refuses Linux), static
-    memory, no checkpoints, the DVD first in the boot order, a 1920x1080 screen
-    and enhanced session off (it shows a black window with Aurora).
+    Generation 2 (UEFI), Secure Boot off (the live ISO's boot loader is not
+    signed yet; the installed system is, see the end), static memory, no
+    checkpoints, the DVD first in the boot order, a 1920x1080 screen and
+    enhanced session off (it shows a black window with Aurora).
 
     If a VM with this name already exists it is kept, disk included: it is
     turned off, its settings are fixed and its DVD drive gets the ISO. Use
@@ -117,9 +117,8 @@ if ($dvd) {
 }
 $dvd = Get-VMDvdDrive -VMName $Name | Select-Object -First 1
 
-Step "Firmware: Secure Boot for Linux (Microsoft UEFI CA), start from the DVD"
-Set-VMFirmware -VMName $Name -EnableSecureBoot On `
-               -SecureBootTemplate MicrosoftUEFICertificateAuthority -FirstBootDevice $dvd
+Step "Firmware: Secure Boot off (the live ISO isn't signed yet), start from the DVD"
+Set-VMFirmware -VMName $Name -EnableSecureBoot Off -FirstBootDevice $dvd
 
 Step "Screen ${Width}x${Height}, enhanced session off"
 try {
@@ -136,6 +135,8 @@ Write-Host ""
 Write-Host "Aurora OS VM '$Name' is ready." -ForegroundColor Green
 Write-Host "  Boot menu: 'Try Aurora OS' for the live desktop; double-click 'Install Aurora OS' to install."
 Write-Host "  After installing, remove the ISO:  Set-VMDvdDrive -VMName '$Name' -Path `$null"
+Write-Host "  The installed system supports Secure Boot; to turn it on (VM off):"
+Write-Host "    Set-VMFirmware -VMName '$Name' -EnableSecureBoot On -SecureBootTemplate MicrosoftUEFICertificateAuthority"
 Write-Host "  A newer ISO later: run this script again with its path (the installed disk is kept)."
 
 if (-not $NoStart) {
