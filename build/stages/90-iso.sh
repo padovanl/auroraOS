@@ -91,8 +91,14 @@ EOF
     cat <<EOF
 }
 menuentry "Boot from hard disk" --class disk {
-    set root=(hd0)
-    chainloader +1
+    if [ "\$grub_platform" = "efi" ]; then
+        # UEFI has no boot sector to chain to: hand back to the firmware,
+        # which goes on to the next boot device (the installed disk).
+        exit
+    else
+        set root=(hd0)
+        chainloader +1
+    fi
 }
 if [ "\$grub_platform" = "efi" ]; then
     menuentry "UEFI firmware settings" --class firmware {
