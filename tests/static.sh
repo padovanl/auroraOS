@@ -36,7 +36,7 @@ rm -rf "$tmp"
 
 step "XML (labwc, greeter, polkit)"
 check xmllint --noout desktop/data/labwc/*.xml desktop/data/greeter/*.xml \
-    overlay/usr/share/polkit-1/actions/*.policy
+    desktop/data/style/lock.ui overlay/usr/share/polkit-1/actions/*.policy
 
 step "Installer configuration (YAML)"
 check python3 - <<'EOF'

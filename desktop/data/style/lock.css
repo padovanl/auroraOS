@@ -7,15 +7,16 @@ window {
 }
 
 #window-box {
-  padding: 48px 56px;
-  border-radius: 28px;
-  background-color: rgba(20, 16, 30, 0.72);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  padding: 28px 34px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 26px;
+  background-color: rgba(24, 19, 37, 0.88);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.5);
 }
 
 #clock-label {
   font-family: Inter;
-  font-size: 72pt;
+  font-size: 54pt;
   font-weight: 300;
   color: #ffffff;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
@@ -23,16 +24,21 @@ window {
 
 #date-label {
   font-family: Inter;
-  font-size: 16pt;
+  font-size: 13pt;
   color: rgba(242, 238, 250, 0.85);
-  margin-bottom: 24px;
+  margin-bottom: 4px;
+}
+
+#input-label {
+  font-family: Inter;
+  font-size: 11pt;
+  color: rgba(242, 238, 250, 0.82);
 }
 
 #input-field {
-  min-width: 300px;
-  min-height: 40px;
-  border-radius: 999px;
-  padding: 0 18px;
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 0 14px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background-color: rgba(255, 255, 255, 0.10);
   color: #ffffff;
@@ -49,9 +55,13 @@ window {
   border: none;
   background-image: linear-gradient(120deg, #a970ff, #ff6f91);
   color: #ffffff;
-  padding: 0 18px;
+  min-height: 38px;
+  padding: 0 22px;
+  font-weight: 700;
 }
 
 #warning-label, #error-label {
   color: #ff8fab;
 }
+
+#message-revealer infobar { border-radius: 10px; }
