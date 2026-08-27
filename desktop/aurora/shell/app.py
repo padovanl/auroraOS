@@ -106,7 +106,7 @@ class Shell(Adw.Application):
         self.brightness = _service(Brightness)
         self.battery = _service(Battery)
         self.network = Network()
-        self.power = Power()
+        self.power = Power(on_logout=self.quit)
         self.microphone = _service(Microphone)
         self.bluetooth = Bluetooth()
         self.power_profiles = _service(PowerProfiles)
@@ -275,6 +275,8 @@ class Shell(Adw.Application):
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
                 panel.open_quick_settings()
+        elif cmd == "logout":
+            self.power.logout()
         elif cmd == "focus":
             # Bring an app's windows forward, newest (a dialog) on top; exit
             # status 1 if it has none.

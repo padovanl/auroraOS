@@ -53,6 +53,17 @@ set -x
 wlr-randr --output HEADLESS-1 --custom-mode 1600x900 || true
 aurora-shell > $out/shell.log 2>&1 &
 sleep 4
+if [ "${AURORA_RELOGIN_TEST:-}" = 1 ]; then
+    for i in \$(seq 600); do
+        test -e "\$XDG_RUNTIME_DIR/aurora-shell.ready" && break
+        sleep .1
+    done
+    if ! test -e "\$XDG_RUNTIME_DIR/aurora-shell.ready"; then
+        echo FIRST_LOGIN_FAILED > $out/logout-result
+        labwc --exit
+        exit 1
+    fi
+fi
 ${scenario:+bash $scenario}
 sleep 1
 grim $out/screen.png
@@ -61,5 +72,25 @@ EOF
 
 # Same compositor config as the real session, minus its autostart.
 rm -rf /tmp/labwc && cp -r /opt/aurora/share/aurora/labwc /tmp/labwc && rm -f /tmp/labwc/autostart
-timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
+if [ "${AURORA_RELOGIN_TEST:-}" = 1 ]; then
+    cat > /tmp/second.sh <<'EOF'
+aurora-shell > /out/second-shell.log 2>&1 &
+for i in $(seq 100); do
+    test -e "$XDG_RUNTIME_DIR/aurora-shell.ready" && break
+    sleep .1
+done
+test -e "$XDG_RUNTIME_DIR/aurora-shell.ready" && echo RELOGIN_OK > /out/logout-result
+labwc --exit
+EOF
+    # Both compositors must use the same session bus: a stale Shell owner is
+    # exactly what would make the second login return a black desktop.
+    timeout 600 dbus-run-session -- bash -c '
+        labwc -C /tmp/labwc -s "bash /tmp/inner.sh"
+        if [ -e /out/logout-result ]; then exit 1; fi
+        rm -f "$XDG_RUNTIME_DIR/aurora-logging-out" "$XDG_RUNTIME_DIR/aurora-shell.ready"
+        labwc -C /tmp/labwc -s "bash /tmp/second.sh"
+    ' > "$out/labwc.log" 2>&1 || true
+else
+    timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
+fi
 echo "screenshot: $out/screen.png"

@@ -18,6 +18,7 @@ xdg-user-dirs-update >/dev/null 2>&1
     tries=0 since=$(date +%s)
     while :; do
         aurora-shell >>"$log" 2>&1
+        [ -e "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out" ] && break
         [ -n "$LABWC_PID" ] && ! kill -0 "$LABWC_PID" 2>/dev/null && break
         now=$(date +%s)
         [ $((now - since)) -gt 60 ] && tries=0 since=$now

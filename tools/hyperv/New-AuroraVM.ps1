@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     Generation 2 (UEFI), Secure Boot off (the live ISO's boot loader is not
-    signed yet; the installed system is, see the end), static memory, no
+    signed yet; the installed system uses direct GRUB), static memory, no
     checkpoints, the DVD first in the boot order, a 1920x1080 screen and
     enhanced session off (it shows a black window with Aurora).
 
@@ -135,8 +135,8 @@ Write-Host ""
 Write-Host "Aurora OS VM '$Name' is ready." -ForegroundColor Green
 Write-Host "  Boot menu: 'Try Aurora OS' for the live desktop; double-click 'Install Aurora OS' to install."
 Write-Host "  After installing, remove the ISO:  Set-VMDvdDrive -VMName '$Name' -Path `$null"
-Write-Host "  The installed system supports Secure Boot; to turn it on (VM off):"
-Write-Host "    Set-VMFirmware -VMName '$Name' -EnableSecureBoot On -SecureBootTemplate MicrosoftUEFICertificateAuthority"
+Write-Host "  Then put the disk first:  Set-VMFirmware -VMName '$Name' -FirstBootDevice (Get-VMHardDiskDrive -VMName '$Name' | Select-Object -First 1)"
+Write-Host "  Keep Secure Boot off after installation: Hyper-V uses direct GRUB."
 Write-Host "  A newer ISO later: run this script again with its path (the installed disk is kept)."
 
 if (-not $NoStart) {

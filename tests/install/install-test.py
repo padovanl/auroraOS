@@ -60,11 +60,18 @@ class VM:
         if os.access("/dev/kvm", os.W_OK):
             cmd[1:1] = ["-enable-kvm", "-cpu", "host"]
         if args.firmware == "uefi":
-            # A fresh NVRAM every time: the installed disk must start without the
-            # boot entry the installer wrote, through \EFI\BOOT\BOOTX64.EFI, like
-            # Hyper-V, a disk moved to another PC, or firmware that forgets entries.
+            if args.hyperv_identity:
+                # Exercise our Hyper-V installer policy, not its firmware/drivers.
+                cmd += ["-smbios", "type=1,manufacturer=Microsoft Corporation,product=Virtual Machine"]
+            # Test the installer's registered entry first, then boot again after
+            # package updates with fresh NVRAM to exercise the disk fallback.
             vars_file = os.path.join(out, f"OVMF_VARS-{name}.fd")
-            shutil.copy("/usr/share/OVMF/OVMF_VARS_4M.fd", vars_file)
+            vars_source = (os.path.join(out, "OVMF_VARS-install-uefi.fd")
+                           if name == "installed-uefi"
+                           else os.path.join(out, "OVMF_VARS-installed-uefi.fd")
+                           if name == "after-efi-update-nvram"
+                           else "/usr/share/OVMF/OVMF_VARS_4M.fd")
+            shutil.copy(vars_source, vars_file)
             cmd += ["-drive", "if=pflash,format=raw,readonly=on,"
                               "file=/usr/share/OVMF/OVMF_CODE_4M.fd",
                     "-drive", f"if=pflash,format=raw,file={vars_file}"]
@@ -251,9 +258,33 @@ def check_installed(args, disk, out, results):
         for desc, command in CHECKS:
             code, output = vm.run(command, timeout=300)
             results.append((desc, code == 0, output.strip()[:200]))
+        if args.firmware == "uefi":
+            mode = "direct" if args.hyperv_identity else "shim"
+            code, output = vm.run(f"test \"$(cat /var/lib/aurora/efi-managed)\" = {mode}")
+            results.append((f"EFI mode is {mode}", code == 0, output))
+            # Exercise the real package hooks that may overwrite EFI binaries.
+            code, output = vm.run("DEBIAN_FRONTEND=noninteractive apt-get install -y --reinstall "
+                                  "grub-efi-amd64 grub-efi-amd64-signed shim-signed", timeout=300)
+            results.append(("bootloader packages reinstalled", code == 0, output[-500:]))
+            code, output = vm.run(f"test \"$(cat /var/lib/aurora/efi-managed)\" = {mode}")
+            results.append(("EFI policy survives package reinstall", code == 0, output))
+            if args.hyperv_identity:
+                code, output = vm.run("lsinitramfs /initrd.img | grep -E '/hv_storvsc\\.ko(\\.|$)'")
+                results.append(("Hyper-V storage driver in initramfs", code == 0, output))
+                code, output = vm.run(
+                    r"current=$(efibootmgr | sed -n 's/BootCurrent: //p'); "
+                    r'entry=$(efibootmgr -v | grep "^Boot$current"); '
+                    r'case "$entry" in *"File(\EFI\debian\grubx64.efi)"*|*"UEFI Misc Device"*) exit 0;; *) exit 1;; esac')
+                results.append(("booted via direct entry or disk fallback", code == 0, output))
+                code, output = vm.run("cmp -s /boot/efi/EFI/BOOT/BOOTX64.EFI "
+                                      "/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi && "
+                                      "cmp -s /boot/efi/EFI/debian/grubx64.efi "
+                                      "/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi")
+                results.append(("both EFI paths contain monolithic GRUB", code == 0, output))
         _c, grubcfg = vm.run("cat /boot/grub/grub-btrfs.cfg 2>/dev/null | head -60")
         with open(os.path.join(out, f"grub-btrfs-{args.firmware}.cfg"), "w") as f:
             f.write(grubcfg)
+        vm.run("sync", timeout=120)
     finally:
         vm.stop()
 
@@ -265,15 +296,35 @@ def main():
     ap.add_argument("--out", default="work/install-test")
     ap.add_argument("--timeout", type=int, default=1800, help="seconds allowed for installing")
     ap.add_argument("--keep-disk", action="store_true")
+    ap.add_argument("--hyperv-identity", action="store_true",
+                    help="exercise Hyper-V EFI policy using QEMU SMBIOS (not Hyper-V firmware)")
     args = ap.parse_args()
     out = os.path.abspath(args.out)
     os.makedirs(out, exist_ok=True)
     disk = os.path.join(out, f"disk-{args.firmware}.qcow2")
+    if os.path.exists(disk):
+        ap.error(f"refusing to overwrite existing test disk: {disk}")
     subprocess.run(["qemu-img", "create", "-q", "-f", "qcow2", disk, DISK_SIZE], check=True)
 
     results = []
     if install(args, disk, out, results):
         check_installed(args, disk, out, results)
+        if args.firmware == "uefi":
+            for name in ("after-efi-update-nvram", "after-efi-update"):
+                vm = VM(args, disk, None, out, name)
+                try:
+                    up = vm.wait_agent()
+                    results.append((f"boots {name}", up, ""))
+                    if up and args.hyperv_identity and name.endswith("-nvram"):
+                        code, output = vm.run(
+                            r"current=$(efibootmgr | sed -n 's/BootCurrent: //p'); "
+                            r'entry=$(efibootmgr -v | grep "^Boot$current"); '
+                            r'case "$entry" in *"File(\EFI\debian\grubx64.efi)"*|*"UEFI Misc Device"*) exit 0;; *) exit 1;; esac')
+                        results.append(("updates preserve disk boot path", code == 0, output))
+                    if up:
+                        vm.run("sync", timeout=120)
+                finally:
+                    vm.stop()
     if not args.keep_disk:
         os.remove(disk)
 

@@ -72,7 +72,7 @@ What these settings do:
 | 8 GB of RAM, static | The live system runs from memory, and a local AI model needs a lot. Use at least 4 GB. Dynamic memory confuses the live system. |
 | 4 processors | More makes the desktop and installs faster. |
 | 60 GB disk | At least 20 GB is needed to install, more to keep snapshots and AI models. |
-| Secure Boot **off** | The live ISO's boot loader is not signed yet: with Secure Boot on, the VM skips the DVD and tries the network ("Start PXE over IPv4"). The *installed* system uses Debian's signed shim, so you can turn Secure Boot on after installing (see part 2). |
+| Secure Boot **off** | Required for the live ISO and for the direct GRUB boot path installed on Hyper-V. Keep it off after installation. |
 | 1920×1080 | Hyper-V's default screen is small. Pick your monitor's resolution. |
 | Enhanced session off | Enhanced session (RDP) doesn't work with Aurora's Wayland desktop and would show a black window. |
 
@@ -92,13 +92,13 @@ Session".
    disk:
    ```powershell
    Set-VMDvdDrive -VMName "Aurora" -Path $null
+   Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "Aurora" | Select-Object -First 1)
    ```
-5. Optional: the installed system boots with Debian's Microsoft-signed shim, so you can
-   now turn Secure Boot on (VM off):
-   ```powershell
-   Set-VMFirmware -VMName "Aurora" -EnableSecureBoot On -SecureBootTemplate MicrosoftUEFICertificateAuthority
-   ```
-   Use exactly this template: the default one, "Microsoft Windows", refuses Linux.
+5. Keep Secure Boot **off**. On Hyper-V with Secure Boot disabled, the installer
+   installs GRUB directly in both the Debian EFI directory and the disk fallback
+   path, avoiding the shim handoff. Package updates refresh both paths. Other
+   UEFI systems retain Debian's signed shim chain. This policy is tested with
+   Hyper-V SMBIOS identity in QEMU; that does not emulate Hyper-V firmware.
 
 The Hyper-V integration daemons are already in Aurora: clean shutdown from Hyper-V
 Manager, time sync and heartbeat work out of the box.
@@ -228,8 +228,8 @@ Updates**, with no ISO needed.
 
 | Problem | Fix |
 |---|---|
-| "Start PXE over IPv4", "The image's hash and certificate are not allowed", or the VM starts from the network | Secure Boot must be **off** to start the ISO: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`, and the DVD must be the first boot device. (After installing, Secure Boot can go back on with the Microsoft UEFI Certificate Authority template.) |
-| After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | ISOs built before 25 Sep 2026 didn't write the fallback boot loader Hyper-V uses. Start from the installer's boot entry: `Set-VMFirmware -VMName Aurora -FirstBootDevice ((Get-VMFirmware -VMName Aurora).BootOrder \| Where-Object Description -match 'aurora')`. Newer ISOs install it. |
+| "Start PXE over IPv4", "The image's hash and certificate are not allowed", or the VM starts from the network | Keep Secure Boot **off**: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`. To install, put the DVD first; after installation, remove the ISO. |
+| After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | Check that the installed VHDX is attached and Secure Boot is off. The current installer writes and checks both EFI paths; older installations are not repaired merely by attaching a new ISO. |
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
 | Slow or stuttering desktop | Give the VM 4 processors and static memory. The virtual display has no 3D, so Aurora uses a software renderer made for it. |

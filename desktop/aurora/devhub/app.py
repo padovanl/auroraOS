@@ -5,6 +5,7 @@ toolchains (recipes.py), Game Hub for games, Windows and Android apps (games.py)
 """
 
 import os
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -41,6 +42,14 @@ def is_installed(recipe):
 def icon_for(recipe):
     theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
     return recipe["icon"] if theme.has_icon(recipe["icon"]) else recipe["fallback_icon"]
+
+
+def install_wrapper(path):
+    """Keep the terminal open for the result, but preserve the recipe's exit code."""
+    quoted_path = shlex.quote(path)
+    return (f"bash {quoted_path}; status=$?; rm -f {quoted_path}; "
+            "[ $status -ne 0 ] && echo && echo '✖ Installation failed (see above).'; "
+            "echo; read -rp 'Press Enter to close…' _; exit $status")
 
 
 class Card(Gtk.Box):
@@ -161,9 +170,7 @@ class DevHub(Adw.ApplicationWindow):
             f.write(f"echo '▶ Installing {r['name']}'\n")
             f.write(r["script"])
             f.write("\necho\necho '✔ Done. Open a new terminal to use it.'\n")
-        wrapper = (f"bash {path}; status=$?; rm -f {path}; "
-                   "[ $status -ne 0 ] && echo && echo '✖ Installation failed (see above).'; "
-                   "echo; read -rp 'Press Enter to close…' _")
+        wrapper = install_wrapper(path)
         try:
             proc = subprocess.Popen(["foot", "--title", f"{self.get_title()} · {r['name']}",
                                      "bash", "-c", wrapper])
@@ -178,6 +185,8 @@ class DevHub(Adw.ApplicationWindow):
             card.refresh()
             if is_installed(r):
                 self.toasts.add_toast(Adw.Toast(title=_("{name} installed").format(name=_(r["name"]))))
+            elif proc.returncode:
+                self.toasts.add_toast(Adw.Toast(title=_("Installation failed")))
             return GLib.SOURCE_REMOVE
         GLib.timeout_add(1000, poll)
 

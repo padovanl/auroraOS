@@ -102,6 +102,12 @@ expect "Terminal actions keep their own names" \
     test "$(grep -c '^Name=Terminal$' "$ROOTFS/usr/local/share/applications/org.gnome.Ptyxis.desktop")" = 1
 
 echo "== installer"
+expect "signed GRUB uses Debian EFI vendor directory" grep -qx 'efiBootloaderId: "debian"' "$ROOTFS/etc/calamares/modules/bootloader.conf"
+expect "UEFI fallback installation enabled" grep -qx 'installEFIFallback: true' "$ROOTFS/etc/calamares/modules/bootloader.conf"
+expect "EFI repair helper installed" test -s "$ROOTFS/usr/local/lib/aurora/efi-install"
+expect "monolithic GRUB for direct Hyper-V boot" test -s "$ROOTFS/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi"
+expect "EFI paths refreshed after package updates" test -s "$ROOTFS/etc/apt/apt.conf.d/99aurora-efi"
+expect "live image is not marked as an installed EFI system" test ! -e "$ROOTFS/var/lib/aurora/efi-managed"
 expect "calamares branding" test -f "$ROOTFS/etc/calamares/branding/aurora/branding.desc"
 expect "branding logo rendered" test -s "$ROOTFS/etc/calamares/branding/aurora/logo.png"
 expect "password dictionary for the installer's strength check" sh -c "ls '$ROOTFS'/var/cache/cracklib/cracklib_dict.pwd*"

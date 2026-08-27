@@ -17,4 +17,7 @@ if [ -n "$scenario" ]; then
     cp "$scenario" "$out/scenario.sh"
     inner_scenario=/out/scenario.sh
 fi
+if [ "$(basename "$scenario")" = logout-relogin.sh ]; then
+    args+=(-e AURORA_RELOGIN_TEST=1)
+fi
 docker run "${args[@]}" aurora-os-dev bash /src/desktop/dev/session.sh "$inner_scenario" /out

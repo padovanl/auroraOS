@@ -13,7 +13,8 @@ check python3 -m py_compile $(find desktop/aurora branding tests overlay -name '
 
 step "Shell syntax"
 sh_files=$(grep -lE '^#!/bin/(ba)?sh' build/*.sh build/stages/*.sh desktop/bin/* desktop/libexec/* \
-    desktop/dev/*.sh tests/*.sh tests/image/*.sh overlay/usr/libexec/* 2>/dev/null)
+    desktop/dev/*.sh tests/*.sh tests/image/*.sh overlay/usr/libexec/* \
+    overlay/usr/local/lib/aurora/* 2>/dev/null)
 for f in $sh_files; do
     bash -n "$f" || { echo "FAILED: $f"; fail=1; }
 done

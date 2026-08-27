@@ -15,6 +15,7 @@ from aurora.i18n import _  # noqa: E402
 CSS = """
 .files-grid > child { border-radius: 12px; }
 .files-grid > child:selected { background-color: alpha(@accent_bg_color, 0.25); }
+popover.aurora-context-menu contents { min-width: 250px; }
 """
 
 

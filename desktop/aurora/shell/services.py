@@ -352,8 +352,9 @@ class Network(GObject.Object):
 class Power:
     """Session and system power actions."""
 
-    def __init__(self):
+    def __init__(self, on_logout=None):
         self._logind = None
+        self._on_logout = on_logout
 
     def _manager(self):
         if self._logind is None:
@@ -402,7 +403,19 @@ class Power:
         apps.spawn(["aurora-lock"])
 
     def logout(self):
-        self._goodbye(lambda: apps.spawn(["labwc", "--exit"]))
+        def end_session():
+            # The shell runs as a per-user GApplication. Release its D-Bus
+            # name before greetd starts another session for the same user.
+            marker = os.path.join(GLib.get_user_runtime_dir(), "aurora-logging-out")
+            try:
+                with open(marker, "w"):
+                    pass
+            except OSError as err:
+                print(f"aurora: cannot write logout marker: {err}")
+            apps.spawn(["labwc", "--exit"])
+            if self._on_logout is not None:
+                self._on_logout()
+        self._goodbye(end_session)
 
 
 class Microphone(GObject.Object):

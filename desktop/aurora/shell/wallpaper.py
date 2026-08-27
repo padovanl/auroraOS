@@ -65,7 +65,17 @@ class Wallpaper(LayerWindow):
         self._stack.set_visible_child(target)
 
     def _build_menu(self, parent):
+        actions = Gio.SimpleActionGroup()
+        for name, folder in (("new-file", False), ("new-folder", True)):
+            create = Gio.SimpleAction.new(name, None)
+            create.connect("activate", self._new_item, folder)
+            actions.add_action(create)
+        parent.insert_action_group("desktop", actions)
         menu = Gio.Menu()
+        section = Gio.Menu()
+        section.append(_("New File…"), "desktop.new-file")
+        section.append(_("New Folder…"), "desktop.new-folder")
+        menu.append_section(None, section)
         section = Gio.Menu()
         section.append(_("Open Terminal"), "app.open-terminal")
         section.append(_("Open Files"), "app.open-files")
@@ -76,11 +86,27 @@ class Wallpaper(LayerWindow):
         section.append(_("Settings"), "app.settings::")
         menu.append_section(None, section)
         popover = Gtk.PopoverMenu(menu_model=menu, has_arrow=False,
-                                  halign=Gtk.Align.START)
+                                  halign=Gtk.Align.START,
+                                  css_classes=["aurora-context-menu"])
         popover.set_parent(parent)
         return popover
 
+    def _new_item(self, _action, _parameter, folder=False):
+        import os
+        from aurora.files.create import NewItemDialog
+        from aurora.shell.desktopicons import desktop_dir
+        directory = desktop_dir()
+        dialog = NewItemDialog(self.app, Gio.File.new_for_path(directory), folder=folder)
+        try:
+            os.makedirs(directory, exist_ok=True)
+        except OSError as err:
+            dialog.error.set_label(str(err))
+            dialog.error.set_visible(True)
+        dialog.present()
+
     def _on_right_click(self, gesture, _n, x, y):
+        self._menu.set_position(Gtk.PositionType.TOP if y > self.get_height() / 2
+                                else Gtk.PositionType.BOTTOM)
         rect = Gdk.Rectangle()
         rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
         self._menu.set_pointing_to(rect)

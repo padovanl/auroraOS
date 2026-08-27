@@ -33,17 +33,28 @@ def greeter_wallpaper():
 AVATAR_DIR = "/var/lib/AccountsService/icons"
 
 CSS = """
-window.greeter { background: #0d0a14; }
-.greeter-card {
-  background-color: rgba(20, 16, 30, 0.78);
-  border-radius: 28px;
-  padding: 36px 40px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-  color: #f2eefa;
+window.greeter { background: #0d0a14; color: #f6f1ff; }
+.greeter-scrim {
+  background-image: linear-gradient(90deg, rgba(10,8,20,0.48), rgba(10,8,20,0.16) 55%, rgba(10,8,20,0.4));
 }
-.greeter-clock { font-size: 56pt; font-weight: 300; color: #f2eefa; }
-.greeter-date { font-size: 14pt; color: rgba(242,238,250,0.8); }
-.greeter-error { color: #ff6f91; }
+.greeter-card {
+  background-color: rgba(24, 19, 37, 0.9);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 30px;
+  padding: 32px 38px;
+  box-shadow: 0 18px 56px rgba(0,0,0,0.5);
+  color: #f6f1ff;
+}
+.greeter-card.error-state { border-color: #ff829e; }
+.greeter-brand { font-size: 11pt; font-weight: 800; letter-spacing: 3px; color: #ffc9db; }
+.greeter-clock { font-size: 64pt; font-weight: 300; color: #ffffff; }
+.greeter-date { font-size: 14pt; color: rgba(250,246,255,0.86); }
+.greeter-error {
+  background: rgba(214, 49, 88, 0.23); border: 1px solid rgba(255, 120, 151, 0.55);
+  border-radius: 12px; color: #ffcfda; padding: 10px 12px;
+}
+.greeter-card entry, .greeter-card dropdown { min-height: 42px; }
+.greeter-card button.suggested-action { min-height: 42px; }
 .greeter-power button { color: #f2eefa; }
 """
 
@@ -85,9 +96,12 @@ class Greeter(Adw.ApplicationWindow):
         if wallpaper:
             pic.set_file(Gio.File.new_for_path(wallpaper))
         overlay.set_child(pic)
+        scrim = Gtk.Box(css_classes=["greeter-scrim"], hexpand=True, vexpand=True)
+        overlay.add_overlay(scrim)
 
-        column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=28,
+        column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20,
                          halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
+        column.append(Gtk.Label(label="AURORA OS", css_classes=["greeter-brand"]))
         self.clock = Gtk.Label(css_classes=["greeter-clock"])
         self.date = Gtk.Label(css_classes=["greeter-date"])
         clock_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -95,9 +109,12 @@ class Greeter(Adw.ApplicationWindow):
         clock_box.append(self.date)
         column.append(clock_box)
 
-        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14,
-                       css_classes=["greeter-card"])
-        card.set_size_request(360, -1)
+        self.card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14,
+                            css_classes=["greeter-card"])
+        card = self.card
+        card.set_size_request(380, -1)
+        card.append(Gtk.Label(label=_("Welcome to Aurora OS"),
+                              css_classes=["title-3"], halign=Gtk.Align.CENTER))
         self.avatar = Adw.Avatar(size=96, show_initials=True)
         card.append(self.avatar)
 
@@ -112,8 +129,15 @@ class Greeter(Adw.ApplicationWindow):
         self.password.connect("activate", lambda *_: self.login())
         card.append(self.password)
 
-        self.error = Gtk.Label(css_classes=["greeter-error"], wrap=True, visible=False)
-        card.append(self.error)
+        self.error = Gtk.Label(css_classes=["greeter-error"], wrap=True)
+        self.error.set_accessible_role(Gtk.AccessibleRole.ALERT)
+        self.error_revealer = Gtk.Revealer(child=self.error,
+                                            transition_type=Gtk.RevealerTransitionType.SLIDE_DOWN,
+                                            transition_duration=220)
+        card.append(self.error_revealer)
+
+        self.spinner = Gtk.Spinner(halign=Gtk.Align.CENTER, visible=False)
+        card.append(self.spinner)
 
         bottom = Gtk.Box(spacing=8)
         self.session_drop = Gtk.DropDown.new_from_strings([s[0] for s in self.sessions])
@@ -140,6 +164,49 @@ class Greeter(Adw.ApplicationWindow):
         self._tick()
         GLib.timeout_add_seconds(1, self._tick)
         self._on_user()
+        self._animate_entry()
+
+    def _animations_enabled(self):
+        return bool(Gtk.Settings.get_default().get_property("gtk-enable-animations"))
+
+    def _animate_entry(self):
+        if not self._animations_enabled():
+            return
+        self.card.set_opacity(0.0)
+        steps = iter(range(1, 11))
+
+        def fade():
+            step = next(steps, None)
+            if step is None:
+                return GLib.SOURCE_REMOVE
+            self.card.set_opacity(step / 10)
+            return GLib.SOURCE_CONTINUE
+
+        GLib.timeout_add(22, fade)
+
+    def _shake_error(self):
+        self.card.add_css_class("error-state")
+        if not self._animations_enabled():
+            GLib.timeout_add(600, self._clear_error_state)
+            return
+        offsets = iter((0, -7, 7, -5, 5, -2, 2, 0))
+
+        def shake():
+            offset = next(offsets, None)
+            if offset is None:
+                self._clear_error_state()
+                return GLib.SOURCE_REMOVE
+            self.card.set_margin_start(max(0, offset))
+            self.card.set_margin_end(max(0, -offset))
+            return GLib.SOURCE_CONTINUE
+
+        GLib.timeout_add(35, shake)
+
+    def _clear_error_state(self):
+        self.card.set_margin_start(0)
+        self.card.set_margin_end(0)
+        self.card.remove_css_class("error-state")
+        return GLib.SOURCE_REMOVE
 
     def _tick(self):
         now = GLib.DateTime.new_now_local()
@@ -171,7 +238,9 @@ class Greeter(Adw.ApplicationWindow):
 
     def _show_error(self, text):
         self.error.set_label(text)
-        self.error.set_visible(bool(text))
+        self.error_revealer.set_reveal_child(bool(text))
+        if text:
+            self._shake_error()
 
     def login(self):
         if self.busy:
@@ -183,6 +252,8 @@ class Greeter(Adw.ApplicationWindow):
         self.busy = True
         self.login_btn.set_sensitive(False)
         self._show_error("")
+        self.spinner.set_visible(True)
+        self.spinner.start()
         cmd = self.sessions[self.session_drop.get_selected()][1]
         threading.Thread(target=self._authenticate,
                          args=(name, self.password.get_text(), cmd), daemon=True).start()
@@ -223,6 +294,8 @@ class Greeter(Adw.ApplicationWindow):
     def _failed(self, msg):
         self.busy = False
         self.login_btn.set_sensitive(True)
+        self.spinner.stop()
+        self.spinner.set_visible(False)
         self.password.set_text("")
         self.password.grab_focus()
         self._show_error(msg)

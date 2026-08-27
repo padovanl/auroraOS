@@ -1,0 +1,66 @@
+#!/bin/bash
+# Install both EFI paths; also called after package updates on managed systems.
+set -euo pipefail
+
+marker=/var/lib/aurora/efi-managed
+if [ "${1:-}" != --install ] && [ ! -f "$marker" ]; then
+    exit 0
+fi
+[ -d /sys/firmware/efi ] || exit 0
+mountpoint -q /boot/efi || { echo 'EFI system partition is not mounted' >&2; exit 1; }
+
+args=(--target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=debian)
+mode=shim
+# Avoid the shim/firmware handoff on Hyper-V with Secure Boot off. The
+# SecureBoot variable can be absent when disabled (as it is with OVMF); the
+# unsigned live ISO cannot start on Hyper-V while Secure Boot is enabled.
+sb=/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c
+sb_state=0
+if [ -e "$sb" ]; then
+    sb_state=$(od -An -tu1 -j4 -N1 "$sb" 2>/dev/null | tr -d ' ')
+fi
+if [ "$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || true)" = 'Microsoft Corporation' ] &&
+   [ "$(cat /sys/class/dmi/id/product_name 2>/dev/null || true)" = 'Virtual Machine' ] &&
+   [ "$sb_state" = 0 ]; then
+    args+=(--no-uefi-secure-boot)
+    mode=direct
+    # Debian's package scripts otherwise register shim again on upgrades.
+    # Keep the direct entry we install below; refresh binaries without
+    # changing the user's firmware boot order in later apt transactions.
+    printf 'grub-efi-amd64 grub2/update_nvram boolean false\n' | debconf-set-selections
+fi
+
+echo "Aurora EFI installation: $mode"
+# First make the disk independently bootable, even if NVRAM cannot be written.
+grub-install "${args[@]}" --removable --no-nvram --recheck
+# Only the installer changes boot order. Package updates refresh the files.
+if [ "${1:-}" = --install ]; then
+    if ! grub-install "${args[@]}" --recheck; then
+        echo 'Cannot register EFI boot entry; keeping the disk fallback path' >&2
+        grub-install "${args[@]}" --no-nvram --recheck
+    fi
+else
+    grub-install "${args[@]}" --no-nvram --recheck
+fi
+if [ "$mode" = direct ]; then
+    # grub-install's ordinary unsigned image needs external modules in
+    # /@/boot/grub. On a zstd-compressed Btrfs root it reaches grub rescue
+    # (or a menu with missing linux/initrd commands). Debian's monolithic
+    # image includes those modules and boots directly without shim.
+    monolithic=/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi
+    test -s "$monolithic"
+    install -m 0644 "$monolithic" /boot/efi/EFI/debian/grubx64.efi
+    install -m 0644 "$monolithic" /boot/efi/EFI/BOOT/BOOTX64.EFI
+    cmp -s /boot/efi/EFI/debian/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
+fi
+test -s /boot/efi/EFI/BOOT/BOOTX64.EFI
+test -s /boot/efi/EFI/debian/grubx64.efi
+if [ "$mode" = shim ]; then
+    test -s /boot/efi/EFI/BOOT/grubx64.efi
+    test -s /boot/efi/EFI/debian/shimx64.efi
+fi
+grub-script-check /boot/grub/grub.cfg
+mkdir -p /var/lib/aurora
+printf '%s\n' "$mode" > "$marker"
+sync -f /boot/efi
+sync -f "$marker"

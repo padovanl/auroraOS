@@ -193,6 +193,7 @@ class FilesWindow(Adw.ApplicationWindow):
         menu = Gio.Menu()
         section = Gio.Menu()
         section.append(_("New Folder"), "win.new-folder")
+        section.append(_("New File…"), "win.new-file")
         section.append(_("Open in Terminal"), "win.terminal-here")
         menu.append_section(None, section)
         section = Gio.Menu()
@@ -238,16 +239,24 @@ class FilesWindow(Adw.ApplicationWindow):
         self.empty = Adw.StatusPage(icon_name="folder-symbolic", title=_("Folder is Empty"))
         self.view_stack.add_named(self.empty, "empty")
 
+        # Capture on the stack also covers empty folders and unused space in
+        # the scroller, while leaving item clicks and rubberband drags to GTK.
+        clear = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY,
+                                 propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        clear.connect("pressed", self._on_background_click)
+        self.view_stack.add_controller(clear)
+        click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
+                                 propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        click.connect("pressed", self._on_context_click, self.view_stack)
+        self.view_stack.add_controller(click)
         for view in (self.grid, self.list):
-            click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
-            click.connect("pressed", self._on_context_click, view)
-            view.add_controller(click)
             # Space previews the selection (Quick Look), before the view sees it.
             keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
             keys.connect("key-pressed", self._on_view_key)
             view.add_controller(keys)
         self.quicklook = None
-        self.context_menu = Gtk.PopoverMenu(has_arrow=False, halign=Gtk.Align.START)
+        self.context_menu = Gtk.PopoverMenu(has_arrow=False, halign=Gtk.Align.START,
+                                            css_classes=["aurora-context-menu"])
         self.context_menu.set_parent(self.view_stack)
 
         # Trash banner and progress
@@ -370,6 +379,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("restore", self.restore_selected)
         add("empty-trash", self.empty_trash)
         add("new-folder", self.new_folder, ["<Ctrl><Shift>n"])
+        add("new-file", self.new_file)
         add("properties", self.properties, ["<Alt>Return"])
         add("select-all", lambda: self.selection.select_all(), ["<Ctrl>a"])
         add("terminal-here", self.terminal_here)
@@ -657,14 +667,42 @@ class FilesWindow(Adw.ApplicationWindow):
 
     # ---------------------------------------------------- context menu
 
-    def _on_context_click(self, gesture, _n, x, y, view):
+    @staticmethod
+    def _item_position(view, x, y):
         widget = view.pick(x, y, Gtk.PickFlags.DEFAULT)
-        pos = None
         while widget is not None and widget is not view:
             if hasattr(widget, "position"):
-                pos = widget.position
-                break
+                return widget.position
+            # The padding of GTK's internal item container belongs to the
+            # item too, even when the custom factory child wasn't picked.
+            if widget.get_css_name() in ("child", "row", "cell"):
+                pending = [widget.get_first_child()]
+                while pending:
+                    child = pending.pop()
+                    if child is None:
+                        continue
+                    if hasattr(child, "position"):
+                        return child.position
+                    pending.extend((child.get_first_child(), child.get_next_sibling()))
             widget = widget.get_parent()
+        return None
+
+    def _on_background_click(self, gesture, _n, x, y):
+        widget = self.view_stack.pick(x, y, Gtk.PickFlags.DEFAULT)
+        if widget is not None and (widget.get_ancestor(Gtk.Popover) is not None or
+                                   widget.get_ancestor(Gtk.Scrollbar) is not None):
+            return
+        if gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
+                                                Gdk.ModifierType.SHIFT_MASK):
+            return
+        if self._item_position(self.view_stack, x, y) is None:
+            self.selection.unselect_all()
+
+    def _on_context_click(self, gesture, _n, x, y, view):
+        widget = view.pick(x, y, Gtk.PickFlags.DEFAULT)
+        if widget is not None and widget.get_ancestor(Gtk.Popover) is not None:
+            return
+        pos = self._item_position(view, x, y)
         if pos is not None and not self.selection.is_selected(pos):
             self.selection.select_item(pos, True)
         elif pos is None:
@@ -708,6 +746,7 @@ class FilesWindow(Adw.ApplicationWindow):
         else:
             s = Gio.Menu()
             s.append(_("New Folder…"), "win.new-folder")
+            s.append(_("New File…"), "win.new-file")
             s.append(_("Paste"), "win.paste")
             menu.append_section(None, s)
             s = Gio.Menu()
@@ -717,6 +756,8 @@ class FilesWindow(Adw.ApplicationWindow):
             menu.append_section(None, s)
 
         self.context_menu.set_menu_model(menu)
+        self.context_menu.set_position(Gtk.PositionType.TOP if y > view.get_height() / 2
+                                       else Gtk.PositionType.BOTTOM)
         # (x, y), or (ok, x, y) with older PyGObject.
         px, py = view.translate_coordinates(self.view_stack, x, y)[-2:]
         rect = Gdk.Rectangle()
@@ -900,6 +941,11 @@ class FilesWindow(Adw.ApplicationWindow):
             except GLib.Error as err:
                 self.toast(err.message)
         self._ask_name(_("New Folder"), _("Untitled Folder"), _("Create"), do, False)
+
+    def new_file(self):
+        if self.current is not None and self.current.get_path() is not None:
+            from aurora.files.create import NewItemDialog
+            NewItemDialog(self.get_application(), self.current, self).present()
 
     def terminal_here(self):
         path = self.current.get_path()

@@ -1,0 +1,2 @@
+// Keep both EFI paths current after GRUB/shim upgrades on installed systems.
+DPkg::Post-Invoke { "/bin/bash /usr/local/lib/aurora/efi-install"; };

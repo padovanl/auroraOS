@@ -24,6 +24,6 @@ def run():
         ["env", "DEBIAN_FRONTEND=noninteractive", "apt-get", "install", "-y",
          "shim-signed", "grub-efi-amd64-signed"])
     if rc != 0:
-        # Not fatal: the system still boots with Secure Boot disabled.
-        libcalamares.utils.warning(f"aurora-secureboot: apt-get failed ({rc})")
+        return ("Secure Boot packages could not be installed",
+                f"Installing Debian's signed bootloader failed (exit {rc}).")
     return None

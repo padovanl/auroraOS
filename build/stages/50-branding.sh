@@ -34,6 +34,7 @@ cal="$ROOTFS/etc/calamares/branding/aurora"
 mkdir -p "$cal"
 sed "s/@VERSION@/$AURORA_VERSION/g" "$SRC/branding/calamares/branding.desc" > "$cal/branding.desc"
 cp "$SRC/branding/calamares/show.qml" "$SRC/branding/calamares/stylesheet.qss" "$cal/"
+cp "$SRC"/branding/calamares/*.svg "$cal/"
 cp -r "$SRC/branding/calamares/slides" "$cal/"
 python3 "$SRC/branding/logo.py" mark "$cal/logo.png" 128
 python3 "$SRC/branding/logo.py" static "$cal/welcome.png" 360

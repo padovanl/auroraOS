@@ -5,6 +5,8 @@ get the current release. Scripts run in a visible terminal with `set -e`;
 anything that needs root uses sudo and asks for the password there.
 """
 
+import shlex
+
 from aurora.i18n import N_
 
 APT_REPO = r'''
@@ -45,7 +47,11 @@ def default_shell(path):
 
 
 def flatpak(app_id):
-    return f"flatpak install -y --user flathub {app_id}"
+    # The image ships a system Flathub remote, but these recipes install into
+    # the user's Flatpak installation. Remotes are scoped to the installation.
+    return ("flatpak remote-add --user --if-not-exists flathub "
+            "https://dl.flathub.org/repo/flathub.flatpakrepo\n"
+            f"flatpak install -y --noninteractive --user flathub {shlex.quote(app_id)}")
 
 
 def docker_service(name, image, port, env=""):
