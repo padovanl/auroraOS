@@ -229,6 +229,7 @@ Updates**, with no ISO needed.
 | Problem | Fix |
 |---|---|
 | "Start PXE over IPv4", "The image's hash and certificate are not allowed", or the VM starts from the network | Secure Boot must be **off** to start the ISO: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`, and the DVD must be the first boot device. (After installing, Secure Boot can go back on with the Microsoft UEFI Certificate Authority template.) |
+| After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | ISOs built before 25 Sep 2026 didn't write the fallback boot loader Hyper-V uses. Start from the installer's boot entry: `Set-VMFirmware -VMName Aurora -FirstBootDevice ((Get-VMFirmware -VMName Aurora).BootOrder \| Where-Object Description -match 'aurora')`. Newer ISOs install it. |
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
 | Slow or stuttering desktop | Give the VM 4 processors and static memory. The virtual display has no 3D, so Aurora uses a software renderer made for it. |

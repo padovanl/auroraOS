@@ -60,9 +60,11 @@ class VM:
         if os.access("/dev/kvm", os.W_OK):
             cmd[1:1] = ["-enable-kvm", "-cpu", "host"]
         if args.firmware == "uefi":
-            vars_file = os.path.join(out, "OVMF_VARS.fd")
-            if cdrom:     # a fresh NVRAM for the install, kept for the installed boot
-                shutil.copy("/usr/share/OVMF/OVMF_VARS_4M.fd", vars_file)
+            # A fresh NVRAM every time: the installed disk must start without the
+            # boot entry the installer wrote, through \EFI\BOOT\BOOTX64.EFI, like
+            # Hyper-V, a disk moved to another PC, or firmware that forgets entries.
+            vars_file = os.path.join(out, f"OVMF_VARS-{name}.fd")
+            shutil.copy("/usr/share/OVMF/OVMF_VARS_4M.fd", vars_file)
             cmd += ["-drive", "if=pflash,format=raw,readonly=on,"
                               "file=/usr/share/OVMF/OVMF_CODE_4M.fd",
                     "-drive", f"if=pflash,format=raw,file={vars_file}"]
