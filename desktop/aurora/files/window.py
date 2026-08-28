@@ -371,6 +371,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("open", self.open_selected, ["Return"])
         add("open-with", self.open_with)
         add("copy", lambda: self.to_clipboard("copy"), ["<Ctrl>c"])
+        add("duplicate", self.duplicate_selected, ["<Ctrl>d"])
         add("cut", lambda: self.to_clipboard("move"), ["<Ctrl>x"])
         add("paste", self.paste, ["<Ctrl>v"])
         add("rename", self.rename, ["F2"])
@@ -733,6 +734,7 @@ class FilesWindow(Adw.ApplicationWindow):
                 s = Gio.Menu()
                 s.append(_("Cut"), "win.cut")
                 s.append(_("Copy"), "win.copy")
+                s.append(_("Duplicate"), "win.duplicate")
                 s.append(_("Rename…"), "win.rename")
                 menu.append_section(None, s)
                 s = Gio.Menu()
@@ -801,6 +803,15 @@ class FilesWindow(Adw.ApplicationWindow):
             if paths:
                 self._run_job("copy", paths, target)
         self.get_clipboard().read_value_async(Gdk.FileList, GLib.PRIORITY_DEFAULT, None, got)
+
+    def duplicate_selected(self):
+        if self.in_trash():
+            return
+        target = self.current.get_path()
+        if target is None:
+            return
+        paths = [f.get_path() for f in self.selected_files() if f.get_path()]
+        self._run_job("copy", paths, target)
 
     def _run_job(self, kind, paths, target):
         if not paths:

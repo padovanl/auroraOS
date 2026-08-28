@@ -39,6 +39,19 @@ def test_copy_folder_recursively(tmp_path):
     assert (src / "sub" / "f.txt").exists()
 
 
+def test_duplicate_file_and_folder_without_overwriting(tmp_path):
+    original = tmp_path / "notes.txt"
+    original.write_text("keep")
+    folder = tmp_path / "Photos"
+    folder.mkdir()
+    (folder / "photo.jpg").write_bytes(b"image")
+    assert run_job("copy", [str(original), str(folder)], str(tmp_path)) == ""
+    assert original.read_text() == "keep"
+    assert (tmp_path / "notes (2).txt").read_text() == "keep"
+    assert (folder / "photo.jpg").read_bytes() == b"image"
+    assert (tmp_path / "Photos (2)" / "photo.jpg").read_bytes() == b"image"
+
+
 def test_move_file(tmp_path):
     f = tmp_path / "f.txt"
     f.write_text("x")

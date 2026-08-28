@@ -64,6 +64,16 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     assert (root / "new.txt").read_bytes() == b""
     print("ok: new file, invalid name and overwrite protection")
 
+    settle(lambda: any(win.model.get_item(i).get_name() == "new.txt"
+                       for i in range(win.model.get_n_items())))
+    index = next(i for i in range(win.model.get_n_items())
+                 if win.model.get_item(i).get_name() == "new.txt")
+    win.selection.select_item(index, True)
+    win._action("duplicate").activate(None)
+    settle(lambda: (root / "new (2).txt").exists())
+    assert (root / "new.txt").exists()
+    print("ok: Duplicate action creates a second file without overwriting")
+
     desktopicons.desktop_dir = lambda: str(root / "Desktop")
     Wallpaper._new_item(SimpleNamespace(app=app), None, None)
     dialog = next(w for w in app.get_windows() if isinstance(w, NewItemDialog))
