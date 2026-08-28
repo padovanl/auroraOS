@@ -12,11 +12,11 @@ import shutil
 import subprocess
 import threading
 
-from gi.repository import Adw, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from aurora import apps
 from aurora.i18n import _, ngettext
-from aurora.settingsapp.util import Page
+from aurora.settingsapp.util import Page, toast
 
 ICONS = {"ok": ("object-select-symbolic", "success"), "warn": ("dialog-warning-symbolic", "warning"),
          "bad": ("dialog-error-symbolic", "error")}
@@ -220,6 +220,15 @@ CHECKS = [
 ]
 
 
+def format_report(results):
+    """A concise, pasteable report with no command output or account secrets."""
+    marks = {"ok": "✓", "warn": "⚠", "bad": "✕"}
+    lines = [_("Aurora Doctor")]
+    for title, _icon, (status, summary, _fix) in results:
+        lines.append(f"{marks[status]} {title}: {summary}")
+    return "\n".join(lines)
+
+
 class Health(Page):
     page_id = "health"
     title = _("System Health")
@@ -235,11 +244,24 @@ class Health(Page):
                            css_classes=["flat"], tooltip_text=_("Check Again"))
         again.connect("clicked", lambda *_: self.run_checks())
         self.headline.add_suffix(again)
+        self.copy_report = Gtk.Button(icon_name="edit-copy-symbolic",
+                                      valign=Gtk.Align.CENTER, sensitive=False,
+                                      css_classes=["flat"], tooltip_text=_("Copy report"))
+        self.copy_report.connect("clicked", self._copy_report)
+        self.headline.add_suffix(self.copy_report)
         self.list = self.group()
         self.rows = []
+        self.report = ""
         self.run_checks()
 
+    def _copy_report(self, *_):
+        if self.report:
+            Gdk.Display.get_default().get_clipboard().set(self.report)
+            toast(self, _("Report copied"))
+
     def run_checks(self):
+        self.report = ""
+        self.copy_report.set_sensitive(False)
         for row in self.rows:
             self.list.remove(row)
         self.rows = []
@@ -258,6 +280,8 @@ class Health(Page):
         GLib.idle_add(self._show, results)
 
     def _show(self, results):
+        self.report = format_report(results)
+        self.copy_report.set_sensitive(bool(results))
         bad = sum(1 for *_x, (st, _s, _f) in results if st != "ok")
         self.headline.set_title(_("Everything looks good") if not bad else
                                 ngettext("{n} thing needs attention", "{n} things need attention",
