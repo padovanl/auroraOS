@@ -472,6 +472,10 @@ CODE = [
     ("MAKE", "#6d7489", ["text-x-makefile", "text-x-cmake"]),
     ("DOCKER", "#1d91e6", ["text-x-dockerfile"]),
     ("LOG", "#8d95a8", ["text-x-log"]),
+    ("VUE", "#42b883", ["text-x-vue"]),
+    ("SV", "#ff3e00", ["text-x-svelte"]),
+    ("PROTO", "#5474a5", ["text-x-protobuf"]),
+    ("TF", "#7b42bc", ["text-x-terraform"]),
 ]
 
 # ---------------------------------------------------------------------- output

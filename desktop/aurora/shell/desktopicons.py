@@ -7,6 +7,7 @@ import re
 from gi.repository import Gdk, Gio, GLib, Gtk, Pango
 
 from aurora import settings
+from aurora.files.icons import icon_for
 
 MAX_ITEMS = 40
 
@@ -68,8 +69,8 @@ class DesktopIcon(Gtk.Button):
             thumb = info.get_attribute_byte_string("thumbnail::path")
             if thumb:
                 img.set_from_file(thumb)
-            elif info.get_icon():
-                img.set_from_gicon(info.get_icon())
+            else:
+                img.set_from_gicon(icon_for(info))
         box.append(img)
         box.append(Gtk.Label(label=name, wrap=True, lines=2,
                              ellipsize=Pango.EllipsizeMode.MIDDLE, max_width_chars=12,

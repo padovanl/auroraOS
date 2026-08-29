@@ -62,6 +62,12 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     dialog.entry.set_text("new.txt")
     dialog._create()
     assert (root / "new.txt").read_bytes() == b""
+    assert win._action("undo").get_enabled()
+    win.undo()
+    settle(lambda: not (root / "new.txt").exists() and win._action("redo").get_enabled())
+    win.redo()
+    settle(lambda: (root / "new.txt").exists() and win._action("undo").get_enabled())
+    print("ok: new-file undo/redo")
     print("ok: new file, invalid name and overwrite protection")
 
     settle(lambda: any(win.model.get_item(i).get_name() == "new.txt"
@@ -88,10 +94,32 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     assert (root / "Desktop/New folder").is_dir()
     print("ok: desktop new-folder callback")
 
+    win.new_tab(Gio.File.new_for_path(str(root / "Desktop")))
+    settle(lambda: win.current.get_path() == str(root / "Desktop"))
+    win.open_location(Gio.File.new_for_path(str(root)))
+    assert len(win.back_stack) == 1
+    win.switch_tab(0)
+    assert win.current.get_path() == str(root) and not win.back_stack
+    win.switch_tab(1)
+    assert win.current.get_path() == str(root) and len(win.back_stack) == 1
+    win.go_back()
+    assert win.current.get_path() == str(root / "Desktop")
+    win.close_tab(1)
+    assert len(win.tabs) == 1 and win.current.get_path() == str(root)
+    print("ok: tabs preserve locations and navigation history")
+
     empty = root / "empty"
     empty.mkdir()
     win.open_location(Gio.File.new_for_path(str(empty)))
     settle(lambda: not win.dirlist.is_loading() and win.view_stack.get_visible_child_name() == "empty")
+    files = Gdk.FileList.new_from_list([Gio.File.new_for_path(str(root / "existing.txt"))])
+    assert win._drop_on_location(files, Gio.File.new_for_path(str(empty)))
+    settle(lambda: (empty / "existing.txt").exists())
+    win.undo()
+    settle(lambda: not (empty / "existing.txt").exists() and win._action("redo").get_enabled())
+    win.redo()
+    settle(lambda: (empty / "existing.txt").exists() and win._action("undo").get_enabled())
+    print("ok: dropped file copy and undo/redo")
     win._on_context_click(None, 1, 100, 100, win.view_stack)
     menu = win.context_menu.get_menu_model()
     section = menu.get_item_link(0, "section")

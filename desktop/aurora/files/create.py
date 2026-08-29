@@ -6,13 +6,14 @@ from aurora.i18n import _
 
 
 class NewItemDialog(Adw.Window):
-    def __init__(self, app, directory, parent=None, folder=False):
+    def __init__(self, app, directory, parent=None, folder=False, on_created=None):
         super().__init__(application=app, title=_("New Folder") if folder else _("New File"),
                          default_width=380, resizable=False, modal=True)
         if parent is not None:
             self.set_transient_for(parent)
         self.directory = directory
         self.folder = folder
+        self.on_created = on_created
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                           margin_top=12, margin_bottom=20, margin_start=20, margin_end=20)
         content.append(Gtk.Label(label=_("Name") if folder else _("File name"), xalign=0))
@@ -57,4 +58,6 @@ class NewItemDialog(Adw.Window):
             self.error.set_label(err.message)
             self.error.set_visible(True)
             return
+        if self.on_created is not None:
+            self.on_created(target, self.folder)
         self.close()

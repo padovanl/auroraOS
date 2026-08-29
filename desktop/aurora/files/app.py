@@ -15,6 +15,8 @@ from aurora.i18n import _  # noqa: E402
 CSS = """
 .files-grid > child { border-radius: 12px; }
 .files-grid > child:selected { background-color: alpha(@accent_bg_color, 0.25); }
+.files-tab { border-radius: 10px; background: alpha(@window_fg_color, 0.06); }
+.files-tab.active-tab { background: alpha(@accent_bg_color, 0.22); }
 popover.aurora-context-menu contents { min-width: 250px; }
 """
 
@@ -39,7 +41,6 @@ class FilesApp(Adw.Application):
             action.connect("activate", cb)
             self.add_action(action)
             self.set_accels_for_action(f"app.{name}", accels)
-        self.set_accels_for_action("window.close", ["<Ctrl>w"])
 
     def open_window(self, gfile):
         win = FilesWindow(self, gfile)

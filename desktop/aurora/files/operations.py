@@ -6,6 +6,7 @@ import threading
 
 from gi.repository import GLib, GObject
 
+from aurora.files.history import Entry
 from aurora.i18n import _
 
 
@@ -52,6 +53,8 @@ class Job(GObject.Object):
         self.cancelled = False
         self._done = 0
         self._total = 1
+        self.changes = []  # (original path, final path), for undo/redo
+        self.history_entry = None
 
     @property
     def label(self):
@@ -69,11 +72,24 @@ class Job(GObject.Object):
     def _tick(self, name):
         self._done += 1
         GLib.idle_add(self.emit, "progress", min(1.0, self._done / self._total), name)
-        if self.cancelled:
-            raise InterruptedError
 
     def _copy_file(self, src, dst):
-        shutil.copy2(src, dst, follow_symlinks=False)
+        if self.cancelled:
+            raise InterruptedError
+        created = False
+        try:
+            if os.path.islink(src):
+                os.symlink(os.readlink(src), dst)
+                created = True
+            else:
+                with open(src, "rb") as source, open(dst, "xb") as target:
+                    created = True
+                    shutil.copyfileobj(source, target)
+            shutil.copystat(src, dst, follow_symlinks=False)
+        except (OSError, shutil.Error):
+            if created:
+                os.remove(dst)
+            raise
         self._tick(os.path.basename(src))
         return dst
 
@@ -82,6 +98,8 @@ class Job(GObject.Object):
         try:
             self._total = _count(self.sources)
             for src in self.sources:
+                if self.cancelled:
+                    raise InterruptedError
                 name = os.path.basename(src.rstrip("/"))
                 same_dir = os.path.dirname(os.path.abspath(src)) == os.path.abspath(self.target_dir)
                 if self.kind == "move" and same_dir:
@@ -93,20 +111,37 @@ class Job(GObject.Object):
                     try:
                         os.rename(src, dest)
                         self._tick(name)
+                        self.changes.append((src, dest))
                         continue
                     except OSError:
                         pass  # different filesystem: copy then delete
-                if os.path.isdir(src) and not os.path.islink(src):
-                    shutil.copytree(src, dest, symlinks=True, copy_function=self._copy_file)
-                else:
-                    self._copy_file(src, dest)
+                created_dir = False
+                try:
+                    if os.path.isdir(src) and not os.path.islink(src):
+                        os.mkdir(dest)
+                        created_dir = True
+                        shutil.copytree(src, dest, symlinks=True, dirs_exist_ok=True,
+                                        copy_function=self._copy_file)
+                    else:
+                        self._copy_file(src, dest)
+                except (InterruptedError, OSError, shutil.Error):
+                    # The destination was created by this job and is incomplete.
+                    if created_dir:
+                        shutil.rmtree(dest)
+                    raise
                 if self.kind == "move":
                     if os.path.isdir(src) and not os.path.islink(src):
                         shutil.rmtree(src)
                     else:
                         os.remove(src)
+                self.changes.append((src, dest))
         except InterruptedError:
             error = _("Cancelled")
         except (OSError, shutil.Error) as err:
             error = str(err)
+        if self.changes:
+            try:
+                self.history_entry = Entry(self.kind, list(self.changes))
+            except OSError as err:
+                error = error or str(err)
         GLib.idle_add(self.emit, "finished", error)

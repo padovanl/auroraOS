@@ -66,7 +66,7 @@ msgid "speech synthesis failed"
 msgstr "音声を合成できませんでした"
 
 #: aurora/assistant.py:100 aurora/assistant.py:318 aurora/assistant.py:396
-#: aurora/files/window.py:736
+#: aurora/files/window.py:948
 msgid "Copy"
 msgstr "コピー"
 
@@ -789,14 +789,14 @@ msgstr "WireGuard ベースの、デバイス間のプライベートネット�
 msgid "SSH that survives sleep and changing networks."
 msgstr "スリープやネットワークの切り替えにも耐える SSH。"
 
-#: aurora/files/app.py:57 aurora/files/window.py:168 aurora/files/window.py:282
-#: aurora/files/window.py:283 aurora/settingsapp/ai.py:158
+#: aurora/files/app.py:58 aurora/files/window.py:191 aurora/files/window.py:326
+#: aurora/files/window.py:327 aurora/settingsapp/ai.py:158
 #: aurora/settingsapp/applications.py:16 aurora/settingsapp/inputs.py:38
 msgid "Files"
 msgstr "ファイル"
 
-#: aurora/files/create.py:10 aurora/files/window.py:195
-#: aurora/files/window.py:954
+#: aurora/files/create.py:10 aurora/files/window.py:218
+#: aurora/files/window.py:1175
 msgid "New Folder"
 msgstr "新規フォルダー"
 
@@ -804,52 +804,52 @@ msgstr "新規フォルダー"
 msgid "New File"
 msgstr "新しいファイル"
 
-#: aurora/files/create.py:18 aurora/files/properties.py:64
-#: aurora/files/window.py:230
+#: aurora/files/create.py:19 aurora/files/properties.py:64
+#: aurora/files/window.py:270
 msgid "Name"
 msgstr "名前"
 
-#: aurora/files/create.py:18
+#: aurora/files/create.py:19
 msgid "File name"
 msgstr "ファイル名"
 
-#: aurora/files/create.py:19 aurora/files/window.py:954
+#: aurora/files/create.py:20 aurora/files/window.py:1175
 msgid "Untitled Folder"
 msgstr "新規フォルダー"
 
-#: aurora/files/create.py:19
+#: aurora/files/create.py:20
 msgid "Untitled.txt"
 msgstr "無題.txt"
 
-#: aurora/files/create.py:25 aurora/files/window.py:858
-#: aurora/files/window.py:895 aurora/files/window.py:916
+#: aurora/files/create.py:26 aurora/files/window.py:1074
+#: aurora/files/window.py:1111 aurora/files/window.py:1132
 #: aurora/settingsapp/inputs.py:266 aurora/settingsapp/system.py:400
 #: aurora/settingsapp/system.py:469 aurora/settingsapp/system.py:487
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: aurora/files/create.py:27 aurora/files/window.py:954
+#: aurora/files/create.py:28 aurora/files/window.py:1175
 msgid "Create"
 msgstr "作成"
 
-#: aurora/files/operations.py:60
+#: aurora/files/operations.py:63
 msgid "Moving {n} item(s)"
 msgstr "{n} 項目を移動中"
 
-#: aurora/files/operations.py:61
+#: aurora/files/operations.py:64
 msgid "Copying {n} item(s)"
 msgstr "{n} 項目をコピー中"
 
-#: aurora/files/operations.py:91
+#: aurora/files/operations.py:96
 msgid "Cannot copy a folder into itself"
 msgstr "フォルダーをそれ自身の中にはコピーできません"
 
-#: aurora/files/operations.py:109
+#: aurora/files/operations.py:124
 msgid "Cancelled"
 msgstr "キャンセルしました"
 
-#: aurora/files/properties.py:28 aurora/files/window.py:744
-#: aurora/files/window.py:757
+#: aurora/files/properties.py:28 aurora/files/window.py:956
+#: aurora/files/window.py:969
 msgid "Properties"
 msgstr "プロパティ"
 
@@ -881,11 +881,11 @@ msgstr "場所"
 msgid "Contents"
 msgstr "内容"
 
-#: aurora/files/properties.py:73 aurora/files/window.py:230
+#: aurora/files/properties.py:73 aurora/files/window.py:270
 msgid "Size"
 msgstr "サイズ"
 
-#: aurora/files/properties.py:76 aurora/files/window.py:231
+#: aurora/files/properties.py:76 aurora/files/window.py:271
 msgid "Modified"
 msgstr "変更日時"
 
@@ -901,174 +901,190 @@ msgstr "アクセス権"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} 項目"
 
-#: aurora/files/window.py:84 aurora/files/window.py:434
+#: aurora/files/window.py:103 aurora/files/window.py:646
 #: aurora/settingsapp/health.py:40
 msgid "Home"
 msgstr "ホーム"
 
-#: aurora/files/window.py:96 aurora/files/window.py:431
+#: aurora/files/window.py:115 aurora/files/window.py:643
 #: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "ゴミ箱"
 
-#: aurora/files/window.py:110 aurora/files/window.py:436
+#: aurora/files/window.py:129 aurora/files/window.py:648
 msgid "Computer"
 msgstr "コンピューター"
 
-#: aurora/files/window.py:174 aurora/welcome.py:48
+#: aurora/files/window.py:197 aurora/welcome.py:48
 msgid "Back"
 msgstr "戻る"
 
-#: aurora/files/window.py:176
+#: aurora/files/window.py:199
 msgid "Forward"
 msgstr "進む"
 
-#: aurora/files/window.py:196 aurora/files/window.py:751
+#: aurora/files/window.py:219 aurora/files/window.py:963
 #: aurora/shell/wallpaper.py:76
 msgid "New File…"
 msgstr "新しいファイル…"
 
-#: aurora/files/window.py:197 aurora/files/window.py:756
+#: aurora/files/window.py:220 aurora/files/window.py:968
 msgid "Open in Terminal"
 msgstr "ターミナルで開く"
 
-#: aurora/files/window.py:200
+#: aurora/files/window.py:223
+msgid "Undo"
+msgstr "元に戻す"
+
+#: aurora/files/window.py:224
+msgid "Redo"
+msgstr "やり直す"
+
+#: aurora/files/window.py:227
 msgid "Show Hidden Files"
 msgstr "隠しファイルを表示"
 
-#: aurora/files/window.py:201
+#: aurora/files/window.py:228
 msgid "List View"
 msgstr "リスト表示"
 
-#: aurora/files/window.py:204 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/files/window.py:231 aurora/files/window.py:257
+msgid "New Tab"
+msgstr "新しいタブ"
+
+#: aurora/files/window.py:232 aurora/shell/dock.py:215 aurora/shell/dock.py:218
 #: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "新規ウインドウ"
 
-#: aurora/files/window.py:205
+#: aurora/files/window.py:233
 msgid "About Files"
 msgstr "「ファイル」について"
 
-#: aurora/files/window.py:210 aurora/settingsapp/devices.py:42
+#: aurora/files/window.py:238 aurora/settingsapp/devices.py:42
 #: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "検索"
 
-#: aurora/files/window.py:239 aurora/files/window.py:569
+#: aurora/files/window.py:279 aurora/files/window.py:781
 msgid "Folder is Empty"
 msgstr "フォルダーは空です"
 
-#: aurora/files/window.py:263 aurora/files/window.py:747
-#: aurora/files/window.py:896 aurora/shell/dock.py:306
+#: aurora/files/window.py:306 aurora/files/window.py:959
+#: aurora/files/window.py:1112 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "ゴミ箱を空にする"
 
-#: aurora/files/window.py:264
+#: aurora/files/window.py:307
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "ゴミ箱を空にすると項目は完全に削除されます"
 
-#: aurora/files/window.py:567
+#: aurora/files/window.py:349
+msgid "Close Tab"
+msgstr "タブを閉じる"
+
+#: aurora/files/window.py:779
 msgid "No Results Found"
 msgstr "結果がありません"
 
-#: aurora/files/window.py:568
+#: aurora/files/window.py:780
 msgid "Trash is Empty"
 msgstr "ゴミ箱は空です"
 
-#: aurora/files/window.py:718 aurora/shell/dock.py:279
+#: aurora/files/window.py:930 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "元に戻す"
 
-#: aurora/files/window.py:719
+#: aurora/files/window.py:931
 msgid "Delete Permanently"
 msgstr "完全に削除"
 
-#: aurora/files/window.py:721 aurora/quicklook.py:141 aurora/shell/app.py:437
+#: aurora/files/window.py:933 aurora/quicklook.py:141 aurora/shell/app.py:437
 #: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "開く"
 
-#: aurora/files/window.py:722
+#: aurora/files/window.py:934
 msgid "Open With…"
 msgstr "このアプリで開く…"
 
-#: aurora/files/window.py:723
+#: aurora/files/window.py:935
 msgid "Quick Look"
 msgstr "クイックルック"
 
-#: aurora/files/window.py:725
+#: aurora/files/window.py:937
 msgid "Send to Nearby Device…"
 msgstr "近くのデバイスに送信…"
 
-#: aurora/files/window.py:729
+#: aurora/files/window.py:941
 msgid "Summarize with Aurora"
 msgstr "Aurora で要約"
 
-#: aurora/files/window.py:730
+#: aurora/files/window.py:942
 msgid "Ask Aurora About This File…"
 msgstr "このファイルについて Aurora に質問…"
 
-#: aurora/files/window.py:735
+#: aurora/files/window.py:947
 msgid "Cut"
 msgstr "切り取り"
 
-#: aurora/files/window.py:737
+#: aurora/files/window.py:949
 msgid "Duplicate"
 msgstr "複製"
 
-#: aurora/files/window.py:738
+#: aurora/files/window.py:950
 msgid "Rename…"
 msgstr "名前を変更…"
 
-#: aurora/files/window.py:741
+#: aurora/files/window.py:953
 msgid "Move to Trash"
 msgstr "ゴミ箱に入れる"
 
-#: aurora/files/window.py:750 aurora/shell/wallpaper.py:77
+#: aurora/files/window.py:962 aurora/shell/wallpaper.py:77
 msgid "New Folder…"
 msgstr "新規フォルダー…"
 
-#: aurora/files/window.py:752
+#: aurora/files/window.py:964
 msgid "Paste"
 msgstr "貼り付け"
 
-#: aurora/files/window.py:755
+#: aurora/files/window.py:967
 msgid "Select All"
 msgstr "すべて選択"
 
-#: aurora/files/window.py:783
+#: aurora/files/window.py:995
 msgid "{n} item(s) cut"
 msgstr "{n} 項目を切り取りました"
 
-#: aurora/files/window.py:783
+#: aurora/files/window.py:995
 msgid "{n} item(s) copied"
 msgstr "{n} 項目をコピーしました"
 
-#: aurora/files/window.py:843
+#: aurora/files/window.py:1059
 msgid "{n} item(s) moved to the Trash"
 msgstr "{n} 項目をゴミ箱に入れました"
 
-#: aurora/files/window.py:856
+#: aurora/files/window.py:1072
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "{n} 項目を完全に削除しますか？"
 
-#: aurora/files/window.py:857
+#: aurora/files/window.py:1073
 msgid "Deleted items cannot be restored."
 msgstr "削除した項目は元に戻せません。"
 
-#: aurora/files/window.py:859 aurora/settingsapp/ai.py:329
+#: aurora/files/window.py:1075 aurora/settingsapp/ai.py:329
 msgid "Delete"
 msgstr "削除"
 
-#: aurora/files/window.py:893
+#: aurora/files/window.py:1109
 msgid "Empty Trash?"
 msgstr "ゴミ箱を空にしますか？"
 
-#: aurora/files/window.py:894
+#: aurora/files/window.py:1110
 msgid "All items in the Trash will be permanently deleted."
 msgstr "ゴミ箱内のすべての項目が完全に削除されます。"
 
-#: aurora/files/window.py:942
+#: aurora/files/window.py:1161
 msgid "Rename"
 msgstr "名前を変更"
 

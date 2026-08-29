@@ -2,10 +2,14 @@
 
 import os
 import shutil
+import threading
+from dataclasses import dataclass, field
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 
 from aurora import apps
+from aurora.files.icons import icon_for
+from aurora.files.history import History
 from aurora.files.operations import Job, unique_destination
 from aurora.i18n import _
 
@@ -20,6 +24,15 @@ TRASH_URI = "trash:///"
 
 # Shared by every window of the app: (mode, [Gio.File]).
 CLIPBOARD = {"mode": None, "files": []}
+
+
+@dataclass
+class FileTab:
+    location: Gio.File
+    back: list = field(default_factory=list)
+    forward: list = field(default_factory=list)
+    search: str = ""
+    view: str = "grid"
 
 
 def file_of(info):
@@ -54,8 +67,9 @@ def user_dir(kind):
 class Sidebar(Gtk.ListBox):
     __gsignals__ = {"open": (GObject.SignalFlags.RUN_FIRST, None, (Gio.File,))}
 
-    def __init__(self):
+    def __init__(self, drop_callback=None):
         super().__init__(css_classes=["navigation-sidebar"])
+        self.drop_callback = drop_callback
         self.connect("row-activated", self._on_row)
         self.volumes = Gio.VolumeMonitor.get()
         for sig in ("mount-added", "mount-removed", "volume-added", "volume-removed"):
@@ -76,6 +90,11 @@ class Sidebar(Gtk.ListBox):
         row.set_child(box)
         row.file = file
         row.volume = volume
+        if file is not None and file.get_path() is not None and os.path.isdir(file.get_path()):
+            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+            target.connect("drop", lambda _t, value, _x, _y, dest=file:
+                           self.drop_callback(value, dest) if self.drop_callback else False)
+            row.add_controller(target)
         self.append(row)
 
     def rebuild(self):
@@ -142,6 +161,10 @@ class FilesWindow(Adw.ApplicationWindow):
         self.show_hidden = False
         self.search_text = ""
         self.jobs = []
+        self.history = History()
+        self._history_busy = False
+        self.tabs = []
+        self.active_tab = -1
 
         # Model: directory -> filter -> sort -> selection
         self.dirlist = Gtk.DirectoryList(attributes=ATTRS, monitored=True)
@@ -156,12 +179,12 @@ class FilesWindow(Adw.ApplicationWindow):
 
         self._build_ui()
         self._build_actions()
-        self.open_location(location or Gio.File.new_for_path(GLib.get_home_dir()))
+        self.new_tab(location or Gio.File.new_for_path(GLib.get_home_dir()))
 
     # ---------------------------------------------------------------- UI
 
     def _build_ui(self):
-        self.sidebar = Sidebar()
+        self.sidebar = Sidebar(self._drop_on_location)
         self.sidebar.connect("open", lambda _s, f: self.open_location(f))
         sidebar_view = Adw.ToolbarView()
         sidebar_view.add_top_bar(Adw.HeaderBar(
@@ -197,10 +220,15 @@ class FilesWindow(Adw.ApplicationWindow):
         section.append(_("Open in Terminal"), "win.terminal-here")
         menu.append_section(None, section)
         section = Gio.Menu()
+        section.append(_("Undo"), "win.undo")
+        section.append(_("Redo"), "win.redo")
+        menu.append_section(None, section)
+        section = Gio.Menu()
         section.append(_("Show Hidden Files"), "win.show-hidden")
         section.append(_("List View"), "win.list-view")
         menu.append_section(None, section)
         section = Gio.Menu()
+        section.append(_("New Tab"), "win.new-tab")
         section.append(_("New Window"), "app.new-window")
         section.append(_("About Files"), "app.about")
         menu.append_section(None, section)
@@ -217,6 +245,18 @@ class FilesWindow(Adw.ApplicationWindow):
         self.search_btn.bind_property("active", self.search_bar, "search-mode-enabled",
                                       GObject.BindingFlags.BIDIRECTIONAL)
         self.search_bar.set_key_capture_widget(self)
+
+        self.tab_buttons = Gtk.Box(spacing=4, css_classes=["files-tabs"])
+        tab_scroller = Gtk.ScrolledWindow(child=self.tab_buttons, hexpand=True,
+                                          vscrollbar_policy=Gtk.PolicyType.NEVER,
+                                          hscrollbar_policy=Gtk.PolicyType.AUTOMATIC)
+        self.tab_strip = Gtk.Box(spacing=6, margin_start=12, margin_end=12,
+                                 margin_top=5, margin_bottom=5)
+        self.tab_strip.append(tab_scroller)
+        add_tab = Gtk.Button(icon_name="list-add-symbolic", css_classes=["flat"],
+                             tooltip_text=_("New Tab"))
+        add_tab.connect("clicked", lambda *_: self.new_tab())
+        self.tab_strip.append(add_tab)
 
         # Views
         self.grid = Gtk.GridView(model=self.selection, max_columns=12, min_columns=2,
@@ -249,6 +289,9 @@ class FilesWindow(Adw.ApplicationWindow):
                                  propagation_phase=Gtk.PropagationPhase.CAPTURE)
         click.connect("pressed", self._on_context_click, self.view_stack)
         self.view_stack.add_controller(click)
+        drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+        drop.connect("drop", self._drop_on_view)
+        self.view_stack.add_controller(drop)
         for view in (self.grid, self.list):
             # Space previews the selection (Quick Look), before the view sees it.
             keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
@@ -267,6 +310,7 @@ class FilesWindow(Adw.ApplicationWindow):
                                               transition_type=Gtk.RevealerTransitionType.SLIDE_UP)
 
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        content.append(self.tab_strip)
         content.append(self.search_bar)
         content.append(self.banner)
         self.view_stack.set_vexpand(True)
@@ -287,11 +331,84 @@ class FilesWindow(Adw.ApplicationWindow):
         bp.add_setter(self.split, "collapsed", True)
         self.add_breakpoint(bp)
 
+    def _render_tabs(self):
+        while (child := self.tab_buttons.get_first_child()) is not None:
+            self.tab_buttons.remove(child)
+        for index, state in enumerate(self.tabs):
+            chip = Gtk.Box(spacing=2, css_classes=["files-tab"])
+            if index == self.active_tab:
+                chip.add_css_class("active-tab")
+            title = self._display_name(state.location)
+            label = Gtk.Label(label=title, max_width_chars=18,
+                              ellipsize=Pango.EllipsizeMode.MIDDLE)
+            choose = Gtk.Button(child=label, css_classes=["flat"],
+                                tooltip_text=state.location.get_parse_name())
+            choose.connect("clicked", lambda _b, i=index: self.switch_tab(i))
+            chip.append(choose)
+            close = Gtk.Button(icon_name="window-close-symbolic", css_classes=["flat"],
+                               tooltip_text=_("Close Tab"))
+            close.connect("clicked", lambda _b, i=index: self.close_tab(i))
+            chip.append(close)
+            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+            target.connect("drop", lambda _t, value, _x, _y, dest=state.location:
+                           self._drop_on_location(value, dest))
+            chip.add_controller(target)
+            self.tab_buttons.append(chip)
+
+    def _save_tab(self):
+        if self.active_tab < 0:
+            return
+        state = self.tabs[self.active_tab]
+        state.location = self.current
+        state.back = list(self.back_stack)
+        state.forward = list(self.forward_stack)
+        state.search = self.search_entry.get_text()
+        state.view = getattr(self, "_view_name", "grid")
+
+    def new_tab(self, location=None):
+        self.tabs.append(FileTab(location or self.current or
+                                 Gio.File.new_for_path(GLib.get_home_dir())))
+        self.switch_tab(len(self.tabs) - 1)
+
+    def switch_tab(self, index):
+        if not 0 <= index < len(self.tabs) or index == self.active_tab:
+            return
+        self._save_tab()
+        self.active_tab = index
+        state = self.tabs[index]
+        self.back_stack, self.forward_stack = list(state.back), list(state.forward)
+        self.open_location(state.location, record=False)
+        self.set_list_view(state.view == "list")
+        self.search_entry.set_text(state.search)
+        self.search_btn.set_active(bool(state.search))
+        self._render_tabs()
+
+    def close_tab(self, index=None):
+        index = self.active_tab if index is None else index
+        if not 0 <= index < len(self.tabs):
+            return
+        if len(self.tabs) == 1:
+            self.close()
+            return
+        active = index == self.active_tab
+        del self.tabs[index]
+        if active:
+            self.active_tab = -1
+            self.switch_tab(min(index, len(self.tabs) - 1))
+        else:
+            if index < self.active_tab:
+                self.active_tab -= 1
+            self._render_tabs()
+
+    def cycle_tab(self, step):
+        if len(self.tabs) > 1:
+            self.switch_tab((self.active_tab + step) % len(self.tabs))
+
     def _icon_for(self, info, size):
         thumb = info.get_attribute_byte_string("thumbnail::path")
         if thumb and size >= 48:
             return Gio.FileIcon.new(Gio.File.new_for_path(thumb))
-        return info.get_icon() or Gio.ThemedIcon.new("text-x-generic")
+        return icon_for(info)
 
     def _grid_factory(self):
         f = Gtk.SignalListItemFactory()
@@ -305,6 +422,9 @@ class FilesWindow(Adw.ApplicationWindow):
                                  ellipsize=Pango.EllipsizeMode.MIDDLE,
                                  justify=Gtk.Justification.CENTER, max_width_chars=14))
             item.set_child(box)
+            drag = Gtk.DragSource(actions=Gdk.DragAction.COPY)
+            drag.connect("prepare", self._drag_prepare, item)
+            box.add_controller(drag)
 
         def bind(_f, item):
             info = item.get_item()
@@ -330,6 +450,10 @@ class FilesWindow(Adw.ApplicationWindow):
                 item.set_child(box)
             else:
                 item.set_child(Gtk.Label(xalign=0, css_classes=["dim-label", "numeric"]))
+            if kind == "name":
+                drag = Gtk.DragSource(actions=Gdk.DragAction.COPY)
+                drag.connect("prepare", self._drag_prepare, item)
+                item.get_child().add_controller(drag)
 
         def bind(_f, item):
             info = item.get_item()
@@ -346,6 +470,40 @@ class FilesWindow(Adw.ApplicationWindow):
         f.connect("setup", setup)
         f.connect("bind", bind)
         return f
+
+    def _drag_prepare(self, _source, _x, _y, item):
+        info = item.get_item()
+        if info is None or self.in_trash():
+            return None
+        files = (self.selected_files() if self.selection.is_selected(item.get_position())
+                 else [file_of(info)])
+        files = [f for f in files if f is not None and f.get_path()]
+        if not files:
+            return None
+        return Gdk.ContentProvider.new_for_value(Gdk.FileList.new_from_list(files))
+
+    def _drop_on_location(self, value, destination):
+        if not isinstance(value, Gdk.FileList) or destination is None:
+            return False
+        target = destination.get_path()
+        if target is None or not os.path.isdir(target):
+            return False
+        paths = [f.get_path() for f in value.get_files() if f.get_path()]
+        if not paths:
+            return False
+        self._run_job("copy", paths, target)
+        return True
+
+    def _drop_on_view(self, _target, value, x, y):
+        if self.in_trash():
+            return False
+        destination = self.current
+        pos = self._item_position(self.view_stack, x, y)
+        if pos is not None:
+            info = self.model.get_item(pos)
+            if info is not None and is_dir(info):
+                destination = file_of(info)
+        return self._drop_on_location(value, destination)
 
     # ----------------------------------------------------------- actions
 
@@ -371,9 +529,15 @@ class FilesWindow(Adw.ApplicationWindow):
         add("open", self.open_selected, ["Return"])
         add("open-with", self.open_with)
         add("copy", lambda: self.to_clipboard("copy"), ["<Ctrl>c"])
+        add("new-tab", self.new_tab, ["<Ctrl>t"])
+        add("close-tab", self.close_tab, ["<Ctrl>w"])
+        add("next-tab", lambda: self.cycle_tab(1), ["<Ctrl>Tab"])
+        add("previous-tab", lambda: self.cycle_tab(-1), ["<Ctrl><Shift>Tab"])
         add("duplicate", self.duplicate_selected, ["<Ctrl>d"])
         add("cut", lambda: self.to_clipboard("move"), ["<Ctrl>x"])
         add("paste", self.paste, ["<Ctrl>v"])
+        add("undo", self.undo, ["<Ctrl>z"])
+        add("redo", self.redo, ["<Ctrl><Shift>z", "<Ctrl>y"])
         add("rename", self.rename, ["F2"])
         add("trash", self.trash_selected, ["Delete"])
         add("delete", self.delete_selected, ["<Shift>Delete"])
@@ -381,6 +545,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("empty-trash", self.empty_trash)
         add("new-folder", self.new_folder, ["<Ctrl><Shift>n"])
         add("new-file", self.new_file)
+        self._update_history_actions()
         add("properties", self.properties, ["<Alt>Return"])
         add("select-all", lambda: self.selection.select_all(), ["<Ctrl>a"])
         add("terminal-here", self.terminal_here)
@@ -396,6 +561,52 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def _action(self, name):
         return self.lookup_action(name)
+
+    def _update_history_actions(self):
+        self._action("undo").set_enabled(bool(self.history.undo_stack) and
+                                          not self._history_busy and not self.jobs)
+        self._action("redo").set_enabled(bool(self.history.redo_stack) and
+                                          not self._history_busy and not self.jobs)
+
+    def _record_history(self, kind, pairs):
+        try:
+            self.history.record(kind, pairs)
+        except OSError as err:
+            self.toast(str(err))
+        self._update_history_actions()
+
+    def undo(self):
+        self._apply_history("undo")
+
+    def redo(self):
+        self._apply_history("redo")
+
+    def _apply_history(self, direction):
+        if self._history_busy or self.jobs:
+            return
+        stack = self.history.undo_stack if direction == "undo" else self.history.redo_stack
+        if not stack:
+            return
+        self._history_busy = True
+        self._update_history_actions()
+
+        def worker():
+            error = ""
+            try:
+                getattr(self.history, direction)()
+            except (OSError, shutil.Error) as err:
+                error = str(err)
+
+            def finished():
+                self._history_busy = False
+                self._update_history_actions()
+                if error:
+                    self.toast(error)
+                else:
+                    self.reload()
+                return GLib.SOURCE_REMOVE
+            GLib.idle_add(finished)
+        threading.Thread(target=worker, daemon=True).start()
 
     # --------------------------------------------------------- navigation
 
@@ -425,6 +636,9 @@ class FilesWindow(Adw.ApplicationWindow):
         self.banner.set_revealed(in_trash)
         self.set_title(self._display_name(gfile))
         self.split.set_show_content(True)
+        if self.active_tab >= 0:
+            self.tabs[self.active_tab].location = gfile
+            self._render_tabs()
 
     def _display_name(self, gfile):
         if gfile.get_uri_scheme() == "trash":
@@ -824,12 +1038,17 @@ class FilesWindow(Adw.ApplicationWindow):
 
         def finished(_j, error):
             self.jobs.remove(job)
+            if job.history_entry is not None:
+                self.history.push(job.history_entry)
+            self._update_history_actions()
+            self.reload()
             if not self.jobs:
                 self.progress_revealer.set_reveal_child(False)
             if error:
                 self.toast(error)
         job.connect("finished", finished)
         self.jobs.append(job)
+        self._update_history_actions()
         job.start()
 
     def trash_selected(self):
@@ -936,7 +1155,10 @@ class FilesWindow(Adw.ApplicationWindow):
 
         def do(name):
             try:
-                file_of(info).set_display_name(name, None)
+                source = file_of(info).get_path()
+                renamed = file_of(info).set_display_name(name, None)
+                if source and renamed.get_path() and source != renamed.get_path():
+                    self._record_history("move", [(source, renamed.get_path())])
             except GLib.Error as err:
                 self.toast(err.message)
         self._ask_name(_("Rename"), info.get_display_name(), _("Rename"), do,
@@ -948,7 +1170,9 @@ class FilesWindow(Adw.ApplicationWindow):
 
         def do(name):
             try:
-                self.current.get_child(name).make_directory(None)
+                target = self.current.get_child(name)
+                target.make_directory(None)
+                self._record_history("create-folder", [(None, target.get_path())])
             except GLib.Error as err:
                 self.toast(err.message)
         self._ask_name(_("New Folder"), _("Untitled Folder"), _("Create"), do, False)
@@ -956,7 +1180,10 @@ class FilesWindow(Adw.ApplicationWindow):
     def new_file(self):
         if self.current is not None and self.current.get_path() is not None:
             from aurora.files.create import NewItemDialog
-            NewItemDialog(self.get_application(), self.current, self).present()
+            NewItemDialog(self.get_application(), self.current, self,
+                          on_created=lambda target, folder: self._record_history(
+                              "create-folder" if folder else "create-file",
+                              [(None, target.get_path())])).present()
 
     def terminal_here(self):
         path = self.current.get_path()

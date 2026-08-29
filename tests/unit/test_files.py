@@ -68,3 +68,27 @@ def test_copy_into_itself_is_refused(tmp_path):
     err = run_job("copy", [str(src)], str(src))
     assert err
     assert not os.path.exists(src / "src" / "src")
+
+
+def test_copy_keeps_symlink(tmp_path):
+    src = tmp_path / "target.py"
+    src.write_text("print(1)")
+    link = tmp_path / "link.py"
+    link.symlink_to(src.name)
+    dst = tmp_path / "dst"
+    dst.mkdir()
+    assert run_job("copy", [str(link)], str(dst)) == ""
+    assert (dst / "link.py").is_symlink()
+    assert os.readlink(dst / "link.py") == src.name
+
+
+def test_copy_file_refuses_existing_destination(tmp_path):
+    src = tmp_path / "src"
+    dst = tmp_path / "dst"
+    src.write_text("source")
+    dst.write_text("keep")
+    job = Job("copy", [], str(tmp_path))
+    import pytest
+    with pytest.raises(FileExistsError):
+        job._copy_file(str(src), str(dst))
+    assert dst.read_text() == "keep"

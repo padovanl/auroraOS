@@ -1,5 +1,5 @@
 # Aurora OS default prompt. Copy to ~/.config/starship.toml to customise.
-# One compact line: where you are, git, the project's language, then the arrow.
+# One compact line: identity, location, project context, then the arrow.
 add_newline = false
 
 format = """$username$hostname$directory$git_branch$git_status$python$nodejs$rust$golang\
@@ -7,11 +7,11 @@ $docker_context$cmd_duration$character"""
 
 [username]
 style_user = "bold #a970ff"
-format = "[$user]($style) "
-show_always = false
+format = "[$user]($style)"
+show_always = true
 
 [hostname]
-ssh_only = true
+ssh_only = false
 style = "bold #ff6f91"
 format = "[@$hostname]($style) "
 

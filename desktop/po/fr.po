@@ -66,7 +66,7 @@ msgid "speech synthesis failed"
 msgstr "échec de la synthèse vocale"
 
 #: aurora/assistant.py:100 aurora/assistant.py:318 aurora/assistant.py:396
-#: aurora/files/window.py:736
+#: aurora/files/window.py:948
 msgid "Copy"
 msgstr "Copier"
 
@@ -789,14 +789,14 @@ msgstr "Un réseau privé entre vos appareils, basé sur WireGuard."
 msgid "SSH that survives sleep and changing networks."
 msgstr "Un SSH qui survit à la veille et aux changements de réseau."
 
-#: aurora/files/app.py:57 aurora/files/window.py:168 aurora/files/window.py:282
-#: aurora/files/window.py:283 aurora/settingsapp/ai.py:158
+#: aurora/files/app.py:58 aurora/files/window.py:191 aurora/files/window.py:326
+#: aurora/files/window.py:327 aurora/settingsapp/ai.py:158
 #: aurora/settingsapp/applications.py:16 aurora/settingsapp/inputs.py:38
 msgid "Files"
 msgstr "Fichiers"
 
-#: aurora/files/create.py:10 aurora/files/window.py:195
-#: aurora/files/window.py:954
+#: aurora/files/create.py:10 aurora/files/window.py:218
+#: aurora/files/window.py:1175
 msgid "New Folder"
 msgstr "Nouveau dossier"
 
@@ -804,52 +804,52 @@ msgstr "Nouveau dossier"
 msgid "New File"
 msgstr "Nouveau fichier"
 
-#: aurora/files/create.py:18 aurora/files/properties.py:64
-#: aurora/files/window.py:230
+#: aurora/files/create.py:19 aurora/files/properties.py:64
+#: aurora/files/window.py:270
 msgid "Name"
 msgstr "Nom"
 
-#: aurora/files/create.py:18
+#: aurora/files/create.py:19
 msgid "File name"
 msgstr "Nom du fichier"
 
-#: aurora/files/create.py:19 aurora/files/window.py:954
+#: aurora/files/create.py:20 aurora/files/window.py:1175
 msgid "Untitled Folder"
 msgstr "Dossier sans titre"
 
-#: aurora/files/create.py:19
+#: aurora/files/create.py:20
 msgid "Untitled.txt"
 msgstr "Sans titre.txt"
 
-#: aurora/files/create.py:25 aurora/files/window.py:858
-#: aurora/files/window.py:895 aurora/files/window.py:916
+#: aurora/files/create.py:26 aurora/files/window.py:1074
+#: aurora/files/window.py:1111 aurora/files/window.py:1132
 #: aurora/settingsapp/inputs.py:266 aurora/settingsapp/system.py:400
 #: aurora/settingsapp/system.py:469 aurora/settingsapp/system.py:487
 msgid "Cancel"
 msgstr "Annuler"
 
-#: aurora/files/create.py:27 aurora/files/window.py:954
+#: aurora/files/create.py:28 aurora/files/window.py:1175
 msgid "Create"
 msgstr "Créer"
 
-#: aurora/files/operations.py:60
+#: aurora/files/operations.py:63
 msgid "Moving {n} item(s)"
 msgstr "Déplacement de {n} élément(s)"
 
-#: aurora/files/operations.py:61
+#: aurora/files/operations.py:64
 msgid "Copying {n} item(s)"
 msgstr "Copie de {n} élément(s)"
 
-#: aurora/files/operations.py:91
+#: aurora/files/operations.py:96
 msgid "Cannot copy a folder into itself"
 msgstr "Impossible de copier un dossier dans lui-même"
 
-#: aurora/files/operations.py:109
+#: aurora/files/operations.py:124
 msgid "Cancelled"
 msgstr "Annulé"
 
-#: aurora/files/properties.py:28 aurora/files/window.py:744
-#: aurora/files/window.py:757
+#: aurora/files/properties.py:28 aurora/files/window.py:956
+#: aurora/files/window.py:969
 msgid "Properties"
 msgstr "Propriétés"
 
@@ -881,11 +881,11 @@ msgstr "Emplacement"
 msgid "Contents"
 msgstr "Contenu"
 
-#: aurora/files/properties.py:73 aurora/files/window.py:230
+#: aurora/files/properties.py:73 aurora/files/window.py:270
 msgid "Size"
 msgstr "Taille"
 
-#: aurora/files/properties.py:76 aurora/files/window.py:231
+#: aurora/files/properties.py:76 aurora/files/window.py:271
 msgid "Modified"
 msgstr "Modifié"
 
@@ -901,174 +901,190 @@ msgstr "Permissions"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} éléments"
 
-#: aurora/files/window.py:84 aurora/files/window.py:434
+#: aurora/files/window.py:103 aurora/files/window.py:646
 #: aurora/settingsapp/health.py:40
 msgid "Home"
 msgstr "Dossier personnel"
 
-#: aurora/files/window.py:96 aurora/files/window.py:431
+#: aurora/files/window.py:115 aurora/files/window.py:643
 #: aurora/settingsapp/system.py:93 aurora/shell/dock.py:284
 msgid "Trash"
 msgstr "Corbeille"
 
-#: aurora/files/window.py:110 aurora/files/window.py:436
+#: aurora/files/window.py:129 aurora/files/window.py:648
 msgid "Computer"
 msgstr "Ordinateur"
 
-#: aurora/files/window.py:174 aurora/welcome.py:48
+#: aurora/files/window.py:197 aurora/welcome.py:48
 msgid "Back"
 msgstr "Précédent"
 
-#: aurora/files/window.py:176
+#: aurora/files/window.py:199
 msgid "Forward"
 msgstr "Suivant"
 
-#: aurora/files/window.py:196 aurora/files/window.py:751
+#: aurora/files/window.py:219 aurora/files/window.py:963
 #: aurora/shell/wallpaper.py:76
 msgid "New File…"
 msgstr "Nouveau fichier…"
 
-#: aurora/files/window.py:197 aurora/files/window.py:756
+#: aurora/files/window.py:220 aurora/files/window.py:968
 msgid "Open in Terminal"
 msgstr "Ouvrir dans un terminal"
 
-#: aurora/files/window.py:200
+#: aurora/files/window.py:223
+msgid "Undo"
+msgstr "Annuler"
+
+#: aurora/files/window.py:224
+msgid "Redo"
+msgstr "Rétablir"
+
+#: aurora/files/window.py:227
 msgid "Show Hidden Files"
 msgstr "Afficher les fichiers cachés"
 
-#: aurora/files/window.py:201
+#: aurora/files/window.py:228
 msgid "List View"
 msgstr "Vue en liste"
 
-#: aurora/files/window.py:204 aurora/shell/dock.py:215 aurora/shell/dock.py:218
+#: aurora/files/window.py:231 aurora/files/window.py:257
+msgid "New Tab"
+msgstr "Nouvel onglet"
+
+#: aurora/files/window.py:232 aurora/shell/dock.py:215 aurora/shell/dock.py:218
 #: aurora/shell/panel.py:389
 msgid "New Window"
 msgstr "Nouvelle fenêtre"
 
-#: aurora/files/window.py:205
+#: aurora/files/window.py:233
 msgid "About Files"
 msgstr "À propos de Fichiers"
 
-#: aurora/files/window.py:210 aurora/settingsapp/devices.py:42
+#: aurora/files/window.py:238 aurora/settingsapp/devices.py:42
 #: aurora/shell/panel.py:271
 msgid "Search"
 msgstr "Rechercher"
 
-#: aurora/files/window.py:239 aurora/files/window.py:569
+#: aurora/files/window.py:279 aurora/files/window.py:781
 msgid "Folder is Empty"
 msgstr "Le dossier est vide"
 
-#: aurora/files/window.py:263 aurora/files/window.py:747
-#: aurora/files/window.py:896 aurora/shell/dock.py:306
+#: aurora/files/window.py:306 aurora/files/window.py:959
+#: aurora/files/window.py:1112 aurora/shell/dock.py:306
 msgid "Empty Trash"
 msgstr "Vider la corbeille"
 
-#: aurora/files/window.py:264
+#: aurora/files/window.py:307
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "Les éléments de la corbeille sont supprimés définitivement quand elle est vidée"
 
-#: aurora/files/window.py:567
+#: aurora/files/window.py:349
+msgid "Close Tab"
+msgstr "Fermer l’onglet"
+
+#: aurora/files/window.py:779
 msgid "No Results Found"
 msgstr "Aucun résultat"
 
-#: aurora/files/window.py:568
+#: aurora/files/window.py:780
 msgid "Trash is Empty"
 msgstr "La corbeille est vide"
 
-#: aurora/files/window.py:718 aurora/shell/dock.py:279
+#: aurora/files/window.py:930 aurora/shell/dock.py:279
 msgid "Restore"
 msgstr "Restaurer"
 
-#: aurora/files/window.py:719
+#: aurora/files/window.py:931
 msgid "Delete Permanently"
 msgstr "Supprimer définitivement"
 
-#: aurora/files/window.py:721 aurora/quicklook.py:141 aurora/shell/app.py:437
+#: aurora/files/window.py:933 aurora/quicklook.py:141 aurora/shell/app.py:437
 #: aurora/shell/dock.py:305 aurora/shell/sysnotify.py:113
 msgid "Open"
 msgstr "Ouvrir"
 
-#: aurora/files/window.py:722
+#: aurora/files/window.py:934
 msgid "Open With…"
 msgstr "Ouvrir avec…"
 
-#: aurora/files/window.py:723
+#: aurora/files/window.py:935
 msgid "Quick Look"
 msgstr "Coup d'œil"
 
-#: aurora/files/window.py:725
+#: aurora/files/window.py:937
 msgid "Send to Nearby Device…"
 msgstr "Envoyer à un appareil à proximité…"
 
-#: aurora/files/window.py:729
+#: aurora/files/window.py:941
 msgid "Summarize with Aurora"
 msgstr "Résumer avec Aurora"
 
-#: aurora/files/window.py:730
+#: aurora/files/window.py:942
 msgid "Ask Aurora About This File…"
 msgstr "Demander à Aurora à propos de ce fichier…"
 
-#: aurora/files/window.py:735
+#: aurora/files/window.py:947
 msgid "Cut"
 msgstr "Couper"
 
-#: aurora/files/window.py:737
+#: aurora/files/window.py:949
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: aurora/files/window.py:738
+#: aurora/files/window.py:950
 msgid "Rename…"
 msgstr "Renommer…"
 
-#: aurora/files/window.py:741
+#: aurora/files/window.py:953
 msgid "Move to Trash"
 msgstr "Mettre à la corbeille"
 
-#: aurora/files/window.py:750 aurora/shell/wallpaper.py:77
+#: aurora/files/window.py:962 aurora/shell/wallpaper.py:77
 msgid "New Folder…"
 msgstr "Nouveau dossier…"
 
-#: aurora/files/window.py:752
+#: aurora/files/window.py:964
 msgid "Paste"
 msgstr "Coller"
 
-#: aurora/files/window.py:755
+#: aurora/files/window.py:967
 msgid "Select All"
 msgstr "Tout sélectionner"
 
-#: aurora/files/window.py:783
+#: aurora/files/window.py:995
 msgid "{n} item(s) cut"
 msgstr "{n} élément(s) coupé(s)"
 
-#: aurora/files/window.py:783
+#: aurora/files/window.py:995
 msgid "{n} item(s) copied"
 msgstr "{n} élément(s) copié(s)"
 
-#: aurora/files/window.py:843
+#: aurora/files/window.py:1059
 msgid "{n} item(s) moved to the Trash"
 msgstr "{n} élément(s) mis à la corbeille"
 
-#: aurora/files/window.py:856
+#: aurora/files/window.py:1072
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "Supprimer définitivement {n} élément(s) ?"
 
-#: aurora/files/window.py:857
+#: aurora/files/window.py:1073
 msgid "Deleted items cannot be restored."
 msgstr "Les éléments supprimés ne peuvent pas être restaurés."
 
-#: aurora/files/window.py:859 aurora/settingsapp/ai.py:329
+#: aurora/files/window.py:1075 aurora/settingsapp/ai.py:329
 msgid "Delete"
 msgstr "Supprimer"
 
-#: aurora/files/window.py:893
+#: aurora/files/window.py:1109
 msgid "Empty Trash?"
 msgstr "Vider la corbeille ?"
 
-#: aurora/files/window.py:894
+#: aurora/files/window.py:1110
 msgid "All items in the Trash will be permanently deleted."
 msgstr "Tous les éléments de la corbeille seront supprimés définitivement."
 
-#: aurora/files/window.py:942
+#: aurora/files/window.py:1161
 msgid "Rename"
 msgstr "Renommer"
 
