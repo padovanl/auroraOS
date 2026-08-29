@@ -12,6 +12,7 @@ from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora.files.app import FilesApp
 from aurora.files.create import NewItemDialog
+from aurora.shell.launcher import AppTile
 from aurora.shell import desktopicons
 from aurora.shell.wallpaper import Wallpaper
 
@@ -94,6 +95,74 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     assert (root / "Desktop/New folder").is_dir()
     print("ok: desktop new-folder callback")
 
+    desktopicons.DesktopIcons._order_path = staticmethod(lambda: str(root / "order.json"))
+    (root / "Desktop/a.txt").write_text("a")
+    (root / "Desktop/b.txt").write_text("b")
+    icons = desktopicons.DesktopIcons()
+    icons.reorder("b.txt", "a.txt")
+    assert icons._load_order().index("b.txt") < icons._load_order().index("a.txt")
+    buttons = []
+    child = icons.get_first_child()
+    while child is not None:
+        buttons.append(child.get_child())
+        child = child.get_next_sibling()
+    a_icon = next(button for button in buttons if button.gfile and
+                  button.gfile.get_basename() == "a.txt")
+    controls = a_icon.observe_controllers()
+    assert any(isinstance(controls.get_item(i), Gtk.DragSource)
+               for i in range(controls.get_n_items()))
+    assert any(isinstance(controls.get_item(i), Gtk.DropTarget)
+               for i in range(controls.get_n_items()))
+    icons.transfer([str(root / "Desktop/a.txt")], str(root / "Desktop/New folder"), move=True)
+    settle(lambda: (root / "Desktop/New folder/a.txt").exists())
+    assert not (root / "Desktop/a.txt").exists()
+    print("ok: desktop icon reordering and move into folder")
+    icon_window = Gtk.Window(child=icons, default_width=450, default_height=300)
+    icon_window.present()
+    settle(lambda: icon_window.get_width() > 0)
+    child = icons.get_first_child()
+    while child is not None and (child.get_child().gfile is None or
+                                  child.get_child().gfile.get_basename() != "b.txt"):
+        child = child.get_next_sibling()
+    assert child is not None
+    child.get_child().show_menu(8, 8)
+    pop = child.get_child().get_last_child()
+    assert isinstance(pop, Gtk.Popover)
+    labels = []
+    button = pop.get_child().get_first_child()
+    while button is not None:
+        if isinstance(button, Gtk.Button):
+            labels.append(button.get_label())
+        button = button.get_next_sibling()
+    assert {"Open", "Rename…", "Move to Trash"}.issubset(labels)
+    pop.popdown()
+    icon_window.close()
+    print("ok: desktop file context menu")
+
+    app_info = Gio.DesktopAppInfo.new("org.aurora.Files.desktop")
+    assert app_info is not None
+    tile = AppTile(app_info, SimpleNamespace())
+    tile_grid = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE)
+    tile_grid.append(tile)
+    tile_window = Gtk.Window(child=tile_grid, default_width=200, default_height=160)
+    tile_window.present()
+    settle(lambda: tile_window.get_width() > 0)
+    tile._show_menu(None, 1, 10, 10)
+    app_menu = tile.get_last_child()
+    assert isinstance(app_menu, Gtk.Popover)
+    labels = []
+    button = app_menu.get_child().get_first_child()
+    while button is not None:
+        if isinstance(button, Gtk.Button):
+            labels.append(button.get_label())
+        button = button.get_next_sibling()
+    assert {"Open", "New Window", "Add to Desktop", "Show in Files"}.issubset(labels)
+    tile._add_to_desktop()
+    assert (root / "Desktop/org.aurora.Files.desktop").exists()
+    app_menu.popdown()
+    tile_window.close()
+    print("ok: app launcher context menu and desktop shortcut")
+
     win.new_tab(Gio.File.new_for_path(str(root / "Desktop")))
     settle(lambda: win.current.get_path() == str(root / "Desktop"))
     win.open_location(Gio.File.new_for_path(str(root)))
@@ -120,6 +189,14 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     win.redo()
     settle(lambda: (empty / "existing.txt").exists() and win._action("undo").get_enabled())
     print("ok: dropped file copy and undo/redo")
+    moved = root / "move.txt"
+    moved.write_text("move me")
+    move_list = Gdk.FileList.new_from_list([Gio.File.new_for_path(str(moved))])
+    assert win._drop_on_location(move_list, Gio.File.new_for_path(str(empty)), move=True)
+    settle(lambda: (empty / "move.txt").exists() and not moved.exists())
+    win.undo()
+    settle(lambda: moved.exists() and not (empty / "move.txt").exists())
+    print("ok: dropped file move and undo")
     win._on_context_click(None, 1, 100, 100, win.view_stack)
     menu = win.context_menu.get_menu_model()
     section = menu.get_item_link(0, "section")

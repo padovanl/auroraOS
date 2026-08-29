@@ -40,7 +40,9 @@ command -v direnv >/dev/null && eval "$(direnv hook bash)"
 command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --shell bash)"
 
 # Prompt: starship with Aurora's config unless the user has their own.
-if command -v starship >/dev/null; then
+if [ "${EUID:-$(id -u)}" -eq 0 ]; then
+    PS1='\u@\h:\w# '
+elif command -v starship >/dev/null; then
     [ -f "$HOME/.config/starship.toml" ] || export STARSHIP_CONFIG=/etc/aurora/starship.toml
     eval "$(starship init bash)"
 fi

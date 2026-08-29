@@ -91,9 +91,10 @@ class Sidebar(Gtk.ListBox):
         row.file = file
         row.volume = volume
         if file is not None and file.get_path() is not None and os.path.isdir(file.get_path()):
-            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             target.connect("drop", lambda _t, value, _x, _y, dest=file:
-                           self.drop_callback(value, dest) if self.drop_callback else False)
+                           self.drop_callback(value, dest, move=FilesWindow._drop_is_move(_t))
+                           if self.drop_callback else False)
             row.add_controller(target)
         self.append(row)
 
@@ -289,7 +290,7 @@ class FilesWindow(Adw.ApplicationWindow):
                                  propagation_phase=Gtk.PropagationPhase.CAPTURE)
         click.connect("pressed", self._on_context_click, self.view_stack)
         self.view_stack.add_controller(click)
-        drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+        drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
         drop.connect("drop", self._drop_on_view)
         self.view_stack.add_controller(drop)
         for view in (self.grid, self.list):
@@ -349,9 +350,9 @@ class FilesWindow(Adw.ApplicationWindow):
                                tooltip_text=_("Close Tab"))
             close.connect("clicked", lambda _b, i=index: self.close_tab(i))
             chip.append(close)
-            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)
+            target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             target.connect("drop", lambda _t, value, _x, _y, dest=state.location:
-                           self._drop_on_location(value, dest))
+                           self._drop_on_location(value, dest, move=self._drop_is_move(_t)))
             chip.add_controller(target)
             self.tab_buttons.append(chip)
 
@@ -422,9 +423,13 @@ class FilesWindow(Adw.ApplicationWindow):
                                  ellipsize=Pango.EllipsizeMode.MIDDLE,
                                  justify=Gtk.Justification.CENTER, max_width_chars=14))
             item.set_child(box)
-            drag = Gtk.DragSource(actions=Gdk.DragAction.COPY)
+            drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
             drag.connect("prepare", self._drag_prepare, item)
             box.add_controller(drag)
+            folder_drop = Gtk.DropTarget.new(Gdk.FileList,
+                                              Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            folder_drop.connect("drop", self._drop_on_item, item)
+            box.add_controller(folder_drop)
 
         def bind(_f, item):
             info = item.get_item()
@@ -451,9 +456,13 @@ class FilesWindow(Adw.ApplicationWindow):
             else:
                 item.set_child(Gtk.Label(xalign=0, css_classes=["dim-label", "numeric"]))
             if kind == "name":
-                drag = Gtk.DragSource(actions=Gdk.DragAction.COPY)
+                drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
                 drag.connect("prepare", self._drag_prepare, item)
                 item.get_child().add_controller(drag)
+                folder_drop = Gtk.DropTarget.new(Gdk.FileList,
+                                                  Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+                folder_drop.connect("drop", self._drop_on_item, item)
+                item.get_child().add_controller(folder_drop)
 
         def bind(_f, item):
             info = item.get_item()
@@ -482,7 +491,21 @@ class FilesWindow(Adw.ApplicationWindow):
             return None
         return Gdk.ContentProvider.new_for_value(Gdk.FileList.new_from_list(files))
 
-    def _drop_on_location(self, value, destination):
+    @staticmethod
+    def _drop_is_move(target):
+        drop = target.get_current_drop() if target is not None else None
+        if drop is None:
+            return False
+        actions = drop.get_actions()
+        return bool(actions & Gdk.DragAction.MOVE) and not bool(actions & Gdk.DragAction.COPY)
+
+    def _drop_on_item(self, target, value, _x, _y, item):
+        info = item.get_item()
+        if info is None or not is_dir(info):
+            return False
+        return self._drop_on_location(value, file_of(info), move=self._drop_is_move(target))
+
+    def _drop_on_location(self, value, destination, move=False):
         if not isinstance(value, Gdk.FileList) or destination is None:
             return False
         target = destination.get_path()
@@ -491,7 +514,7 @@ class FilesWindow(Adw.ApplicationWindow):
         paths = [f.get_path() for f in value.get_files() if f.get_path()]
         if not paths:
             return False
-        self._run_job("copy", paths, target)
+        self._run_job("move" if move else "copy", paths, target)
         return True
 
     def _drop_on_view(self, _target, value, x, y):
@@ -503,7 +526,8 @@ class FilesWindow(Adw.ApplicationWindow):
             info = self.model.get_item(pos)
             if info is not None and is_dir(info):
                 destination = file_of(info)
-        return self._drop_on_location(value, destination)
+        return self._drop_on_location(value, destination,
+                                      move=self._drop_is_move(_target))
 
     # ----------------------------------------------------------- actions
 

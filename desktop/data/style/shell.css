@@ -45,9 +45,11 @@ window.aurora-layer {
 
 .panel-app-count { font-size: 0.8em; font-weight: 700; min-width: 16px; padding: 0 5px;
   border-radius: 999px; background-color: alpha(@shell_fg, 0.16); color: @shell_fg; }
-.panel-minimized { padding-left: 8px; border-left: 1px solid @shell_border; }
-.panel-minimized-item image { opacity: 0.8; }
-.panel-minimized-item:hover image { opacity: 1; }
+.panel-windows { padding-left: 8px; border-left: 1px solid @shell_border; }
+.panel-window { padding: 1px 7px; }
+.panel-window.focused { background-color: alpha(@aurora_violet, 0.28); }
+.panel-window.minimized { opacity: 0.62; }
+.panel-window:hover { background-color: alpha(@aurora_violet, 0.22); opacity: 1; }
 
 .panel-app-name {
   font-weight: 700;
@@ -150,9 +152,6 @@ window.aurora-layer {
 .dock-peek-card.active { background-color: alpha(@shell_fg, 0.1); }
 .dock-peek-card label { font-size: 0.9em; }
 .dock-bottom .dock-dots { min-height: 6px; }
-.dock-minimized image:not(.dock-badge) { opacity: 0.85; }
-.dock-badge { background-color: @aurora_violet; color: white; border-radius: 999px; padding: 2px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
 .dock-left .dock-dots, .dock-right .dock-dots { min-width: 6px; }
 
 .dock-separator {
@@ -314,4 +313,14 @@ window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-hei
 /* ---- Aurora Assistant button in the top bar ---- */
 .panel-assistant image { color: #d9b8ff; }
 .panel-assistant:hover image { color: #ffffff; }
-popover.aurora-context-menu contents { min-width: 250px; }
+popover.aurora-context-menu contents {
+  min-width: 250px;
+  padding: 7px;
+  border-radius: 12px;
+}
+popover.aurora-context-menu button.model { margin: 2px 0; min-height: 34px; padding: 5px 12px; border-radius: 8px; }
+popover.aurora-context-menu button.model:hover,
+popover.aurora-context-menu button.model:focus { background-color: alpha(@aurora_violet, 0.3); }
+popover.aurora-context-menu button.context-action { margin: 2px 0; min-height: 34px; padding: 6px 12px; border-radius: 8px; }
+popover.aurora-context-menu button.context-action:hover,
+popover.aurora-context-menu button.context-action:focus { background-color: alpha(@aurora_violet, 0.3); }

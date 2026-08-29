@@ -3,11 +3,14 @@
 
 import os
 import re
+import json
 
-from gi.repository import Gdk, Gio, GLib, Gtk, Pango
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
-from aurora import settings
+from aurora import apps, settings
 from aurora.files.icons import icon_for
+from aurora.files.operations import Job
+from aurora.i18n import _
 
 MAX_ITEMS = 40
 
@@ -83,8 +86,40 @@ class DesktopIcon(Gtk.Button):
         click = Gtk.GestureClick(propagation_phase=Gtk.PropagationPhase.CAPTURE)
         click.connect("pressed", self._on_press)
         self.add_controller(click)
+        right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
+                                 propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        right.connect("pressed", self._on_right_click)
+        self.add_controller(right)
+        if self.gfile is not None:
+            drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+            drag.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(
+                Gdk.FileList.new_from_list([self.gfile])))
+            self.add_controller(drag)
+            drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            drop.connect("drop", self._on_drop)
+            self.add_controller(drop)
+
+    def _on_drop(self, _target, value, _x, _y):
+        if not isinstance(value, Gdk.FileList) or self.gfile is None:
+            return False
+        paths = [f.get_path() for f in value.get_files() if f.get_path()]
+        parent = self.get_ancestor(DesktopIcons)
+        target = self.gfile.get_path()
+        if not paths or parent is None or target is None or target in paths:
+            return False
+        if os.path.isdir(target):
+            actions = _target.get_current_drop().get_actions()
+            parent.transfer(paths, target, move=bool(actions & Gdk.DragAction.MOVE) and
+                            not bool(actions & Gdk.DragAction.COPY))
+            return True
+        if len(paths) == 1 and os.path.dirname(paths[0]) == desktop_dir():
+            parent.reorder(os.path.basename(paths[0]), os.path.basename(target))
+            return True
+        return False
 
     def _on_press(self, _gesture, n_press, _x, _y):
+        if _gesture.get_current_button() != Gdk.BUTTON_PRIMARY:
+            return
         # One selected icon at a time; a click on empty desktop clears it.
         parent = self.get_ancestor(DesktopIcons)
         if parent is not None:
@@ -96,8 +131,133 @@ class DesktopIcon(Gtk.Button):
                 return
             open_file(self.gfile)
 
+    def _on_right_click(self, gesture, _n, x, y):
+        if self.gfile is not None:
+            self.show_menu(x, y)
+            gesture.set_state(Gtk.EventSequenceState.CLAIMED)
+
+    def show_menu(self, x, y):
+        if self.gfile is None:
+            return
+        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop.set_parent(self)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
+                      margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
+
+        def row(label, callback):
+            button = Gtk.Button(label=label, css_classes=["flat", "context-action"])
+            button.get_child().set_xalign(0)
+            button.connect("clicked", lambda *_: (pop.popdown(), callback()))
+            box.append(button)
+
+        row(_("Open"), lambda: open_file(self.gfile))
+        row(_("Open in Files"), lambda: apps.spawn(
+            ["aurora-files", self.gfile.get_path() if os.path.isdir(self.gfile.get_path())
+             else os.path.dirname(self.gfile.get_path())]))
+        box.append(Gtk.Separator())
+        row(_("Copy"), lambda: self.get_clipboard().set(
+            Gdk.FileList.new_from_list([self.gfile])))
+        row(_("Rename…"), self._rename)
+        row(_("Move to Trash"), self._trash)
+        row(_("Properties"), self._properties)
+        pop.set_child(box)
+        rect = Gdk.Rectangle()
+        rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
+        pop.set_pointing_to(rect)
+        pop.popup()
+
+    def _rename(self):
+        dialog = Adw.AlertDialog(heading=_("Rename"))
+        entry = Gtk.Entry(text=self.gfile.get_basename(), activates_default=True)
+        dialog.set_extra_child(entry)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("rename", _("Rename"))
+        dialog.set_default_response("rename")
+
+        def done(_dialog, response):
+            name = entry.get_text().strip()
+            if response == "rename" and name and name not in (".", "..") and "/" not in name:
+                try:
+                    self.gfile.set_display_name(name, None)
+                except GLib.Error as err:
+                    print(f"aurora: desktop rename failed: {err.message}")
+        dialog.connect("response", done)
+        dialog.present(self.get_root())
+        entry.grab_focus()
+
+    def _trash(self):
+        try:
+            self.gfile.trash(None)
+        except GLib.Error as err:
+            print(f"aurora: desktop trash failed: {err.message}")
+
+    def _properties(self):
+        from aurora.files.properties import PropertiesDialog
+        PropertiesDialog([self.gfile]).present(self.get_root())
+
 
 class DesktopIcons(Gtk.FlowBox):
+    @staticmethod
+    def _order_path():
+        base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+        return os.path.join(base, "aurora", "desktop-icons.json")
+
+    def _load_order(self):
+        try:
+            with open(self._order_path(), encoding="utf-8") as stream:
+                value = json.load(stream)
+            return [name for name in value if isinstance(name, str)] if isinstance(value, list) else []
+        except (OSError, ValueError):
+            return []
+
+    def _save_order(self, order):
+        path = self._order_path()
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            temporary = path + ".tmp"
+            with open(temporary, "w", encoding="utf-8") as stream:
+                json.dump(order, stream)
+            os.replace(temporary, path)
+        except OSError as err:
+            print(f"aurora: cannot save desktop icon order: {err}")
+
+    def reorder(self, source, target):
+        names = []
+        child = self.get_first_child()
+        while child is not None:
+            icon = child.get_child()
+            if icon.gfile is not None:
+                names.append(icon.gfile.get_basename())
+            child = child.get_next_sibling()
+        if source not in names or target not in names or source == target:
+            return
+        names.remove(source)
+        names.insert(names.index(target), source)
+        self._save_order(names)
+        self.reload()
+
+    def reorder_to_end(self, source):
+        names = []
+        child = self.get_first_child()
+        while child is not None:
+            icon = child.get_child()
+            if icon.gfile is not None:
+                names.append(icon.gfile.get_basename())
+            child = child.get_next_sibling()
+        if source in names:
+            names.remove(source)
+            names.append(source)
+            self._save_order(names)
+            self.reload()
+
+    def transfer(self, paths, target, move=False):
+        kind = "move" if move else "copy"
+        job = Job(kind, paths, target)
+        job.connect("finished", lambda _j, error: print(f"aurora: desktop drop: {error}")
+                    if error else self.reload())
+        job.start()
+
     def select(self, icon=None):
         child = self.get_first_child()
         while child is not None:
@@ -159,8 +319,10 @@ class DesktopIcons(Gtk.FlowBox):
         except GLib.Error:
             pass
         # Folders first, then by name with numbers in order (file-2 before file-10).
-        infos.sort(key=lambda i: (i.get_file_type() != Gio.FileType.DIRECTORY,
-                                  natural_key(i.get_display_name())))
+        order = {name: index for index, name in enumerate(self._load_order())}
+        infos.sort(key=lambda i: (0, order[i.get_name()]) if i.get_name() in order else
+                   (1, i.get_file_type() != Gio.FileType.DIRECTORY,
+                    natural_key(i.get_display_name())))
         shown = 0
         # The live system offers the installer on the desktop, like Ubuntu's.
         installer = Gio.DesktopAppInfo.new("aurora-installer.desktop") if is_live() else None

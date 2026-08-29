@@ -1,5 +1,8 @@
 """App launcher: Spotlight-style search bar and Launchpad-style app grid."""
 
+import os
+import shutil
+
 from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
@@ -18,9 +21,10 @@ def _icon_image(icon, size):
 
 
 class AppTile(Gtk.FlowBoxChild):
-    def __init__(self, app):
+    def __init__(self, app, shell):
         super().__init__(css_classes=["launcher-tile"])
         self.app = app
+        self.shell = shell
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
                       halign=Gtk.Align.CENTER)
         box.append(_icon_image(app.get_icon() or "application-x-executable", 64))
@@ -31,6 +35,63 @@ class AppTile(Gtk.FlowBoxChild):
         self.set_child(box)
         self.set_tooltip_text(app.get_description())
         self.name = (app.get_display_name() or "").lower()
+        right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
+        right.connect("pressed", self._show_menu)
+        self.add_controller(right)
+
+    def _show_menu(self, _gesture, _n, x, y):
+        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop.set_parent(self)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        box.set_margin_top(5)
+        box.set_margin_bottom(5)
+        box.set_margin_start(5)
+        box.set_margin_end(5)
+
+        def row(label, callback):
+            button = Gtk.Button(label=label, css_classes=["flat", "context-action"])
+            button.get_child().set_xalign(0)
+            button.connect("clicked", lambda *_: (pop.popdown(), callback()))
+            box.append(button)
+
+        row(_("Open"), lambda: self.shell.launcher._run(
+            lambda: self.shell.launch_app(self.app)))
+        actions = list(self.app.list_actions())
+        new_window = next((a for a in actions if a.replace("_", "-").lower()
+                           in ("new-window", "new-window-action", "window")), None)
+        row(_("New Window"), lambda: self.shell.launcher._run(
+            lambda: self.shell.launch_app(self.app, action=new_window)))
+        box.append(Gtk.Separator())
+        key = self.app.get_id()
+        s = settings.get()
+        favs = list(s.get_strv("dock-favorites")) if s else []
+        if key in favs:
+            row(_("Remove from Dock"), lambda: s.set_strv(
+                "dock-favorites", [f for f in favs if f != key]))
+        else:
+            row(_("Keep in Dock"), lambda: s.set_strv("dock-favorites", favs + [key])
+                if s else None)
+        row(_("Add to Desktop"), self._add_to_desktop)
+        row(_("Show in Files"), lambda: apps.spawn(
+            ["aurora-files", os.path.dirname(self.app.get_filename())]))
+        pop.set_child(box)
+        rect = Gdk.Rectangle()
+        rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
+        pop.set_pointing_to(rect)
+        pop.popup()
+
+    def _add_to_desktop(self):
+        from aurora.files.operations import unique_destination
+        from aurora.shell.desktopicons import desktop_dir
+        source = self.app.get_filename()
+        if not source or not os.path.isfile(source):
+            return
+        try:
+            os.makedirs(desktop_dir(), exist_ok=True)
+            shutil.copy2(source, unique_destination(desktop_dir(), os.path.basename(source)))
+        except OSError as err:
+            print(f"aurora: cannot add app to desktop: {err}")
 
 
 class ResultRow(Gtk.ListBoxRow):
@@ -123,7 +184,7 @@ class Launcher(LayerWindow):
     def _populate(self):
         self.grid.remove_all()
         for app in apps.all_apps():
-            self.grid.append(AppTile(app))
+            self.grid.append(AppTile(app, self.shell))
 
     def _on_search(self, entry):
         text = entry.get_text()
@@ -167,7 +228,7 @@ class Launcher(LayerWindow):
         GLib.idle_add(lambda: (fn(), False)[1])
 
     def _on_tile(self, _grid, tile):
-        self._run(lambda: apps.launch(tile.app))
+        self._run(lambda: self.shell.launch_app(tile.app))
 
     def _on_row(self, _list, row):
         self._run(row.result.activate)

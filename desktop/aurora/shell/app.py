@@ -124,6 +124,7 @@ class Shell(Adw.Application):
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
         self.panels = PerMonitor(lambda m: Panel(self, m))
         self.docks = PerMonitor(lambda m: Dock(self, m))
+        self._startup_cursor_source = 0
         from aurora.shell.hotcorners import HotCorners
         from aurora.shell.overview import Overview
         self.overview = Overview(self)
@@ -198,6 +199,24 @@ class Shell(Adw.Application):
                 Gdk.Display.get_default(), self._dyn_css,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
         self._dyn_css.load_from_string(css)
+
+    def launch_app(self, app, action=None):
+        surfaces = (self.wallpapers.windows() + self.panels.windows() +
+                    self.docks.windows() + [self.launcher])
+        for surface in surfaces:
+            surface.set_cursor_from_name("progress")
+        if self._startup_cursor_source:
+            GLib.source_remove(self._startup_cursor_source)
+
+        def clear():
+            self._startup_cursor_source = 0
+            for surface in surfaces:
+                if surface.get_native() is not None:
+                    surface.set_cursor(None)
+            return GLib.SOURCE_REMOVE
+
+        self._startup_cursor_source = GLib.timeout_add(2200, clear)
+        return apps.launch(app, action=action)
 
     def _load_css(self):
         provider = Gtk.CssProvider()

@@ -3,3 +3,19 @@
 decoration {
   border-radius: 12px 12px 0 0;
 }
+
+menu {
+  padding: 6px;
+  border-radius: 10px;
+}
+
+menu menuitem {
+  min-height: 28px;
+  padding: 4px 12px;
+  border-radius: 7px;
+}
+
+menu menuitem:hover,
+menu menuitem:focus {
+  background-color: alpha(@theme_selected_bg_color, 0.30);
+}

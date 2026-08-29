@@ -253,9 +253,14 @@ class Panel(LayerWindow):
                                        margin_start=2)
         self.app_menu.set_create_popup_func(self._fill_app_menu)
         left.append(self.app_menu)
-        # Minimized windows, one icon each: a click brings the window back.
-        self.minimized = Gtk.Box(spacing=2, margin_start=10, css_classes=["panel-minimized"])
-        left.append(self.minimized)
+        # Every open window gets a switcher button, including minimized ones.
+        self.windows = Gtk.Box(spacing=2, css_classes=["panel-windows"])
+        self.window_scroll = Gtk.ScrolledWindow(child=self.windows,
+                                               hscrollbar_policy=Gtk.PolicyType.NEVER,
+                                               vscrollbar_policy=Gtk.PolicyType.NEVER,
+                                               propagate_natural_width=True,
+                                               max_content_width=650)
+        left.append(self.window_scroll)
         bar.set_start_widget(left)
 
         right = Gtk.Box(spacing=2)
@@ -313,28 +318,34 @@ class Panel(LayerWindow):
         self.set_keyboard(Keyboard.NONE)
         GLib.timeout_add(150, lambda: self.set_keyboard(Keyboard.ON_DEMAND) or False)
 
-    def _update_minimized(self):
-        while (c := self.minimized.get_first_child()) is not None:
-            self.minimized.remove(c)
-        windows = [t for t in self.shell.toplevels.toplevels if t.minimized]
-        labels = window_labels(list(self.shell.toplevels.toplevels), _("Window"))
-        for t in sorted(windows, key=lambda w: w.serial):
+    def _update_windows(self):
+        while (child := self.windows.get_first_child()) is not None:
+            self.windows.remove(child)
+        windows = sorted(self.shell.toplevels.toplevels, key=lambda w: w.serial)
+        labels = window_labels(windows, _("Window"))
+        for t in windows:
             app = apps.find_app(t.app_id)
             icon = Gtk.Image(pixel_size=16)
             if app and app.get_icon():
                 icon.set_from_gicon(app.get_icon())
             else:
                 icon.set_from_icon_name("application-x-executable")
-            name = app.get_display_name() if app else (t.app_id or "")
-            b = Gtk.Button(child=icon, css_classes=["flat", "panel-button", "panel-minimized-item"],
-                           tooltip_text=_("{title} (minimized) — click to restore").format(
-                               title=labels.get(t) or name))
+            name = labels.get(t) or (app.get_display_name() if app else t.app_id)
+            content = Gtk.Box(spacing=5)
+            content.append(icon)
+            content.append(Gtk.Label(label=name, ellipsize=3, max_width_chars=16))
+            classes = ["flat", "panel-button", "panel-window"]
+            if t.activated:
+                classes.append("focused")
+            if t.minimized:
+                classes.append("minimized")
+            b = Gtk.Button(child=content, css_classes=classes, tooltip_text=t.title or name)
             b.connect("clicked", lambda _b, t=t: t.activate())
-            self.minimized.append(b)
-        self.minimized.set_visible(bool(windows))
+            self.windows.append(b)
+        self.window_scroll.set_visible(bool(windows))
 
     def _update_app(self):
-        self._update_minimized()
+        self._update_windows()
         active = self.shell.toplevels.active()
         if active is None:
             self.app_name.set_label(_("Desktop"))
@@ -356,8 +367,10 @@ class Panel(LayerWindow):
         """The focused app's windows (click one to bring it forward), then
         New Window and Quit."""
         active = self.shell.toplevels.active()
-        pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START)
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+                          css_classes=["aurora-context-menu"])
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
+                      margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
         pop.set_child(box)
         button.set_popover(pop)
         if active is None:
@@ -367,7 +380,7 @@ class Panel(LayerWindow):
         labels = window_labels(windows, _("Window"))
 
         def add(label, callback, checked=None):
-            b = Gtk.Button(css_classes=["flat"])
+            b = Gtk.Button(css_classes=["flat", "context-action"])
             row = Gtk.Box(spacing=8)
             if checked is not None:  # a window: a check mark on the focused one
                 row.append(Gtk.Image(icon_name="object-select-symbolic" if checked else None,

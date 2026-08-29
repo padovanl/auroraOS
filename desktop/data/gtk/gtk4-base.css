@@ -8,3 +8,19 @@ window.csd > .titlebar {
 popover > contents {
   border-radius: 14px;
 }
+
+popover.menu > contents {
+  padding: 6px;
+}
+
+popover.menu button.model {
+  min-height: 32px;
+  padding: 5px 12px;
+  margin: 2px 0;
+  border-radius: 8px;
+}
+
+popover.menu button.model:hover,
+popover.menu button.model:focus {
+  background-color: alpha(@accent_bg_color, 0.25);
+}

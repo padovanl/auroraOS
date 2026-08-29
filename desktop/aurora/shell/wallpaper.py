@@ -36,6 +36,9 @@ class Wallpaper(LayerWindow):
             clear = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY)
             clear.connect("pressed", self._on_background_click)
             overlay.add_controller(clear)
+            drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            drop.connect("drop", self._on_drop)
+            overlay.add_controller(drop)
         self._menu = self._build_menu(overlay)
 
         click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
@@ -53,6 +56,28 @@ class Wallpaper(LayerWindow):
                 return  # the icon handles its own click
             widget = widget.get_parent()
         self._icons.select(None)
+
+    def _on_drop(self, _target, value, x, y):
+        from aurora.shell.desktopicons import DesktopIcon, desktop_dir
+        if not isinstance(value, Gdk.FileList) or self._icons is None:
+            return False
+        picked = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
+        if picked is not None and (isinstance(picked, DesktopIcon) or
+                                   picked.get_ancestor(DesktopIcon) is not None):
+            return False  # the icon's own target handles folders and reordering
+        paths = [f.get_path() for f in value.get_files() if f.get_path()]
+        if not paths:
+            return False
+        import os
+        if len(paths) == 1 and os.path.dirname(paths[0]) == desktop_dir():
+            self._icons.reorder_to_end(os.path.basename(paths[0]))
+            return True
+        os.makedirs(desktop_dir(), exist_ok=True)
+        actions = _target.get_current_drop().get_actions()
+        self._icons.transfer(paths, desktop_dir(),
+                             move=bool(actions & Gdk.DragAction.MOVE) and
+                             not bool(actions & Gdk.DragAction.COPY))
+        return True
 
     def reload(self):
         path = self.app.daycycle.wallpaper()
@@ -105,6 +130,14 @@ class Wallpaper(LayerWindow):
         dialog.present()
 
     def _on_right_click(self, gesture, _n, x, y):
+        from aurora.shell.desktopicons import DesktopIcon
+        picked = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
+        icon = picked if isinstance(picked, DesktopIcon) else (
+            picked.get_ancestor(DesktopIcon) if picked is not None else None)
+        if icon is not None and icon.gfile is not None:
+            cx, cy = self.get_child().translate_coordinates(icon, x, y)[-2:]
+            icon.show_menu(cx, cy)
+            return
         self._menu.set_position(Gtk.PositionType.TOP if y > self.get_height() / 2
                                 else Gtk.PositionType.BOTTOM)
         rect = Gdk.Rectangle()

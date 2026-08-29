@@ -92,8 +92,10 @@ class DockItem(Gtk.Button):
         hover.connect("enter", lambda *_: self._peek_later())
         hover.connect("leave", lambda *_: self._peek_cancel(close=True))
         self.add_controller(hover)
-        if app is not None:
+        if app is not None or (key not in ("launchpad", "trash") and
+                               not key.startswith("min:")):
             self.connect("clicked", self._on_click)
+        if app is not None:
             middle = Gtk.GestureClick(button=Gdk.BUTTON_MIDDLE)
             middle.connect("pressed", lambda *_: self.launch())
             self.add_controller(middle)
@@ -106,6 +108,8 @@ class DockItem(Gtk.Button):
 
     def set_windows(self, windows):
         self.windows = windows
+        if self.app is None and windows:
+            self.set_tooltip_text(windows[0].title or windows[0].app_id or _("Window"))
         while (c := self.dots.get_first_child()) is not None:
             self.dots.remove(c)
         for w in windows[:MAX_DOTS]:
@@ -188,7 +192,7 @@ class DockItem(Gtk.Button):
         if self.app:
             self.add_css_class("launching")
             GLib.timeout_add(1200, lambda: self.remove_css_class("launching"))
-            apps.launch(self.app)
+            self.dock.shell.launch_app(self.app)
 
     def _on_click(self, *_a):
         if not self.windows:
@@ -238,45 +242,24 @@ class DockItem(Gtk.Button):
         entries = self.menu_entries()
         if not entries:
             return
-        pop = Gtk.Popover(has_arrow=True, position=self.dock.popover_side)
+        pop = Gtk.Popover(has_arrow=True, position=self.dock.popover_side,
+                          css_classes=["aurora-context-menu"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
+                      margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
         for entry in entries:
             if entry is None:
                 box.append(Gtk.Separator())
                 continue
             label, cb = entry
-            b = Gtk.Button(label=label, css_classes=["flat"])
+            b = Gtk.Button(label=label, css_classes=["flat", "context-action"])
             b.get_child().set_xalign(0)
             b.connect("clicked", lambda _b, cb=cb: (pop.popdown(), cb()))
             box.append(b)
         pop.set_child(box)
         self.dock.hold(pop)
         pop.popup()
-
-
-class MinimizedItem(DockItem):
-    """A minimized window, kept at the end of the dock like on a Mac: one click
-    brings it back."""
-
-    def __init__(self, dock, window, app):
-        super().__init__(dock, f"min:{id(window)}", icon=(app.get_icon() if app and app.get_icon()
-                                                        else "application-x-executable"),
-                         tooltip=window.title or (app.get_display_name() if app else _("Window")))
-        self.window = window
-        self.add_css_class("dock-minimized")
-        badge = Gtk.Image(icon_name="go-down-symbolic", pixel_size=12, css_classes=["dock-badge"],
-                          halign=Gtk.Align.END, valign=Gtk.Align.END)
-        overlay = Gtk.Overlay()
-        content = self.get_child()
-        self.set_child(overlay)
-        overlay.set_child(content)
-        overlay.add_overlay(badge)
-        self.connect("clicked", lambda *_: self.window.activate())
-
-    def menu_entries(self):
-        return [(_("Restore"), self.window.activate), None, (_("Close"), self.window.close)]
 
 
 class TrashItem(DockItem):
@@ -487,16 +470,6 @@ class Dock(LayerWindow):
             item.set_windows(sorted(windows, key=lambda w: w.serial, reverse=True))
             self._items[key] = item
             self.box.append(item)
-
-        # Minimized windows, each with its own icon, before the Trash.
-        minimized = [t for t in self.shell.toplevels.toplevels if t.minimized]
-        if minimized:
-            self.box.append(self._separator())
-            for t in sorted(minimized, key=lambda w: w.serial):
-                key = f"min:{id(t)}"
-                item = old.get(key) or MinimizedItem(self, t, apps.find_app(t.app_id))
-                self._items[key] = item
-                self.box.append(item)
 
         if self.show_trash:
             self.box.append(self._separator())
