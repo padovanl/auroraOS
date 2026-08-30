@@ -7,7 +7,7 @@ import threading
 
 from gi.repository import Adw, GLib, Gtk
 
-from aurora import ai, settings
+from aurora import activities, ai, settings
 from aurora.ai import components, keys
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, combo_row, switch_row, toast
@@ -36,12 +36,16 @@ class Job:
     def __init__(self, row, work, done):
         self.row, self.done = row, done
         self.cancel = False
+        self.activity_id = activities.create(
+            _("Downloading {name}").format(name=row.get_title()), "download", cancellable=False)
         self.bar = Gtk.ProgressBar(valign=Gtk.Align.CENTER, width_request=120)
         row.add_suffix(self.bar)
         threading.Thread(target=self._run, args=(work,), daemon=True).start()
 
     def progress(self, done, total):
-        GLib.idle_add(self.bar.set_fraction, done / total if total else 0)
+        fraction = done / total if total else 0
+        activities.update(self.activity_id, progress=fraction)
+        GLib.idle_add(self.bar.set_fraction, fraction)
 
     def _run(self, work):
         try:
@@ -52,6 +56,9 @@ class Job:
         GLib.idle_add(self._finish, error)
 
     def _finish(self, error):
+        activities.update(self.activity_id, status="failed" if error else "finished",
+                          progress=1.0 if not error else self.bar.get_fraction(),
+                          error=error or "")
         self.row.remove(self.bar)
         self.done(error)
         return False

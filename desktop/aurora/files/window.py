@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 
-from aurora import apps
+from aurora import activities, apps
 from aurora.files.icons import icon_for
 from aurora.files.history import History
 from aurora.files.operations import Job, unique_destination
@@ -307,7 +307,20 @@ class FilesWindow(Adw.ApplicationWindow):
         self.banner = Adw.Banner(button_label=_("Empty Trash"), action_name="win.empty-trash",
                                  title=_("Items in the Trash are deleted permanently when emptied"))
         self.progress = Gtk.ProgressBar(show_text=True, css_classes=["osd"])
-        self.progress_revealer = Gtk.Revealer(child=self.progress,
+        progress_box = Gtk.Box(spacing=8, margin_start=12, margin_end=12,
+                               margin_top=6, margin_bottom=6)
+        self.progress.set_hexpand(True)
+        progress_box.append(self.progress)
+        self.cancel_job_button = Gtk.Button(icon_name="process-stop-symbolic",
+                                            tooltip_text=_("Cancel transfer"))
+        self.cancel_job_button.connect("clicked", lambda *_: self.jobs[-1].cancel()
+                                       if self.jobs else None)
+        progress_box.append(self.cancel_job_button)
+        self.retry_job_button = Gtk.Button(label=_("Retry"), visible=False)
+        self.retry_job_button.connect("clicked", lambda *_: self._retry_job())
+        progress_box.append(self.retry_job_button)
+        self._retry_args = None
+        self.progress_revealer = Gtk.Revealer(child=progress_box,
                                               transition_type=Gtk.RevealerTransitionType.SLIDE_UP)
 
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -1054,11 +1067,18 @@ class FilesWindow(Adw.ApplicationWindow):
     def _run_job(self, kind, paths, target):
         if not paths:
             return
+        self._retry_args = None
+        self.retry_job_button.set_visible(False)
+        self.cancel_job_button.set_visible(True)
         job = Job(kind, paths, target)
+        job.activity_id = activities.create(job.label, kind)
         self.progress.set_text(job.label)
         self.progress.set_fraction(0)
         self.progress_revealer.set_reveal_child(True)
-        job.connect("progress", lambda _j, frac, _n: self.progress.set_fraction(frac))
+        def progress(_j, frac, name):
+            self.progress.set_fraction(frac)
+            activities.update(job.activity_id, progress=frac, item=name)
+        job.connect("progress", progress)
 
         def finished(_j, error):
             self.jobs.remove(job)
@@ -1066,14 +1086,28 @@ class FilesWindow(Adw.ApplicationWindow):
                 self.history.push(job.history_entry)
             self._update_history_actions()
             self.reload()
-            if not self.jobs:
+            completed = {source for source, _dest in job.changes}
+            remaining = [path for path in paths if path not in completed and os.path.lexists(path)]
+            self._retry_args = (kind, remaining, target) if error and remaining and \
+                error != _("Cancelled") else None
+            self.retry_job_button.set_visible(self._retry_args is not None)
+            self.cancel_job_button.set_visible(bool(self.jobs))
+            if not self.jobs and self._retry_args is None:
                 self.progress_revealer.set_reveal_child(False)
             if error:
                 self.toast(error)
+            activities.update(job.activity_id, progress=1.0 if not error else
+                              self.progress.get_fraction(),
+                              status="cancelled" if error == _("Cancelled") else
+                              "failed" if error else "finished", error=error)
         job.connect("finished", finished)
         self.jobs.append(job)
         self._update_history_actions()
         job.start()
+
+    def _retry_job(self):
+        if self._retry_args:
+            self._run_job(*self._retry_args)
 
     def trash_selected(self):
         if self.in_trash():

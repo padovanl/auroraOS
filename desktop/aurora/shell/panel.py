@@ -146,6 +146,76 @@ class Clock(Gtk.MenuButton):
         return GLib.SOURCE_REMOVE
 
 
+class ActivityCenter(Gtk.MenuButton):
+    """Recent transfers from Aurora apps, including cross-process progress."""
+
+    def __init__(self):
+        super().__init__(icon_name="view-list-symbolic", css_classes=["flat", "panel-button"],
+                         tooltip_text=_("Activities"))
+        self.pop = Gtk.Popover(has_arrow=False)
+        self.pop.add_css_class("aurora-context-menu")
+        self.rows = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                            margin_top=12, margin_bottom=12,
+                            margin_start=12, margin_end=12)
+        self.rows.set_size_request(320, -1)
+        self.pop.set_child(self.rows)
+        self.pop.connect("show", lambda *_: self.refresh())
+        self.set_popover(self.pop)
+        GLib.timeout_add_seconds(2, self._tick)
+        self._tick()
+
+    def _tick(self):
+        from aurora import activities
+        items = activities.list_recent()
+        self.set_visible(bool(items))
+        self.set_tooltip_text(_("Activities ({n} running)").format(
+            n=sum(item.get("status") == "running" for item in items)))
+        if self.pop.get_visible():
+            self.refresh(items)
+        return GLib.SOURCE_CONTINUE
+
+    def refresh(self, items=None):
+        from aurora import activities
+        if items is None:
+            items = activities.list_recent()
+        while (child := self.rows.get_first_child()) is not None:
+            self.rows.remove(child)
+        self.rows.append(Gtk.Label(label=_("Activities"), xalign=0,
+                                   css_classes=["heading"]))
+        if not items:
+            self.rows.append(Gtk.Label(label=_("No recent activities"), xalign=0,
+                                       css_classes=["dim-label"]))
+        for item in items[:8]:
+            line = Gtk.Box(spacing=8)
+            text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3, hexpand=True)
+            text.append(Gtk.Label(label=item.get("label", ""), xalign=0, ellipsize=3))
+            state = item.get("status")
+            detail = item.get("item") or ""
+            if state == "failed":
+                detail = item.get("error") or _("Failed")
+            elif state == "cancelled":
+                detail = _("Cancelled")
+            elif state == "finished":
+                detail = _("Finished")
+            text.append(Gtk.Label(label=detail, xalign=0, ellipsize=3,
+                                  css_classes=["dim-label", "caption"]))
+            if state == "running":
+                progress = item.get("progress", 0)
+                if progress:
+                    text.append(Gtk.ProgressBar(fraction=max(0, min(1, progress))))
+                else:
+                    text.append(Gtk.Spinner(spinning=True, halign=Gtk.Align.START))
+                line.append(text)
+                if item.get("cancellable", True):
+                    cancel = Gtk.Button(icon_name="process-stop-symbolic",
+                                        tooltip_text=_("Cancel transfer"))
+                    cancel.connect("clicked", lambda _b, ident=item["id"]: activities.cancel(ident))
+                    line.append(cancel)
+            else:
+                line.append(text)
+            self.rows.append(line)
+
+
 class StatusArea(Gtk.MenuButton):
     """Network / volume / battery icons; opens the control center."""
 
@@ -273,6 +343,8 @@ class Panel(LayerWindow):
         if s:
             s.bind("ai-panel-button", assistant, "visible", 0)
         right.append(assistant)
+        self.activities = ActivityCenter()
+        right.append(self.activities)
         search = Gtk.Button(icon_name="system-search-symbolic", tooltip_text=_("Search"),
                             css_classes=["flat", "panel-button"])
         search.connect("clicked", lambda *_: shell.launcher.toggle("spotlight"))
@@ -291,7 +363,8 @@ class Panel(LayerWindow):
         self._update_app()
         # A menu opened from a shortcut must get the keyboard (Esc, arrows),
         # and give it back when it closes.
-        self._menus = (left.get_first_child(), self.app_menu, self.status, clock)
+        self._menus = (left.get_first_child(), self.app_menu, self.activities,
+                       self.status, clock)
         for button in self._menus:
             button.connect("notify::active", self._on_menu_active)
         # Opened from a shortcut, a menu has no pointer grab: its keys arrive at

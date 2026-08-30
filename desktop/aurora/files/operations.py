@@ -6,6 +6,7 @@ import threading
 
 from gi.repository import GLib, GObject
 
+from aurora import activities
 from aurora.files.history import Entry
 from aurora.i18n import _
 
@@ -51,6 +52,7 @@ class Job(GObject.Object):
         self.sources = sources
         self.target_dir = target_dir
         self.cancelled = False
+        self.activity_id = None
         self._done = 0
         self._total = 1
         self.changes = []  # (original path, final path), for undo/redo
@@ -69,12 +71,16 @@ class Job(GObject.Object):
     def cancel(self):
         self.cancelled = True
 
+    def _is_cancelled(self):
+        return self.cancelled or (self.activity_id is not None and
+                                  activities.cancelled(self.activity_id))
+
     def _tick(self, name):
         self._done += 1
         GLib.idle_add(self.emit, "progress", min(1.0, self._done / self._total), name)
 
     def _copy_file(self, src, dst):
-        if self.cancelled:
+        if self._is_cancelled():
             raise InterruptedError
         created = False
         try:
@@ -84,9 +90,12 @@ class Job(GObject.Object):
             else:
                 with open(src, "rb") as source, open(dst, "xb") as target:
                     created = True
-                    shutil.copyfileobj(source, target)
+                    while chunk := source.read(1024 * 1024):
+                        if self._is_cancelled():
+                            raise InterruptedError
+                        target.write(chunk)
             shutil.copystat(src, dst, follow_symlinks=False)
-        except (OSError, shutil.Error):
+        except (InterruptedError, OSError, shutil.Error):
             if created:
                 os.remove(dst)
             raise
@@ -98,7 +107,7 @@ class Job(GObject.Object):
         try:
             self._total = _count(self.sources)
             for src in self.sources:
-                if self.cancelled:
+                if self._is_cancelled():
                     raise InterruptedError
                 name = os.path.basename(src.rstrip("/"))
                 same_dir = os.path.dirname(os.path.abspath(src)) == os.path.abspath(self.target_dir)
