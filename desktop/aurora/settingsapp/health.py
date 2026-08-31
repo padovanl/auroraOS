@@ -252,7 +252,74 @@ class Health(Page):
         self.list = self.group()
         self.rows = []
         self.report = ""
+        diagnostic = self.group(_("Guided Diagnostics"),
+                                _("Choose a problem, review the report, then save it yourself."))
+        create = Adw.ButtonRow(title=_("Create Diagnostic Report…"))
+        create.connect("activated", lambda *_: self._diagnostic_dialog())
+        diagnostic.add(create)
         self.run_checks()
+
+    def _diagnostic_dialog(self):
+        dialog = Adw.AlertDialog(heading=_("Guided Diagnostics"),
+                                 body=_("No report is uploaded automatically."))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        categories = ("install", "boot", "apps")
+        issue = Adw.ComboRow(title=_("Problem"), model=Gtk.StringList.new(
+            [_ ("Installation"), _("Startup or login"), _("Applications")]))
+        details = Adw.SwitchRow(title=_("Include detailed logs"),
+                                subtitle=_("Logs may contain personal information. Review "
+                                           "the report before sharing it."))
+        box.append(issue)
+        box.append(details)
+        dialog.set_extra_child(box)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("create", _("Create Report"))
+        dialog.connect("response", lambda _d, response: self._create_report(
+            categories[issue.get_selected()], details.get_active())
+            if response == "create" else None)
+        dialog.present(self.get_root())
+
+    def _create_report(self, category, detailed):
+        from aurora import diagnostics
+        toast(self, _("Collecting diagnostics…"))
+
+        def work():
+            report = diagnostics.collect(category, detailed)
+            GLib.idle_add(self._preview_report, report)
+        threading.Thread(target=work, daemon=True).start()
+
+    def _preview_report(self, report):
+        dialog = Adw.AlertDialog(heading=_("Review Diagnostic Report"),
+                                 body=_("Nothing is sent automatically. Remove anything "
+                                        "you do not want to share."))
+        view = Gtk.TextView(editable=True, monospace=True, wrap_mode=Gtk.WrapMode.WORD_CHAR,
+                            top_margin=8, bottom_margin=8, left_margin=8, right_margin=8)
+        view.get_buffer().set_text(report)
+        scroll = Gtk.ScrolledWindow(child=view, min_content_width=650,
+                                    min_content_height=360)
+        dialog.set_extra_child(scroll)
+        dialog.add_response("close", _("Close"))
+        dialog.add_response("save", _("Save Report…"))
+        dialog.connect("response", lambda _d, response: self._save_report(view)
+                       if response == "save" else None)
+        dialog.present(self.get_root())
+        return False
+
+    def _save_report(self, view):
+        buf = view.get_buffer()
+        report = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
+        dialog = Gtk.FileDialog(title=_("Save Diagnostic Report"),
+                                initial_name="aurora-diagnostics.txt")
+
+        def selected(d, result):
+            try:
+                target = d.save_finish(result)
+                target.replace_contents(report.encode("utf-8"), None, True,
+                                        Gio.FileCreateFlags.NONE, None)
+                toast(self, _("Diagnostic report saved"))
+            except GLib.Error as err:
+                toast(self, str(err))
+        dialog.save(self.get_root(), None, selected)
 
     def _copy_report(self, *_):
         if self.report:

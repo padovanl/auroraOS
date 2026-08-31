@@ -60,7 +60,11 @@ def sync_gtk_theme():
     iface = settings.interface()
     if iface is None:
         return
+    a11y = settings.get("org.gnome.desktop.a11y.interface")
+    high_contrast = a11y is not None and a11y.get_boolean("high-contrast")
     theme = "adw-gtk3-dark" if is_dark() else "adw-gtk3"
+    if high_contrast:
+        theme = "HighContrast"
     if os.path.isdir(os.path.join("/usr/share/themes", theme)) and \
             iface.get_string("gtk-theme") != theme:
         iface.set_string("gtk-theme", theme)
@@ -74,7 +78,8 @@ def sync_gtk_theme():
         wanted = variants[family][1 if is_dark() else 0]
         if icons != wanted:
             iface.set_string("icon-theme", wanted)
-    accent = ACCENT_HEX.get(iface.get_string("accent-color"), ACCENT_HEX["purple"])
+    accent = ("#000000" if high_contrast else
+              ACCENT_HEX.get(iface.get_string("accent-color"), ACCENT_HEX["purple"]))
     path = os.path.expanduser("~/.config/aurora/gtk-accent.css")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:

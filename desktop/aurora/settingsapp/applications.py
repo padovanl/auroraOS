@@ -208,7 +208,7 @@ class Accessibility(Page):
         seeing = self.group(_("Seeing"))
         if a11y:
             seeing.add(switch_row(_("High contrast"), a11y.get_boolean("high-contrast"),
-                                  lambda v: a11y.set_boolean("high-contrast", v)))
+                                  lambda v: self._high_contrast(v, a11y, iface)))
         if iface:
             seeing.add(combo_row(_("Text size"), [_(t[1]) for t in TEXT_SIZES],
                                  nearest(TEXT_SIZES, iface.get_double("text-scaling-factor")),
@@ -219,7 +219,7 @@ class Accessibility(Page):
                                  on_change=lambda i: iface.set_int("cursor-size",
                                                                    POINTER_SIZES[i][0])))
             seeing.add(switch_row(_("Reduce animation"), not iface.get_boolean("enable-animations"),
-                                  lambda v: iface.set_boolean("enable-animations", not v)))
+                                  lambda v: self._reduce_motion(v, iface)))
             seeing.add(switch_row(_("Always show scrollbars"),
                                   not iface.get_boolean("overlay-scrolling"),
                                   lambda v: iface.set_boolean("overlay-scrolling", not v)))
@@ -284,6 +284,22 @@ class Accessibility(Page):
             cfg.set("magnifier", key, value=value)
         cfg.save()
 
+    def _high_contrast(self, on, a11y, iface):
+        from aurora import look
+        a11y.set_boolean("high-contrast", on)
+        if iface:
+            iface.set_string("gtk-theme", "HighContrast" if on else
+                             ("adw-gtk3-dark" if look.is_dark() else "adw-gtk3"))
+        look.apply()
+
+    def _reduce_motion(self, on, iface):
+        from aurora import look
+        iface.set_boolean("enable-animations", not on)
+        aurora = settings.get()
+        if aurora:
+            aurora.set_boolean("window-animations", not on)
+        look.apply()
+
     def _double_click(self, ms, mouse):
         cfg = labwcconf.Config()
         cfg.set("mouse", "doubleClickTime", value=ms)
@@ -304,4 +320,3 @@ class Accessibility(Page):
             except FileNotFoundError:
                 pass
             apps.spawn(["pkill", "-x", SCREEN_KEYBOARD])
-
