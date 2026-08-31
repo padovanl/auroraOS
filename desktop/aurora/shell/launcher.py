@@ -95,9 +95,11 @@ class AppTile(Gtk.FlowBoxChild):
 
 
 class ResultRow(Gtk.ListBoxRow):
-    def __init__(self, result):
+    def __init__(self, result, shell=None):
         super().__init__(css_classes=["launcher-result"])
         self.result = result
+        self.app = result.app
+        self.shell = shell
         box = Gtk.Box(spacing=12, margin_top=6, margin_bottom=6,
                       margin_start=10, margin_end=10)
         box.append(_icon_image(result.icon, 32))
@@ -109,6 +111,46 @@ class ResultRow(Gtk.ListBoxRow):
                                   css_classes=["dim-label", "caption"]))
         box.append(text)
         self.set_child(box)
+        if (self.app is not None and shell is not None) or result.path:
+            right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
+            right.connect("pressed", self._show_menu)
+            self.add_controller(right)
+
+    def _show_menu(self, gesture, n, x, y):
+        if self.app is not None:
+            return AppTile._show_menu(self, gesture, n, x, y)
+        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop.set_parent(self)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
+                      margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
+
+        def row(label, callback):
+            button = Gtk.Button(label=label, css_classes=["flat", "context-action"])
+            button.get_child().set_xalign(0)
+            button.connect("clicked", lambda *_: (pop.popdown(), callback()))
+            box.append(button)
+
+        path = self.result.path
+        row(_("Open"), self.result.activate)
+        row(_("Show in Files"), lambda: apps.spawn(["aurora-files", os.path.dirname(path)]))
+        row(_("Copy Path"), lambda: Gdk.Display.get_default().get_clipboard().set(path))
+        if os.path.isdir(path):
+            from aurora import projectworkspaces
+            row(_("Open Workspace"), lambda: projectworkspaces.open_workspace(path))
+            row(_("Open in Terminal"), lambda: apps.spawn(
+                ["ptyxis", "--new-window", "--working-directory", path]))
+        else:
+            row(_("Ask Aurora about this file"), lambda: apps.spawn(
+                ["aurora-assistant", "--file", path]))
+        pop.set_child(box)
+        rect = Gdk.Rectangle()
+        rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
+        pop.set_pointing_to(rect)
+        pop.popup()
+
+    def _add_to_desktop(self):
+        return AppTile._add_to_desktop(self)
 
 
 class Launcher(LayerWindow):
@@ -194,7 +236,7 @@ class Launcher(LayerWindow):
         self.results.remove_all()
         for r in search.search(text, self.shell.open_settings,
                                refresh=lambda: self._on_search(self.entry)):
-            self.results.append(ResultRow(r))
+            self.results.append(ResultRow(r, self.shell))
         self.results.select_row(self.results.get_row_at_index(0))
         self.stack.set_visible_child_name("results")
         # Documents by meaning arrive later (a local model computes them).
@@ -211,7 +253,7 @@ class Launcher(LayerWindow):
         if self.entry.get_text() != query:
             return
         for r in results:
-            row = ResultRow(r)
+            row = ResultRow(r, self.shell)
             # Insert before the web-search fallback at the end.
             self.results.insert(row, max(0, self._count_rows() - 1))
 

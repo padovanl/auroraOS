@@ -6,6 +6,7 @@ toolchains (recipes.py), Game Hub for games, Windows and Android apps (games.py)
 
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,7 +17,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk, Pango  # noqa: E402
 
-from aurora import VERSION  # noqa: E402
+from aurora import VERSION, activities, projectworkspaces  # noqa: E402
 from aurora.devhub.recipes import CATEGORIES, RECIPES  # noqa: E402
 from aurora.i18n import N_, _  # noqa: E402
 
@@ -105,6 +106,17 @@ class DevHub(Adw.ApplicationWindow):
         hero.append(Gtk.Label(label=_(hub["hero"]), xalign=0, css_classes=["title-1"]))
         hero.append(Gtk.Label(label=_(hub["text"]), xalign=0, wrap=True))
         content.append(hero)
+        if hub is DEV_HUB:
+            self.projects_group = Adw.PreferencesGroup(
+                title=_("Project Workspaces"),
+                description=_("Open your editor, terminal and Files together for a project."))
+            add_project = Gtk.Button(icon_name="list-add-symbolic",
+                                     tooltip_text=_("Add Project"), css_classes=["flat"])
+            add_project.connect("clicked", lambda *_: self._add_project())
+            self.projects_group.set_header_suffix(add_project)
+            content.append(self.projects_group)
+            self._project_rows = []
+            self._refresh_projects()
 
         self.sections = []
         for cat, title in hub["categories"]:
@@ -141,6 +153,69 @@ class DevHub(Adw.ApplicationWindow):
                                      min_sidebar_width=200, max_sidebar_width=240)
         self.set_content(split)
 
+    def _refresh_projects(self):
+        from aurora.shell.search import find_projects
+        for row in self._project_rows:
+            self.projects_group.remove(row)
+        self._project_rows = []
+        saved = projectworkspaces.load()
+        paths = list(dict.fromkeys([*saved, *find_projects()]))
+        for path in paths[:12]:
+            if not os.path.isdir(path):
+                continue
+            row = Adw.ActionRow(title=os.path.basename(path), subtitle=path)
+            launch = Gtk.Button(label=_("Open Workspace"), css_classes=["pill"],
+                                valign=Gtk.Align.CENTER)
+            launch.connect("clicked", lambda _b, p=path: projectworkspaces.open_workspace(p))
+            row.add_suffix(launch)
+            setup = Gtk.Button(icon_name="emblem-system-symbolic",
+                               tooltip_text=_("Configure Workspace"),
+                               css_classes=["flat"], valign=Gtk.Align.CENTER)
+            setup.connect("clicked", lambda _b, p=path: self._configure_project(p))
+            row.add_suffix(setup)
+            self.projects_group.add(row)
+            self._project_rows.append(row)
+        if not self._project_rows:
+            row = Adw.ActionRow(title=_("No projects found"),
+                                subtitle=_("Add a project folder to begin."))
+            self.projects_group.add(row)
+            self._project_rows.append(row)
+
+    def _add_project(self):
+        dialog = Gtk.FileDialog(title=_("Choose Project Folder"))
+
+        def chosen(d, result):
+            try:
+                folder = d.select_folder_finish(result)
+            except GLib.Error:
+                return
+            path = folder.get_path()
+            if path:
+                projectworkspaces.configure(path)
+                self._refresh_projects()
+        dialog.select_folder(self, None, chosen)
+
+    def _configure_project(self, path):
+        prefs = projectworkspaces.preferences(path)
+        dialog = Adw.AlertDialog(heading=_("Configure Workspace"), body=path)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        editors = ["auto", *[e for e in projectworkspaces.EDITORS[1:] if
+                              shutil.which(e)]]
+        editor = Adw.ComboRow(title=_("Editor"), model=Gtk.StringList.new(
+            [_("Automatic") if e == "auto" else e for e in editors]))
+        editor.set_selected(editors.index(prefs["editor"]) if prefs["editor"] in editors else 0)
+        terminal = Adw.SwitchRow(title=_("Open Terminal"), active=prefs["terminal"])
+        files = Adw.SwitchRow(title=_("Open Files"), active=prefs["files"])
+        for row in (editor, terminal, files):
+            box.append(row)
+        dialog.set_extra_child(box)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("save", _("Save"))
+        dialog.connect("response", lambda _d, response: projectworkspaces.configure(
+            path, editors[editor.get_selected()], terminal.get_active(), files.get_active())
+            if response == "save" else None)
+        dialog.present(self)
+
     def _jump(self, label):
         ok, point = label.compute_point(self.content, Graphene.Point())
         if ok:
@@ -176,12 +251,17 @@ class DevHub(Adw.ApplicationWindow):
                                      "bash", "-c", wrapper])
         except OSError:
             proc = subprocess.Popen(["x-terminal-emulator", "-e", "bash", "-c", wrapper])
+        activity_id = activities.create(_("Installing {name}").format(name=_(r["name"])),
+                                        "install", cancellable=False)
         card.button.set_label(_("Installing…"))
         card.button.set_sensitive(False)
 
         def poll():
             if proc.poll() is None:
                 return GLib.SOURCE_CONTINUE
+            activities.update(activity_id, status="finished" if proc.returncode == 0
+                              else "failed", progress=1.0 if proc.returncode == 0 else 0,
+                              error="" if proc.returncode == 0 else _("Installation failed"))
             card.refresh()
             if is_installed(r):
                 self.toasts.add_toast(Adw.Toast(title=_("{name} installed").format(name=_(r["name"]))))

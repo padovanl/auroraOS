@@ -21,6 +21,8 @@ class Result:
     icon: object = "application-x-executable"   # icon name or Gio.Icon
     activate: Callable = field(default=lambda: None)
     score: float = 0.0
+    app: object = None  # set only for application results (context menu)
+    path: str = ""  # local file or project, for context actions
 
 
 # --- Applications ----------------------------------------------------------
@@ -58,7 +60,7 @@ def search_apps(query):
         if score:
             out.append(Result(app.get_display_name(), app.get_description() or "",
                               app.get_icon() or "application-x-executable",
-                              lambda a=app: apps.launch(a), score))
+                              lambda a=app: apps.launch(a), score, app))
     return out
 
 
@@ -317,7 +319,8 @@ def search_projects(query):
         where = repo.replace(home, "~", 1) + (f" · {branch}" if branch else "")
         out.append(Result(os.path.basename(repo), _("Project · {where}").format(where=where),
                           "folder-code-symbolic" if name.startswith(q) else "folder-symbolic",
-                          lambda r=repo: open_project(r), 75 if name.startswith(q) else 45))
+                          lambda r=repo: open_project(r), 75 if name.startswith(q) else 45,
+                          path=repo))
     return out[:6]
 
 
@@ -433,8 +436,10 @@ def search_recent(query):
         name = info.get_display_name() or ""
         if q in name.lower() and info.exists():
             uri = info.get_uri()
+            path = Gio.File.new_for_uri(uri).get_path() or ""
             out.append(Result(name, _("Recent file"), info.get_gicon() or "text-x-generic",
-                              lambda u=uri: Gio.AppInfo.launch_default_for_uri(u, None), 35))
+                              lambda u=uri: Gio.AppInfo.launch_default_for_uri(u, None), 35,
+                              path=path))
     return out[:5]
 
 

@@ -12,7 +12,8 @@ from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora.files.app import FilesApp
 from aurora.files.create import NewItemDialog
-from aurora.shell.launcher import AppTile
+from aurora.shell import search
+from aurora.shell.launcher import AppTile, ResultRow
 from aurora.shell import desktopicons
 from aurora.shell.wallpaper import Wallpaper
 
@@ -162,6 +163,21 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     app_menu.popdown()
     tile_window.close()
     print("ok: app launcher context menu and desktop shortcut")
+
+    match = next(result for result in search.search_apps("Files")
+                 if result.app is not None and result.app.get_id() == app_info.get_id())
+    result_row = ResultRow(match, SimpleNamespace())
+    result_list = Gtk.ListBox()
+    result_list.append(result_row)
+    search_window = Gtk.Window(child=result_list, default_width=400, default_height=100)
+    search_window.present()
+    settle(lambda: search_window.get_width() > 0)
+    result_row._show_menu(None, 1, 10, 10)
+    result_menu = result_row.get_last_child()
+    assert isinstance(result_menu, Gtk.Popover)
+    result_menu.popdown()
+    search_window.close()
+    print("ok: app search result context menu")
 
     win.new_tab(Gio.File.new_for_path(str(root / "Desktop")))
     settle(lambda: win.current.get_path() == str(root / "Desktop"))
