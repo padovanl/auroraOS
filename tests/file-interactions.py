@@ -179,6 +179,28 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     search_window.close()
     print("ok: app search result context menu")
 
+    file_result = search.Result("existing.txt", "Recent file", path=str(root / "existing.txt"))
+    file_row = ResultRow(file_result)
+    file_list = Gtk.ListBox()
+    file_list.append(file_row)
+    file_window = Gtk.Window(child=file_list, default_width=400, default_height=100)
+    file_window.present()
+    settle(lambda: file_window.get_width() > 0)
+    file_row._show_menu(None, 1, 10, 10)
+    file_menu = file_row.get_last_child()
+    assert isinstance(file_menu, Gtk.Popover)
+    file_actions = []
+    button = file_menu.get_child().get_first_child()
+    while button is not None:
+        if isinstance(button, Gtk.Button):
+            file_actions.append(button.get_label())
+        button = button.get_next_sibling()
+    assert {"Open", "Show in Files", "Copy Path", "Ask Aurora about this file"}.issubset(
+        file_actions)
+    file_menu.popdown()
+    file_window.close()
+    print("ok: recent-file search context actions")
+
     win.new_tab(Gio.File.new_for_path(str(root / "Desktop")))
     settle(lambda: win.current.get_path() == str(root / "Desktop"))
     win.open_location(Gio.File.new_for_path(str(root)))

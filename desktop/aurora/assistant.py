@@ -60,6 +60,13 @@ def _markup(text):
     return out
 
 
+def messages_for_provider(history, which):
+    """Strip UI metadata and refuse to export file attachments to cloud APIs."""
+    if which != "local" and any(item.get("local_only") for item in history):
+        raise ValueError(_("Attachments require the local AI model"))
+    return [{"role": item["role"], "content": item["content"]} for item in history[-12:]]
+
+
 class Message(Gtk.Box):
     def __init__(self, role, text=""):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6,
@@ -540,10 +547,7 @@ class AssistantWindow(Adw.ApplicationWindow):
         parts = []
         error = None
         try:
-            if ai.provider() != "local" and any(m.get("local_only") for m in history):
-                raise ProviderError(_("Attachments require the local AI model"))
-            messages = [{"role": item["role"], "content": item["content"]}
-                        for item in history[-12:]]
+            messages = messages_for_provider(history, ai.provider())
             for piece in chat(messages):
                 if stop_event.is_set():
                     break

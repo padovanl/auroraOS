@@ -37,9 +37,43 @@ pkill -f aurora-files
 aurora-settings --page desktop >/dev/null 2>&1 & shot settings-desktop 4
 aurora-settings --page appearance >/dev/null 2>&1; shot settings-appearance
 aurora-settings --page keyboard >/dev/null 2>&1; shot settings-keyboard
+aurora-settings --page accessibility >/dev/null 2>&1; shot settings-accessibility
+aurora-settings --page health >/dev/null 2>&1; shot settings-health 4
 pkill -f aurora-settings
 aurora-devhub >/dev/null 2>&1 & shot devhub 4
 pkill -f aurora-devhub
+
+# The Assistant screenshot uses a local fake API endpoint: deterministic text,
+# no model download or external service. It exercises the real chat UI.
+python3 -u - <<'PY' >/dev/null 2>&1 &
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+class Handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/event-stream')
+        self.end_headers()
+        answer = 'Aurora keeps your work close.\n\n```bash\ngit status\n```\nOpen your project workspace from Spotlight or Dev Hub.'
+        for part in (answer[i:i+16] for i in range(0, len(answer), 16)):
+            self.wfile.write(('data: ' + json.dumps({'choices':[{'delta':{'content':part}}]}) + '\n\n').encode())
+        self.wfile.write(b'data: [DONE]\n\n')
+    def log_message(self, *_args):
+        pass
+HTTPServer(('127.0.0.1', 47702), Handler).serve_forever()
+PY
+ai_server_pid=$!
+gsettings set org.aurora.desktop ai-provider openai
+gsettings set org.aurora.desktop ai-openai-url http://127.0.0.1:47702/v1
+gsettings set org.aurora.desktop ai-openai-model showcase
+gsettings set org.aurora.desktop ai-enabled true
+aurora-files >/dev/null 2>&1 &
+sleep 2
+aurora-assistant --ask 'How do I check my project?' >/dev/null 2>&1 &
+assistant_pid=$!
+shot assistant 4
+shot assistant-pip 1
+kill "$assistant_pid" "$ai_server_pid" 2>/dev/null || true
+pkill -f aurora-files
 
 # Other layouts.
 aurora-files >/dev/null 2>&1 &
