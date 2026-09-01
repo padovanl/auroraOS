@@ -110,7 +110,13 @@ EOF
 
 iso="$OUT/aurora-os-$AURORA_VERSION-$ARCH.iso"
 log "mastering $iso"
-grub-mkrescue -o "$iso" "$ISODIR" -- -volid "$ISO_LABEL" 2>&1 | grep -v '^xorriso : UPDATE' || true
-[ -s "$iso" ] || die "ISO was not created"
+tmp_iso=$(mktemp "$OUT/.aurora-os-$AURORA_VERSION-$ARCH.iso.XXXXXX")
+trap 'rm -f "$tmp_iso"' EXIT
+# Keep the old ISO intact until mastering succeeds. pipefail ensures an xorriso
+# failure cannot be mistaken for a successful build with an old output file.
+grub-mkrescue -o "$tmp_iso" "$ISODIR" -- -volid "$ISO_LABEL" 2>&1 |
+    awk '!/^xorriso : UPDATE/'
+[ -s "$tmp_iso" ] || die "ISO was not created"
+mv -f "$tmp_iso" "$iso"
 ( cd "$OUT" && sha256sum "$(basename "$iso")" > "$(basename "$iso").sha256" )
 log "done: $iso ($(du -h "$iso" | cut -f1))"
