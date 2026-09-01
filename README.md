@@ -154,19 +154,29 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
     firewall), **Sharing** (screen sharing, nearby sharing, phone, SSH), **AI**.
   - **Users** (fingerprint, **online accounts** for Google, Microsoft, Nextcloud…),
     Language & Region, Date & Time, Software Updates (system snapshots), **System
-    Health**, About.
+  Health** with guided, user-reviewed diagnostic reports for installation, startup and apps,
+    About.
 - **Aurora Assistant**: chat with the AI, with quick actions on copied text (summarize,
-  improve, translate, explain), code blocks you can copy, answers read aloud. It floats
+  improve, translate, explain), code blocks you can copy, answers read aloud. Chats are
+  saved locally; you can stop or regenerate an answer. New replies scroll into view unless
+  you are reading earlier messages: then a highlighted animated down-arrow lets you jump
+  to the latest reply. Attach text, code, documents and photos with the paperclip or by
+  dragging them into chat (photos are read with offline OCR). Attachments are sent **only
+  to the local model**, never to a cloud provider; switching providers requires a new chat.
+  The Assistant floats
   **like a picture-in-picture video**: a compact card in the bottom-right corner, above
   your other windows and on every workspace, so it stays open while you work. Drag it by
   its bar, expand it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
 - **Files**: places and drives, grid and list views, search, hidden files, cut/copy/paste
-  with progress, trash with restore, rename, new folder, "Open With", properties, open in
+  with progress, cancel and retry, trash with restore, rename, new folder, "Open With", properties, open in
   terminal, **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
   "Summarize" and "Ask About This File".
 - **Dev Hub**: about 90 one-click installers in 17 categories, with a category sidebar
-  and search: editors and IDEs, languages and runtimes, cloud and DevOps, databases and
+  and search. Its Project Workspaces open the configured editor, terminal and Files together
+  for each repository or folder. Tool installs and AI downloads appear alongside file
+  transfers in the panel's **Activities** menu. The installer catalog covers editors and
+  IDEs, languages and runtimes, cloud and DevOps, databases and
   API tools, AI assistants (Claude Code, Codex, Ollama), **shells and terminals** (Zsh,
   Oh My Zsh, fish, default-shell switch, Starship, Zellij, kitty, Alacritty, WezTerm,
   Tilix, Terminator, GNOME Console), command-line tools, version control, containers and
@@ -422,6 +432,13 @@ The Assistant is in the dock and in the top bar (✦), and opens with
 ask "find files bigger than 1 GB in my home"   # suggests a command, runs it if you say y
 make 2>&1 | why                                 # explains the error and the fix
 ```
+
+Right-click an app, recent file or project in Spotlight for quick actions. Apps can be
+pinned to the dock or desktop; files can be opened in Files, copied by path or handed to
+the Assistant; projects can launch a configured workspace. Settings → System Health →
+Guided Diagnostics creates a local report for installation, boot/login or app problems.
+The default report excludes raw logs; including them is opt-in, and you can edit the
+preview before saving. Nothing is uploaded automatically.
 
 ### Sharing
 - **Files with nearby devices:** right-click a file in Files → *Send to Nearby Device…*
