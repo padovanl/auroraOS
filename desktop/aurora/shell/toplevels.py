@@ -57,6 +57,7 @@ class Toplevel(GObject.Object):
         self.states = set()
         self.ready = False
         self.serial = 0
+        self.focus_serial = 0
         handle.dispatcher["title"] = self._on_title
         handle.dispatcher["app_id"] = self._on_app_id
         handle.dispatcher["state"] = self._on_state
@@ -134,6 +135,7 @@ class ToplevelTracker(GObject.Object):
         self.seat = None
         self.manager = None
         self._serial = 0
+        self._focus_serial = 0
         self._display = None
         if not HAVE_BINDINGS:
             return
@@ -187,6 +189,8 @@ class ToplevelTracker(GObject.Object):
             self._display.flush()
 
     def added(self, toplevel):
+        self._serial += 1
+        toplevel.serial = self._serial
         self.toplevels.append(toplevel)
 
     def removed(self, toplevel):
@@ -196,8 +200,8 @@ class ToplevelTracker(GObject.Object):
         self.emit("changed")
 
     def bump(self, toplevel):
-        self._serial += 1
-        toplevel.serial = self._serial
+        self._focus_serial += 1
+        toplevel.focus_serial = self._focus_serial
 
     def active(self):
         for t in self.toplevels:
@@ -207,4 +211,4 @@ class ToplevelTracker(GObject.Object):
 
     def for_app(self, app_id):
         return sorted((t for t in self.toplevels if t.app_id == app_id),
-                      key=lambda t: t.serial, reverse=True)
+                      key=lambda t: t.focus_serial, reverse=True)

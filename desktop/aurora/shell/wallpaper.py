@@ -73,10 +73,9 @@ class Wallpaper(LayerWindow):
             self._icons.reorder_to_end(os.path.basename(paths[0]))
             return True
         os.makedirs(desktop_dir(), exist_ok=True)
-        actions = _target.get_current_drop().get_actions()
+        from aurora.dnd import is_move
         self._icons.transfer(paths, desktop_dir(),
-                             move=bool(actions & Gdk.DragAction.MOVE) and
-                             not bool(actions & Gdk.DragAction.COPY))
+                             move=is_move(_target))
         return True
 
     def reload(self):

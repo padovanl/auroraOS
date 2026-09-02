@@ -17,7 +17,19 @@ CSS = """
 .files-grid > child:selected { background-color: alpha(@accent_bg_color, 0.25); }
 .files-tab { border-radius: 10px; background: alpha(@window_fg_color, 0.06); }
 .files-tab.active-tab { background: alpha(@accent_bg_color, 0.22); }
-popover.aurora-context-menu contents { min-width: 250px; }
+popover.aurora-context-menu contents {
+  min-width: 238px; padding: 5px; border-radius: 8px;
+  background: #303030; color: #f4f4f4;
+  border: 1px solid #404040; box-shadow: 0 6px 22px alpha(#000000, 0.35);
+}
+popover.aurora-context-menu separator { background: #454545; margin: 4px 5px; min-height: 1px; }
+popover.aurora-context-menu button.model {
+  margin: 0; min-height: 30px; padding: 3px 10px;
+  border-radius: 4px; color: #f4f4f4;
+}
+popover.aurora-context-menu button.model:hover,
+popover.aurora-context-menu button.model:focus { background: #4b4b4b; }
+popover.aurora-context-menu button.model:disabled { color: #999999; }
 """
 
 

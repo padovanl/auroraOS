@@ -437,6 +437,7 @@ class FilesWindow(Adw.ApplicationWindow):
                                  justify=Gtk.Justification.CENTER, max_width_chars=14))
             item.set_child(box)
             drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+            drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
             drag.connect("prepare", self._drag_prepare, item)
             box.add_controller(drag)
             folder_drop = Gtk.DropTarget.new(Gdk.FileList,
@@ -470,6 +471,7 @@ class FilesWindow(Adw.ApplicationWindow):
                 item.set_child(Gtk.Label(xalign=0, css_classes=["dim-label", "numeric"]))
             if kind == "name":
                 drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+                drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
                 drag.connect("prepare", self._drag_prepare, item)
                 item.get_child().add_controller(drag)
                 folder_drop = Gtk.DropTarget.new(Gdk.FileList,
@@ -506,11 +508,8 @@ class FilesWindow(Adw.ApplicationWindow):
 
     @staticmethod
     def _drop_is_move(target):
-        drop = target.get_current_drop() if target is not None else None
-        if drop is None:
-            return False
-        actions = drop.get_actions()
-        return bool(actions & Gdk.DragAction.MOVE) and not bool(actions & Gdk.DragAction.COPY)
+        from aurora.dnd import is_move
+        return is_move(target)
 
     def _drop_on_item(self, target, value, _x, _y, item):
         info = item.get_item()
@@ -1000,6 +999,8 @@ class FilesWindow(Adw.ApplicationWindow):
             s = Gio.Menu()
             s.append(_("New Folder…"), "win.new-folder")
             s.append(_("New File…"), "win.new-file")
+            menu.append_section(None, s)
+            s = Gio.Menu()
             s.append(_("Paste"), "win.paste")
             menu.append_section(None, s)
             s = Gio.Menu()

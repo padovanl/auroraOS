@@ -314,13 +314,19 @@ window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-hei
 .panel-assistant image { color: #d9b8ff; }
 .panel-assistant:hover image { color: #ffffff; }
 popover.aurora-context-menu contents {
-  min-width: 250px;
-  padding: 7px;
-  border-radius: 12px;
+  min-width: 238px;
+  padding: 5px;
+  border-radius: 8px;
+  background: #303030;
+  color: #f4f4f4;
+  border: 1px solid #404040;
+  box-shadow: 0 6px 22px alpha(#000000, 0.35);
 }
-popover.aurora-context-menu button.model { margin: 2px 0; min-height: 34px; padding: 5px 12px; border-radius: 8px; }
+popover.aurora-context-menu separator { background: #454545; margin: 4px 5px; min-height: 1px; }
+popover.aurora-context-menu button.model { margin: 0; min-height: 30px; padding: 3px 10px; border-radius: 4px; color: #f4f4f4; }
 popover.aurora-context-menu button.model:hover,
-popover.aurora-context-menu button.model:focus { background-color: alpha(@aurora_violet, 0.3); }
-popover.aurora-context-menu button.context-action { margin: 2px 0; min-height: 34px; padding: 6px 12px; border-radius: 8px; }
+popover.aurora-context-menu button.model:focus { background-color: #4b4b4b; }
+popover.aurora-context-menu button.model:disabled { color: #999999; }
+popover.aurora-context-menu button.context-action { margin: 0; min-height: 30px; padding: 3px 10px; border-radius: 4px; color: #f4f4f4; }
 popover.aurora-context-menu button.context-action:hover,
-popover.aurora-context-menu button.context-action:focus { background-color: alpha(@aurora_violet, 0.3); }
+popover.aurora-context-menu button.context-action:focus { background-color: #4b4b4b; }

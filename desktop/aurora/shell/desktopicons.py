@@ -92,6 +92,7 @@ class DesktopIcon(Gtk.Button):
         self.add_controller(right)
         if self.gfile is not None:
             drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+            drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
             drag.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(
                 Gdk.FileList.new_from_list([self.gfile])))
             self.add_controller(drag)
@@ -108,9 +109,8 @@ class DesktopIcon(Gtk.Button):
         if not paths or parent is None or target is None or target in paths:
             return False
         if os.path.isdir(target):
-            actions = _target.get_current_drop().get_actions()
-            parent.transfer(paths, target, move=bool(actions & Gdk.DragAction.MOVE) and
-                            not bool(actions & Gdk.DragAction.COPY))
+            from aurora.dnd import is_move
+            parent.transfer(paths, target, move=is_move(_target))
             return True
         if len(paths) == 1 and os.path.dirname(paths[0]) == desktop_dir():
             parent.reorder(os.path.basename(paths[0]), os.path.basename(target))
