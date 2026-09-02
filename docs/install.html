@@ -131,7 +131,7 @@
     <div class="card reveal"><h4>📶 Share your Wi-Fi</h4><p>Settings → Network → the QR icon next to your network. Point a phone's camera at it.</p></div>
     <div class="card reveal"><h4>🖥️ Share your screen</h4><p>Settings → Sharing → <em>Share this screen</em>, then connect with any VNC app using the address and password shown.</p></div>
     <div class="card reveal"><h4>📱 Your phone</h4><p>Install KDE Connect on the phone, switch on <em>Allow phones to connect</em> in Settings → Sharing and pair.</p></div>
-    <div class="card reveal"><h4>🩺 System Health</h4><p>Settings → System Health checks disks, space, updates, firmware, drivers, services, the firewall, snapshots and the battery, and fixes each problem with a click.</p></div>
+    <div class="card reveal"><h4>🩺 System Health</h4><p>Settings → System Health checks disks, space, updates, firmware, drivers, services, the firewall, snapshots and the battery. Guided Diagnostics collects a report for installation, boot/login or app problems; you review it before saving, and detailed logs are optional.</p></div>
     <div class="card reveal"><h4>🔋 Battery care</h4><p>On supported laptops, Settings → Power → <em>Limit charging to 80%</em> keeps the battery healthy for years.</p></div>
     <div class="card reveal"><h4>♿ Accessibility</h4><p>Settings → Accessibility: text and pointer size, zoom (<kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>8</kbd>, whole screen or a lens), a screen keyboard, high contrast, the Orca screen reader.</p></div>
     <div class="card reveal"><h4>😴 Suspend, lid and power button</h4><p>Settings → Power: suspend after a while on battery or when plugged in, and choose what the power button and closing the lid do.</p></div>
@@ -187,6 +187,12 @@
   <details class="reveal"><summary>Black screen after the boot menu</summary>
     <p>Choose <em>Try Aurora OS (safe graphics)</em> in the boot menu. With an NVIDIA card,
       install its driver afterwards from Settings → Software Updates → Additional Drivers.</p></details>
+  <details class="reveal"><summary>Installation or login failed</summary>
+    <p>In the live session or after login, open <strong>Settings → System Health → Create
+      Diagnostic Report</strong>. Choose installation or startup, review the report and save it
+      only if you want to share it. Detailed logs are off by default because they may contain
+      personal information. For Hyper-V Generation 2, use the VM settings in the
+      <a data-repo-link data-path="/blob/main/HYPERV.md" href="#">Hyper-V guide</a>.</p></details>
   <details class="reveal"><summary>Keeping Windows</summary>
     <p>Choose <em>Install alongside</em> in the installer and drag the divider. The boot menu
       then lets you pick the system at startup. Back up your files first.</p></details>

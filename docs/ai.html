@@ -44,7 +44,11 @@
         any answer can be read aloud.</p>
       <ul class="ticks">
         <li>Quick actions on the text you copied: summarize, improve, translate, explain</li>
-        <li>Remembers the conversation until you start a new one</li>
+        <li>Conversations are saved locally; stop or regenerate an answer, and reopen earlier chats</li>
+        <li>When you scroll up to read, new replies wait for you: an animated down-arrow takes
+          you to the latest message without interrupting your reading</li>
+        <li>Attach text, code, documents or photos with the paperclip or drag and drop. Photos
+          are read with offline OCR; attachments are available only with the local AI model</li>
         <li>Floats like picture-in-picture: a compact card in the corner, above your other
           windows and on every workspace, while you keep working. Expand it or close it any time</li>
       </ul>
@@ -74,7 +78,8 @@
       <p>Type <code>?</code> and your question in Spotlight. Longer questions also offer an
         “Ask Aurora” result. With search by meaning turned on, Spotlight finds documents by what
         they're about: “the electricity bill from March” finds the PDF even if it's called
-        <code>scan_0042.pdf</code>.</p>
+        <code>scan_0042.pdf</code>. Right-click an app, recent file or project for quick
+        actions such as pinning an app, copying a file path or opening a project workspace.</p>
     </div>
     <div class="feature-media">
       <img src="screenshots/spotlight-ask.png" alt="Spotlight with an Ask Aurora result" data-zoom>
@@ -91,12 +96,12 @@
   </div>
   <div class="terminal reveal" aria-label="Example terminal session">
     <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
-<pre><span class="c">❯</span> ask "find files bigger than 1 GB in my home"
+<pre><span class="c">user@aurora:~$</span> ask "find files bigger than 1 GB in my home"
 <span class="d">Aurora AI · local</span>
 find ~/ -type f -size +1G
 This finds every file larger than 1 GB under your home folder.
 <span class="y">Run it?</span> [y/N/e = edit] y
-<span class="c">❯</span> npm run build 2>&amp;1 | why
+<span class="c">user@aurora:~$</span> npm run build 2>&amp;1 | why
 The build fails because the module "vite" isn't installed. Install the dependencies first:
 npm install</pre>
   </div>
@@ -109,7 +114,7 @@ npm install</pre>
   </div>
   <div class="app-groups">
     <div class="card reveal"><h4>✍️ Writing Tools</h4><p>Proofread, rewrite, shorten, summarize or translate the selected text in any app.</p></div>
-    <div class="card reveal"><h4>📄 Files</h4><p>Right-click a document: <em>Summarize with Aurora</em> or <em>Ask About This File</em>. Text, code, PDF, Word and LibreOffice.</p></div>
+    <div class="card reveal"><h4>📄 Files</h4><p>Right-click a document: <em>Summarize with Aurora</em> or <em>Ask About This File</em>. Text, code, PDF, Word and LibreOffice. You can also drag files straight into the chat.</p></div>
     <div class="card reveal"><h4>🖼️ Screenshots</h4><p><em>Ask Aurora</em> on the screenshot notification explains what's on screen, from an error dialog to a page of text.</p></div>
     <div class="card reveal"><h4>🔔 Notifications</h4><p>When they pile up, <em>Summarize</em> tells you what matters and what needs action.</p></div>
     <div class="card reveal"><h4>🎙️ Dictation</h4><p><kbd>Super</kbd>+<kbd>H</kbd>, speak, <kbd>Super</kbd>+<kbd>H</kbd>. The text is typed wherever you are. Whisper, on your computer.</p></div>
@@ -164,7 +169,9 @@ npm install</pre>
   <details class="reveal"><summary>Does anything leave my computer?</summary>
     <p>Not with the local model. The only network traffic is the one-time download of the
       pieces you set up (from GitHub, Hugging Face and PyPI). With a cloud provider, your
-      questions and the text you ask about go to that provider.</p></details>
+      questions and the text you ask about go to that provider. Chat attachments are blocked
+      with cloud providers: choose the local model to attach files or photos. Conversations
+      are saved in your user account, not uploaded by Aurora.</p></details>
   <details class="reveal"><summary>Which languages does it speak?</summary>
     <p>It answers in the language you write in, and follows “reply in Italian” whatever your
       system language. You can also fix one language in Settings. Dictation detects the

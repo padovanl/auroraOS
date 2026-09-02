@@ -36,11 +36,11 @@
     <div class="terminal reveal" aria-label="Example terminal session">
       <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
 <pre><span class="p">~/code/api</span> <span class="b"> main</span> <span class="y">py 3.13</span>
-<span class="c">❯</span> git pull &amp;&amp; docker compose up -d
+<span class="c">user@aurora:~/code/api$</span> git pull &amp;&amp; docker compose up -d
 <span class="d">✔ Container api-db-1   Started</span>
 <span class="d">✔ Container api-web-1  Started</span>
 <span class="p">~/code/api</span> <span class="b"> main</span> <span class="d">took 3s</span>
-<span class="c">❯</span> portop
+<span class="c">user@aurora:~/code/api$</span> portop
 <span class="h"> PORT   PROTO  PROCESS      SERVICE / CONTAINER</span>
  5432   tcp    postgres     api-db-1
  8000   tcp    uvicorn      api-web-1
@@ -72,7 +72,9 @@
       <h3>Dev Hub: your toolbox in one click</h3>
       <p>About 90 tools in 17 categories, with a sidebar to jump between them and a search
         box. Each one installs from its <em>official</em> source, so you always get the newest
-        release, and you see every step in a terminal.</p>
+        release, and you see every step in a terminal. The Projects section lets you add a
+        folder, choose an editor and decide whether its workspace opens a terminal and Files
+        too. Open the workspace here or from a project's Spotlight context menu.</p>
       <ul>
         <li><strong>Editors, languages, cloud, databases:</strong> VS Code, VSCodium, Zed,
           JetBrains IDEs, Android Studio, Rust, Go, Java, uv, Bun, Deno, GitHub CLI, kubectl,
@@ -93,6 +95,9 @@
           Octave, Godot, Blender, LÖVE, Arduino IDE, PlatformIO, KiCad, serial consoles,
           Inkscape, GIMP, draw.io, Obsidian, Zeal, Nmap, ZAP, Tailscale, Mosh.</li>
       </ul>
+      <p>Installations, local AI downloads and file transfers appear in the top bar's
+        Activities menu; Files transfers can be cancelled there and retried from Files if
+        they fail.</p>
     </div>
     <div class="feature-media">
       <img src="screenshots/devhub.png" alt="Dev Hub with one-click installers" data-zoom>
@@ -107,7 +112,8 @@
     <p>With <a href="ai.html">Aurora AI</a> turned on, <code>ask</code> turns a sentence into a
       command (it runs only if you say yes) and <code>cmd 2&gt;&amp;1 | why</code> explains a failure
       and the fix. Right-click a source file in Files and ask about it, or search your projects
-      in Spotlight by name: Enter opens them in your editor.</p>
+      in Spotlight by name: Enter opens them in your editor; right-click opens the whole
+      configured workspace.</p>
   </div>
 </section>
 
