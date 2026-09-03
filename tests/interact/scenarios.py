@@ -76,6 +76,27 @@ def desktop_file(vm):
     vm.wait_for(lambda: not vm.windows(), timeout=10)
 
 
+def desktop_drag(vm):
+    """Drag a desktop file into a desktop folder with QEMU pointer events."""
+    vm.user("printf 'drag test\\n' > ~/Desktop/zz-file.txt; mkdir -p ~/Desktop/zz-folder")
+    time.sleep(2)
+    vm.shot("desktop-before-drag")
+    vm.move(70, 210)
+    time.sleep(0.3)
+    vm.button("left", True)
+    for x, y in ((72, 225), (75, 250), (75, 280), (70, 320)):
+        vm.move(x, y)
+        time.sleep(0.35)
+    vm.button("left", False)
+    time.sleep(3)
+    vm.shot("desktop-after-drag")
+    code, _ = vm.user("test -f ~/Desktop/zz-folder/zz-file.txt && "
+                       "test ! -e ~/Desktop/zz-file.txt")
+    check("dragging a desktop file into a desktop folder moves it", code == 0)
+    vm.user("rm -f ~/Desktop/zz-file.txt ~/Desktop/zz-folder/zz-file.txt; "
+            "rmdir ~/Desktop/zz-folder")
+
+
 def shell_recovers(vm):
     # A crash must not leave the session without its bar and dock.
     vm.root("pkill -9 -f '^/usr/bin/python3 /usr/bin/[a]urora-shell$'")
@@ -182,7 +203,7 @@ def main():
         vm.push_desktop(REPO)
         vm.restart_shell()
     try:
-        for scenario in (desktop_icons, desktop_file, installer, terminal, control_center, hot_corner,
+        for scenario in (desktop_icons, desktop_file, desktop_drag, installer, terminal, control_center, hot_corner,
                          files, settings, shell_recovers):
             try:
                 scenario(vm)

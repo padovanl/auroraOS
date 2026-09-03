@@ -117,6 +117,9 @@ trap 'rm -f "$tmp_iso"' EXIT
 grub-mkrescue -o "$tmp_iso" "$ISODIR" -- -volid "$ISO_LABEL" 2>&1 |
     awk '!/^xorriso : UPDATE/'
 [ -s "$tmp_iso" ] || die "ISO was not created"
+# mktemp creates mode 0600; the published image must be readable by normal
+# users (QEMU, USB writers, checksum tools), while remaining atomic.
+chmod 0644 "$tmp_iso"
 mv -f "$tmp_iso" "$iso"
 ( cd "$OUT" && sha256sum "$(basename "$iso")" > "$(basename "$iso").sha256" )
 log "done: $iso ($(du -h "$iso" | cut -f1))"
