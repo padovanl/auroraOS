@@ -81,10 +81,10 @@ def desktop_drag(vm):
     vm.user("printf 'drag test\\n' > ~/Desktop/zz-file.txt; mkdir -p ~/Desktop/zz-folder")
     time.sleep(2)
     vm.shot("desktop-before-drag")
-    vm.move(70, 210)
+    vm.move(70, 330)
     time.sleep(0.3)
     vm.button("left", True)
-    for x, y in ((72, 225), (75, 250), (75, 280), (70, 320)):
+    for x, y in ((72, 315), (75, 285), (75, 250), (70, 220)):
         vm.move(x, y)
         time.sleep(0.35)
     vm.button("left", False)
