@@ -61,6 +61,7 @@ class Welcome(Adw.ApplicationWindow):
         view.set_content(box)
         self.set_content(view)
         self._update_buttons()
+        self.connect("close-request", lambda *_: self._mark_seen() or False)
 
     def _status(self, icon, title, description, child=None):
         page = Adw.StatusPage(icon_name=icon, title=title, description=description,
@@ -138,10 +139,13 @@ class Welcome(Adw.ApplicationWindow):
         last = pos == self.carousel.get_n_pages() - 1
         self.next.set_label(_("Done") if last else _("Next"))
 
-    def _finish(self):
+    def _mark_seen(self):
         path = config_path("welcome-done")
         os.makedirs(os.path.dirname(path), exist_ok=True)
         open(path, "w").close()
+
+    def _finish(self):
+        self._mark_seen()
         self.close()
 
 
@@ -150,7 +154,9 @@ class WelcomeApp(Adw.Application):
         super().__init__(application_id="org.aurora.Welcome")
 
     def do_activate(self):
-        (self.props.active_window or Welcome(self)).present()
+        window = self.props.active_window or Welcome(self)
+        window._mark_seen()
+        window.present()
 
 
 def main():

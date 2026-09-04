@@ -13,6 +13,7 @@ the lock screen shows the same background.
 import os
 import shutil
 import subprocess
+import time
 
 from gi.repository import GLib, GObject
 
@@ -41,9 +42,12 @@ class DayCycle(GObject.Object):
         self.phase = sun.phase(loc=self.location)
         self._night_light = None
         self._night_args = None
+        self._slide_started = time.monotonic()
+        self._slide_index = 0
         s = settings.get()
         if s:
-            for key in ("wallpaper", "wallpaper-dynamic"):
+            for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
+                        "wallpaper-slideshow-minutes"):
                 s.connect(f"changed::{key}", lambda *a: self._wallpaper_changed())
             s.connect("changed::color-scheme-auto", lambda *a: self._sync_scheme())
             for key in ("night-light", "night-light-schedule", "night-light-from",
@@ -59,6 +63,10 @@ class DayCycle(GObject.Object):
     def wallpaper(self):
         """The picture to show now."""
         s = settings.get()
+        if s is not None and s.get_boolean("wallpaper-slideshow"):
+            pictures = self._slides()
+            if pictures:
+                return pictures[self._slide_index % len(pictures)]
         if s is None or s.get_boolean("wallpaper-dynamic"):
             path = dynamic_path(self.phase)
             if os.path.exists(path):
@@ -68,6 +76,16 @@ class DayCycle(GObject.Object):
             if candidate and os.path.exists(candidate):
                 return candidate
         return None
+
+    @staticmethod
+    def _slides():
+        gallery = os.path.join(BACKGROUNDS)
+        try:
+            return [os.path.join(gallery, name) for name in sorted(os.listdir(gallery))
+                    if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+                    and not name.startswith("aurora-dynamic-")]
+        except OSError:
+            return []
 
     def _wallpaper_changed(self):
         self._update_link()
@@ -97,6 +115,13 @@ class DayCycle(GObject.Object):
             self.phase = phase
             s = settings.get()
             if s is None or s.get_boolean("wallpaper-dynamic"):
+                self._wallpaper_changed()
+        s = settings.get()
+        if s is not None and s.get_boolean("wallpaper-slideshow"):
+            interval = max(5, s.get_int("wallpaper-slideshow-minutes")) * 60
+            if time.monotonic() - self._slide_started >= interval:
+                self._slide_started = time.monotonic()
+                self._slide_index += 1
                 self._wallpaper_changed()
         self._sync_scheme()
         return GLib.SOURCE_CONTINUE

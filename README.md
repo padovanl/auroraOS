@@ -115,10 +115,11 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
 | **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
 | **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next. The login and lock screens follow it. |
+| **Personal and rotating wallpapers** | Add a picture in Settings → Appearance, or rotate the included gallery every 15 minutes, 1 hour, 6 hours or 24 hours. Rotation works offline; the lock screen follows the active picture. |
 | **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
 | **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. |
 | **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). |
-| **Weather** | Current weather and the next hours next to the calendar (can be turned off). |
+| **Weather** | Current weather and the next hours next to the calendar (can be turned off), using the city selected in GNOME Weather when available. |
 | **Sounds** | An Aurora sound when you log in and when you shut down, restart or log out (on by default, Settings → Sound). |
 | **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |

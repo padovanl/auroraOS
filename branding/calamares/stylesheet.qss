@@ -45,15 +45,15 @@ QRadioButton, QCheckBox, QLabel { color: #f2eefa; background: transparent; }
 
 /* Explicit indicators: the platform's light-theme controls are illegible
    against the installer's dark background. Keep all states distinct. */
-QCheckBox, QRadioButton { spacing: 9px; padding: 5px 0; }
+QCheckBox, QRadioButton { spacing: 12px; padding: 7px 0; }
 QCheckBox::indicator, QRadioButton::indicator {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     border: 2px solid #8f819f;
     background-color: #221d30;
 }
-QCheckBox::indicator { border-radius: 5px; }
-QRadioButton::indicator { border-radius: 11px; }
+QCheckBox::indicator { border-radius: 6px; }
+QRadioButton::indicator { border-radius: 12px; }
 QCheckBox::indicator:hover, QRadioButton::indicator:hover { border-color: #cba4ff; }
 QCheckBox::indicator:focus, QRadioButton::indicator:focus { border-color: #f2eefa; }
 QCheckBox::indicator:checked, QCheckBox::indicator:indeterminate,

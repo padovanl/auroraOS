@@ -72,9 +72,10 @@ class Shell(Adw.Application):
 
     def do_startup(self):
         Adw.Application.do_startup(self)
+        self._sync_style()
         self._load_css()
         for name, cb, ptype in (
-            ("open-terminal", lambda *_: apps.spawn(["ptyxis", "--new-window"]), None),
+            ("open-terminal", lambda *_: self._open_desktop_terminal(), None),
             ("open-files", lambda *_: self._open_files(), None),
             ("settings", lambda _a, p: self.open_settings(p.get_string()), "s"),
             ("launcher", lambda *_: self.launcher.toggle(), None),
@@ -160,6 +161,7 @@ class Shell(Adw.Application):
             from aurora import look
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
+            iface.connect("changed::color-scheme", lambda *a: self._sync_style())
             iface.connect("changed::accent-color", lambda *a: self._load_css())
             look.apply()
         # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
@@ -235,6 +237,19 @@ class Shell(Adw.Application):
                     Gdk.Display.get_default(), self._shell_css,
                     Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
             self._shell_css.load_from_string(css)
+
+    @staticmethod
+    def _sync_style():
+        iface = settings.interface()
+        dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
+        Adw.StyleManager.get_default().set_color_scheme(
+            Adw.ColorScheme.FORCE_DARK if dark else Adw.ColorScheme.FORCE_LIGHT)
+
+    def _open_desktop_terminal(self):
+        from aurora.shell.desktopicons import desktop_dir
+        path = desktop_dir()
+        os.makedirs(path, exist_ok=True)
+        return apps.spawn(["ptyxis", "--new-window", f"--working-directory={path}"])
 
     # --- command line ---
 

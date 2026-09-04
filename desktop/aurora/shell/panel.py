@@ -36,6 +36,20 @@ class WeatherWidget(Gtk.Button):
         from aurora import sun, weather
         s = settings.get()
         loc = sun.location()
+        self._place = None
+        try:
+            import gi
+            gi.require_version("GWeather", "4.0")
+            from gi.repository import GWeather
+            places = Gio.Settings.new("org.gnome.Weather").get_value("locations")
+            if places.n_children():
+                chosen = GWeather.Location.get_world().deserialize(
+                    places.get_child_value(0).get_variant())
+                if chosen is not None and chosen.has_coords():
+                    loc = chosen.get_coords()
+                    self._place = chosen.get_city_name() or chosen.get_name()
+        except (GLib.Error, ImportError, AttributeError, TypeError, ValueError):
+            pass
         if (s is not None and not s.get_boolean("weather-widget")) or loc is None:
             self.set_visible(False)
             return
@@ -68,8 +82,9 @@ class WeatherWidget(Gtk.Button):
         unit = data["unit"]
         self.icon.set_from_icon_name(icon)
         self.temp.set_label(f"{data['temp']:.0f}{unit}")
-        self.desc.set_label(_("{sky} · H {high:.0f}° L {low:.0f}°").format(
-            sky=_(text), high=data["high"], low=data["low"]))
+        summary = _("{sky} · H {high:.0f}° L {low:.0f}°").format(
+            sky=_(text), high=data["high"], low=data["low"])
+        self.desc.set_label(f"{self._place} · {summary}" if self._place else summary)
         while (c := self.hours.get_first_child()) is not None:
             self.hours.remove(c)
         for hour, temp, code in data["hours"]:
@@ -310,20 +325,7 @@ class Panel(LayerWindow):
 
         left = Gtk.Box(spacing=2)
         left.append(AuroraMenu(shell))
-        # The focused app's name; a click lists its windows (numbered when
-        # they share a title), like the app menu of a Mac.
-        self.app_name = Gtk.Label(css_classes=["panel-app-name"], ellipsize=3,
-                                  max_width_chars=40)
-        self.app_count = Gtk.Label(css_classes=["panel-app-count"], visible=False)
-        name_box = Gtk.Box(spacing=6)
-        name_box.append(self.app_name)
-        name_box.append(self.app_count)
-        self.app_menu = Gtk.MenuButton(child=name_box, always_show_arrow=False,
-                                       css_classes=["flat", "panel-button", "panel-app"],
-                                       margin_start=2)
-        self.app_menu.set_create_popup_func(self._fill_app_menu)
-        left.append(self.app_menu)
-        # Every open window gets a switcher button, including minimized ones.
+        # Every open window gets one stable switcher button, including minimized ones.
         self.windows = Gtk.Box(spacing=2, css_classes=["panel-windows"])
         self.window_scroll = Gtk.ScrolledWindow(child=self.windows,
                                                hscrollbar_policy=Gtk.PolicyType.NEVER,
@@ -359,11 +361,11 @@ class Panel(LayerWindow):
         bar.set_end_widget(right)
 
         self.set_child(bar)
-        shell.toplevels.connect("changed", lambda *a: self._update_app())
-        self._update_app()
+        shell.toplevels.connect("changed", lambda *a: self._update_windows())
+        self._update_windows()
         # A menu opened from a shortcut must get the keyboard (Esc, arrows),
         # and give it back when it closes.
-        self._menus = (left.get_first_child(), self.app_menu, self.activities,
+        self._menus = (left.get_first_child(), self.activities,
                        self.status, clock)
         for button in self._menus:
             button.connect("notify::active", self._on_menu_active)
@@ -414,40 +416,22 @@ class Panel(LayerWindow):
                 classes.append("minimized")
             b = Gtk.Button(child=content, css_classes=classes, tooltip_text=t.title or name)
             b.connect("clicked", lambda _b, t=t: t.activate())
+            right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
+                                     propagation_phase=Gtk.PropagationPhase.CAPTURE)
+            right.connect("pressed", self._window_context_menu, t, b)
+            b.add_controller(right)
             self.windows.append(b)
         self.window_scroll.set_visible(bool(windows))
 
-    def _update_app(self):
-        self._update_windows()
-        active = self.shell.toplevels.active()
-        if active is None:
-            self.app_name.set_label(_("Desktop"))
-            self.app_name.set_tooltip_text(None)
-            self.app_count.set_visible(False)
-            self.app_menu.set_sensitive(False)
-            return
-        app = apps.find_app(active.app_id)
-        self.app_name.set_label(app.get_display_name() if app else
-                                (active.app_id or active.title or ""))
-        self.app_name.set_tooltip_text(active.title)
-        count = len(self.shell.toplevels.for_app(active.app_id))
-        self.app_count.set_label(str(count))
-        self.app_count.set_tooltip_text(_("Open windows: {n}").format(n=count))
-        self.app_count.set_visible(count > 1)
-        self.app_menu.set_sensitive(True)
-
-    def _fill_app_menu(self, button):
-        """The focused app's windows (click one to bring it forward), then
-        New Window and Quit."""
-        active = self.shell.toplevels.active()
+    def _window_context_menu(self, gesture, _n, x, y, active, button):
+        """Window-specific right-click actions on its stable top-bar button."""
         pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
                           css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
                       margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
         pop.set_child(box)
-        button.set_popover(pop)
-        if active is None:
-            return
+        pop.set_parent(button)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         app = apps.find_app(active.app_id)
         windows = sorted(self.shell.toplevels.for_app(active.app_id), key=lambda w: w.serial)
         labels = window_labels(windows, _("Window"))
@@ -479,6 +463,11 @@ class Panel(LayerWindow):
         if len(windows) > 1:
             add(_("Quit {n} Windows").format(n=len(windows)),
                 lambda: [w.close() for w in windows])
+        rect = Gdk.Rectangle()
+        rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
+        pop.set_pointing_to(rect)
+        pop.popup()
+        gesture.set_state(Gtk.EventSequenceState.CLAIMED)
 
     def _toggle_menu(self, button):
         """Open or close a bar menu from a shortcut. The bar takes the keyboard

@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import uuid
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
@@ -175,6 +176,18 @@ class Appearance(Page):
         self.flow.connect("child-activated", self._on_wallpaper)
         bg.add(self.flow)
         self._load_wallpapers()
+        if aurora:
+            bg.add(switch_row(_("Rotate wallpapers"),
+                              aurora.get_boolean("wallpaper-slideshow"),
+                              self._set_slideshow,
+                              subtitle=_("Cycle through the included wallpapers offline")))
+            intervals = [15, 60, 360, 1440]
+            value = aurora.get_int("wallpaper-slideshow-minutes")
+            bg.add(combo_row(_("Change every"),
+                             [_('15 minutes'), _('1 hour'), _('6 hours'), _('24 hours')],
+                             intervals.index(value) if value in intervals else 1,
+                             on_change=lambda i: aurora.set_int(
+                                 "wallpaper-slideshow-minutes", intervals[i])))
 
         if aurora:
             night = self.group(_("Night Light"), _("Warmer colors are easier on the eyes at night."))
@@ -297,9 +310,16 @@ class Appearance(Page):
     def _on_wallpaper(self, _flow, child):
         aurora = settings.get()
         if aurora:
+            aurora.set_boolean("wallpaper-slideshow", False)
             aurora.set_boolean("wallpaper-dynamic", child.path is None)
             if child.path:
                 aurora.set_string("wallpaper", child.path)
+
+    def _set_slideshow(self, active):
+        aurora = settings.get()
+        aurora.set_boolean("wallpaper-slideshow", active)
+        if active:
+            aurora.set_boolean("wallpaper-dynamic", False)
 
     def _add_picture(self, *_a):
         dialog = Gtk.FileDialog(title=_("Choose a Background"))
@@ -314,12 +334,21 @@ class Appearance(Page):
                 f = dlg.open_finish(res)
             except GLib.Error:
                 return
+            path = f.get_path()
+            if not path or not os.path.isfile(path):
+                return
             dest_dir = os.path.expanduser("~/.local/share/backgrounds")
             os.makedirs(dest_dir, exist_ok=True)
-            dest = os.path.join(dest_dir, os.path.basename(f.get_path()))
-            shutil.copyfile(f.get_path(), dest)
+            name, extension = os.path.splitext(os.path.basename(path))
+            dest = os.path.join(dest_dir, f"{name}-{uuid.uuid4().hex[:8]}{extension}")
+            try:
+                shutil.copyfile(path, dest)
+            except OSError as err:
+                print(f"aurora: cannot add wallpaper: {err}")
+                return
             aurora = settings.get()
             if aurora:
+                aurora.set_boolean("wallpaper-slideshow", False)
                 aurora.set_boolean("wallpaper-dynamic", False)
                 aurora.set_string("wallpaper", dest)
             self._load_wallpapers()
