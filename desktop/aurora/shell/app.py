@@ -160,6 +160,7 @@ class Shell(Adw.Application):
             from aurora import look
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
+            iface.connect("changed::accent-color", lambda *a: self._load_css())
             look.apply()
         # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
         GLib.idle_add(self._ready, t0)
@@ -219,13 +220,21 @@ class Shell(Adw.Application):
         return apps.launch(app, action=action)
 
     def _load_css(self):
-        provider = Gtk.CssProvider()
         path = data_path("style", "shell.css")
         if os.path.exists(path):
-            provider.load_from_path(path)
-            Gtk.StyleContext.add_provider_for_display(
-                Gdk.Display.get_default(), provider,
-                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            from aurora.look import ACCENT_HEX
+            iface = settings.interface()
+            accent = (ACCENT_HEX.get(iface.get_string("accent-color"), "#a970ff")
+                      if iface else "#a970ff")
+            with open(path, encoding="utf-8") as f:
+                css = f.read().replace("@define-color aurora_violet #a970ff;",
+                                       f"@define-color aurora_violet {accent};")
+            if not hasattr(self, "_shell_css"):
+                self._shell_css = Gtk.CssProvider()
+                Gtk.StyleContext.add_provider_for_display(
+                    Gdk.Display.get_default(), self._shell_css,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            self._shell_css.load_from_string(css)
 
     # --- command line ---
 

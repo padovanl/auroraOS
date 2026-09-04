@@ -249,9 +249,9 @@ class Appearance(Page):
 
     def _install_swatch_css(self):
         css = "".join(
-            f"#accent-{k} check {{ background: {c}; min-width: 22px; min-height: 22px;"
+            f"#accent-{k} radio {{ background: {c}; min-width: 22px; min-height: 22px;"
             f" border-radius: 999px; box-shadow: none; -gtk-icon-source: none; }}"
-            f" #accent-{k}:checked check {{ box-shadow: 0 0 0 2px @window_bg_color,"
+            f" #accent-{k}:checked radio {{ box-shadow: 0 0 0 2px @window_bg_color,"
             f" 0 0 0 4px {c}; }}"
             for k, c, _n in ACCENTS)
         provider = Gtk.CssProvider()
