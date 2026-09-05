@@ -70,7 +70,8 @@ class Wallpaper(LayerWindow):
             return False
         import os
         if len(paths) == 1 and os.path.dirname(paths[0]) == desktop_dir():
-            self._icons.reorder_to_end(os.path.basename(paths[0]))
+            cx, cy = self.get_child().translate_coordinates(self._icons, x, y)[-2:]
+            self._icons.place(os.path.basename(paths[0]), cx - 40, cy - 40)
             return True
         os.makedirs(desktop_dir(), exist_ok=True)
         from aurora.dnd import is_move

@@ -1,5 +1,4 @@
-"""Files from ~/Desktop shown on the background, in columns from the top left
-(or top right, per the desktop-icons-position setting)."""
+"""Files from ~/Desktop on a freely positionable desktop canvas."""
 
 import os
 import re
@@ -100,7 +99,7 @@ class DesktopIcon(Gtk.Button):
             drop.connect("drop", self._on_drop)
             self.add_controller(drop)
 
-    def _on_drop(self, _target, value, _x, _y):
+    def _on_drop(self, _target, value, x, y):
         if not isinstance(value, Gdk.FileList) or self.gfile is None:
             return False
         paths = [f.get_path() for f in value.get_files() if f.get_path()]
@@ -113,8 +112,8 @@ class DesktopIcon(Gtk.Button):
             parent.transfer(paths, target, move=is_move(_target))
             return True
         if len(paths) == 1 and os.path.dirname(paths[0]) == desktop_dir():
-            parent.reorder(os.path.basename(paths[0]), os.path.basename(target))
-            return True
+            px, py = self.translate_coordinates(parent, x, y)[-2:]
+            return parent.place(os.path.basename(paths[0]), px - 40, py - 40)
         return False
 
     def _on_press(self, _gesture, n_press, _x, _y):
@@ -197,11 +196,71 @@ class DesktopIcon(Gtk.Button):
         PropertiesDialog([self.gfile]).present(self.get_root())
 
 
-class DesktopIcons(Gtk.FlowBox):
+class DesktopIcons(Gtk.Fixed):
+    CELL_WIDTH = 116
+    CELL_HEIGHT = 112
+
     @staticmethod
     def _order_path():
         base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
         return os.path.join(base, "aurora", "desktop-icons.json")
+
+    @classmethod
+    def _positions_path(cls):
+        return os.path.join(os.path.dirname(cls._order_path()), "desktop-icon-positions.json")
+
+    def _load_positions(self):
+        try:
+            with open(self._positions_path(), encoding="utf-8") as stream:
+                value = json.load(stream)
+            if isinstance(value, dict):
+                return {key: [int(point[0]), int(point[1])]
+                        for key, point in value.items()
+                        if isinstance(key, str) and isinstance(point, list) and len(point) == 2
+                        and all(isinstance(n, (int, float)) for n in point)}
+        except (OSError, ValueError, TypeError, OverflowError):
+            pass
+        return {}
+
+    def _save_positions(self):
+        path = self._positions_path()
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            temporary = path + ".tmp"
+            with open(temporary, "w", encoding="utf-8") as stream:
+                json.dump(self._positions, stream)
+            os.replace(temporary, path)
+        except OSError as err:
+            print(f"aurora: cannot save desktop icon positions: {err}")
+
+    def _bounds(self):
+        s = settings.get()
+        bar = 46
+        dock = 0 if s is None or s.get_boolean("dock-autohide") else s.get_int("dock-icon-size") + 40
+        panel_top = s is None or s.get_string("panel-position") != "bottom"
+        where = s.get_string("dock-position") if s else "bottom"
+        left = 16 + (dock if where == "left" else 0)
+        top = (bar if panel_top else 16) + (dock if where == "top" else 0)
+        right = max(left, self.get_width() - 16 - (dock if where == "right" else 0)
+                    - self.CELL_WIDTH)
+        bottom = max(top, self.get_height() - max(16, (0 if panel_top else bar)
+                     + (dock if where == "bottom" else 16)) - self.CELL_HEIGHT)
+        return left, top, right, bottom
+
+    def _clamp(self, x, y):
+        left, top, right, bottom = self._bounds()
+        return max(left, min(int(x), right)), max(top, min(int(y), bottom))
+
+    def place(self, name, x, y):
+        """Move one desktop file to a drop coordinate and remember the result."""
+        icon = self._icons.get(name)
+        if icon is None:
+            return False
+        x, y = self._clamp(x, y)
+        self.move(icon, x, y)
+        self._positions[name] = [x, y]
+        self._save_positions()
+        return True
 
     def _load_order(self):
         try:
@@ -222,35 +281,6 @@ class DesktopIcons(Gtk.FlowBox):
         except OSError as err:
             print(f"aurora: cannot save desktop icon order: {err}")
 
-    def reorder(self, source, target):
-        names = []
-        child = self.get_first_child()
-        while child is not None:
-            icon = child.get_child()
-            if icon.gfile is not None:
-                names.append(icon.gfile.get_basename())
-            child = child.get_next_sibling()
-        if source not in names or target not in names or source == target:
-            return
-        names.remove(source)
-        names.insert(names.index(target), source)
-        self._save_order(names)
-        self.reload()
-
-    def reorder_to_end(self, source):
-        names = []
-        child = self.get_first_child()
-        while child is not None:
-            icon = child.get_child()
-            if icon.gfile is not None:
-                names.append(icon.gfile.get_basename())
-            child = child.get_next_sibling()
-        if source in names:
-            names.remove(source)
-            names.append(source)
-            self._save_order(names)
-            self.reload()
-
     def transfer(self, paths, target, move=False):
         kind = "move" if move else "copy"
         job = Job(kind, paths, target)
@@ -259,20 +289,17 @@ class DesktopIcons(Gtk.FlowBox):
         job.start()
 
     def select(self, icon=None):
-        child = self.get_first_child()
-        while child is not None:
-            button = child.get_child() if isinstance(child, Gtk.FlowBoxChild) else child
-            if button is not None:
-                (button.add_css_class if button is icon else button.remove_css_class)("selected")
-            child = child.get_next_sibling()
+        for button in self._icons.values():
+            (button.add_css_class if button is icon else button.remove_css_class)("selected")
 
     def __init__(self):
-        super().__init__(selection_mode=Gtk.SelectionMode.NONE,
-                         orientation=Gtk.Orientation.VERTICAL,
-                         valign=Gtk.Align.FILL, margin_top=46, margin_start=16, margin_end=16,
-                         margin_bottom=100, row_spacing=6, column_spacing=6,
-                         max_children_per_line=40, css_classes=["desktop-icons"])
+        super().__init__(hexpand=True, vexpand=True, halign=Gtk.Align.FILL,
+                         valign=Gtk.Align.FILL, css_classes=["desktop-icons"])
         self._dir = Gio.File.new_for_path(desktop_dir())
+        self._positions = self._load_positions()
+        self._icons = {}
+        self._last_size = (0, 0)
+        self.add_tick_callback(self._watch_size)
         self._monitor = None
         try:
             self._monitor = self._dir.monitor_directory(Gio.FileMonitorFlags.WATCH_MOVES, None)
@@ -289,24 +316,26 @@ class DesktopIcons(Gtk.FlowBox):
         self.reload()
 
     def _fit_margins(self):
-        """Keep the icons clear of the top bar and the dock, wherever they are."""
-        s = settings.get()
-        if s is None:
-            return
-        bar = 46
-        dock = 0 if s.get_boolean("dock-autohide") else s.get_int("dock-icon-size") + 40
-        panel_top = s.get_string("panel-position") != "bottom"
-        where = s.get_string("dock-position")
-        self.set_margin_top((bar if panel_top else 16) + (dock if where == "top" else 0))
-        self.set_margin_bottom(max(16, (0 if panel_top else bar) + (dock if where == "bottom" else 16)))
-        self.set_margin_start(16 + (dock if where == "left" else 0))
-        self.set_margin_end(16 + (dock if where == "right" else 0))
+        """Reposition saved icons when panel or dock layout changes."""
+        if self.get_width() and self.get_height():
+            self.reload()
+
+    def _watch_size(self, *_args):
+        size = self.get_width(), self.get_height()
+        if size != self._last_size and all(size):
+            self._last_size = size
+            self.reload()
+        return GLib.SOURCE_CONTINUE
 
     def reload(self):
-        self.remove_all()
+        child = self.get_first_child()
+        while child is not None:
+            next_child = child.get_next_sibling()
+            self.remove(child)
+            child = next_child
+        self._icons = {}
         s = settings.get()
         right = s is not None and s.get_string("desktop-icons-position") == "right"
-        self.set_halign(Gtk.Align.END if right else Gtk.Align.START)
         if s is not None and not s.get_boolean("desktop-icons"):
             self.set_visible(False)
             return GLib.SOURCE_REMOVE
@@ -324,14 +353,45 @@ class DesktopIcons(Gtk.FlowBox):
                    (1, i.get_file_type() != Gio.FileType.DIRECTORY,
                     natural_key(i.get_display_name())))
         shown = 0
+        left, top, right_edge, bottom = self._bounds()
+        rows = max(1, (bottom - top) // self.CELL_HEIGHT + 1)
+        occupied = set()
+        visible_names = {info.get_name() for info in infos[:MAX_ITEMS]}
+        for name, point in self._positions.items():
+            if name in visible_names:
+                px, py = self._clamp(*point)
+                occupied.add((px // self.CELL_WIDTH, py // self.CELL_HEIGHT))
+
+        def add_icon(icon, name=None):
+            nonlocal shown
+            slot = shown
+            col, row = divmod(slot, rows)
+            default_x = (right_edge - col * self.CELL_WIDTH if right
+                         else left + col * self.CELL_WIDTH)
+            default_y = top + row * self.CELL_HEIGHT
+            x, y = self._clamp(*(self._positions[name] if name in self._positions
+                                 else (default_x, default_y)))
+            if name not in self._positions:
+                while (x // self.CELL_WIDTH, y // self.CELL_HEIGHT) in occupied:
+                    slot += 1
+                    col, row = divmod(slot, rows)
+                    x, y = self._clamp((right_edge - col * self.CELL_WIDTH if right
+                                        else left + col * self.CELL_WIDTH),
+                                       top + row * self.CELL_HEIGHT)
+                    if slot > MAX_ITEMS + 1:
+                        break
+            occupied.add((x // self.CELL_WIDTH, y // self.CELL_HEIGHT))
+            self.put(icon, x, y)
+            if name is not None:
+                self._icons[name] = icon
+            shown += 1
+
         # The live system offers the installer on the desktop, like Ubuntu's.
         installer = Gio.DesktopAppInfo.new("aurora-installer.desktop") if is_live() else None
         if installer is not None:
-            self.append(DesktopIcon(None, app=installer))
-            shown += 1
+            add_icon(DesktopIcon(None, app=installer))
         for info in infos[:MAX_ITEMS]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
-            self.append(icon)
-            shown += 1
+            add_icon(icon, info.get_name())
         self.set_visible(shown > 0)
         return GLib.SOURCE_REMOVE
