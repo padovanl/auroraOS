@@ -126,7 +126,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background (top left, or top right): click to select, double-click to open, click the empty desktop to clear the selection. App launchers (`.desktop` files) show the app's name and icon. Icons fill columns from the top, folders first, names in natural order (file-2 before file-10). |
 | **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons whose symbols are always visible (×, −, and arrows to expand or restore; or monochrome), server-side and GTK decorations styled alike. |
-| **Animations** | Windows fade and settle in as they open, and files float in, row by row, as a folder opens in Files. Switch them off in Settings → Appearance. |
+| **Animations** | GTK interface transitions and Files' opening effects can be switched off in Settings → Appearance. labwc does not currently animate the opening, closing or minimization of every application window. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
