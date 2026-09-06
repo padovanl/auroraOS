@@ -1,6 +1,6 @@
 """Desktop background, one surface per monitor, with a right-click menu."""
 
-from gi.repository import Gdk, Gio, Gtk
+from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora.i18n import _
 from aurora.shell.layer import Layer, LayerWindow
@@ -96,23 +96,31 @@ class Wallpaper(LayerWindow):
             create.connect("activate", self._new_item, folder)
             actions.add_action(create)
         parent.insert_action_group("desktop", actions)
-        menu = Gio.Menu()
-        section = Gio.Menu()
-        section.append(_("New File…"), "desktop.new-file")
-        section.append(_("New Folder…"), "desktop.new-folder")
-        menu.append_section(None, section)
-        section = Gio.Menu()
-        section.append(_("Open Terminal"), "app.open-terminal")
-        section.append(_("Open Files"), "app.open-files")
-        menu.append_section(None, section)
-        section = Gio.Menu()
-        section.append(_("Change Background…"), "app.settings::appearance")
-        section.append(_("Display Settings"), "app.settings::display")
-        section.append(_("Settings"), "app.settings::")
-        menu.append_section(None, section)
-        popover = Gtk.PopoverMenu(menu_model=menu, has_arrow=False,
-                                  halign=Gtk.Align.START,
-                                  css_classes=["aurora-context-menu"])
+        popover = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+                              css_classes=["aurora-context-menu"])
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1,
+                      margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)
+        sections = [
+            [(_("New File…"), "desktop.new-file", None),
+             (_("New Folder…"), "desktop.new-folder", None)],
+            [(_("Open Terminal"), "app.open-terminal", None),
+             (_("Open Files"), "app.open-files", None)],
+            [(_("Change Background…"), "app.settings", "appearance"),
+             (_("Display Settings"), "app.settings", "display"),
+             (_("Settings"), "app.settings", "")],
+        ]
+        for index, section in enumerate(sections):
+            if index:
+                box.append(Gtk.Separator())
+            for label, action, target in section:
+                button = Gtk.Button(label=label, css_classes=["flat", "context-action"],
+                                    action_name=action)
+                button.get_child().set_xalign(0)
+                if target is not None:
+                    button.set_action_target_value(GLib.Variant("s", target))
+                button.connect("clicked", lambda *_: popover.popdown())
+                box.append(button)
+        popover.set_child(box)
         popover.set_parent(parent)
         return popover
 

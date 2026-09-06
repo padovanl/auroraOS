@@ -18,18 +18,23 @@ CSS = """
 .files-tab { border-radius: 10px; background: alpha(@window_fg_color, 0.06); }
 .files-tab.active-tab { background: alpha(@accent_bg_color, 0.22); }
 popover.aurora-context-menu contents {
-  min-width: 256px; padding: 7px; border-radius: 8px;
-  background: #303030; color: #f4f4f4;
-  border: 1px solid #404040; box-shadow: 0 6px 22px alpha(#000000, 0.35);
+  padding: 6px; border-radius: 10px;
+  background: #292b30; color: #d6d8dd;
+  border: 1px solid #454850; box-shadow: 0 10px 28px alpha(#000000, 0.4);
 }
-popover.aurora-context-menu separator { background: #454545; margin: 6px 7px; min-height: 1px; }
-popover.aurora-context-menu button.model {
-  margin: 1px 0; min-height: 36px; padding: 5px 12px;
-  border-radius: 5px; color: #f4f4f4;
+popover.aurora-context-menu separator { background: #41444b; margin: 6px 10px; min-height: 1px; }
+popover.aurora-context-menu button.model,
+popover.aurora-context-menu button.context-action {
+  margin: 2px 0; min-height: 34px; padding: 5px 14px;
+  border-radius: 6px; color: #d6d8dd;
+  font-family: Inter, sans-serif; font-size: 13px; font-weight: 500;
 }
 popover.aurora-context-menu button.model:hover,
-popover.aurora-context-menu button.model:focus { background: #4b4b4b; }
-popover.aurora-context-menu button.model:disabled { color: #999999; }
+popover.aurora-context-menu button.model:focus,
+popover.aurora-context-menu button.context-action:hover,
+popover.aurora-context-menu button.context-action:focus { background: #414650; color: #ffffff; }
+popover.aurora-context-menu button.model:disabled,
+popover.aurora-context-menu button.context-action:disabled { color: #868b94; }
 """
 
 

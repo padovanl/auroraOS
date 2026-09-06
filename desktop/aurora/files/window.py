@@ -347,8 +347,8 @@ class FilesWindow(Adw.ApplicationWindow):
             keys.connect("key-pressed", self._on_view_key)
             view.add_controller(keys)
         self.quicklook = None
-        self.context_menu = Gtk.PopoverMenu(has_arrow=False, halign=Gtk.Align.START,
-                                            css_classes=["aurora-context-menu"])
+        self.context_menu = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+                                        css_classes=["aurora-context-menu"])
         self.context_menu.set_parent(self.view_stack)
 
         # Trash banner and progress
@@ -1007,57 +1007,53 @@ class FilesWindow(Adw.ApplicationWindow):
         elif pos is None:
             self.selection.unselect_all()
 
-        menu = Gio.Menu()
+        sections = []
         has_sel = pos is not None
         trash = self.in_trash()
         if has_sel:
-            s = Gio.Menu()
+            s = []
             if trash:
-                s.append(_("Restore"), "win.restore")
-                s.append(_("Delete Permanently"), "win.delete")
+                s.extend([(_("Restore"), "restore"),
+                          (_("Delete Permanently"), "delete")])
             else:
-                s.append(_("Open"), "win.open")
-                s.append(_("Open With…"), "win.open-with")
-                s.append(_("Quick Look"), "win.quick-look")
+                s.extend([(_("Open"), "open"), (_("Open With…"), "open-with"),
+                          (_("Quick Look"), "quick-look")])
                 if shutil.which("localsend_app"):
-                    s.append(_("Send to Nearby Device…"), "win.send-nearby")
+                    s.append((_("Send to Nearby Device…"), "send-nearby"))
                 from aurora import ai
                 if ai.feature("files") and not self.selection_has_dir():
-                    ai_menu = Gio.Menu()
-                    ai_menu.append(_("Summarize with Aurora"), "win.ai-summarize")
-                    ai_menu.append(_("Ask Aurora About This File…"), "win.ai-ask")
-                    menu.append_section(None, ai_menu)
-            menu.append_section(None, s)
+                    sections.append([(_("Summarize with Aurora"), "ai-summarize"),
+                                     (_("Ask Aurora About This File…"), "ai-ask")])
+            sections.append(s)
             if not trash:
-                s = Gio.Menu()
-                s.append(_("Cut"), "win.cut")
-                s.append(_("Copy"), "win.copy")
-                s.append(_("Duplicate"), "win.duplicate")
-                s.append(_("Rename…"), "win.rename")
-                menu.append_section(None, s)
-                s = Gio.Menu()
-                s.append(_("Move to Trash"), "win.trash")
-                menu.append_section(None, s)
-            s = Gio.Menu()
-            s.append(_("Properties"), "win.properties")
-            menu.append_section(None, s)
+                sections.append([(_("Cut"), "cut"), (_("Copy"), "copy"),
+                                 (_("Duplicate"), "duplicate"), (_("Rename…"), "rename")])
+                sections.append([(_("Move to Trash"), "trash")])
+            sections.append([(_("Properties"), "properties")])
         elif trash:
-            menu.append(_("Empty Trash"), "win.empty-trash")
+            sections.append([(_("Empty Trash"), "empty-trash")])
         else:
-            s = Gio.Menu()
-            s.append(_("New Folder…"), "win.new-folder")
-            s.append(_("New File…"), "win.new-file")
-            menu.append_section(None, s)
-            s = Gio.Menu()
-            s.append(_("Paste"), "win.paste")
-            menu.append_section(None, s)
-            s = Gio.Menu()
-            s.append(_("Select All"), "win.select-all")
-            s.append(_("Open in Terminal"), "win.terminal-here")
-            s.append(_("Properties"), "win.properties")
-            menu.append_section(None, s)
+            sections.extend([[(_("New Folder…"), "new-folder"),
+                              (_("New File…"), "new-file")],
+                             [(_("Paste"), "paste")],
+                             [(_("Select All"), "select-all"),
+                              (_("Open in Terminal"), "terminal-here"),
+                              (_("Properties"), "properties")]])
 
-        self.context_menu.set_menu_model(menu)
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1,
+                      margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)
+        for index, section in enumerate(sections):
+            if index:
+                box.append(Gtk.Separator())
+            for label, name in section:
+                action = self.lookup_action(name)
+                button = Gtk.Button(label=label, css_classes=["flat", "context-action"],
+                                    sensitive=action is not None and action.get_enabled())
+                button.get_child().set_xalign(0)
+                button.connect("clicked", lambda _b, a=action: (
+                    self.context_menu.popdown(), a.activate(None)))
+                box.append(button)
+        self.context_menu.set_child(box)
         self.context_menu.set_position(Gtk.PositionType.TOP if y > view.get_height() / 2
                                        else Gtk.PositionType.BOTTOM)
         # (x, y), or (ok, x, y) with older PyGObject.
