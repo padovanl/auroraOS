@@ -73,6 +73,7 @@ class Shell(Adw.Application):
     def do_startup(self):
         Adw.Application.do_startup(self)
         self._sync_style()
+        self._enable_terminal_opacity()
         self._load_css()
         for name, cb, ptype in (
             ("open-terminal", lambda *_: self._open_desktop_terminal(), None),
@@ -244,6 +245,28 @@ class Shell(Adw.Application):
         dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
         Adw.StyleManager.get_default().set_color_scheme(
             Adw.ColorScheme.FORCE_DARK if dark else Adw.ColorScheme.FORCE_LIGHT)
+
+    @staticmethod
+    def _enable_terminal_opacity():
+        """Expose Ptyxis' built-in opacity slider in its profile menu."""
+        defaults = settings.get("org.gnome.Ptyxis")
+        if defaults is None:
+            return
+
+        def seed(*_args):
+            uuid = defaults.get_string("default-profile-uuid")
+            if not uuid or "/" in uuid or len(uuid) > 64:
+                return
+            source = Gio.SettingsSchemaSource.get_default()
+            if source.lookup("org.gnome.Ptyxis.Profile", True) is None:
+                return
+            profile = Gio.Settings.new_with_path(
+                "org.gnome.Ptyxis.Profile", f"/org/gnome/Ptyxis/Profiles/{uuid}/")
+            if profile.get_user_value("opacity") is None:
+                profile.set_double("opacity", 0.99)
+
+        defaults.connect("changed::default-profile-uuid", seed)
+        seed()
 
     def _open_desktop_terminal(self):
         from aurora.shell.desktopicons import desktop_dir

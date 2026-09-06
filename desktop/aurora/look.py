@@ -113,6 +113,9 @@ def apply():
     sync_gtk_theme()
     apply_labwc(s)
     apply_gtk(s)
+    if os.environ.get("AURORA_COMPOSITOR") == "wayfire":
+        from aurora.wayfireconf import generate
+        generate()
 
 
 if __name__ == "__main__":

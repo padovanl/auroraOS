@@ -53,7 +53,8 @@ class WeatherWidget(Gtk.Button):
         if (s is not None and not s.get_boolean("weather-widget")) or loc is None:
             self.set_visible(False)
             return
-        data = weather.cached(*loc)
+        fahrenheit = weather.uses_fahrenheit()
+        data = weather.cached(*loc, fahrenheit=fahrenheit)
         if data is not None:
             self._show(data)
             return
@@ -64,7 +65,7 @@ class WeatherWidget(Gtk.Button):
 
         def work():
             try:
-                result = weather.fetch(*loc, fahrenheit=weather.uses_fahrenheit())
+                result = weather.fetch(*loc, fahrenheit=fahrenheit)
             except Exception as e:  # noqa: BLE001 - offline is normal
                 print(f"aurora: weather unavailable: {e}")
                 result = None

@@ -90,6 +90,11 @@ class Sidebar(Gtk.ListBox):
         row.set_child(box)
         row.file = file
         row.volume = volume
+        row.eject = eject
+        right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
+                                 propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        right.connect("pressed", self._on_context, row)
+        row.add_controller(right)
         if file is not None and file.get_path() is not None and os.path.isdir(file.get_path()):
             target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             target.connect("drop", lambda _t, value, _x, _y, dest=file:
@@ -97,6 +102,49 @@ class Sidebar(Gtk.ListBox):
                            if self.drop_callback else False)
             row.add_controller(target)
         self.append(row)
+
+    def _on_context(self, gesture, _n, x, y, row):
+        window = self.get_root()
+        if not isinstance(window, FilesWindow):
+            return
+        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-context-menu"])
+        pop.set_parent(row)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2,
+                      margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)
+
+        def action(label, callback):
+            button = Gtk.Button(label=label, css_classes=["flat", "context-action"])
+            button.get_child().set_xalign(0)
+            button.connect("clicked", lambda *_: (pop.popdown(), callback()))
+            box.append(button)
+
+        action(_("Open"), lambda: self._on_row(self, row))
+        if row.file is not None:
+            action(_("New Tab"), lambda: window.new_tab(row.file))
+            action(_("New Window"), lambda: apps.spawn(["aurora-files", row.file.get_uri()]))
+            box.append(Gtk.Separator())
+            path = row.file.get_path()
+            if path and os.path.isdir(path):
+                action(_("Open in Terminal"), lambda: apps.spawn(
+                    ["ptyxis", "--new-window", f"--working-directory={path}"]))
+            action(_("Copy Path"), lambda: self.get_clipboard().set(
+                path or row.file.get_uri()))
+            action(_("Properties"), lambda: self._properties(row.file))
+        if row.eject is not None:
+            box.append(Gtk.Separator())
+            action(_("Eject"), lambda: row.eject.unmount_with_operation(
+                Gio.MountUnmountFlags.NONE, None, None, None, None))
+        pop.set_child(box)
+        rect = Gdk.Rectangle()
+        rect.x, rect.y, rect.width, rect.height = int(x), int(y), 1, 1
+        pop.set_pointing_to(rect)
+        pop.popup()
+        gesture.set_state(Gtk.EventSequenceState.CLAIMED)
+
+    def _properties(self, file):
+        from aurora.files.properties import PropertiesDialog
+        PropertiesDialog([file]).present(self.get_root())
 
     def rebuild(self):
         self.remove_all()

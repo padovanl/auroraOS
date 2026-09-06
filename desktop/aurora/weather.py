@@ -55,12 +55,14 @@ def cache_path():
     return os.path.join(base, "aurora", "weather.json")
 
 
-def cached(lat, lon, max_age=MAX_AGE):
+def cached(lat, lon, max_age=MAX_AGE, fahrenheit=None):
     try:
         with open(cache_path()) as f:
             data = json.load(f)
         if time.time() - data["fetched"] > max_age or data["where"] != [round(lat, 2),
                                                                            round(lon, 2)]:
+            return None
+        if fahrenheit is not None and (data["weather"].get("unit") == "°F") != fahrenheit:
             return None
         return data["weather"]
     except (OSError, ValueError, KeyError):
@@ -108,7 +110,13 @@ def fetch(lat, lon, fahrenheit=False, timeout=6):
 
 
 def uses_fahrenheit(loc=None):
-    """The US (and a few others) use Fahrenheit."""
+    """Follow the same GWeather unit preference used by GNOME Weather."""
+    from gi.repository import Gio
+    source = Gio.SettingsSchemaSource.get_default()
+    if source is not None and source.lookup("org.gnome.GWeather4", True) is not None:
+        choice = Gio.Settings.new("org.gnome.GWeather4").get_string("temperature-unit")
+        if choice in ("fahrenheit", "centigrade", "kelvin"):
+            return choice == "fahrenheit"
     import locale
     loc = loc or locale.getlocale(locale.LC_MEASUREMENT if hasattr(locale, "LC_MEASUREMENT")
                                   else locale.LC_CTYPE)[0] or os.environ.get("LANG", "")

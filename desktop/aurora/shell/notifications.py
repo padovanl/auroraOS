@@ -140,7 +140,13 @@ class Card(Gtk.Box):
             self.append(row)
 
         click = Gtk.GestureClick()
-        click.connect("released", lambda *_: server.invoke(note.id, "default"))
+        def open_card(_gesture, _n, x, y):
+            target = self.pick(x, y, Gtk.PickFlags.DEFAULT)
+            if target is not None and (isinstance(target, Gtk.Button) or
+                                       target.get_ancestor(Gtk.Button) is not None):
+                return
+            server.invoke(note.id, "default")
+        click.connect("released", open_card)
         self.add_controller(click)
 
 
@@ -274,12 +280,18 @@ class NotificationServer:
             (self._live[nid][0] if nid in self._live else None)
         if note is None:
             return
-        if key == "default" and not any(k == "default" for k, _l in note.actions):
-            # No default action: focus the sending app if we know it.
-            app = apps.app_by_id(note.desktop_entry + ".desktop") if note.desktop_entry else None
-            windows = self.shell.toplevels.for_app(note.desktop_entry) if app else []
+        has_default = any(k == "default" for k, _l in note.actions)
+        if key == "default" and (not has_default or nid not in self._live):
+            # A closed notification's D-Bus action may no longer have a
+            # listener. Focus or launch its declared sender instead.
+            app_id = note.desktop_entry.removesuffix(".desktop")
+            windows = self.shell.toplevels.for_app(app_id) if app_id else []
             if windows:
                 windows[0].activate()
+            else:
+                app = apps.find_app(app_id) if app_id else apps.find_app(note.app_name)
+                if app is not None:
+                    apps.launch(app)
         else:
             self._emit("ActionInvoked", GLib.Variant("(us)", (nid, key)))
             # Notifications the shell sent itself handle their actions here.

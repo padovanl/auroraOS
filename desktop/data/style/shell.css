@@ -308,7 +308,9 @@ window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-hei
 .aurora-hotcorner > * { background: transparent; min-width: 0; min-height: 0; }
 
 /* ---- Weather in the calendar popover ---- */
-.weather-widget { padding: 10px 12px; border-radius: 14px; background-color: alpha(currentColor, 0.06); }
+.weather-widget { padding: 12px 14px; border-radius: 14px; background-color: alpha(@aurora_violet, 0.13); border: 1px solid alpha(@aurora_violet, 0.28); }
+.weather-widget:hover { background-color: alpha(@aurora_violet, 0.20); }
+.weather-widget image { color: @aurora_amber; }
 
 /* ---- Aurora Assistant button in the top bar ---- */
 .panel-assistant image { color: #d9b8ff; }

@@ -40,7 +40,7 @@ CONTROL
 }
 
 control aurora-desktop "$stage/desktop" \
-    "python3, python3-gi, python3-gi-cairo, python3-cairo, python3-pywayland, python3-cffi-backend, gir1.2-gtk-4.0, gir1.2-adw-1, gir1.2-gtk4layershell-1.0, libgtk4-layer-shell0, gir1.2-nm-1.0, gir1.2-upowerglib-1.0, gir1.2-gtksource-5, gir1.2-poppler-0.18, papirus-icon-theme, labwc, greetd, wl-clipboard, grim, slurp, wlsunset, swayidle, gtklock, pipewire-bin, aurora-artwork (>= ${version%.*})" \
+    "python3, python3-gi, python3-gi-cairo, python3-cairo, python3-pywayland, python3-cffi-backend, gir1.2-gtk-4.0, gir1.2-adw-1, gir1.2-gtk4layershell-1.0, libgtk4-layer-shell0, gir1.2-nm-1.0, gir1.2-upowerglib-1.0, gir1.2-gtksource-5, gir1.2-poppler-0.18, papirus-icon-theme, wayfire, labwc, greetd, wl-clipboard, grim, slurp, wlsunset, swayidle, gtklock, pipewire-bin, aurora-artwork (>= ${version%.*})" \
     "Aurora desktop environment
  The shell (menu bar, dock, Spotlight, Launchpad, Control Center,
  notifications, overview), Settings, Files, Dev Hub, the login screen,

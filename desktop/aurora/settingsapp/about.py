@@ -89,7 +89,7 @@ class About(Page):
         for title, value in (
             (_("Operating system"), rel.get("PRETTY_NAME", "Aurora OS")),
             (_("Based on"), f"Debian {debian}" if debian else "Debian"),
-            (_("Desktop"), f"Aurora Shell {VERSION} (labwc)"),
+            (_("Desktop"), f"Aurora Shell {VERSION} ({os.environ.get('AURORA_COMPOSITOR', 'Wayland')})"),
             (_("Windowing system"), "Wayland" if os.environ.get("WAYLAND_DISPLAY") else "X11"),
             (_("Kernel"), f"Linux {platform.release()}"),
         ):

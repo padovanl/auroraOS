@@ -7,7 +7,7 @@ screen recording (with detail lists where it makes sense); media controls;
 battery, screenshot, settings, lock and the power menu.
 """
 
-from gi.repository import GLib, Gtk, Pango
+from gi.repository import Adw, GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import _
@@ -249,6 +249,10 @@ class QuickSettings(Gtk.Popover):
         for svc in (shell.network, shell.bluetooth, shell.audio, shell.microphone,
                     shell.power_profiles, shell.recorder, shell.media, shell.battery):
             svc.connect("changed", lambda *a: self.get_visible() and self.refresh())
+        if iface is not None:
+            iface.connect("changed::color-scheme", lambda *a: self.get_visible() and self.refresh())
+        Adw.StyleManager.get_default().connect(
+            "notify::dark", lambda *a: self.get_visible() and self.refresh())
         self.connect("show", lambda *_: self._on_show())
 
     # --- actions ---
@@ -275,6 +279,7 @@ class QuickSettings(Gtk.Popover):
             s.set_boolean("color-scheme-auto", False)
         if iface is not None:
             iface.set_string("color-scheme", "prefer-dark" if value else "default")
+        self.refresh()
 
     def _set_airplane(self, on):
         self.shell.network.set_wifi_enabled(not on)
@@ -414,7 +419,7 @@ class QuickSettings(Gtk.Popover):
             self.t_power.set_state(cur != "balanced", PROFILE_LABELS[cur], PROFILE_ICONS[cur])
             toggles.append(self.t_power)
         self.t_night.set_state(s is not None and s.get_boolean("night-light"))
-        self.t_dark.set_state(iface is not None and iface.get_string("color-scheme") == "prefer-dark")
+        self.t_dark.set_state(Adw.StyleManager.get_default().get_dark())
         self.t_dnd.set_state(s is not None and s.get_boolean("do-not-disturb"))
         toggles += [self.t_night, self.t_dark, self.t_dnd]
         if net.wifi_device() is not None or sh.bluetooth.available:

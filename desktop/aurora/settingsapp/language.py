@@ -104,7 +104,8 @@ def set_xkb_option(prefix, value):
     env = read_conf(path)
     env["XKB_DEFAULT_OPTIONS"] = xkb_options(env.get("XKB_DEFAULT_OPTIONS", ""), prefix, value)
     write_conf(path, env)
-    subprocess.Popen(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL)
+    from aurora import compositor
+    compositor.refresh()
 
 
 def xkb_option(prefix):
@@ -136,7 +137,8 @@ class Language(Page):
                            on_change=self._set_formats))
 
         restart = Adw.ButtonRow(title=_("Log Out Now"))
-        restart.connect("activated", lambda *_: subprocess.Popen(["labwc", "--exit"]))
+        from aurora import compositor
+        restart.connect("activated", lambda *_: compositor.logout())
         lang.add(restart)
 
         kb = self.group(_("Keyboard"),
@@ -193,7 +195,8 @@ class Language(Page):
         env["XKB_DEFAULT_OPTIONS"] = xkb_options(env.get("XKB_DEFAULT_OPTIONS", ""), "grp:",
                                                  "grp:alt_shift_toggle" if len(codes) > 1 else "")
         write_conf(path, env)
-        subprocess.Popen(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL)
+        from aurora import compositor
+        compositor.refresh()
         self._refresh_layouts()
 
     def _refresh_layouts(self):

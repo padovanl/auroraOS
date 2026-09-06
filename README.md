@@ -125,8 +125,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click to select, double-click to open, click empty space to clear the selection, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
-| **Windows** | labwc compositor: snapping to halves, quarters and thirds (keyboard, or hold <kbd>Super</kbd> while dragging), 4 to 9 workspaces, window switcher, round colored buttons whose symbols are always visible (×, −, and arrows to expand or restore; or monochrome), server-side and GTK decorations styled alike. |
-| **Animations** | GTK interface transitions and Files' opening effects can be switched off in Settings → Appearance. labwc does not currently animate the opening, closing or minimization of every application window. |
+| **Windows** | Wayfire manages the default session, with snapping to halves and quarters, workspaces and a window switcher. A selectable labwc fallback keeps its snap regions, including thirds. GTK apps keep Aurora's styled title bars. |
+| **Animations** | Wayfire animates opening, closing, minimization and restoration of windows. Settings → Appearance can turn the compositor effects and GTK/Files transitions off together. The labwc fallback has GTK/Files transitions only. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
@@ -541,7 +541,7 @@ plus everything around it, chosen, configured and packaged so that it works toge
 | initramfs | A tiny temporary system in RAM that finds and mounts the real root file system. | `initramfs-tools`, extended by `live-boot` on the USB stick. |
 | init | The first process: starts every service. | systemd. |
 | Userland | Shell, libraries, core tools, package manager. | Debian 13 "trixie" and apt. |
-| Graphics stack | Talks to the GPU and draws windows. | Mesa + a Wayland compositor (labwc). |
+| Graphics stack | Talks to the GPU and draws windows. | Mesa + Wayfire (labwc fallback). |
 | Desktop | Everything the user sees: bar, dock, launcher, settings, apps. | **Written by us** in Python + GTK 4. |
 | Installer | Copies the system to a disk and makes it bootable. | Calamares, configured and extended by us. |
 
@@ -600,7 +600,7 @@ lists in `config/packages/`:
 
 - `base.list`: kernel, firmware, systemd, NetworkManager, `live-boot`, Plymouth, audio
   (PipeWire), printing, Bluetooth, file systems.
-- `desktop.list`: labwc, greetd, GTK 4, libadwaita, gtk4-layer-shell, fonts, portals and
+- `desktop.list`: Wayfire, labwc fallback, greetd, GTK 4, libadwaita, gtk4-layer-shell, fonts, portals and
   the apps we ship.
 - `installer.list`: Calamares, GRUB for BIOS (`grub-pc-bin`) and UEFI
   (`grub-efi-amd64-bin`), shim, `efibootmgr`, partitioning tools.
@@ -707,7 +707,7 @@ This is the part most people find mysterious. The ISO contains:
    `boot=live` is on the command line) creates the `aurora` user with no password and
    sudo, applies the language and keyboard chosen in the boot menu, and turns on
    automatic login.
-4. greetd starts the session: `aurora-session` → labwc → our shell. With `aurora.install`
+4. greetd starts the session: `aurora-session` → Wayfire (or labwc fallback) → our shell. With `aurora.install`
    on the command line ("Install Aurora OS" in the menu), the installer opens right away;
    otherwise the live desktop shows an **Install Aurora OS** icon, like Ubuntu's "Try".
 
@@ -743,9 +743,10 @@ about **15,000 lines of Python** (`desktop/aurora/`):
 
 - **Language and toolkit.** Python 3 with PyGObject, GTK 4 and libadwaita: fast to write,
   and the same widgets the GNOME apps use, so everything looks consistent.
-- **The compositor** is **labwc**, a small Wayland compositor (it draws windows, handles
-  input, keybindings, window rules). We don't write a compositor: we configure it
-  (`desktop/data/labwc/rc.xml`, `autostart`, `themerc`).
+- **The compositor** is **Wayfire** in the default session: its `animate` plugin draws
+  window transitions that GTK cannot apply to other apps. **labwc** remains selectable at
+  login as a lightweight fallback. Aurora renders Wayfire's INI from the same preferences
+  that Settings keeps in `~/.config/labwc/rc.xml`.
 - **The shell** (`desktop/aurora/shell/`) is one process whose windows become **layer
   surfaces** (the `wlr-layer-shell` protocol, through gtk4-layer-shell): the top bar, dock,
   wallpaper and desktop icons, launcher, notifications, hot corners. Layer surfaces sit
@@ -759,9 +760,9 @@ about **15,000 lines of Python** (`desktop/aurora/`):
   `org.freedesktop.Notifications` server).
 - **Apps**: Settings, Files, the Assistant, Dev Hub, Game Hub, Welcome, the greeter (the
   login screen, a greetd client), lock screen, Quick Look.
-- **The session**: `aurora-session` picks renderers that work on the machine (software
-  ones in VMs), seeds `~/.config/labwc`, and starts labwc; labwc's `autostart` starts the
-  shell and restarts it if it ever crashes.
+- **The session**: `aurora-session` seeds the compositor settings and starts Wayfire by
+  default; its autostart starts the shell and restarts it if it crashes. If Wayfire cannot
+  start, the session falls back to labwc. The greeter also offers labwc explicitly.
 - **Look**: our GTK stylesheet on top of libadwaita, our icon theme (drawn by
   `branding/icons`), labwc theme, cursor, fonts.
 - **Languages**: every string goes through gettext (`_()`); translations live in
@@ -772,7 +773,7 @@ about **15,000 lines of Python** (`desktop/aurora/`):
 | Written by us | Taken as is (configured) |
 |---|---|
 | Build scripts (Bash, ~2,000 lines) | Debian packages, debootstrap, live-boot |
-| Desktop shell and apps (Python, ~15,000 lines) | labwc, GTK 4, libadwaita, gtk4-layer-shell |
+| Desktop shell and apps (Python, ~15,000 lines) | Wayfire, labwc fallback, GTK 4, libadwaita, gtk4-layer-shell |
 | Calamares modules and configuration | Calamares, GRUB, shim |
 | Branding generators (logo, icons, wallpapers, sounds) | Plymouth, greetd |
 | Stylesheets (CSS), labwc config (XML) | PipeWire, NetworkManager, systemd |
@@ -824,7 +825,7 @@ Always check both firmware types: many bugs appear on only one of them.
 │  wallpaper · menu bar · dock · Spotlight/Launchpad · notifications ·  │  wlr-layer-shell
 │  control center · OSD                    window list ← wlr-foreign-   │  toplevel-management
 ├───────────────────────────────────────────────────────────────────────┤
-│ labwc: Wayland compositor (wlroots), window management, keybindings   │
+│ Wayfire (labwc fallback): compositor, window management, animations   │
 │ Xwayland for older X11 apps                                           │
 ├───────────────────────────────────────────────────────────────────────┤
 │ Session services: PipeWire/WirePlumber · xdg-desktop-portal ·         │
@@ -846,8 +847,8 @@ applies the language and keyboard from the boot menu (`aurora.lang=`, `aurora.kb
 greetd logs that user in.
 
 **Session.** `aurora-session` loads the user's language and keyboard, exports the Wayland
-environment and starts labwc with `~/.config/labwc`. labwc's `autostart` (refreshed from
-`/usr/share/aurora/labwc` at every login, so updates reach it) launches Aurora Shell, the
+environment and starts Wayfire with Aurora's generated INI. The same autostart script
+used by the labwc fallback launches Aurora Shell, the
 polkit agent, the idle manager, XDG autostart entries and, on first login, the Welcome app.
 If the shell ever exits, it is started again (at most five times a minute), so a crash
 never leaves the session without its bar, dock and desktop.
@@ -856,11 +857,12 @@ never leaves the session without its bar, dock and desktop.
 with gtk4-layer-shell. The window list comes from a second, raw Wayland connection
 (pywayland) speaking `wlr-foreign-toplevel-management`. Commands such as
 `aurora-shell launcher` or `aurora-shell volume up` are forwarded to the running instance
-through GApplication, which is how labwc keybindings reach it.
+through GApplication, which is how compositor keybindings reach it.
 
 **Settings storage.** Desktop options are GSettings keys (`org.aurora.desktop`, plus the
 standard `org.gnome.desktop.*` keys that GTK apps and portals follow). Compositor options are
-written to `~/.config/labwc/rc.xml` and applied live with `labwc --reconfigure`. Actions
+written to `~/.config/labwc/rc.xml` for the fallback and mirrored to
+`~/.config/aurora/wayfire.ini` for the default session. Actions
 that need root go through a single audited helper, `/usr/libexec/aurora-admin`, called with
 `pkexec` under its own polkit action.
 
@@ -1034,30 +1036,31 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   other's input or screen), no tearing, proper fractional scaling and mixed-DPI monitors.
   Xwayland runs the few remaining X11 apps transparently.
 
-#### Compositor: labwc
-- **Alternatives:** Mutter (GNOME), KWin (KDE), Sway, Hyprland, Wayfire, niri, writing
+#### Compositor: Wayfire, with labwc fallback
+- **Alternatives:** Mutter (GNOME), KWin (KDE), Sway, Hyprland, labwc, niri, writing
   our own on wlroots.
-- **Why:** we wanted our **own** desktop, so we needed a compositor that manages windows
-  well and lets an external shell draw everything else. labwc is a small, stable,
-  floating-window compositor on wlroots. It supports the protocols a custom shell needs
-  (layer-shell, foreign-toplevel management, output management, idle, screencopy,
-  virtual keyboard for tests) and is configured with plain XML. We can generate and edit
-  that XML from Settings and apply it live.
+- **Why:** Wayfire is packaged in Debian 13, supports the Wayland protocols Aurora Shell
+  uses, and its `animate` plugin draws opening, closing, minimize and restore transitions
+  for applications of any toolkit. The leaner labwc session stays available in the greeter
+  and is started automatically if Wayfire cannot launch. Aurora Settings keeps the labwc
+  XML as a shared preference source and renders a Wayfire INI on login and after changes.
   - Mutter and KWin come bundled with their own shells.
   - Sway and niri are tiling-first.
   - Hyprland changes quickly and isn't in Debian.
-  - Wayfire (in Debian) has eye candy such as blur and animations, but a more complex
-    plugin model.
+  - labwc is simpler and retains features such as custom third-width snap regions, but
+    does not animate application windows.
   - Writing a compositor would take years to reach labwc's robustness.
-- **Trade-off:** labwc has no background blur, so Aurora uses translucency instead.
-  Wayfire stays on our radar for real blur.
+- **Trade-off:** Wayfire's plugin system and GL renderer are more complex, especially in
+  software-rendered virtual machines. Its server-side decorations do not use labwc's Aurora
+  theme; GTK apps use their own Aurora-styled client-side header bars. Blur remains off by
+  default. Choose “Aurora (labwc fallback)” at login if Wayfire misbehaves.
 
 #### Window decorations
-- **Choice:** themes generated by `desktop/data/themes/generate.py`: round colored
-  buttons or monochrome icons, each in a light and a dark variant, following the desktop
-  style. GTK apps' own title bars get matching buttons through CSS.
-- **Why:** server-side and client-side title bars look the same, and nothing is copied
-  from Apple.
+- **Choice:** GTK apps use Aurora's styled client-side header bars. The generated labwc
+  server-side theme remains available in the fallback session; Wayfire's non-GTK server-side
+  decorations may differ.
+- **Why:** preserve Aurora's appearance for its own apps while using compositor-level
+  animation across toolkits.
 
 ### Aurora's own desktop
 
@@ -1297,16 +1300,14 @@ set up a feature, and every place it appears has its own switch.
   Steam, VS Code…) to their apps: those are recognized by their logo.
 - **Window buttons:** the round colored buttons always show their symbol (×, −, and two
   arrows to expand or restore) instead of hiding it until hover as on a Mac, softer until
-  the pointer is over them. The same design is drawn for labwc's borders, GTK 4 and
-  GTK 3 apps.
-- **Animations:** labwc doesn't animate windows, so Aurora does it in GTK: a short fade and
-  settle as a window opens, and items floating in, row by row, as a folder opens in Files
-  (`gtk4-animations.css`, loaded only when Window animations are on; GTK skips it when
-  animations are off system-wide).
-- **Rendering in virtual machines:** without a real GPU the session uses wlroots'
-  **pixman** renderer and GTK's **cairo** renderer (`aurora-render-env`). The software GL
-  paths (llvmpipe) left stale regions on screen after partial redraws. Real GPUs keep
-  hardware rendering.
+  the pointer is over them. The same design is drawn for labwc's fallback borders, GTK 4
+  and GTK 3 apps; Wayfire prefers client-side decorations.
+- **Animations:** Wayfire's `animate` plugin handles application windows, including
+  minimize and restore. GTK and Files retain their own content transitions
+  (`gtk4-animations.css`). The Window animations switch controls both layers.
+- **Rendering in virtual machines:** labwc uses wlroots' **pixman** renderer and GTK's
+  **cairo** renderer without a GPU. Wayfire 0.9 requires GLES, so Aurora uses Mesa's
+  software GL in those VMs and retains labwc as a selectable or automatic fallback.
 - **Fonts:** Inter for the interface (highly legible on screens), JetBrains Mono for code,
   Noto for every script (CJK, Arabic, Devanagari, emoji) so 20 languages render
   correctly.

@@ -1,6 +1,12 @@
 #!/bin/sh
 # Start an Aurora desktop session (used by greetd and wayland-sessions).
 
+case "${1:-wayfire}" in
+    wayfire|labwc) compositor="${1:-wayfire}" ;;
+    *) echo "aurora-session: unknown compositor" >&2; exit 2 ;;
+esac
+export AURORA_COMPOSITOR="$compositor"
+
 # Language: system default, then the user's choice from Settings.
 [ -r /etc/default/locale ] && . /etc/default/locale
 [ -r "$HOME/.config/aurora/locale.conf" ] && . "$HOME/.config/aurora/locale.conf"
@@ -35,7 +41,8 @@ rm -f "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out"
 # Renderers that draw correctly on this machine (software ones in VMs).
 . /usr/libexec/aurora-render-env
 
-# Seed the user's compositor config the first time, so it can be edited.
+# Keep labwc's configuration for the fallback session and as Aurora Settings'
+# shared source. Wayfire gets an INI rendered from the same preferences.
 cfg="$HOME/.config/labwc"
 if [ ! -f "$cfg/rc.xml" ]; then
     mkdir -p "$cfg"
@@ -49,4 +56,42 @@ fi
 # First login: write the GTK stylesheet imports for the chosen window style.
 [ -f "$HOME/.config/gtk-4.0/gtk.css" ] || aurora-look >/dev/null 2>&1
 
-exec labwc -C "$cfg"
+if [ "$compositor" = labwc ]; then
+    exec labwc -C "$cfg"
+fi
+
+if ! command -v wayfire >/dev/null 2>&1; then
+    echo "aurora-session: Wayfire unavailable; starting labwc" >&2
+    export AURORA_COMPOSITOR=labwc
+    exec labwc -C "$cfg"
+fi
+
+# Wayfire 0.9 renders with GLES. The VM pixman renderer selected for labwc is
+# not usable by Wayfire; Mesa's software GLES is the fallback on those hosts.
+if [ "${WLR_RENDERER:-}" = pixman ]; then
+    fallback_renderer=pixman
+    WLR_RENDERER=gles2
+    LIBGL_ALWAYS_SOFTWARE=1
+    export WLR_RENDERER LIBGL_ALWAYS_SOFTWARE
+fi
+wayfire_cfg=$(aurora-wayfire-config) || {
+    echo "aurora-session: cannot render Wayfire configuration; starting labwc" >&2
+    export AURORA_COMPOSITOR=labwc
+    exec labwc -C "$cfg"
+}
+wayfire -c "$wayfire_cfg" &
+compositor_pid=$!
+started=$(date +%s)
+pidfile="${XDG_RUNTIME_DIR:-/tmp}/aurora-wayfire.pid"
+printf '%s\n' "$compositor_pid" > "$pidfile"
+wait "$compositor_pid"
+result=$?
+rm -f "$pidfile"
+if [ "$result" -ne 0 ] && [ "$(($(date +%s) - started))" -lt 15 ] &&
+   [ ! -e "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out" ]; then
+    echo "aurora-session: Wayfire failed to start; falling back to labwc" >&2
+    export AURORA_COMPOSITOR=labwc
+    [ -z "${fallback_renderer:-}" ] || { WLR_RENDERER="$fallback_renderer"; export WLR_RENDERER; }
+    exec labwc -C "$cfg"
+fi
+exit "$result"

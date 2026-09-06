@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+"""Regenerate Wayfire's INI from Aurora Settings and the labwc fallback config."""
+import os
+import sys
+
+sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
+
+from aurora.wayfireconf import generate  # noqa: E402
+
+print(generate())

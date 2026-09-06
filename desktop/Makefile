@@ -24,9 +24,10 @@ install: protocols translations wallpapers sounds
 	install -m 755 $$(find bin -maxdepth 1 -type f) $(BINDIR)/
 	install -d $(DESTDIR)$(PREFIX)/libexec
 	install -m 755 libexec/* $(DESTDIR)$(PREFIX)/libexec/
-	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/style $(DATADIR)/gtk
+	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/wayfire $(DATADIR)/style $(DATADIR)/gtk
 	install -m 644 data/gtk/* $(DATADIR)/gtk/
 	install -m 644 data/labwc/* $(DATADIR)/labwc/
+	install -m 644 data/wayfire/* $(DATADIR)/wayfire/
 	install -m 644 data/greeter/* $(DATADIR)/greeter/
 	install -m 644 data/style/* $(DATADIR)/style/
 	install -d $(SHAREDIR)/themes

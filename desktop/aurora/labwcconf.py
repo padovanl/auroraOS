@@ -91,4 +91,8 @@ class Config:
 
     def save(self):
         self.tree.write(path(), encoding="unicode", xml_declaration=True)
-        subprocess.run(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL, check=False)
+        if os.environ.get("AURORA_COMPOSITOR") == "wayfire":
+            from aurora.wayfireconf import generate
+            generate()
+        else:
+            subprocess.run(["labwc", "--reconfigure"], stderr=subprocess.DEVNULL, check=False)

@@ -412,7 +412,8 @@ class Power:
                     pass
             except OSError as err:
                 print(f"aurora: cannot write logout marker: {err}")
-            apps.spawn(["labwc", "--exit"])
+            from aurora import compositor
+            compositor.logout()
             if self._on_logout is not None:
                 self._on_logout()
         self._goodbye(end_session)
