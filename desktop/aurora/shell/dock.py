@@ -99,6 +99,32 @@ class DockItem(Gtk.Button):
             middle = Gtk.GestureClick(button=Gdk.BUTTON_MIDDLE)
             middle.connect("pressed", lambda *_: self.launch())
             self.add_controller(middle)
+        if pinned and app is not None:
+            source = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+            source.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(self.key))
+            source.connect("drag-begin", lambda *_: self.dock._drag_start())
+            source.connect("drag-end", lambda *_: self.dock._drag_end())
+            self.add_controller(source)
+            target = Gtk.DropTarget.new(str, Gdk.DragAction.MOVE)
+            target.connect("enter", lambda *_: self._drag_enter())
+            target.connect("leave", lambda *_: self._drag_leave())
+            target.connect("drop", self._drop_favorite)
+            self.add_controller(target)
+
+    def _drag_enter(self):
+        self.add_css_class("dock-drop-target")
+        return Gdk.DragAction.MOVE
+
+    def _drag_leave(self):
+        self.remove_css_class("dock-drop-target")
+
+    def _drop_favorite(self, _target, key, x, y):
+        self._drag_leave()
+        if key == self.key:
+            return True
+        coordinate = y if self.dock.vertical else x
+        length = self.get_height() if self.dock.vertical else self.get_width()
+        return self.dock.reorder(key, self.key, after=coordinate >= length / 2)
 
     def set_icon(self, icon):
         if isinstance(icon, Gio.Icon):
@@ -325,6 +351,7 @@ class Dock(LayerWindow):
         self._hide_source = 0
         self._tick_id = 0
         self._pointer = None
+        self._dragging = False
 
         # The shelf (background) keeps its resting size; the icon row sits on
         # top of it and may grow past it while magnified.
@@ -424,6 +451,31 @@ class Dock(LayerWindow):
         if s:
             s.set_strv("dock-favorites", [f for f in self.favorites()
                                           if f not in (key, "aurora-installer.desktop")])
+
+    def reorder(self, source, target, after=False):
+        s = settings.get()
+        if s is None:
+            return False
+        favorites = list(s.get_strv("dock-favorites"))
+        if source not in favorites or target not in favorites or source == target:
+            return False
+        favorites.remove(source)
+        index = favorites.index(target) + int(after)
+        favorites.insert(index, source)
+        # Rebuilding during GtkDropTarget::drop would remove the active target.
+        GLib.idle_add(lambda: (s.set_strv("dock-favorites", favorites), GLib.SOURCE_REMOVE)[1])
+        return True
+
+    def _drag_start(self):
+        self._dragging = True
+        if self._hide_source:
+            GLib.source_remove(self._hide_source)
+            self._hide_source = 0
+
+    def _drag_end(self):
+        self._dragging = False
+        if self.autohide and self._pointer is None:
+            self._schedule_hide()
 
     # --- content ---
 
@@ -534,7 +586,7 @@ class Dock(LayerWindow):
         for item in self._items.values():
             item.target = float(self.icon_size)
         self._animate()
-        if self.autohide and not self._held:
+        if self.autohide and not self._held and not self._dragging:
             self._schedule_hide()
 
     def _animate(self):
@@ -576,7 +628,7 @@ class Dock(LayerWindow):
 
     def _auto_hide(self):
         self._hide_source = 0
-        if self.autohide and not self._held and self._pointer is None:
+        if self.autohide and not self._held and not self._dragging and self._pointer is None:
             self._hidden = True
             self.revealer.set_reveal_child(False)
         return GLib.SOURCE_REMOVE
