@@ -6,8 +6,9 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
 
+from aurora import data_path  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 from aurora.settingsapp.about import About  # noqa: E402
 from aurora.settingsapp.ai import AI  # noqa: E402
@@ -15,9 +16,9 @@ from aurora.settingsapp.health import Health  # noqa: E402
 from aurora.settingsapp.applications import Accessibility, Applications, Notifications  # noqa: E402
 from aurora.settingsapp.devices import Bluetooth, Printers  # noqa: E402
 from aurora.settingsapp.inputs import Keyboard, Mouse, Multitasking  # noqa: E402
-from aurora.settingsapp.system import Privacy, Sharing, Updates, Users  # noqa: E402
+from aurora.settingsapp.system import Privacy, Permissions, Sharing, Updates, Users  # noqa: E402
 from aurora.settingsapp.appearance import Appearance  # noqa: E402
-from aurora.settingsapp.desktop import Desktop  # noqa: E402
+from aurora.settingsapp.desktop import Desktop, DesktopProfiles  # noqa: E402
 from aurora.settingsapp.display import Displays  # noqa: E402
 from aurora.settingsapp.language import Language  # noqa: E402
 from aurora.settingsapp.network import Network  # noqa: E402
@@ -29,9 +30,9 @@ from aurora.settingsapp.timedate import DateTime  # noqa: E402
 # devices and input, security, system.
 SECTIONS = [
     [Network, Bluetooth, Displays, Sound, Power],
-    [Appearance, Desktop, Multitasking, Notifications, Applications],
+    [Appearance, Desktop, DesktopProfiles, Multitasking, Notifications, Applications],
     [Mouse, Keyboard, Printers, Accessibility],
-    [Privacy, Sharing],
+    [Privacy, Permissions, Sharing],
     [AI],
     [Users, Language, DateTime, Updates, Health, About],
 ]
@@ -116,6 +117,13 @@ class SettingsApp(Adw.Application):
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.add_main_option("page", ord("p"), GLib.OptionFlags.NONE, GLib.OptionArg.STRING,
                              _("Open a specific page"), "PAGE")
+
+    def do_startup(self):
+        Adw.Application.do_startup(self)
+        css = Gtk.CssProvider()
+        css.load_from_path(data_path("style", "settings.css"))
+        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css,
+                                                  Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def do_command_line(self, cmdline):
         opts = cmdline.get_options_dict().end().unpack()

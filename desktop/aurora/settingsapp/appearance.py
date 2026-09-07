@@ -170,9 +170,19 @@ class Appearance(Page):
                              tooltip_text=_("Add Picture…"))
         add_btn.connect("clicked", self._add_picture)
         bg.set_header_suffix(add_btn)
+        self.background_preview = Gtk.Picture(content_fit=Gtk.ContentFit.COVER,
+                                              can_shrink=True, css_classes=["background-preview"])
+        self.background_preview.set_size_request(480, 235)
+        self.background_name = Gtk.Label(xalign=0, css_classes=["heading"])
+        preview_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                              margin_top=8, margin_bottom=18)
+        preview_box.append(self.background_preview)
+        preview_box.append(self.background_name)
+        bg.add(preview_box)
         self.flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.SINGLE,
-                                max_children_per_line=4, min_children_per_line=2,
-                                row_spacing=10, column_spacing=10, homogeneous=True)
+                                max_children_per_line=3, min_children_per_line=2,
+                                row_spacing=14, column_spacing=14, homogeneous=True,
+                                css_classes=["background-gallery"])
         self.flow.connect("child-activated", self._on_wallpaper)
         bg.add(self.flow)
         self._load_wallpapers()
@@ -278,10 +288,15 @@ class Appearance(Page):
         current = aurora.get_string("wallpaper") if aurora else ""
         dynamic = aurora is not None and aurora.get_boolean("wallpaper-dynamic")
         preview = "/usr/share/backgrounds/aurora/aurora-dynamic-dusk.png"
+        current_preview = preview if dynamic else current
+        if current_preview and os.path.isfile(current_preview):
+            self.background_preview.set_file(Gio.File.new_for_path(current_preview))
+        self.background_name.set_label(_("Dynamic") if dynamic else
+                                       os.path.splitext(os.path.basename(current))[0].replace("-", " "))
         if os.path.exists(preview):
             pic = Gtk.Picture(file=Gio.File.new_for_path(preview),
                               content_fit=Gtk.ContentFit.COVER, can_shrink=True)
-            pic.set_size_request(160, 90)
+            pic.set_size_request(184, 112)
             badge = Gtk.Label(label=_("Dynamic"), css_classes=["osd", "caption-heading"],
                               halign=Gtk.Align.START, valign=Gtk.Align.END,
                               margin_start=6, margin_bottom=6)
@@ -298,8 +313,14 @@ class Appearance(Page):
                 continue
             pic = Gtk.Picture(file=Gio.File.new_for_path(path),
                               content_fit=Gtk.ContentFit.COVER, can_shrink=True)
-            pic.set_size_request(160, 90)
-            frame = Gtk.Frame(child=pic, css_classes=["wallpaper-thumb"])
+            pic.set_size_request(184, 112)
+            title = Gtk.Label(label=os.path.splitext(os.path.basename(path))[0].replace("-", " "),
+                              ellipsize=Pango.EllipsizeMode.END, max_width_chars=22,
+                              css_classes=["background-card-title"])
+            frame_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            frame_box.append(pic)
+            frame_box.append(title)
+            frame = Gtk.Frame(child=frame_box, css_classes=["wallpaper-thumb"])
             child = Gtk.FlowBoxChild(child=frame)
             child.path = path
             child.set_tooltip_text(os.path.basename(path))
@@ -314,6 +335,7 @@ class Appearance(Page):
             aurora.set_boolean("wallpaper-dynamic", child.path is None)
             if child.path:
                 aurora.set_string("wallpaper", child.path)
+            self._load_wallpapers()
 
     def _set_slideshow(self, active):
         aurora = settings.get()

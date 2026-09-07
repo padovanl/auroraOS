@@ -240,6 +240,15 @@ def search_clipboard(query):
                     else _("Clipboard"))
         out.append(Result(one_line[:120], subtitle, "edit-paste-symbolic",
                           lambda t=text: _copy(t), 500 - i))
+    if not q or q in _("Image").lower():
+        for i, path in enumerate(clipboard.image_paths()):
+            try:
+                texture = Gdk.Texture.new_from_filename(path)
+            except Exception:  # damaged image must not break Spotlight
+                continue
+            out.append(Result(_("Image"), _("Clipboard"), texture,
+                              lambda t=texture: Gdk.Display.get_default().get_clipboard().set_texture(t),
+                              400 - i))
     if not out:
         out.append(Result(_("Clipboard history is empty") if not q else _("No matches"),
                           _("Copied text shows up here. Turn it off in Settings → Privacy."),

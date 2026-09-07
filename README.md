@@ -124,8 +124,8 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
-| **Desktop icons** | Files in the Desktop folder appear on the background: click to select, double-click to open, click empty space to clear the selection, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
-| **Windows** | Wayfire manages the default session, with snapping to halves and quarters, workspaces and a window switcher. A selectable labwc fallback keeps its snap regions, including thirds. GTK apps keep Aurora's styled title bars. |
+| **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
+| **Windows** | Wayfire manages the default **Aurora** session, with snapping to halves and quarters, workspaces and a window switcher. **Aurora Compatibility** uses labwc; it starts automatically if Wayfire fails and leaves a startup report in System Health. GTK apps keep Aurora's styled title bars. |
 | **Animations** | Wayfire animates opening, closing, minimization and restoration of windows. Settings → Appearance can turn the compositor effects and GTK/Files transitions off together. The labwc fallback has GTK/Files transitions only. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
@@ -140,9 +140,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   - **Power**: screen blank, automatic suspend on battery and when plugged in, what the
     power button and the lid do, power mode, battery percentage, battery health, 80%
     charge limit.
-  - **Appearance**: style, accent, wallpaper, icons, pointer, fonts, Night Light,
+  - **Appearance**: style, accent, wallpaper gallery with large preview, icons, pointer, fonts, Night Light,
     animations and window animations. **Desktop & Dock** (layouts, top bar, dock, window
-    buttons, desktop icons, what Spotlight shows), **Multitasking**.
+    buttons, desktop icons, what Spotlight shows), **Multitasking**, **Desktop Profiles**
+    (Work, Gaming, Battery and custom combinations of dock, notifications, effects and power).
   - **Notifications**: Do Not Disturb, notifications per app, what happens when a drive is
     connected. **Apps**: default and startup apps.
   - **Mouse & Touchpad** (gestures), **Keyboard** (repeat, Compose key for special
@@ -151,9 +152,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
     visible scrollbars, screen reader, **zoom** (whole screen or a lens,
     <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>8</kbd>), alert sounds, **screen keyboard**,
     blinking cursor, double-click delay.
-  - **Privacy & Security** (screen lock, file history, clipboard history, weather,
-    firewall), **Sharing** (screen sharing, nearby sharing, phone, SSH), **AI**.
-  - **Users** (fingerprint, **online accounts** for Google, Microsoft, Nextcloud…),
+  - **Privacy & Security** (screen lock, file history, searchable clipboard history
+    with pins and image entries, weather, firewall), **App Permissions** (review and revoke
+    remembered Flatpak portal grants), **Sharing** (screen sharing, nearby sharing, phone, SSH), **AI**.
+  - **Users** (profile card and picture, fingerprint, **online accounts** for Google, Microsoft, Nextcloud…),
     Language & Region, Date & Time, Software Updates (system snapshots), **System
   Health** with guided, user-reviewed diagnostic reports for installation, startup and apps,
     About.
@@ -169,13 +171,15 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
   your other windows and on every workspace, so it stays open while you work. Drag it by
   its bar, expand it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
-- **Files**: places and drives, grid and list views, search, hidden files, cut/copy/paste
+- **Files**: places and drives, grid and list views with drag-to-select, search, hidden files, cut/copy/paste
   with progress, cancel and retry, trash with restore, rename, new folder, "Open With", properties, open in
-  terminal, **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
-  "Summarize" and "Ask About This File".
+  terminal, batch rename, SHA-256 checksums, two-folder comparison, Git change badges,
+  **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
+  "Summarize", "Ask About This File" and a reviewed Git-change summary.
 - **Dev Hub**: about 90 one-click installers in 17 categories, with a category sidebar
   and search. Its Project Workspaces open the configured editor, terminal and Files together
-  for each repository or folder. Tool installs and AI downloads appear alongside file
+  for each repository or folder. In the animated session they can also save and restore
+  window positions; Compatibility opens the apps without moving windows. Tool installs and AI downloads appear alongside file
   transfers in the panel's **Activities** menu. The installer catalog covers editors and
   IDEs, languages and runtimes, cloud and DevOps, databases and
   API tools, AI assistants (Claude Code, Codex, Ollama), **shells and terminals** (Zsh,

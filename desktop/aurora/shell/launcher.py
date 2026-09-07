@@ -13,7 +13,9 @@ from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
 def _icon_image(icon, size):
     img = Gtk.Image(pixel_size=size)
-    if isinstance(icon, Gio.Icon):
+    if isinstance(icon, Gdk.Paintable):
+        img.set_from_paintable(icon)
+    elif isinstance(icon, Gio.Icon):
         img.set_from_gicon(icon)
     else:
         img.set_from_icon_name(icon)

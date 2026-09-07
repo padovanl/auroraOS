@@ -82,7 +82,13 @@ wayfire_cfg=$(aurora-wayfire-config) || {
     export AURORA_COMPOSITOR=labwc
     exec labwc -C "$cfg"
 }
-wayfire -c "$wayfire_cfg" &
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/aurora"
+mkdir -p "$state_dir"
+chmod 700 "$state_dir"
+failure_log="$state_dir/compositor-failure.log"
+rm -f "$failure_log"
+umask 077
+wayfire -c "$wayfire_cfg" 2>"$failure_log" &
 compositor_pid=$!
 started=$(date +%s)
 pidfile="${XDG_RUNTIME_DIR:-/tmp}/aurora-wayfire.pid"
@@ -93,8 +99,10 @@ rm -f "$pidfile"
 if [ "$result" -ne 0 ] && [ "$(($(date +%s) - started))" -lt 15 ] &&
    [ ! -e "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out" ]; then
     echo "aurora-session: Wayfire failed to start; falling back to labwc" >&2
+    printf '\nAurora: Wayfire exited with status %s; labwc fallback started.\n' "$result" >> "$failure_log"
     export AURORA_COMPOSITOR=labwc
     [ -z "${fallback_renderer:-}" ] || { WLR_RENDERER="$fallback_renderer"; export WLR_RENDERER; }
     exec labwc -C "$cfg"
 fi
+[ "$result" -ne 0 ] || rm -f "$failure_log"
 exit "$result"

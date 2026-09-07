@@ -4,7 +4,7 @@ from gi.repository import Adw, Gtk
 
 from aurora import look, settings
 from aurora.i18n import N_, _
-from aurora.settingsapp.util import Page, combo_row, switch_row
+from aurora.settingsapp.util import Page, combo_row, switch_row, toast
 
 # Each preset is a set of org.aurora.desktop values.
 PRESETS = {
@@ -47,6 +47,64 @@ PRESETS = {
 }
 
 LOOK_KEYS = {"window-buttons", "window-button-style", "window-corner-radius", "window-gaps"}
+
+
+class DesktopProfiles(Page):
+    page_id = "profiles"
+    title = _("Desktop Profiles")
+    icon_name = "preferences-system-symbolic"
+
+    def build(self):
+        from aurora import desktopprofiles
+        builtins = self.group(_("Ready-made profiles"),
+                              _("Apply a set of dock, notification, animation and power settings."))
+        for key, title in (("work", _("Work")), ("gaming", _("Gaming")),
+                           ("battery", _("Battery"))):
+            row = Adw.ButtonRow(title=title)
+            row.connect("activated", lambda _r, name=key:
+                        self._apply_profile(name))
+            builtins.add(row)
+        self.custom = self.group(_("Saved profiles"))
+        self._refresh_custom()
+        save = Adw.ButtonRow(title=_("Save current setup…"))
+        save.connect("activated", lambda *_: self._save_dialog())
+        self.custom.add(save)
+
+    def _refresh_custom(self):
+        from aurora import desktopprofiles
+        for row in getattr(self, "_custom_rows", []):
+            self.custom.remove(row)
+        self._custom_rows = []
+        for name in sorted(desktopprofiles.load()):
+            row = Adw.ButtonRow(title=name)
+            row.connect("activated", lambda _r, value=name: self._apply_profile(value))
+            self.custom.add(row)
+            self._custom_rows.append(row)
+
+    def _apply_profile(self, name):
+        from aurora import desktopprofiles
+        if desktopprofiles.apply(name):
+            toast(self, _("Profile applied"))
+
+    def _save_dialog(self):
+        from aurora import desktopprofiles
+        dialog = Adw.AlertDialog(heading=_("Save current setup"))
+        entry = Gtk.Entry(placeholder_text=_("Profile name"), max_length=40)
+        dialog.set_extra_child(entry)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("save", _("Save"))
+
+        def save(_dialog, response):
+            if response != "save":
+                return
+            try:
+                desktopprofiles.save(entry.get_text())
+                self._refresh_custom()
+                toast(self, _("Profile saved"))
+            except (ValueError, RuntimeError, OSError):
+                toast(self, _("Enter a valid profile name"))
+        dialog.connect("response", save)
+        dialog.present(self.get_root())
 
 
 class Desktop(Page):

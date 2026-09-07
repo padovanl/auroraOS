@@ -208,6 +208,10 @@ class DevHub(Adw.ApplicationWindow):
         files = Adw.SwitchRow(title=_("Open Files"), active=prefs["files"])
         for row in (editor, terminal, files):
             box.append(row)
+        layout = Gtk.Button(label=_("Save Current Window Layout"),
+                            tooltip_text=_("Save positions of currently open windows for this workspace"))
+        layout.connect("clicked", lambda *_: self._save_project_layout(path, dialog))
+        box.append(layout)
         dialog.set_extra_child(box)
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("save", _("Save"))
@@ -215,6 +219,13 @@ class DevHub(Adw.ApplicationWindow):
             path, editors[editor.get_selected()], terminal.get_active(), files.get_active())
             if response == "save" else None)
         dialog.present(self)
+
+    def _save_project_layout(self, path, dialog):
+        try:
+            count = projectworkspaces.capture_layout(path)
+            dialog.set_body(_("Saved positions for %d windows.") % count)
+        except (OSError, ValueError, ConnectionError):
+            dialog.set_body(_("Window layout requires the Aurora animated session."))
 
     def _jump(self, label):
         ok, point = label.compute_point(self.content, Graphene.Point())

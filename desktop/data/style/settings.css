@@ -1,0 +1,23 @@
+.user-profile-card {
+  background-color: alpha(@accent_bg_color, 0.08);
+  border: 1px solid alpha(@accent_bg_color, 0.20);
+  border-radius: 18px;
+}
+.background-preview {
+  border-radius: 16px;
+  box-shadow: 0 6px 22px alpha(#000000, 0.16);
+}
+.background-gallery flowboxchild {
+  border-radius: 14px;
+  padding: 5px;
+}
+.background-gallery flowboxchild:selected {
+  background-color: alpha(@accent_bg_color, 0.24);
+  box-shadow: inset 0 0 0 2px @accent_bg_color;
+}
+.wallpaper-thumb {
+  border-radius: 11px;
+  padding: 5px;
+  background-color: alpha(@window_fg_color, 0.045);
+}
+.background-card-title { font-size: 12px; font-weight: 600; margin: 0 5px 5px; }

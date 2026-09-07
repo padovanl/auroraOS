@@ -1,6 +1,8 @@
 """Aurora Files main window."""
 
 import os
+import hashlib
+import subprocess
 import shutil
 import threading
 from dataclasses import dataclass, field
@@ -498,7 +500,9 @@ class FilesWindow(Adw.ApplicationWindow):
             box = item.get_child()
             img, label = box.get_first_child(), box.get_last_child()
             img.set_from_gicon(self._icon_for(info, 64))
-            label.set_label(info.get_display_name())
+            changed = info.get_name() in getattr(self, "_git_changed", set())
+            label.set_label(info.get_display_name() + ("  ●" if changed else ""))
+            (label.add_css_class if changed else label.remove_css_class)("files-git-changed")
             box.set_opacity(0.6 if info.get_is_hidden() else 1.0)
             box.position = item.get_position()
 
@@ -533,7 +537,10 @@ class FilesWindow(Adw.ApplicationWindow):
             w.position = item.get_position()
             if kind == "name":
                 w.get_first_child().set_from_gicon(self._icon_for(info, 24))
-                w.get_last_child().set_label(info.get_display_name())
+                changed = info.get_name() in getattr(self, "_git_changed", set())
+                name = w.get_last_child()
+                name.set_label(info.get_display_name() + ("  ●" if changed else ""))
+                (name.add_css_class if changed else name.remove_css_class)("files-git-changed")
             elif kind == "size":
                 w.set_label(human_size(info))
             else:
@@ -623,6 +630,10 @@ class FilesWindow(Adw.ApplicationWindow):
         add("undo", self.undo, ["<Ctrl>z"])
         add("redo", self.redo, ["<Ctrl><Shift>z", "<Ctrl>y"])
         add("rename", self.rename, ["F2"])
+        add("batch-rename", self.batch_rename)
+        add("checksums", self.checksums)
+        add("compare-folders", self.compare_folders)
+        add("ai-git-summary", self.summarize_git_changes)
         add("trash", self.trash_selected, ["Delete"])
         add("delete", self.delete_selected, ["<Shift>Delete"])
         add("restore", self.restore_selected)
@@ -711,6 +722,7 @@ class FilesWindow(Adw.ApplicationWindow):
             self.forward_stack.clear()
         self.current = gfile
         self.dirlist.set_file(gfile)
+        self._refresh_git_status(gfile)
         self._animate_items()
         self.search_btn.set_active(False)
         self._update_path()
@@ -791,6 +803,32 @@ class FilesWindow(Adw.ApplicationWindow):
     def reload(self):
         self.dirlist.set_file(None)
         self.dirlist.set_file(self.current)
+
+    def _refresh_git_status(self, gfile):
+        path = gfile.get_path()
+        self._git_changed = set()
+        self._git_generation = getattr(self, "_git_generation", 0) + 1
+        generation = self._git_generation
+        if not path or not os.path.isdir(path):
+            return
+
+        def work():
+            try:
+                result = subprocess.run(
+                    ["git", "-C", path, "status", "--porcelain=v1", "--untracked-files=normal",
+                     "--", "."], capture_output=True, text=True, timeout=6)
+                changed = {line[3:].split(" -> ")[-1] for line in result.stdout.splitlines()
+                           if len(line) > 3 and "/" not in line[3:]}
+            except (OSError, subprocess.TimeoutExpired):
+                changed = set()
+            GLib.idle_add(apply, changed)
+
+        def apply(changed):
+            if generation == self._git_generation:
+                self._git_changed = changed
+                self.reload()
+            return GLib.SOURCE_REMOVE
+        threading.Thread(target=work, daemon=True).start()
 
     # --------------------------------------------------- filtering/sort
 
@@ -1028,6 +1066,10 @@ class FilesWindow(Adw.ApplicationWindow):
             if not trash:
                 sections.append([(_("Cut"), "cut"), (_("Copy"), "copy"),
                                  (_("Duplicate"), "duplicate"), (_("Rename…"), "rename")])
+                if len(self.selected_files()) > 1:
+                    sections.append([(_("Rename Multiple…"), "batch-rename"),
+                                     (_("Compare Folders"), "compare-folders")])
+                sections.append([(_("SHA-256 Checksums"), "checksums")])
                 sections.append([(_("Move to Trash"), "trash")])
             sections.append([(_("Properties"), "properties")])
         elif trash:
@@ -1039,6 +1081,9 @@ class FilesWindow(Adw.ApplicationWindow):
                              [(_("Select All"), "select-all"),
                               (_("Open in Terminal"), "terminal-here"),
                               (_("Properties"), "properties")]])
+            from aurora import ai
+            if ai.enabled() and ai.feature("files"):
+                sections.append([(_("Summarize Git Changes…"), "ai-git-summary")])
 
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1,
                       margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)
@@ -1067,6 +1112,135 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def toast(self, msg):
         self.toast_overlay.add_toast(Adw.Toast(title=msg, timeout=3))
+
+    def batch_rename(self):
+        paths = [file.get_path() for file in self.selected_files()]
+        if len(paths) < 2 or any(not path for path in paths):
+            return
+        dialog = Adw.AlertDialog(heading=_("Rename Multiple…"),
+                                 body=_("Replace text in the selected names. No file is overwritten."))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        find = Gtk.Entry(placeholder_text=_("Find"))
+        replace = Gtk.Entry(placeholder_text=_("Replace with"))
+        box.append(find)
+        box.append(replace)
+        dialog.set_extra_child(box)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("rename", _("Rename"))
+
+        def apply(_dialog, response):
+            if response != "rename":
+                return
+            needle = find.get_text()
+            if not needle:
+                self.toast(_("Enter text to find"))
+                return
+            pairs = [(path, os.path.join(os.path.dirname(path),
+                      os.path.basename(path).replace(needle, replace.get_text())))
+                     for path in paths]
+            pairs = [(src, dst) for src, dst in pairs if src != dst]
+            targets = [dst for _src, dst in pairs]
+            if len(targets) != len(set(targets)) or any(os.path.lexists(dst) for dst in targets):
+                self.toast(_("A destination name already exists"))
+                return
+            done = []
+            try:
+                for src, dst in pairs:
+                    os.rename(src, dst)
+                    done.append((src, dst))
+            except OSError as err:
+                self.toast(str(err))
+            if done:
+                self.history.record("move", done)
+                self._update_history_actions()
+                self.reload()
+        dialog.connect("response", apply)
+        dialog.present(self)
+
+    def checksums(self):
+        paths = [f.get_path() for f in self.selected_files()]
+        paths = [p for p in paths if p and os.path.isfile(p)]
+        if not paths:
+            return
+        dialog = Adw.AlertDialog(heading=_("SHA-256 Checksums"), body=_("Calculating…"))
+        dialog.add_response("close", _("Close"))
+        dialog.present(self)
+
+        def work():
+            lines = []
+            for path in paths:
+                try:
+                    digest = hashlib.sha256()
+                    with open(path, "rb") as stream:
+                        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                            digest.update(chunk)
+                    lines.append(f"{digest.hexdigest()}  {os.path.basename(path)}")
+                except OSError as err:
+                    lines.append(f"{os.path.basename(path)}: {err}")
+            GLib.idle_add(show, "\n".join(lines))
+
+        def show(report):
+            dialog.set_body("")
+            view = Gtk.TextView(editable=False, monospace=True, wrap_mode=Gtk.WrapMode.CHAR)
+            view.get_buffer().set_text(report)
+            dialog.set_extra_child(Gtk.ScrolledWindow(child=view,
+                                                      min_content_width=600,
+                                                      min_content_height=220))
+            return GLib.SOURCE_REMOVE
+        threading.Thread(target=work, daemon=True).start()
+
+    def compare_folders(self):
+        paths = [f.get_path() for f in self.selected_files()]
+        if len(paths) != 2 or any(not path or not os.path.isdir(path) for path in paths):
+            self.toast(_("Select exactly two folders"))
+            return
+        apps.spawn(["meld", *paths])
+
+    def summarize_git_changes(self):
+        from aurora import ai
+        path = self.current.get_path() if self.current else None
+        if not path or not ai.enabled():
+            return
+        dialog = Adw.AlertDialog(heading=_("Summarize Git Changes…"),
+                                 body=_("Review the changes before sending them to Aurora AI."))
+        view = Gtk.TextView(editable=False, monospace=True, wrap_mode=Gtk.WrapMode.CHAR)
+        view.get_buffer().set_text(_("Loading…"))
+        dialog.set_extra_child(Gtk.ScrolledWindow(child=view, min_content_width=600,
+                                                  min_content_height=320))
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("ask", _("Ask Aurora"))
+        dialog.set_response_enabled("ask", False)
+        dialog.present(self)
+        preview = {"text": ""}
+
+        def response(_dialog, choice):
+            if choice == "ask" and preview["text"]:
+                prompt = "Summarize these Git changes, identify risks and suggest next steps:\n\n" \
+                    + preview["text"][:12000]
+                apps.spawn(["aurora-assistant", "--ask", prompt])
+        dialog.connect("response", response)
+
+        def work():
+            parts = []
+            for args in (("status", "--short"), ("diff", "--no-ext-diff", "--", "."),
+                         ("diff", "--cached", "--no-ext-diff", "--", ".")):
+                try:
+                    result = subprocess.run(["git", "-C", path, *args], capture_output=True,
+                                            text=True, timeout=8)
+                    if result.returncode == 0 and result.stdout.strip():
+                        parts.append("$ git " + " ".join(args) + "\n" + result.stdout[:12000])
+                except (OSError, subprocess.TimeoutExpired):
+                    pass
+            GLib.idle_add(show, "\n\n".join(parts)[:16000])
+
+        def show(text):
+            preview["text"] = text
+            view.get_buffer().set_text(text or _("No Git changes found"))
+            dialog.set_response_enabled("ask", bool(text))
+            dialog.set_body(_("Provider: {name}. Review the text before sending.").format(
+                name=ai.provider()))
+            return GLib.SOURCE_REMOVE
+        threading.Thread(target=work, daemon=True).start()
 
     def to_clipboard(self, mode):
         files = self.selected_files()

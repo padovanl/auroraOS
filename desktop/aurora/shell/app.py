@@ -121,6 +121,7 @@ class Shell(Adw.Application):
         self.notifications = NotificationServer(self)
         from aurora.shell.sysnotify import SystemNotifications
         self.sysnotify = SystemNotifications(self)
+        GLib.idle_add(self._notify_compositor_fallback)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
@@ -145,6 +146,7 @@ class Shell(Adw.Application):
                           lambda *a: self._later(self.hotcorners.rebuild))
         self._update_dynamic_css()
         self._clip_watch = None
+        self._image_clip_watch = None
         self._vnc = None
         if s:
             s.connect("changed::clipboard-history", lambda *a: self._sync_clipboard())
@@ -176,6 +178,23 @@ class Shell(Adw.Application):
                 f.write(f"{time.monotonic() - t0:.1f}\n")
         except OSError:
             pass
+        return GLib.SOURCE_REMOVE
+
+    def _notify_compositor_fallback(self):
+        if os.environ.get("AURORA_COMPOSITOR") != "labwc":
+            return GLib.SOURCE_REMOVE
+        log = os.path.join(os.environ.get("XDG_STATE_HOME") or
+                           os.path.expanduser("~/.local/state"),
+                           "aurora", "compositor-failure.log")
+        if not os.path.isfile(log):
+            return GLib.SOURCE_REMOVE
+        self.sysnotify.notify(
+            _("Graphics fallback started"),
+            _("Wayfire could not start. Aurora opened the safe desktop instead. "
+              "Select this notification to review the startup report."),
+            "dialog-warning-symbolic", [("default", _("Open System Health"))],
+            lambda key: self.open_settings("health") if key == "default" else None,
+            urgency=2)
         return GLib.SOURCE_REMOVE
 
     def _later(self, fn):
@@ -584,9 +603,14 @@ class Shell(Adw.Application):
         if want and self._clip_watch is None and shutil.which("wl-paste"):
             self._clip_watch = subprocess.Popen(
                 ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"])
+            self._image_clip_watch = subprocess.Popen(
+                ["wl-paste", "--type", "image/png", "--watch", "aurora-clipboard", "store-image"])
         elif not want and self._clip_watch is not None:
             self._clip_watch.terminate()
             self._clip_watch = None
+            if self._image_clip_watch is not None:
+                self._image_clip_watch.terminate()
+                self._image_clip_watch = None
 
     def _on_recording_saved(self, _rec, path):
         self.notifications.notify(

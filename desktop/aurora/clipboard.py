@@ -12,12 +12,16 @@ wl-paste passes that on in CLIPBOARD_STATE. The history lives in
 """
 
 import fcntl
+import hashlib
 import json
 import os
 import sys
+import time
 
 LIMIT = 100                 # entries kept
 MAX_BYTES = 64 * 1024       # larger copies are not remembered
+EXPIRE_SECONDS = 7 * 24 * 60 * 60
+MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
 
 def history_path():
@@ -25,11 +29,107 @@ def history_path():
     return os.path.join(base, "aurora", "clipboard.json")
 
 
+def _meta_path():
+    return history_path() + ".meta"
+
+
+def _image_dir():
+    return os.path.join(os.path.dirname(history_path()), "clipboard-images")
+
+
+def image_paths():
+    try:
+        paths = [os.path.join(_image_dir(), name) for name in os.listdir(_image_dir())
+                 if name.endswith(".png")]
+        paths.sort(key=os.path.getmtime, reverse=True)
+        now = time.time()
+        return [path for path in paths[:20]
+                if now - os.path.getmtime(path) < EXPIRE_SECONDS]
+    except OSError:
+        return []
+
+
+def store_image(stdin=sys.stdin):
+    if os.environ.get("CLIPBOARD_STATE", "data") in ("sensitive", "clear", "nil"):
+        return
+    data = stdin.buffer.read(MAX_IMAGE_BYTES + 1)
+    if len(data) > MAX_IMAGE_BYTES or not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return
+    directory = _image_dir()
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    path = os.path.join(directory, hashlib.sha256(data).hexdigest() + ".png")
+    with open(path, "wb") as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        stream.write(data)
+    os.utime(path)
+    for old in [os.path.join(directory, name) for name in os.listdir(directory)
+                if name.endswith(".png") and name != os.path.basename(path)]:
+        try:
+            age = time.time() - os.path.getmtime(old)
+            if old not in image_paths() or age >= EXPIRE_SECONDS:
+                os.remove(old)
+        except OSError:
+            pass
+
+
+def _key(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def _meta():
+    try:
+        with open(_meta_path(), encoding="utf-8") as stream:
+            value = json.load(stream)
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def _save_meta(meta):
+    path = _meta_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    temporary = path + ".new"
+    with open(temporary, "w", encoding="utf-8") as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        json.dump(meta, stream)
+    os.replace(temporary, path)
+
+
+def pinned(text):
+    return bool(_meta().get(_key(text), {}).get("pinned"))
+
+
+def pin(text, value=True):
+    if text not in load():
+        return False
+    meta = _meta()
+    key = _key(text)
+    entry = meta.get(key, {})
+    entry["pinned"] = bool(value)
+    entry["time"] = time.time()
+    meta[key] = entry
+    _save_meta(meta)
+    return True
+
+
+def delete(text):
+    items = [item for item in load() if item != text]
+    _save(items)
+    meta = _meta()
+    meta.pop(_key(text), None)
+    _save_meta(meta)
+
+
 def load():
     try:
         with open(history_path()) as f:
             items = json.load(f)
-        return [i for i in items if isinstance(i, str)]
+        meta = _meta()
+        now = time.time()
+        valid = [i for i in items if isinstance(i, str) and
+                 (meta.get(_key(i), {}).get("pinned") or
+                  now - meta.get(_key(i), {}).get("time", now) < EXPIRE_SECONDS)]
+        return sorted(valid, key=lambda i: not meta.get(_key(i), {}).get("pinned", False))
     except (OSError, ValueError):
         return []
 
@@ -64,12 +164,23 @@ def store(stdin=sys.stdin, env=os.environ):
     with open(lock_path, "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         _save(add(data))
+        meta = _meta()
+        meta[_key(data)] = {"time": time.time(),
+                            "pinned": bool(meta.get(_key(data), {}).get("pinned"))}
+        _save_meta(meta)
 
 
 def clear():
+    for path in (history_path(), _meta_path()):
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            pass
     try:
-        os.remove(history_path())
-    except FileNotFoundError:
+        for name in os.listdir(_image_dir()):
+            if name.endswith(".png"):
+                os.remove(os.path.join(_image_dir(), name))
+    except OSError:
         pass
 
 
@@ -77,6 +188,8 @@ def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "store":
         store()
+    elif cmd == "store-image":
+        store_image()
     elif cmd == "list":
         for item in load():
             print(item.replace("\n", "⏎"))

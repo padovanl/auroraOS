@@ -79,8 +79,8 @@ def sessions():
             found.append((entry.get("Name", os.path.basename(path)), entry["Exec"]))
         except (KeyError, configparser.Error):
             continue
-    found.sort(key=lambda s: (s[1] != "aurora-session", s[0]))
-    return found or [("Aurora", "aurora-session")]
+    found.sort(key=lambda s: (s[1] != "aurora-session wayfire", s[0]))
+    return found or [("Aurora", "aurora-session wayfire")]
 
 
 class Greeter(Adw.ApplicationWindow):

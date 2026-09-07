@@ -32,6 +32,17 @@ class Wallpaper(LayerWindow):
             from aurora.shell.desktopicons import DesktopIcons
             self._icons = DesktopIcons()
             overlay.add_overlay(self._icons)
+            self._selection_box = Gtk.DrawingArea(hexpand=True, vexpand=True,
+                                                  can_target=False)
+            self._selection_box.set_draw_func(self._draw_selection)
+            overlay.add_overlay(self._selection_box)
+            self._selection_rect = None
+            self._selection_origin = None
+            select_drag = Gtk.GestureDrag()
+            select_drag.connect("drag-begin", self._selection_begin)
+            select_drag.connect("drag-update", self._selection_update)
+            select_drag.connect("drag-end", self._selection_end)
+            overlay.add_controller(select_drag)
             # A click on empty desktop clears the selection.
             clear = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY)
             clear.connect("pressed", self._on_background_click)
@@ -50,12 +61,53 @@ class Wallpaper(LayerWindow):
         self.reload()
 
     def _on_background_click(self, _gesture, _n, x, y):
+        if _gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
+                                               Gdk.ModifierType.SHIFT_MASK):
+            return
         widget = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
         while widget is not None:
             if widget.has_css_class("desktop-icon"):
                 return  # the icon handles its own click
             widget = widget.get_parent()
         self._icons.select(None)
+
+    def _selection_begin(self, gesture, x, y):
+        picked = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
+        from aurora.shell.desktopicons import DesktopIcon
+        if picked is not None and (isinstance(picked, DesktopIcon) or
+                                   picked.get_ancestor(DesktopIcon) is not None):
+            self._selection_origin = None
+            gesture.set_state(Gtk.EventSequenceState.DENIED)
+            return
+        self._selection_origin = (x, y, set(self._icons._selected))
+
+    def _selection_update(self, _gesture, dx, dy):
+        if self._selection_origin is None:
+            return
+        x, y, original = self._selection_origin
+        self._selection_rect = (x, y, x + dx, y + dy)
+        self._selection_box.queue_draw()
+        start = self.get_child().translate_coordinates(self._icons, x, y)[-2:]
+        end = self.get_child().translate_coordinates(self._icons, x + dx, y + dy)[-2:]
+        self._icons.select_rect(*start, *end, original)
+
+    def _selection_end(self, *_args):
+        self._selection_origin = None
+        self._selection_rect = None
+        self._selection_box.queue_draw()
+
+    def _draw_selection(self, _area, cr, _width, _height):
+        if self._selection_rect is None:
+            return
+        x1, y1, x2, y2 = self._selection_rect
+        x, y = min(x1, x2), min(y1, y2)
+        width, height = abs(x2 - x1), abs(y2 - y1)
+        cr.set_source_rgba(0.66, 0.44, 1.0, 0.20)
+        cr.rectangle(x, y, width, height)
+        cr.fill_preserve()
+        cr.set_source_rgba(0.76, 0.60, 1.0, 0.85)
+        cr.set_line_width(1)
+        cr.stroke()
 
     def _on_drop(self, _target, value, x, y):
         from aurora.shell.desktopicons import DesktopIcon, desktop_dir

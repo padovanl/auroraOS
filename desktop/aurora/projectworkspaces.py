@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import tempfile
+import threading
 from pathlib import Path
 
 
@@ -41,16 +42,28 @@ def preferences(path):
     value = load().get(os.path.realpath(path), {})
     return {"editor": value.get("editor", "auto") if value.get("editor") in EDITORS else "auto",
             "terminal": bool(value.get("terminal", True)),
-            "files": bool(value.get("files", True))}
+            "files": bool(value.get("files", True)),
+            "layout": value.get("layout", []) if isinstance(value.get("layout", []), list) else []}
 
 
 def configure(path, editor="auto", terminal=True, files=True):
     if editor not in EDITORS:
         raise ValueError("unsupported editor")
     data = load()
+    previous = data.get(os.path.realpath(path), {})
     data[os.path.realpath(path)] = {"editor": editor, "terminal": bool(terminal),
-                                    "files": bool(files)}
+                                    "files": bool(files), "layout": previous.get("layout", [])}
     save(data)
+
+
+def capture_layout(path):
+    from aurora import wayfirelayout
+    layout = wayfirelayout.save_layout()
+    data = load()
+    key = os.path.realpath(path)
+    data[key] = {**data.get(key, {}), "layout": layout}
+    save(data)
+    return len(layout)
 
 
 def open_workspace(path):
@@ -60,6 +73,11 @@ def open_workspace(path):
     if not os.path.isdir(path):
         raise FileNotFoundError(path)
     prefs = preferences(path)
+    try:
+        from aurora import wayfirelayout
+        before = wayfirelayout.views() if prefs["layout"] else []
+    except (OSError, ValueError, ConnectionError):
+        before = []
     editor = prefs["editor"]
     if editor == "auto":
         editor = next((name for name in EDITORS[1:] if shutil.which(name)), "")
@@ -72,3 +90,6 @@ def open_workspace(path):
         opened = True
     if prefs["files"] or not opened:
         apps.spawn(["aurora-files", path])
+    if before and prefs["layout"]:
+        threading.Thread(target=wayfirelayout.restore_layout,
+                         args=(prefs["layout"], before), daemon=True).start()

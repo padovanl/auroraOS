@@ -40,6 +40,17 @@ def collect(category, include_logs=False):
         raise ValueError("unknown diagnostic category")
     lines = ["Aurora OS diagnostic report", f"Category: {category}",
              "No data has been uploaded. Review before saving or sharing."]
+    if category == "boot":
+        path = os.path.join(os.environ.get("XDG_STATE_HOME") or
+                            os.path.expanduser("~/.local/state"), "aurora",
+                            "compositor-failure.log")
+        try:
+            with open(path, encoding="utf-8", errors="replace") as stream:
+                excerpt = stream.read(65536).splitlines()[-30:]
+            lines.extend(["\nCompositor startup failure (last 30 lines):",
+                          redact("\n".join(excerpt))])
+        except OSError:
+            pass
     commands = COMMANDS[category] + (DETAILS[category] if include_logs else ())
     for argv in commands:
         lines.append("\n$ " + " ".join(argv))

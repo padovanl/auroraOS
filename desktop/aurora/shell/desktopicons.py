@@ -92,12 +92,17 @@ class DesktopIcon(Gtk.Button):
         if self.gfile is not None:
             drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
             drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-            drag.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(
-                Gdk.FileList.new_from_list([self.gfile])))
+            drag.connect("prepare", self._drag_files)
             self.add_controller(drag)
             drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             drop.connect("drop", self._on_drop)
             self.add_controller(drop)
+
+    def _drag_files(self, *_args):
+        parent = self.get_ancestor(DesktopIcons)
+        files = parent.selected_files() if parent and self.has_css_class("selected") else []
+        return Gdk.ContentProvider.new_for_value(
+            Gdk.FileList.new_from_list(files or [self.gfile]))
 
     def _on_drop(self, _target, value, x, y):
         if not isinstance(value, Gdk.FileList) or self.gfile is None:
@@ -119,10 +124,11 @@ class DesktopIcon(Gtk.Button):
     def _on_press(self, _gesture, n_press, _x, _y):
         if _gesture.get_current_button() != Gdk.BUTTON_PRIMARY:
             return
-        # One selected icon at a time; a click on empty desktop clears it.
         parent = self.get_ancestor(DesktopIcons)
         if parent is not None:
-            parent.select(self)
+            state = _gesture.get_current_event_state()
+            parent.select(self, extend=bool(state & (Gdk.ModifierType.CONTROL_MASK |
+                                                     Gdk.ModifierType.SHIFT_MASK)))
         if n_press == 2:
             if self.app is not None:
                 from aurora import apps
@@ -288,9 +294,35 @@ class DesktopIcons(Gtk.Fixed):
                     if error else self.reload())
         job.start()
 
-    def select(self, icon=None):
-        for button in self._icons.values():
-            (button.add_css_class if button is icon else button.remove_css_class)("selected")
+    def select(self, icon=None, extend=False):
+        if not extend:
+            self._selected.clear()
+        if icon is not None and icon.gfile is not None:
+            name = icon.gfile.get_basename()
+            if extend and name in self._selected:
+                self._selected.remove(name)
+            else:
+                self._selected.add(name)
+        self._sync_selection()
+
+    def selected_files(self):
+        return [icon.gfile for name, icon in self._icons.items() if name in self._selected]
+
+    def select_rect(self, x1, y1, x2, y2, original=()):
+        left, right = sorted((x1, x2))
+        top, bottom = sorted((y1, y2))
+        self._selected = set(original)
+        for name, icon in self._icons.items():
+            ok, bounds = icon.compute_bounds(self)
+            if ok and bounds.get_x() < right and bounds.get_x() + bounds.get_width() > left \
+                    and bounds.get_y() < bottom and bounds.get_y() + bounds.get_height() > top:
+                self._selected.add(name)
+        self._sync_selection()
+
+    def _sync_selection(self):
+        for name, button in self._icons.items():
+            (button.add_css_class if name in self._selected else
+             button.remove_css_class)("selected")
 
     def __init__(self):
         super().__init__(hexpand=True, vexpand=True, halign=Gtk.Align.FILL,
@@ -298,6 +330,7 @@ class DesktopIcons(Gtk.Fixed):
         self._dir = Gio.File.new_for_path(desktop_dir())
         self._positions = self._load_positions()
         self._icons = {}
+        self._selected = set()
         self._last_size = (0, 0)
         self.add_tick_callback(self._watch_size)
         self._monitor = None
@@ -393,5 +426,7 @@ class DesktopIcons(Gtk.Fixed):
         for info in infos[:MAX_ITEMS]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
             add_icon(icon, info.get_name())
+        self._selected.intersection_update(self._icons)
+        self._sync_selection()
         self.set_visible(shown > 0)
         return GLib.SOURCE_REMOVE

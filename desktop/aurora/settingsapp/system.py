@@ -9,6 +9,7 @@ import select
 import shutil
 import socket
 import subprocess
+import threading
 import time
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
@@ -70,6 +71,9 @@ class Privacy(Page):
         clear_clip = Adw.ButtonRow(title=_("Clear Clipboard History"))
         clear_clip.connect("activated", lambda *_: self._clear_clipboard())
         clip.add(clear_clip)
+        manage_clip = Adw.ButtonRow(title=_("Manage Clipboard History…"))
+        manage_clip.connect("activated", lambda *_: self._manage_clipboard())
+        clip.add(manage_clip)
 
         online = self.group(_("Online Services"))
         if aurora:
@@ -106,9 +110,111 @@ class Privacy(Page):
         clipboard.clear()
         toast(self, _("Clipboard history cleared"))
 
+    def _manage_clipboard(self):
+        from aurora import clipboard
+        dialog = Adw.AlertDialog(heading=_("Clipboard History"))
+        rows = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
+
+        def refresh():
+            while (child := rows.get_first_child()) is not None:
+                rows.remove(child)
+            for text in clipboard.load():
+                label = " ".join(text.split())[:90]
+                row = Gtk.Box(spacing=8, margin_top=4, margin_bottom=4,
+                              margin_start=8, margin_end=8)
+                row.append(Gtk.Label(label=label, xalign=0, hexpand=True,
+                                     ellipsize=3, tooltip_text=text))
+                is_pinned = clipboard.pinned(text)
+                pin = Gtk.Button(icon_name="emblem-favorite-symbolic", css_classes=["flat"],
+                                 tooltip_text=_("Unpin") if is_pinned else _("Pin"))
+                pin.set_opacity(1.0 if is_pinned else 0.5)
+                pin.connect("clicked", lambda _b, value=text, state=is_pinned:
+                            (clipboard.pin(value, not state), refresh()))
+                row.append(pin)
+                remove = Gtk.Button(icon_name="edit-delete-symbolic", css_classes=["flat"],
+                                    tooltip_text=_("Remove"))
+                remove.connect("clicked", lambda _b, value=text:
+                               (clipboard.delete(value), refresh()))
+                row.append(remove)
+                rows.append(row)
+        refresh()
+        dialog.set_extra_child(Gtk.ScrolledWindow(child=rows, min_content_width=480,
+                                                  min_content_height=300))
+        dialog.add_response("close", _("Close"))
+        dialog.present(self.get_root())
+
     def _set_firewall(self, on):
         ok, err = admin("firewall", "on" if on else "off")
         toast(self, (_("Firewall enabled") if on else _("Firewall disabled")) if ok else err)
+
+
+class Permissions(Page):
+    page_id = "permissions"
+    title = _("App Permissions")
+    icon_name = "security-high-symbolic"
+
+    def build(self):
+        from aurora import permissions
+        group = self.group(_("Sandboxed Apps"),
+                           _("Review remembered file, camera, microphone and screen grants. "
+                             "Native apps are not sandboxed; manifest permissions are shown "
+                             "for reference and may still give broader access."))
+        installed = permissions.installed_apps()
+        if not installed:
+            group.add(Adw.ActionRow(title=_("No Flatpak apps installed")))
+            return
+        for app_id, name in installed:
+            row = Adw.ActionRow(title=name, subtitle=app_id, activatable=True)
+            row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
+            row.connect("activated", lambda _r, aid=app_id, label=name:
+                        self._show_app(aid, label))
+            group.add(row)
+
+    def _show_app(self, app_id, name):
+        from aurora import permissions
+        dialog = Adw.AlertDialog(heading=name,
+                                 body=_("Select a remembered grant to revoke it."))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        status = Gtk.Label(label=_("Loading…"), xalign=0)
+        box.append(status)
+        rows = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
+        box.append(rows)
+        scroll = Gtk.ScrolledWindow(child=box, min_content_width=520,
+                                    min_content_height=300)
+        dialog.set_extra_child(scroll)
+        dialog.add_response("close", _("Close"))
+        dialog.present(self.get_root())
+
+        def loaded(grants, manifest):
+            status.set_label(_("Remembered grants") if grants else _("No remembered grants"))
+            for table, object_id, value in grants:
+                row = Adw.ActionRow(title=f"{table} · {object_id}", subtitle=value)
+                button = Gtk.Button(icon_name="edit-delete-symbolic", css_classes=["flat"],
+                                    tooltip_text=_("Revoke"), valign=Gtk.Align.CENTER)
+                button.connect("clicked", lambda _b, t=table, oid=object_id, r=row:
+                               self._revoke(app_id, t, oid, r))
+                row.add_suffix(button)
+                rows.append(row)
+            if manifest:
+                label = Gtk.Label(label=_("Declared sandbox access") + "\n" + manifest,
+                                  xalign=0, selectable=True, wrap=True)
+                label.add_css_class("dim-label")
+                box.append(label)
+            return GLib.SOURCE_REMOVE
+
+        def work():
+            grants = permissions.grants(app_id)
+            manifest = permissions.declared(app_id)
+            GLib.idle_add(loaded, grants, manifest)
+        threading.Thread(target=work, daemon=True).start()
+
+    def _revoke(self, app_id, table, object_id, row):
+        from aurora import permissions
+        if permissions.revoke(table, object_id, app_id):
+            row.set_subtitle(_("Revoked; restart the app to apply"))
+            row.set_sensitive(False)
+        else:
+            toast(self, _("Could not revoke this grant"))
 
 
 # --------------------------------------------------------------- sharing
@@ -288,17 +394,27 @@ class Users(Page):
         me = pwd.getpwuid(os.getuid())
         self.me = me
         you = self.group(_("Your Account"))
-        header = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_bottom=12)
-        self.avatar = Adw.Avatar(size=96, show_initials=True,
+        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20,
+                         margin_top=16, margin_bottom=16,
+                         margin_start=18, margin_end=18,
+                         css_classes=["user-profile-card"])
+        self.avatar = Adw.Avatar(size=116, show_initials=True,
                                  text=me.pw_gecos.split(",")[0] or me.pw_name)
         icon = f"/var/lib/AccountsService/icons/{me.pw_name}"
         if os.path.exists(icon):
             self.avatar.set_custom_image(Gdk.Texture.new_from_filename(icon))
-        change = Gtk.Button(label=_("Change Picture…"), halign=Gtk.Align.CENTER,
-                            css_classes=["flat"])
+        details = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7,
+                          valign=Gtk.Align.CENTER, hexpand=True)
+        details.append(Gtk.Label(label=me.pw_gecos.split(",")[0] or me.pw_name,
+                                 xalign=0, wrap=True, css_classes=["title-2"]))
+        details.append(Gtk.Label(label="@" + me.pw_name, xalign=0,
+                                 css_classes=["dim-label"]))
+        change = Gtk.Button(label=_("Change Picture…"), halign=Gtk.Align.START,
+                            css_classes=["pill"])
         change.connect("clicked", lambda *_: self._pick_avatar())
         header.append(self.avatar)
-        header.append(change)
+        details.append(change)
+        header.append(details)
         you.add(header)
 
         name = Adw.EntryRow(title=_("Full name"), text=me.pw_gecos.split(",")[0],

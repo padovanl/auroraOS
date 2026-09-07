@@ -17,6 +17,7 @@ CSS = """
 .files-grid > child:selected { background-color: alpha(@accent_bg_color, 0.25); }
 .files-tab { border-radius: 10px; background: alpha(@window_fg_color, 0.06); }
 .files-tab.active-tab { background: alpha(@accent_bg_color, 0.22); }
+.files-git-changed { color: #bf85f5; font-weight: 600; }
 popover.aurora-context-menu contents {
   padding: 6px; border-radius: 10px;
   background: #292b30; color: #d6d8dd;
