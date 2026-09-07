@@ -72,7 +72,10 @@ if [ "${WLR_RENDERER:-}" = pixman ]; then
     fallback_renderer=pixman
     WLR_RENDERER=gles2
     LIBGL_ALWAYS_SOFTWARE=1
-    export WLR_RENDERER LIBGL_ALWAYS_SOFTWARE
+    # wlroots refuses llvmpipe unless explicitly allowed. On Hyper-V this
+    # otherwise aborts Wayfire before it can open a desktop session.
+    WLR_RENDERER_ALLOW_SOFTWARE=1
+    export WLR_RENDERER LIBGL_ALWAYS_SOFTWARE WLR_RENDERER_ALLOW_SOFTWARE
 fi
 wayfire_cfg=$(aurora-wayfire-config) || {
     echo "aurora-session: cannot render Wayfire configuration; starting labwc" >&2

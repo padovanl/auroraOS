@@ -102,7 +102,7 @@ class DockItem(Gtk.Button):
         if pinned and app is not None:
             source = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
             source.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(self.key))
-            source.connect("drag-begin", lambda *_: self.dock._drag_start())
+            source.connect("drag-begin", self._begin_drag)
             source.connect("drag-end", lambda *_: self.dock._drag_end())
             self.add_controller(source)
             target = Gtk.DropTarget.new(str, Gdk.DragAction.MOVE)
@@ -110,6 +110,14 @@ class DockItem(Gtk.Button):
             target.connect("leave", lambda *_: self._drag_leave())
             target.connect("drop", self._drop_favorite)
             self.add_controller(target)
+
+    def _begin_drag(self, source, _drag):
+        # The payload is a desktop ID, but the pointer should carry the app's
+        # actual icon instead of GTK's default text preview for that string.
+        source.set_icon(Gtk.WidgetPaintable.new(self.icon),
+                        self.icon.get_pixel_size() // 2,
+                        self.icon.get_pixel_size() // 2)
+        self.dock._drag_start()
 
     def _drag_enter(self):
         self.add_css_class("dock-drop-target")

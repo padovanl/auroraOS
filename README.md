@@ -1307,7 +1307,9 @@ set up a feature, and every place it appears has its own switch.
   (`gtk4-animations.css`). The Window animations switch controls both layers.
 - **Rendering in virtual machines:** labwc uses wlroots' **pixman** renderer and GTK's
   **cairo** renderer without a GPU. Wayfire 0.9 requires GLES, so Aurora uses Mesa's
-  software GL in those VMs and retains labwc as a selectable or automatic fallback.
+  software GL in those VMs with wlroots' software-rendering opt-in and retains labwc
+  as a selectable or automatic fallback. On Hyper-V, Wayfire still depends on Mesa's
+  GLES support; if it cannot initialize EGL, choose the labwc session at login.
 - **Fonts:** Inter for the interface (highly legible on screens), JetBrains Mono for code,
   Noto for every script (CJK, Arabic, Devanagari, emoji) so 20 languages render
   correctly.
