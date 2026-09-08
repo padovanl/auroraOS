@@ -10,8 +10,8 @@
 # GPUs keep hardware rendering. Variables that are already set always win.
 
 aurora_software_gpu() {
-    ls /dev/dri/renderD* >/dev/null 2>&1 || return 0
-    for vendor in /sys/class/drm/card[0-9]*/device/vendor; do
+    ls "${AURORA_DRI_DEVICES:-/dev/dri}"/renderD* >/dev/null 2>&1 || return 0
+    for vendor in "${AURORA_DRM_SYSFS:-/sys/class/drm}"/card[0-9]*/device/vendor; do
         [ -r "$vendor" ] || continue
         case "$(cat "$vendor")" in
             # virtio, VMware, QEMU std VGA, QXL, VirtualBox, Hyper-V, Cirrus
@@ -22,7 +22,21 @@ aurora_software_gpu() {
     return 0
 }
 
+aurora_hyperv_gpu() {
+    for device in "${AURORA_DRM_SYSFS:-/sys/class/drm}"/card[0-9]*/device; do
+        [ -d "$device" ] || continue
+        [ "$(cat "$device/vendor" 2>/dev/null)" = "0x1414" ] && return 0
+        driver=$(readlink -f "$device/driver" 2>/dev/null) || continue
+        [ "${driver##*/}" = hyperv_drm ] && return 0
+    done
+    return 1
+}
+
 if aurora_software_gpu; then
     : "${WLR_RENDERER:=pixman}" "${GSK_RENDERER:=cairo}"
     export WLR_RENDERER GSK_RENDERER
+    if aurora_hyperv_gpu; then
+        AURORA_HYPERV_SOFTWARE=1
+        export AURORA_HYPERV_SOFTWARE
+    fi
 fi

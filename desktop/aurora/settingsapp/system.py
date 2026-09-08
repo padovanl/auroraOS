@@ -393,20 +393,20 @@ class Users(Page):
     def build(self):
         me = pwd.getpwuid(os.getuid())
         self.me = me
-        you = self.group(_("Your Account"))
-        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20,
-                         margin_top=16, margin_bottom=16,
-                         margin_start=18, margin_end=18,
+        profile = self.group()
+        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=22,
+                         margin_top=4, margin_bottom=8,
                          css_classes=["user-profile-card"])
-        self.avatar = Adw.Avatar(size=116, show_initials=True,
+        self.avatar = Adw.Avatar(size=88, show_initials=True,
                                  text=me.pw_gecos.split(",")[0] or me.pw_name)
         icon = f"/var/lib/AccountsService/icons/{me.pw_name}"
         if os.path.exists(icon):
             self.avatar.set_custom_image(Gdk.Texture.new_from_filename(icon))
-        details = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7,
+        details = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
                           valign=Gtk.Align.CENTER, hexpand=True)
-        details.append(Gtk.Label(label=me.pw_gecos.split(",")[0] or me.pw_name,
-                                 xalign=0, wrap=True, css_classes=["title-2"]))
+        self.profile_name = Gtk.Label(label=me.pw_gecos.split(",")[0] or me.pw_name,
+                                      xalign=0, wrap=True, css_classes=["title-2"])
+        details.append(self.profile_name)
         details.append(Gtk.Label(label="@" + me.pw_name, xalign=0,
                                  css_classes=["dim-label"]))
         change = Gtk.Button(label=_("Change Picture…"), halign=Gtk.Align.START,
@@ -415,12 +415,14 @@ class Users(Page):
         header.append(self.avatar)
         details.append(change)
         header.append(details)
-        you.add(header)
+        profile.add(header)
 
-        name = Adw.EntryRow(title=_("Full name"), text=me.pw_gecos.split(",")[0],
-                            show_apply_button=True)
-        name.connect("apply", lambda r: self._accounts_call("SetRealName",
-                                                            GLib.Variant("(s)", (r.get_text(),))))
+        you = self.group(_("Your Account"))
+        name = Adw.ActionRow(title=_("Full name"),
+                             subtitle=me.pw_gecos.split(",")[0] or me.pw_name,
+                             activatable=True)
+        name.add_suffix(Gtk.Image(icon_name="document-edit-symbolic"))
+        name.connect("activated", lambda *_: self._edit_full_name(name))
         you.add(name)
         you.add(Adw.ActionRow(title=_("Username"), subtitle=me.pw_name))
         pw = Adw.ButtonRow(title=_("Change Password…"))
@@ -453,6 +455,25 @@ class Users(Page):
         self.others.set_header_suffix(add)
         self._rows = []
         self._fill_users()
+
+    def _edit_full_name(self, row):
+        dialog = Adw.AlertDialog(heading=_("Full name"))
+        entry = Gtk.Entry(text=row.get_subtitle(), margin_top=10, margin_bottom=4)
+        dialog.set_extra_child(entry)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("save", _("Save"))
+        dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
+        dialog.connect("response", lambda _d, response:
+                       self._save_full_name(entry.get_text(), row)
+                       if response == "save" else None)
+        dialog.present(self.get_root())
+
+    def _save_full_name(self, text, row):
+        value = text.strip()
+        if self._accounts_call("SetRealName", GLib.Variant("(s)", (value,))):
+            self.profile_name.set_label(value or self.me.pw_name)
+            self.avatar.set_text(value or self.me.pw_name)
+            row.set_subtitle(value or self.me.pw_name)
 
     def _fill_fingerprint(self):
         from aurora.settingsapp import fingerprint
