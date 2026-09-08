@@ -26,7 +26,8 @@ fi
 step "Desktop entries"
 check desktop-file-validate desktop/data/applications/*.desktop
 # Session files use DesktopNames (session spec), which the validator flags.
-check grep -q "^Exec=aurora-session$" desktop/data/wayland-sessions/aurora.desktop
+check grep -q "^Exec=aurora-session wayfire$" desktop/data/wayland-sessions/aurora.desktop
+check grep -q "^Name=Aurora Compatibility$" desktop/data/wayland-sessions/aurora-labwc.desktop
 
 step "GSettings schemas"
 tmp=$(mktemp -d)
