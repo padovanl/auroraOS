@@ -56,21 +56,6 @@ fi
 # First login: write the GTK stylesheet imports for the chosen window style.
 [ -f "$HOME/.config/gtk-4.0/gtk.css" ] || aurora-look >/dev/null 2>&1
 
-if [ "$compositor" = wayfire ] && [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ] &&
-   [ "${AURORA_ALLOW_SOFTWARE_WAYFIRE:-0}" != 1 ]; then
-    # Wayfire 0.9 needs GLES. Hyper-V's synthetic display has no stable GLES
-    # scanout: llvmpipe can start but leaves stale window and cursor fragments.
-    # labwc uses the pixman renderer already selected by aurora-render-env.
-    state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/aurora"
-    mkdir -p "$state_dir"
-    chmod 700 "$state_dir"
-    umask 077
-    printf '%s\n' 'HYPERV_SOFTWARE_RENDERER: Wayfire GLES disabled; labwc/pixman selected to avoid stale frames.' \
-        > "$state_dir/compositor-failure.log"
-    export AURORA_COMPOSITOR=labwc
-    exec labwc -C "$cfg"
-fi
-
 if [ "$compositor" = labwc ]; then
     exec labwc -C "$cfg"
 fi
@@ -92,6 +77,18 @@ if [ "${WLR_RENDERER:-}" = pixman ]; then
     WLR_RENDERER_ALLOW_SOFTWARE=1
     export WLR_RENDERER LIBGL_ALWAYS_SOFTWARE WLR_RENDERER_ALLOW_SOFTWARE
 fi
+# Hyper-V can run Mesa's software GLES, but its synthetic display has shown
+# stale cursor/window fragments with Wayfire's incremental damage tracking.
+# -R rerenders damaged frames; modifier-free DRM/EGL buffers and a software
+# cursor avoid assumptions the synthetic display does not reliably satisfy.
+set --
+if [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ]; then
+    WLR_DRM_NO_MODIFIERS=1
+    WLR_EGL_NO_MODIFIERS=1
+    WLR_NO_HARDWARE_CURSORS=1
+    export WLR_DRM_NO_MODIFIERS WLR_EGL_NO_MODIFIERS WLR_NO_HARDWARE_CURSORS
+    set -- -R
+fi
 wayfire_cfg=$(aurora-wayfire-config) || {
     echo "aurora-session: cannot render Wayfire configuration; starting labwc" >&2
     export AURORA_COMPOSITOR=labwc
@@ -103,7 +100,7 @@ chmod 700 "$state_dir"
 failure_log="$state_dir/compositor-failure.log"
 rm -f "$failure_log"
 umask 077
-wayfire -c "$wayfire_cfg" 2>"$failure_log" &
+wayfire "$@" -c "$wayfire_cfg" 2>"$failure_log" &
 compositor_pid=$!
 started=$(date +%s)
 pidfile="${XDG_RUNTIME_DIR:-/tmp}/aurora-wayfire.pid"

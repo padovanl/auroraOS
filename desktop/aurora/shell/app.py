@@ -188,18 +188,10 @@ class Shell(Adw.Application):
                            "aurora", "compositor-failure.log")
         if not os.path.isfile(log):
             return GLib.SOURCE_REMOVE
-        try:
-            with open(log, encoding="utf-8", errors="replace") as stream:
-                hyperv = stream.readline().startswith("HYPERV_SOFTWARE_RENDERER:")
-        except OSError:
-            hyperv = False
         self.sysnotify.notify(
-            _("Safe graphics mode") if hyperv else _("Graphics fallback started"),
-            (_("Hyper-V needs the stable software renderer. Aurora opened the "
-               "compatibility desktop to prevent flickering. Select this notification "
-               "to review the startup report.") if hyperv else
-             _("Wayfire could not start. Aurora opened the safe desktop instead. "
-               "Select this notification to review the startup report.")),
+            _("Graphics fallback started"),
+            _("Wayfire could not start. Aurora opened the safe desktop instead. "
+              "Select this notification to review the startup report."),
             "dialog-warning-symbolic", [("default", _("Open System Health"))],
             lambda key: self.open_settings("health") if key == "default" else None,
             urgency=2)

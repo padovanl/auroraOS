@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aurora\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 17:08+0200\n"
+"POT-Creation-Date: 2026-09-28 17:21+0200\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -312,7 +312,7 @@ msgid "Writing Tools"
 msgstr "Инструменты письма"
 
 #: aurora/assistant.py:661 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:406
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:398
 #, no-python-format
 msgid "Aurora AI"
 msgstr "Aurora ИИ"
@@ -1191,7 +1191,7 @@ msgid "{size} · {n} items"
 msgstr "{size} · объектов: {n}"
 
 #: aurora/files/window.py:124 aurora/files/window.py:1057
-#: aurora/quicklook.py:141 aurora/shell/app.py:530
+#: aurora/quicklook.py:141 aurora/shell/app.py:522
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:322
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/sysnotify.py:113
@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "Loading…"
 msgstr "Запись…"
 
-#: aurora/files/window.py:1211 aurora/shell/app.py:533
+#: aurora/files/window.py:1211 aurora/shell/app.py:525
 #, no-python-format
 msgid "Ask Aurora"
 msgstr "Спросить Aurora"
@@ -5269,132 +5269,119 @@ msgstr "Часовой пояс"
 msgid "24-hour clock"
 msgstr "24-часовой формат"
 
-#: aurora/shell/app.py:197
-#, no-python-format
-msgid "Safe graphics mode"
-msgstr ""
-
-#: aurora/shell/app.py:197
+#: aurora/shell/app.py:192
 #, no-python-format
 msgid "Graphics fallback started"
 msgstr ""
 
-#: aurora/shell/app.py:198
-#, no-python-format
-msgid ""
-"Hyper-V needs the stable software renderer. Aurora opened the compatibility "
-"desktop to prevent flickering. Select this notification to review the "
-"startup report."
-msgstr ""
-
-#: aurora/shell/app.py:201
+#: aurora/shell/app.py:193
 #, no-python-format
 msgid ""
 "Wayfire could not start. Aurora opened the safe desktop instead. Select this "
 "notification to review the startup report."
 msgstr ""
 
-#: aurora/shell/app.py:203
+#: aurora/shell/app.py:195
 #, fuzzy, no-python-format
 msgid "Open System Health"
 msgstr "Состояние системы"
 
-#: aurora/shell/app.py:344
+#: aurora/shell/app.py:336
 #, no-python-format
 msgid "Writing tools are off"
 msgstr "Инструменты письма выключены"
 
-#: aurora/shell/app.py:407
+#: aurora/shell/app.py:399
 #, no-python-format
 msgid "Set it up in Settings → AI."
 msgstr "Настройте в Настройки → ИИ."
 
-#: aurora/shell/app.py:413
+#: aurora/shell/app.py:405
 #, no-python-format
 msgid "Dictation is off"
 msgstr "Диктовка выключена"
 
-#: aurora/shell/app.py:420
+#: aurora/shell/app.py:412
 #, no-python-format
 msgid "Dictation isn't installed yet"
 msgstr "Диктовка ещё не установлена"
 
-#: aurora/shell/app.py:424
+#: aurora/shell/app.py:416
 #, no-python-format
 msgid "Listening… press Super+H to stop"
 msgstr "Слушаю… нажмите Super+H, чтобы остановить"
 
-#: aurora/shell/app.py:426
+#: aurora/shell/app.py:418
 #, no-python-format
 msgid "Writing it down…"
 msgstr "Записываю…"
 
-#: aurora/shell/app.py:440
+#: aurora/shell/app.py:432
 #, no-python-format
 msgid "Nothing was heard"
 msgstr "Ничего не услышано"
 
-#: aurora/shell/app.py:449
+#: aurora/shell/app.py:441
 #, no-python-format
 msgid "Read aloud is off"
 msgstr "Чтение вслух выключено"
 
-#: aurora/shell/app.py:456
+#: aurora/shell/app.py:448
 #, no-python-format
 msgid "Select some text first"
 msgstr "Сначала выделите текст"
 
-#: aurora/shell/app.py:524
+#: aurora/shell/app.py:516
 #, no-python-format
 msgid "Screenshot captured"
 msgstr "Снимок экрана сделан"
 
-#: aurora/shell/app.py:525
+#: aurora/shell/app.py:517
 #, no-python-format, python-brace-format
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "Сохранён в {path} и скопирован в буфер обмена."
 
-#: aurora/shell/app.py:530
+#: aurora/shell/app.py:522
 #, no-python-format
 msgid "Annotate"
 msgstr "Добавить пометки"
 
-#: aurora/shell/app.py:530
+#: aurora/shell/app.py:522
 #, no-python-format
 msgid "Copy Text"
 msgstr "Копировать текст"
 
-#: aurora/shell/app.py:579 aurora/shell/app.py:586
+#: aurora/shell/app.py:571 aurora/shell/app.py:578
 #, no-python-format
 msgid "Text Recognition"
 msgstr "Распознавание текста"
 
-#: aurora/shell/app.py:579
+#: aurora/shell/app.py:571
 #, no-python-format
 msgid "No text found"
 msgstr "Текст не найден"
 
-#: aurora/shell/app.py:580
+#: aurora/shell/app.py:572
 #, no-python-format
 msgid "Try a larger or sharper area."
 msgstr "Попробуйте область побольше или почётче."
 
-#: aurora/shell/app.py:586
+#: aurora/shell/app.py:578
 #, no-python-format
 msgid "Text copied"
 msgstr "Текст скопирован"
 
-#: aurora/shell/app.py:625 aurora/shell/quicksettings.py:179
+#: aurora/shell/app.py:617 aurora/shell/quicksettings.py:179
 #, no-python-format
 msgid "Screen Recording"
 msgstr "Запись экрана"
 
-#: aurora/shell/app.py:625
+#: aurora/shell/app.py:617
 #, no-python-format
 msgid "Screen recording saved"
 msgstr "Запись экрана сохранена"
 
-#: aurora/shell/app.py:626
+#: aurora/shell/app.py:618
 #, no-python-format, python-brace-format
 msgid "Saved to {path}."
 msgstr "Сохранено в {path}."
