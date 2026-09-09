@@ -76,6 +76,14 @@ What these settings do:
 | 1920×1080 | Hyper-V's default screen is small. Pick your monitor's resolution. |
 | Enhanced session off | Enhanced session (RDP) doesn't work with Aurora's Wayland desktop and would show a black window. |
 
+The default **Aurora** session uses Wayfire and window animations. On Hyper-V's
+software display Aurora starts it with full damage rerendering, modifier-free
+buffers and a software cursor to avoid stale frames. This is an in-guest
+configuration; no Windows graphics setting enables 3D acceleration for the VM.
+The **Aurora Compatibility** session uses labwc if Wayfire still misbehaves.
+After copying a newly built ISO, check its SHA-256 against the adjacent
+`.iso.sha256` file so an earlier image is not mistaken for the new build.
+
 You can do the same in **Hyper-V Manager** (New → Virtual Machine): choose Generation 2,
 then in Settings → Security untick "Enable Secure Boot", and in View untick "Enhanced
 Session".
@@ -233,6 +241,7 @@ Updates**, with no ISO needed.
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
 | Slow or stuttering desktop | Give the VM 4 processors and static memory. The virtual display has no 3D, so Aurora uses a software renderer made for it. |
+| Flickering windows or cursor trails | First check that you booted the latest ISO and that Enhanced Session is off. The default Wayfire session applies Hyper-V-specific redraw settings automatically. If it still flickers, choose **Aurora Compatibility** at login and report the ISO checksum plus `~/.local/state/aurora/compositor-failure.log` if present. This remains a Wayfire/Hyper-V issue, not a confirmed fix. |
 | No network | The VM's network adapter must use "Default Switch" (or an external switch). |
 | Aurora AI can't reach Ollama | Check `OLLAMA_HOST=0.0.0.0`, the firewall rule, and Windows' address: it can change when Windows restarts. Run the `Get-NetIPAddress` command again and update the address in Settings → AI. For a fixed address, create an *External* virtual switch and use your PC's LAN address instead. |
 | Answers are slow | Use a smaller model, or check in Task Manager that Ollama is using the GPU, not the CPU. |

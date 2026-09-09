@@ -10,6 +10,13 @@ fail=0
 aurora-look >/dev/null 2>&1
 
 # A tray app and a file on the desktop, to exercise the tray and desktop icons.
+# The headless shell may still be registering its D-Bus watcher after the
+# fixed startup sleep; launch the item only once that service is available.
+for _i in $(seq 30); do
+    gdbus introspect --session --dest org.kde.StatusNotifierWatcher \
+        --object-path /StatusNotifierWatcher >/dev/null 2>&1 && break
+    sleep 0.5
+done
 python3 /src/tests/fake-tray-item.py > "$out/smoke/tray.log" 2>&1 &
 mkdir -p ~/Desktop && echo hello > ~/Desktop/notes.txt
 for _i in $(seq 20); do grep -q registered "$out/smoke/tray.log" && break; sleep 0.5; done

@@ -105,8 +105,11 @@ compositor_pid=$!
 started=$(date +%s)
 pidfile="${XDG_RUNTIME_DIR:-/tmp}/aurora-wayfire.pid"
 printf '%s\n' "$compositor_pid" > "$pidfile"
-wait "$compositor_pid"
-result=$?
+if wait "$compositor_pid"; then
+    result=0
+else
+    result=$?
+fi
 rm -f "$pidfile"
 if [ "$result" -ne 0 ] && [ "$(($(date +%s) - started))" -lt 15 ] &&
    [ ! -e "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out" ]; then

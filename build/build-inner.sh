@@ -3,6 +3,12 @@
 # With no arguments every stage runs in order.
 . "$(dirname "$0")/lib.sh"
 
+# All builder containers share /work. Serialise stages so a second build cannot
+# replace the ISO staging tree while the first is still copying packages.
+mkdir -p "$WORK"
+exec 9>"$WORK/.build.lock"
+flock 9
+
 trap umount_chroot EXIT
 
 stages=("$@")
