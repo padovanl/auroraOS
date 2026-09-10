@@ -77,17 +77,16 @@ if [ "${WLR_RENDERER:-}" = pixman ]; then
     WLR_RENDERER_ALLOW_SOFTWARE=1
     export WLR_RENDERER LIBGL_ALWAYS_SOFTWARE WLR_RENDERER_ALLOW_SOFTWARE
 fi
-# hyperv_drm copies only the DRM damage clips into the host-visible scanout.
-# Wayfire -R controls compositor redraw, not the clips wlroots sends to DRM.
-# Use wlroots' legacy KMS path on Hyper-V so the kernel gets full-frame flips;
-# keep the software cursor and linear buffers on this synthetic display.
+# Hyper-V can run Mesa's software GLES, but its synthetic display has shown
+# stale cursor/window fragments with Wayfire's incremental damage tracking.
+# -R rerenders damaged frames; modifier-free DRM/EGL buffers and a software
+# cursor avoid assumptions the synthetic display does not reliably satisfy.
 set --
 if [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ]; then
-    WLR_DRM_NO_ATOMIC=1
     WLR_DRM_NO_MODIFIERS=1
     WLR_EGL_NO_MODIFIERS=1
     WLR_NO_HARDWARE_CURSORS=1
-    export WLR_DRM_NO_ATOMIC WLR_DRM_NO_MODIFIERS WLR_EGL_NO_MODIFIERS WLR_NO_HARDWARE_CURSORS
+    export WLR_DRM_NO_MODIFIERS WLR_EGL_NO_MODIFIERS WLR_NO_HARDWARE_CURSORS
     set -- -R
 fi
 wayfire_cfg=$(aurora-wayfire-config) || {

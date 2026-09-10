@@ -23,13 +23,6 @@ aurora_software_gpu() {
 }
 
 aurora_hyperv_gpu() {
-    # Hyper-V's VMBus display is not PCI; /device/vendor need not exist. DMI
-    # identifies the VM even when sysfs has no vendor/driver symlink.
-    dmi="${AURORA_DMI_ROOT:-/sys/class/dmi/id}"
-    if [ "$(cat "$dmi/sys_vendor" 2>/dev/null)" = "Microsoft Corporation" ] &&
-       [ "$(cat "$dmi/product_name" 2>/dev/null)" = "Virtual Machine" ]; then
-        return 0
-    fi
     for device in "${AURORA_DRM_SYSFS:-/sys/class/drm}"/card[0-9]*/device; do
         [ -d "$device" ] || continue
         [ "$(cat "$device/vendor" 2>/dev/null)" = "0x1414" ] && return 0

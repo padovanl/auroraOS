@@ -27,8 +27,7 @@ def test_renderer_selection(tmp_path, vendor, render_node, hyperv):
     for name in ("WLR_RENDERER", "GSK_RENDERER", "AURORA_HYPERV_SOFTWARE"):
         env.pop(name, None)
     env.update(AURORA_DRM_SYSFS=str(drm.parent.parent),
-               AURORA_DRI_DEVICES=str(dri),
-               AURORA_DMI_ROOT=str(tmp_path / "dmi"))
+               AURORA_DRI_DEVICES=str(dri))
     result = subprocess.run(
         ["/bin/sh", "-c",
          '. "$1"; printf "%s|%s|%s" "${WLR_RENDERER:-}" "${GSK_RENDERER:-}" '
@@ -37,25 +36,6 @@ def test_renderer_selection(tmp_path, vendor, render_node, hyperv):
         env=env, check=True, text=True, capture_output=True)
     expected = "pixman|cairo" if vendor != "0x1002" or not render_node else "|"
     assert result.stdout == expected + ("|1" if hyperv else "|")
-
-
-def test_hyperv_vmbus_without_pci_vendor(tmp_path):
-    dmi = tmp_path / "dmi"
-    dmi.mkdir()
-    (dmi / "sys_vendor").write_text("Microsoft Corporation\n")
-    (dmi / "product_name").write_text("Virtual Machine\n")
-    dri = tmp_path / "dri"
-    dri.mkdir()
-    env = os.environ.copy()
-    for name in ("WLR_RENDERER", "GSK_RENDERER", "AURORA_HYPERV_SOFTWARE"):
-        env.pop(name, None)
-    env.update(AURORA_DRM_SYSFS=str(tmp_path / "empty"),
-               AURORA_DRI_DEVICES=str(dri), AURORA_DMI_ROOT=str(dmi))
-    result = subprocess.run(
-        ["/bin/sh", "-c", '. "$1"; printf "%s|%s|%s" "$WLR_RENDERER" '
-         '"$GSK_RENDERER" "$AURORA_HYPERV_SOFTWARE"', "sh", str(RENDER_ENV)],
-        env=env, check=True, text=True, capture_output=True)
-    assert result.stdout == "pixman|cairo|1"
 
 
 @pytest.mark.parametrize("hyperv", [False, True])
@@ -77,9 +57,9 @@ def test_wayfire_is_launched_on_software_display(tmp_path, hyperv):
     (gtk / "gtk.css").touch()
     for command, body in (
         ("aurora-wayfire-config", "#!/bin/sh\necho /tmp/test-wayfire.ini\n"),
-        ("wayfire", "#!/bin/sh\nprintf '%s|%s|%s|%s|%s' \"$*\" "
+        ("wayfire", "#!/bin/sh\nprintf '%s|%s|%s|%s' \"$*\" "
          "\"$AURORA_COMPOSITOR\" \"${WLR_DRM_NO_MODIFIERS:-}\" "
-         "\"$WLR_RENDERER\" \"${WLR_DRM_NO_ATOMIC:-}\" > \"$AURORA_TEST_LOG\"\n"),
+         "\"$WLR_RENDERER\" > \"$AURORA_TEST_LOG\"\n"),
     ):
         executable = binaries / command
         executable.write_text(body)
@@ -93,9 +73,8 @@ def test_wayfire_is_launched_on_software_display(tmp_path, hyperv):
                AURORA_TEST_LOG=str(log), WLR_RENDERER="pixman",
                AURORA_HYPERV_SOFTWARE="1" if hyperv else "0")
     subprocess.run([str(session), "wayfire"], env=env, check=True, timeout=10)
-    args, compositor, modifiers, renderer, legacy = log.read_text().split("|")
+    args, compositor, modifiers, renderer = log.read_text().split("|")
     assert args.startswith("-R -c ") if hyperv else args.startswith("-c ")
     assert compositor == "wayfire"
     assert modifiers == ("1" if hyperv else "")
     assert renderer == "gles2"
-    assert legacy == ("1" if hyperv else "")
