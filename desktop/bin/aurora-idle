@@ -9,6 +9,10 @@ suspend_battery=$(gsettings get org.aurora.desktop suspend-battery-minutes 2>/de
 suspend_ac=$(gsettings get org.aurora.desktop suspend-ac-minutes 2>/dev/null | awk '{print $NF}')
 # The live user has no password; locking would only get in the way.
 grep -qw boot=live /proc/cmdline && lock=false
+# Keep Awake (Control Center): no blanking, locking or suspend on inactivity.
+if [ -e "${XDG_RUNTIME_DIR:-/tmp}/aurora-keep-awake" ]; then
+    minutes=0 suspend_battery=0 suspend_ac=0
+fi
 
 set -- swayidle -w
 if [ "$lock" = "true" ]; then

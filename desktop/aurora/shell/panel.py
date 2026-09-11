@@ -352,6 +352,13 @@ class Panel(LayerWindow):
                             css_classes=["flat", "panel-button"])
         search.connect("clicked", lambda *_: shell.launcher.toggle("spotlight"))
         right.append(search)
+        from aurora.shell.sysmon import SystemMonitor
+        self.sysmon = SystemMonitor()
+        if s:
+            s.bind("panel-system-monitor", self.sysmon, "visible", 0)
+        else:
+            self.sysmon.set_visible(False)
+        right.append(self.sysmon)
         self.status = StatusArea(shell)
         right.append(self.status)
         clock = self.clock = Clock(shell)

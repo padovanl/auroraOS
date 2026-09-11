@@ -1,0 +1,140 @@
+"""System monitor readings, the color picker's pixel decoding, and the shortcut list."""
+
+from aurora.shell import colorpicker, sysmon
+
+
+def test_cpu_percent_from_proc_stat():
+    before = sysmon.cpu_times("cpu  100 0 100 800 0 0 0 0 0 0\ncpu0 1 2 3 4\n")
+    after = sysmon.cpu_times("cpu  150 0 150 900 0 0 0 0 0 0\n")
+    # 100 busy jiffies out of 200: half the processor.
+    assert sysmon.cpu_percent(before, after) == 50.0
+    assert sysmon.cpu_percent(after, after) == 0.0
+
+
+def test_iowait_counts_as_idle():
+    before = sysmon.cpu_times("cpu  0 0 0 0 0 0 0 0\n")
+    after = sysmon.cpu_times("cpu  10 0 0 50 40 0 0 0\n")
+    assert sysmon.cpu_percent(before, after) == 10.0
+
+
+def test_memory_uses_available():
+    used, total = sysmon.memory("MemTotal: 8000 kB\nMemFree: 1000 kB\nMemAvailable: 6000 kB\n")
+    assert (used, total) == (2000 * 1024, 8000 * 1024)
+
+
+def test_network_skips_loopback(tmp_path):
+    for name, rx, tx in (("lo", 999, 999), ("eth0", 10, 20), ("wlan0", 5, 1)):
+        stats = tmp_path / name / "statistics"
+        stats.mkdir(parents=True)
+        (stats / "rx_bytes").write_text(str(rx))
+        (stats / "tx_bytes").write_text(str(tx))
+    assert sysmon.network_bytes(str(tmp_path)) == (15, 21)
+
+
+def test_temperature_prefers_the_processor(tmp_path):
+    for entry, name, milli in (("hwmon0", "acpitz", 40000), ("hwmon1", "coretemp", 55500)):
+        (tmp_path / entry).mkdir()
+        (tmp_path / entry / "name").write_text(name + "\n")
+        (tmp_path / entry / "temp1_input").write_text(str(milli))
+    assert sysmon.temperature(str(tmp_path)) == 55.5
+    assert sysmon.temperature(str(tmp_path / "missing")) is None
+
+
+def test_rates_read_naturally():
+    assert sysmon.human_rate(512) == "512 B/s"
+    assert sysmon.human_rate(2_500_000) == "2.5 MB/s"
+
+
+def test_ppm_pixel_and_hex():
+    assert colorpicker.ppm_pixel(b"P6\n1 1\n255\n\x12\xab\xff") == (0x12, 0xAB, 0xFF)
+    assert colorpicker.ppm_pixel(b"P6 # grim\n1 1 255 \x00\x80\x01") == (0, 128, 1)
+    # 16-bit samples are scaled down.
+    assert colorpicker.ppm_pixel(b"P6\n1 1\n65535\n\xff\xff\x00\x00\x80\x00") == (255, 0, 128)
+    assert colorpicker.hex_color((18, 171, 255)) == "#12ABFF"
+
+
+def test_every_shortcut_in_the_overlay_has_words(monkeypatch, tmp_path):
+    import os
+    import shutil
+    from aurora.shell import shortcuts
+    config = tmp_path / ".config" / "labwc"
+    config.mkdir(parents=True)
+    rc = os.path.join(os.path.dirname(__file__), "..", "..", "desktop", "data", "labwc", "rc.xml")
+    shutil.copy(rc, config / "rc.xml")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    rows = shortcuts.shortcut_rows()
+    titles = [title for title, _keys in rows]
+    assert "Pick a color from the screen" in titles
+    assert "Show keyboard shortcuts" in titles
+    assert len(titles) == len(set(titles))  # one row per action
+    assert not any("aurora-shell" in t for t in titles)
+
+
+def test_ai_download_refuses_to_fill_the_disk(tmp_path):
+    from collections import namedtuple
+
+    import pytest
+
+    from aurora.ai import download
+    Usage = namedtuple("Usage", "total used free")
+    item = {"size": 5 * 10 ** 9}
+    dest = str(tmp_path / "model.gguf")
+    big_disk = lambda _p: Usage(500 * 10 ** 9, 0, 40 * 10 ** 9)   # noqa: E731
+    download.check_space(item, dest, usage=big_disk)               # 40 GB free: fine
+    # 14 GB free on a 500 GB disk: 5 GB would leave 9, under the 10 GB reserve.
+    edge = lambda _p: Usage(500 * 10 ** 9, 0, 14 * 10 ** 9)        # noqa: E731
+    with pytest.raises(download.DownloadError, match="Not enough disk space"):
+        download.check_space(item, dest, usage=edge)
+    # A resumed download only needs the rest.
+    download.check_space(item, dest, have=4 * 10 ** 9, usage=edge)
+    # Small disks keep at least 2 GB free.
+    small = lambda _p: Usage(20 * 10 ** 9, 0, 6 * 10 ** 9)         # noqa: E731
+    with pytest.raises(download.DownloadError):
+        download.check_space(item, dest, usage=small)
+
+
+def test_full_disk_during_download_leaves_no_part_file(tmp_path, monkeypatch):
+    import errno
+    import hashlib
+    import io
+
+    import pytest
+
+    from aurora.ai import download
+    data = b"x" * (3 << 20)
+    item = {"url": "https://example.invalid/m", "size": len(data),
+            "sha256": hashlib.sha256(data).hexdigest()}
+    dest = tmp_path / "m.bin"
+    real_open = open
+
+    class Full(io.BufferedWriter):
+        pass
+
+    def opener(_req, timeout):
+        return io.BytesIO(data)
+
+    def failing_open(path, mode="r", *a, **k):
+        f = real_open(path, mode, *a, **k)
+        if str(path).endswith(".part"):
+            def write(_block):
+                raise OSError(errno.ENOSPC, "No space left on device")
+            f.write = write
+        return f
+
+    from collections import namedtuple
+    Usage = namedtuple("Usage", "total used free")
+    monkeypatch.setattr(download.shutil, "disk_usage",
+                        lambda _p: Usage(500 * 10 ** 9, 0, 400 * 10 ** 9))
+    monkeypatch.setattr("builtins.open", failing_open)
+    with pytest.raises(download.DownloadError, match="filled up"):
+        download.fetch(item, str(dest), opener=opener)
+    assert not (tmp_path / "m.bin.part").exists()
+
+
+def test_disk_low_threshold():
+    from aurora.shell.sysnotify import disk_low
+    gb = 1024 ** 3
+    assert disk_low(100 * gb, 1 * gb)          # under 2 GB
+    assert not disk_low(100 * gb, 10 * gb)     # 10% free
+    assert disk_low(1000 * gb, 8 * gb)         # big disks keep at most 10 GB free
+    assert not disk_low(1000 * gb, 40 * gb)

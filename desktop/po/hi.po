@@ -3,8 +3,6 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: aurora\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 17:21+0200\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,275 +10,227 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: aurora/ai/cli.py:39
-#, no-python-format
 msgid "Aurora AI is off. Turn it on in Settings → AI."
 msgstr "Aurora AI बंद है। इसे सेटिंग्स → AI में चालू करें।"
 
 #: aurora/ai/cli.py:41
-#, no-python-format
 msgid "The terminal assistant is off (Settings → AI)."
 msgstr "टर्मिनल सहायक बंद है (सेटिंग्स → AI)।"
 
 #: aurora/ai/cli.py:65
-#, no-python-format
 msgid "Run it?"
 msgstr "इसे चलाएँ?"
 
 #: aurora/ai/cli.py:65
-#, no-python-format
 msgid "[y/N/e = edit]"
 msgstr "[y = हाँ / N = नहीं / e = संपादित करें]"
 
 #: aurora/ai/cli.py:131
-#, no-python-format
 msgid "Search by meaning is off (Settings → AI)."
 msgstr "अर्थ से खोज बंद है (सेटिंग्स → AI)।"
 
 #: aurora/ai/components.py:91
-#, no-python-format
 msgid "the speech packages could not be installed"
 msgstr "वाणी पैकेज स्थापित नहीं हो सके"
 
-#: aurora/ai/download.py:72
-#, no-python-format, python-brace-format
+#: aurora/ai/download.py:59
+msgid "Not enough disk space for {name}: it needs {need} and {reserve} must stay free for the system, but only {free} is free. Remove models you don't use in Settings → AI, or free up space."
+msgstr "{name} के लिए डिस्क में पर्याप्त जगह नहीं है: इसे {need} चाहिए और सिस्टम के लिए {reserve} खाली रहना चाहिए, लेकिन केवल {free} खाली है। सेटिंग्स → AI में उपयोग न होने वाले मॉडल हटाएँ, या जगह खाली करें।"
+
+#: aurora/ai/download.py:107
+msgid "The disk filled up while downloading {name}; free up space and try again"
+msgstr "{name} डाउनलोड करते समय डिस्क भर गई; जगह खाली करें और फिर से प्रयास करें"
+
+#: aurora/ai/download.py:115
 msgid "{name} is damaged (checksum mismatch); try again"
 msgstr "{name} दूषित है (गलत चेकसम); फिर से कोशिश करें"
 
 #: aurora/ai/providers.py:145
-#, no-python-format
 msgid "add your Anthropic API key in Settings → AI"
 msgstr "सेटिंग्स → AI में Anthropic API कुंजी जोड़ें"
 
 #: aurora/ai/server.py:65
-#, no-python-format
 msgid "the AI runtime is not installed (Settings → AI)"
 msgstr "AI इंजन स्थापित नहीं है (सेटिंग्स → AI)"
 
 #: aurora/ai/server.py:74
-#, no-python-format
 msgid "the AI model is not downloaded (Settings → AI)"
 msgstr "कोई AI मॉडल डाउनलोड नहीं हुआ (सेटिंग्स → AI)"
 
 #: aurora/ai/server.py:94
-#, no-python-format, python-brace-format
 msgid "the AI model stopped unexpectedly (see {log})"
 msgstr "AI मॉडल अचानक रुक गया ({log} देखें)"
 
 #: aurora/ai/server.py:98
-#, no-python-format, python-brace-format
 msgid "the AI model did not start in {n} seconds"
 msgstr "AI मॉडल {n} सेकंड में शुरू नहीं हुआ"
 
 #: aurora/ai/speech.py:78
-#, no-python-format
 msgid "speech recognition failed"
 msgstr "वाणी पहचानी नहीं जा सकी"
 
 #: aurora/ai/speech.py:111
-#, no-python-format
 msgid "speech synthesis failed"
 msgstr "वाणी बनाई नहीं जा सकी"
 
 #: aurora/assistant.py:66 aurora/assistant.py:509
-#, no-python-format
 msgid "Attachments require the local AI model"
 msgstr "संलग्नकों के लिए स्थानीय AI मॉडल आवश्यक है"
 
 #: aurora/assistant.py:119 aurora/assistant.py:579 aurora/assistant.py:680
 #: aurora/files/window.py:1067 aurora/shell/desktopicons.py:164
-#, no-python-format
 msgid "Copy"
 msgstr "कॉपी करें"
 
 #: aurora/assistant.py:149 aurora/assistant.py:160
 #: aurora/settingsapp/inputs.py:26
-#, no-python-format
 msgid "Aurora Assistant"
 msgstr "Aurora सहायक"
 
 #: aurora/assistant.py:163 aurora/assistant.py:412
-#, no-python-format
 msgid "New Chat"
 msgstr "नई चैट"
 
 #: aurora/assistant.py:167
-#, no-python-format
 msgid "Conversations"
 msgstr "बातचीत"
 
 #: aurora/assistant.py:170 aurora/files/window.py:1166
 #: aurora/settingsapp/health.py:301 aurora/settingsapp/system.py:143
 #: aurora/settingsapp/system.py:185
-#, no-python-format
 msgid "Close"
 msgstr "बंद करें"
 
 #: aurora/assistant.py:175 aurora/assistant.py:283
-#, no-python-format
 msgid "Expand"
 msgstr "बड़ा करें"
 
 #: aurora/assistant.py:179
-#, no-python-format
 msgid "AI Settings"
 msgstr "AI सेटिंग्स"
 
 #: aurora/assistant.py:184
-#, no-python-format
 msgid "Aurora AI is off"
 msgstr "Aurora AI बंद है"
 
 #: aurora/assistant.py:185
-#, no-python-format
-msgid ""
-"Turn it on in Settings → AI. It runs on this computer, or with the cloud "
-"provider you choose."
-msgstr ""
-"इसे सेटिंग्स → AI में चालू करें। यह इसी कंप्यूटर पर या आपकी चुनी हुई क्लाउड सेवा से चलता है।"
+msgid "Turn it on in Settings → AI. It runs on this computer, or with the cloud provider you choose."
+msgstr "इसे सेटिंग्स → AI में चालू करें। यह इसी कंप्यूटर पर या आपकी चुनी हुई क्लाउड सेवा से चलता है।"
 
 #: aurora/assistant.py:187
-#, no-python-format
 msgid "Open AI Settings"
 msgstr "AI सेटिंग्स खोलें"
 
 #: aurora/assistant.py:197
-#, no-python-format
 msgid "How can I help?"
 msgstr "मैं कैसे मदद करूँ?"
 
 #: aurora/assistant.py:198
-#, no-python-format
 msgid "Ask anything, or pick an action for the text you copied."
 msgstr "कुछ भी पूछें, या कॉपी किए गए टेक्स्ट के लिए कोई क्रिया चुनें।"
 
 #: aurora/assistant.py:213
-#, no-python-format
 msgid "Jump to latest"
 msgstr "नवीनतम संदेश पर जाएँ"
 
 #: aurora/assistant.py:224 aurora/assistant.py:635
 #: aurora/shell/notifications.py:312
-#, no-python-format
 msgid "Summarize"
 msgstr "सारांश"
 
 #: aurora/assistant.py:225
-#, no-python-format
 msgid "Improve Writing"
 msgstr "लेखन सुधारें"
 
 #: aurora/assistant.py:227 aurora/assistant.py:637
-#, no-python-format
 msgid "Translate"
 msgstr "अनुवाद करें"
 
 #: aurora/assistant.py:229
-#, no-python-format
 msgid "Explain"
 msgstr "समझाएँ"
 
 #: aurora/assistant.py:232
-#, no-python-format
 msgid "Uses the text you copied"
 msgstr "कॉपी किए गए टेक्स्ट का उपयोग करता है"
 
 #: aurora/assistant.py:248 aurora/shell/search.py:351
-#, no-python-format
 msgid "Ask Aurora…"
 msgstr "Aurora से पूछें…"
 
 #: aurora/assistant.py:251 aurora/assistant.py:299
-#, no-python-format
 msgid "Attach files or photos"
 msgstr "फ़ाइलें या तस्वीरें संलग्न करें"
 
 #: aurora/assistant.py:260
-#, no-python-format
 msgid "Stop generating"
 msgstr "जवाब बनाना रोकें"
 
 #: aurora/assistant.py:283
-#, no-python-format
 msgid "Make Smaller"
 msgstr "छोटा करें"
 
 #: aurora/assistant.py:289
-#, no-python-format
 msgid "On this computer"
 msgstr "इस कंप्यूटर पर"
 
 #: aurora/assistant.py:290
-#, no-python-format
 msgid "OpenAI-compatible"
 msgstr "OpenAI-संगत"
 
 #: aurora/assistant.py:325
-#, no-python-format
 msgid "Up to four attachments per message"
 msgstr "प्रति संदेश अधिकतम चार संलग्नक"
 
 #: aurora/assistant.py:333
-#, no-python-format, python-brace-format
 msgid "Can't attach {name}"
 msgstr "{name} संलग्न नहीं किया जा सका"
 
 #: aurora/assistant.py:335
-#, no-python-format, python-brace-format
 msgid "Reading {name}…"
 msgstr "{name} पढ़ा जा रहा है…"
 
 #: aurora/assistant.py:365
-#, no-python-format, python-brace-format
 msgid "Can't read text from {name}"
 msgstr "{name} से टेक्स्ट नहीं पढ़ा जा सकता"
 
 #: aurora/assistant.py:370
-#, no-python-format
 msgid "Remove attachment"
 msgstr "संलग्नक हटाएँ"
 
 #: aurora/assistant.py:373
-#, no-python-format
 msgid "Summarize this file in a few bullet points."
 msgstr "इस फ़ाइल का कुछ बिंदुओं में सारांश दें।"
 
 #: aurora/assistant.py:375
-#, no-python-format, python-brace-format
 msgid "Ask about {name}…"
 msgstr "{name} के बारे में पूछें…"
 
 #: aurora/assistant.py:416
-#, no-python-format
 msgid "Delete conversation"
 msgstr "बातचीत मिटाएँ"
 
 #: aurora/assistant.py:421
-#, no-python-format
 msgid "No saved conversations"
 msgstr "कोई सहेजी हुई बातचीत नहीं"
 
 #: aurora/assistant.py:495
-#, no-python-format
 msgid "Copy some text first, then pick an action."
 msgstr "पहले कुछ टेक्स्ट कॉपी करें, फिर कोई क्रिया चुनें।"
 
 #: aurora/assistant.py:512
-#, no-python-format
 msgid "Start a new chat before using a cloud provider"
 msgstr "क्लाउड प्रदाता इस्तेमाल करने से पहले नई बातचीत शुरू करें"
 
 #: aurora/assistant.py:574 aurora/assistant.py:708
-#, no-python-format, python-brace-format
 msgid "Something went wrong: {error}"
 msgstr "कुछ गलत हो गया: {error}"
 
 #: aurora/assistant.py:583
-#, no-python-format
 msgid "Regenerate"
 msgstr "फिर से बनाएँ"
 
 #: aurora/assistant.py:588
-#, no-python-format
 msgid "Read Aloud"
 msgstr "पढ़कर सुनाएँ"
 
@@ -305,33 +255,27 @@ msgid "Key Points"
 msgstr "मुख्य बिंदु"
 
 #: aurora/assistant.py:656 aurora/assistant.py:660
-#, no-python-format
 msgid "Writing Tools"
 msgstr "लेखन उपकरण"
 
 #: aurora/assistant.py:661 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:398
-#, no-python-format
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:410
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
 #: aurora/assistant.py:682
-#, no-python-format
 msgid "Replace Selection"
 msgstr "चयन बदलें"
 
 #: aurora/assistant.py:694
-#, no-python-format
 msgid "Working…"
 msgstr "काम चल रहा है…"
 
 #: aurora/devhub/app.py:75
-#, no-python-format
 msgid "Installed"
 msgstr "स्थापित"
 
 #: aurora/devhub/app.py:75 aurora/settingsapp/system.py:716
-#, no-python-format
 msgid "Install"
 msgstr "स्थापित करें"
 
@@ -348,129 +292,102 @@ msgid "Your toolbox, one click away"
 msgstr "आपका पूरा टूलचेन, एक क्लिक में"
 
 #: aurora/devhub/app.py:84
-msgid ""
-"Everything installs from its official source, so you always get the latest "
-"release. Git, Python, Node.js, Docker, Podman and more are already on your "
-"system."
-msgstr ""
-"सब कुछ आधिकारिक स्रोतों से स्थापित होता है, इसलिए आपको हमेशा नवीनतम संस्करण मिलता है। "
-"Git, Python, Node.js, Docker, Podman और बहुत कुछ पहले से सिस्टम में है।"
+msgid "Everything installs from its official source, so you always get the latest release. Git, Python, Node.js, Docker, Podman and more are already on your system."
+msgstr "सब कुछ आधिकारिक स्रोतों से स्थापित होता है, इसलिए आपको हमेशा नवीनतम संस्करण मिलता है। Git, Python, Node.js, Docker, Podman और बहुत कुछ पहले से सिस्टम में है।"
 
 #: aurora/devhub/app.py:111
-#, no-python-format
 msgid "Project Workspaces"
 msgstr "प्रोजेक्ट कार्यस्थान"
 
 #: aurora/devhub/app.py:112
-#, no-python-format
 msgid "Open your editor, terminal and Files together for a project."
 msgstr "प्रोजेक्ट के लिए एडिटर, टर्मिनल और फ़ाइलें साथ खोलें।"
 
 #: aurora/devhub/app.py:114
-#, no-python-format
 msgid "Add Project"
 msgstr "प्रोजेक्ट जोड़ें"
 
 #: aurora/devhub/app.py:167 aurora/shell/launcher.py:142
-#, no-python-format
 msgid "Open Workspace"
 msgstr "कार्यस्थान खोलें"
 
 #: aurora/devhub/app.py:172 aurora/devhub/app.py:200
-#, no-python-format
 msgid "Configure Workspace"
 msgstr "कार्यस्थान कॉन्फ़िगर करें"
 
 #: aurora/devhub/app.py:179
-#, no-python-format
 msgid "No projects found"
 msgstr "कोई प्रोजेक्ट नहीं मिला"
 
 #: aurora/devhub/app.py:180
-#, no-python-format
 msgid "Add a project folder to begin."
 msgstr "शुरू करने के लिए प्रोजेक्ट फ़ोल्डर जोड़ें।"
 
 #: aurora/devhub/app.py:185
-#, no-python-format
 msgid "Choose Project Folder"
 msgstr "प्रोजेक्ट फ़ोल्डर चुनें"
 
 #: aurora/devhub/app.py:204
-#, no-python-format
 msgid "Editor"
 msgstr "एडिटर"
 
 #: aurora/devhub/app.py:205
-#, no-python-format
 msgid "Automatic"
 msgstr "स्वचालित"
 
 #: aurora/devhub/app.py:207 aurora/shell/wallpaper.py:158
-#, no-python-format
 msgid "Open Terminal"
 msgstr "टर्मिनल खोलें"
 
 #: aurora/devhub/app.py:208 aurora/shell/wallpaper.py:159 aurora/welcome.py:19
-#, no-python-format
 msgid "Open Files"
 msgstr "फ़ाइलें खोलें"
 
 #: aurora/devhub/app.py:211
-#, no-python-format
 msgid "Save Current Window Layout"
-msgstr ""
+msgstr "वर्तमान विंडो लेआउट सहेजें"
 
 #: aurora/devhub/app.py:212
-#, no-python-format
 msgid "Save positions of currently open windows for this workspace"
-msgstr ""
+msgstr "इस कार्यक्षेत्र के लिए खुली विंडो की स्थितियाँ सहेजें"
 
 #: aurora/devhub/app.py:216 aurora/files/create.py:26
 #: aurora/files/window.py:1128 aurora/files/window.py:1210
 #: aurora/files/window.py:1354 aurora/files/window.py:1391
 #: aurora/files/window.py:1412 aurora/settingsapp/desktop.py:94
-#: aurora/settingsapp/health.py:275 aurora/settingsapp/inputs.py:266
+#: aurora/settingsapp/health.py:275 aurora/settingsapp/inputs.py:269
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
 #: aurora/shell/desktopicons.py:179
-#, no-python-format
 msgid "Cancel"
 msgstr "रद्द करें"
 
 #: aurora/devhub/app.py:217 aurora/settingsapp/desktop.py:95
 #: aurora/settingsapp/system.py:464
-#, no-python-format
 msgid "Save"
 msgstr "सहेजें"
 
 #: aurora/devhub/app.py:226
-#, no-python-format
 msgid "Saved positions for %d windows."
-msgstr ""
+msgstr "%d विंडो की स्थितियाँ सहेजी गईं।"
 
 #: aurora/devhub/app.py:228
-#, no-python-format
 msgid "Window layout requires the Aurora animated session."
-msgstr ""
+msgstr "विंडो लेआउट के लिए Aurora का एनिमेटेड सत्र आवश्यक है।"
 
 #: aurora/devhub/app.py:265
-#, no-python-format, python-brace-format
 msgid "Installing {name}"
 msgstr "{name} स्थापित हो रहा है"
 
 #: aurora/devhub/app.py:267
-#, no-python-format
 msgid "Installing…"
 msgstr "स्थापित हो रहा है…"
 
 #: aurora/devhub/app.py:275 aurora/devhub/app.py:280
-#, no-python-format
 msgid "Installation failed"
 msgstr "इंस्टॉलेशन विफल रहा"
 
 #: aurora/devhub/app.py:278
-#, no-python-format, python-brace-format
 msgid "{name} installed"
 msgstr "{name} स्थापित हो गया"
 
@@ -491,10 +408,8 @@ msgid "Android Apps"
 msgstr "Android ऐप्स"
 
 #: aurora/devhub/games.py:26
-msgid ""
-"Valve's store. Proton runs most Windows games; turn it on in Steam Play."
-msgstr ""
-"Valve का स्टोर। Proton ज़्यादातर Windows गेम चलाता है; इसे Steam Play में चालू करें।"
+msgid "Valve's store. Proton runs most Windows games; turn it on in Steam Play."
+msgstr "Valve का स्टोर। Proton ज़्यादातर Windows गेम चलाता है; इसे Steam Play में चालू करें।"
 
 #: aurora/devhub/games.py:31
 msgid "Epic Games, GOG and Amazon Prime Gaming libraries in one launcher."
@@ -509,8 +424,7 @@ msgid "Run Windows programs in tidy, separate Wine bottles."
 msgstr "Windows प्रोग्राम को साफ़-सुथरी, अलग Wine \"बोतलों\" में चलाएँ।"
 
 #: aurora/devhub/games.py:45
-msgid ""
-"Install newer Proton-GE and Wine-GE builds for Steam, Lutris and Heroic."
+msgid "Install newer Proton-GE and Wine-GE builds for Steam, Lutris and Heroic."
 msgstr "Steam, Lutris और Heroic के लिए नए Proton-GE और Wine-GE स्थापित करें।"
 
 #: aurora/devhub/games.py:50
@@ -538,13 +452,8 @@ msgid "Play anything"
 msgstr "कुछ भी खेलें"
 
 #: aurora/devhub/games.py:77
-msgid ""
-"Steam with Proton runs most Windows games. Add the Epic and GOG stores, "
-"Windows programs with Bottles, and Android apps with Waydroid, each with one "
-"click."
-msgstr ""
-"Proton के साथ Steam ज़्यादातर Windows गेम चलाता है। Epic और GOG स्टोर, Bottles से "
-"Windows प्रोग्राम और Waydroid से Android ऐप्स जोड़ें — हर एक, एक क्लिक में।"
+msgid "Steam with Proton runs most Windows games. Add the Epic and GOG stores, Windows programs with Bottles, and Android apps with Waydroid, each with one click."
+msgstr "Proton के साथ Steam ज़्यादातर Windows गेम चलाता है। Epic और GOG स्टोर, Bottles से Windows प्रोग्राम और Waydroid से Android ऐप्स जोड़ें — हर एक, एक क्लिक में।"
 
 #: aurora/devhub/recipes.py:22
 msgid "Editors & IDEs"
@@ -727,23 +636,16 @@ msgid "API development and testing (Flathub)."
 msgstr "API विकास और परीक्षण (Flathub)।"
 
 #: aurora/devhub/recipes.py:207
-msgid ""
-"Anthropic's coding agent in the terminal. Sign in with your Claude "
-"subscription or an API key."
-msgstr ""
-"टर्मिनल में Anthropic का कोडिंग एजेंट। Claude सदस्यता या API कुंजी से साइन इन करें।"
+msgid "Anthropic's coding agent in the terminal. Sign in with your Claude subscription or an API key."
+msgstr "टर्मिनल में Anthropic का कोडिंग एजेंट। Claude सदस्यता या API कुंजी से साइन इन करें।"
 
 #: aurora/devhub/recipes.py:213
-msgid ""
-"OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an "
-"API key."
+msgid "OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an API key."
 msgstr "टर्मिनल में OpenAI का कोडिंग एजेंट। ChatGPT प्लान या API कुंजी से साइन इन करें।"
 
 #: aurora/devhub/recipes.py:219
-msgid ""
-"Run many more open models locally; Aurora AI can use it as its provider."
-msgstr ""
-"कई अन्य ओपन मॉडल स्थानीय रूप से चलाएँ; Aurora AI इसे प्रदाता के रूप में उपयोग कर सकता है।"
+msgid "Run many more open models locally; Aurora AI can use it as its provider."
+msgstr "कई अन्य ओपन मॉडल स्थानीय रूप से चलाएँ; Aurora AI इसे प्रदाता के रूप में उपयोग कर सकता है।"
 
 #: aurora/devhub/recipes.py:225
 msgid "The Z shell, with autosuggestions and syntax highlighting."
@@ -786,8 +688,7 @@ msgid "A fast, informative prompt for Bash, Zsh and fish."
 msgstr "Bash, Zsh और fish के लिए तेज़, जानकारी भरा प्रॉम्प्ट।"
 
 #: aurora/devhub/recipes.py:272
-msgid ""
-"A terminal workspace with panes, tabs and plugins, an alternative to tmux."
+msgid "A terminal workspace with panes, tabs and plugins, an alternative to tmux."
 msgstr "पैन, टैब और प्लगइन वाला टर्मिनल वर्कस्पेस, tmux का विकल्प।"
 
 #: aurora/devhub/recipes.py:279
@@ -799,8 +700,7 @@ msgid "A minimal, very fast GPU-accelerated terminal."
 msgstr "एक न्यूनतम, बहुत तेज़ GPU-त्वरित टर्मिनल।"
 
 #: aurora/devhub/recipes.py:289
-msgid ""
-"A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."
+msgid "A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."
 msgstr "GPU-त्वरित टर्मिनल और मल्टीप्लेक्सर, Lua में कॉन्फ़िगर (Flathub)।"
 
 #: aurora/devhub/recipes.py:294
@@ -824,12 +724,8 @@ msgid "More CLI tools"
 msgstr "और कमांड-लाइन उपकरण"
 
 #: aurora/devhub/recipes.py:329
-msgid ""
-"eza (a modern ls), yq (jq for YAML), just (a command runner), tldr pages, "
-"ncdu and duf for disk usage."
-msgstr ""
-"eza (आधुनिक ls), yq (YAML के लिए jq), just (कमांड रनर), tldr पेज, और डिस्क उपयोग "
-"के लिए ncdu व duf।"
+msgid "eza (a modern ls), yq (jq for YAML), just (a command runner), tldr pages, ncdu and duf for disk usage."
+msgstr "eza (आधुनिक ls), yq (YAML के लिए jq), just (कमांड रनर), tldr पेज, और डिस्क उपयोग के लिए ncdu व duf।"
 
 #: aurora/devhub/recipes.py:334
 msgid "A smarter cd that remembers the folders you use."
@@ -1041,545 +937,441 @@ msgstr "SSH जो स्लीप और नेटवर्क बदलने 
 
 #: aurora/files/app.py:76 aurora/files/window.py:242 aurora/files/window.py:390
 #: aurora/files/window.py:391 aurora/settingsapp/ai.py:165
-#: aurora/settingsapp/applications.py:16 aurora/settingsapp/inputs.py:38
-#, no-python-format
+#: aurora/settingsapp/applications.py:16 aurora/settingsapp/inputs.py:41
 msgid "Files"
 msgstr "फ़ाइलें"
 
 #: aurora/files/create.py:10 aurora/files/window.py:269
 #: aurora/files/window.py:1455
-#, no-python-format
 msgid "New Folder"
 msgstr "नया फ़ोल्डर"
 
 #: aurora/files/create.py:10
-#, no-python-format
 msgid "New File"
 msgstr "नई फ़ाइल"
 
 #: aurora/files/create.py:19 aurora/files/properties.py:64
 #: aurora/files/window.py:321
-#, no-python-format
 msgid "Name"
 msgstr "नाम"
 
 #: aurora/files/create.py:19
-#, no-python-format
 msgid "File name"
 msgstr "फ़ाइल का नाम"
 
 #: aurora/files/create.py:20 aurora/files/window.py:1455
-#, no-python-format
 msgid "Untitled Folder"
 msgstr "नया फ़ोल्डर"
 
 #: aurora/files/create.py:20
-#, no-python-format
 msgid "Untitled.txt"
 msgstr "बिना शीर्षक.txt"
 
 #: aurora/files/create.py:28 aurora/files/window.py:1455
-#, no-python-format
 msgid "Create"
 msgstr "बनाएँ"
 
 #: aurora/files/operations.py:65
-#, no-python-format, python-brace-format
 msgid "Moving {n} item(s)"
 msgstr "{n} आइटम ले जाए जा रहे हैं"
 
 #: aurora/files/operations.py:66
-#, no-python-format, python-brace-format
 msgid "Copying {n} item(s)"
 msgstr "{n} आइटम कॉपी किए जा रहे हैं"
 
 #: aurora/files/operations.py:118
-#, no-python-format
 msgid "Cannot copy a folder into itself"
 msgstr "किसी फ़ोल्डर को उसी के अंदर कॉपी नहीं किया जा सकता"
 
 #: aurora/files/operations.py:148 aurora/files/window.py:1311
 #: aurora/files/window.py:1320 aurora/shell/panel.py:213
-#, no-python-format
 msgid "Cancelled"
 msgstr "रद्द किया गया"
 
 #: aurora/files/properties.py:28 aurora/files/window.py:135
 #: aurora/files/window.py:1074 aurora/files/window.py:1083
 #: aurora/shell/desktopicons.py:168
-#, no-python-format
 msgid "Properties"
 msgstr "गुण"
 
 #: aurora/files/properties.py:43
-#, no-python-format, python-brace-format
 msgid "{n} items"
 msgstr "{n} आइटम"
 
 #: aurora/files/properties.py:44
-#, no-python-format
 msgid "Total size"
 msgstr "कुल आकार"
 
 #: aurora/files/properties.py:44 aurora/files/properties.py:70
 #: aurora/files/window.py:1165
-#, no-python-format
 msgid "Calculating…"
 msgstr "गणना हो रही है…"
 
 #: aurora/files/properties.py:59
-#, no-python-format
 msgid "Error"
 msgstr "त्रुटि"
 
 #: aurora/files/properties.py:66
-#, no-python-format
 msgid "Type"
 msgstr "प्रकार"
 
 #: aurora/files/properties.py:68
-#, no-python-format
 msgid "Location"
 msgstr "स्थान"
 
 #: aurora/files/properties.py:70
-#, no-python-format
 msgid "Contents"
 msgstr "सामग्री"
 
 #: aurora/files/properties.py:73 aurora/files/window.py:321
-#, no-python-format
 msgid "Size"
 msgstr "आकार"
 
 #: aurora/files/properties.py:76 aurora/files/window.py:322
-#, no-python-format
 msgid "Modified"
 msgstr "संशोधित"
 
 #: aurora/files/properties.py:79
-#, no-python-format
 msgid "Accessed"
 msgstr "एक्सेस किया गया"
 
 #: aurora/files/properties.py:84
-#, no-python-format
 msgid "Permissions"
 msgstr "अनुमतियाँ"
 
 #: aurora/files/properties.py:99
-#, no-python-format, python-brace-format
 msgid "{size} · {n} items"
 msgstr "{size} · {n} आइटम"
 
 #: aurora/files/window.py:124 aurora/files/window.py:1057
-#: aurora/quicklook.py:141 aurora/shell/app.py:522
+#: aurora/quicklook.py:141 aurora/shell/app.py:534
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:322
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
-#: aurora/shell/sysnotify.py:113
-#, no-python-format
+#: aurora/shell/sysnotify.py:155
 msgid "Open"
 msgstr "खोलें"
 
 #: aurora/files/window.py:126 aurora/files/window.py:282
 #: aurora/files/window.py:308
-#, no-python-format
 msgid "New Tab"
 msgstr "नया टैब"
 
 #: aurora/files/window.py:127 aurora/files/window.py:283
 #: aurora/shell/dock.py:253 aurora/shell/dock.py:256
-#: aurora/shell/launcher.py:65 aurora/shell/panel.py:460
-#, no-python-format
+#: aurora/shell/launcher.py:65 aurora/shell/panel.py:467
 msgid "New Window"
 msgstr "नई विंडो"
 
 #: aurora/files/window.py:131 aurora/files/window.py:271
 #: aurora/files/window.py:1082 aurora/shell/launcher.py:143
-#, no-python-format
 msgid "Open in Terminal"
 msgstr "टर्मिनल में खोलें"
 
 #: aurora/files/window.py:133 aurora/shell/launcher.py:139
-#, no-python-format
 msgid "Copy Path"
 msgstr "पथ कॉपी करें"
 
-#: aurora/files/window.py:138 aurora/shell/sysnotify.py:113
-#, no-python-format
+#: aurora/files/window.py:138 aurora/shell/sysnotify.py:155
 msgid "Eject"
 msgstr "निकालें"
 
 #: aurora/files/window.py:154 aurora/files/window.py:744
 #: aurora/settingsapp/health.py:40
-#, no-python-format
 msgid "Home"
 msgstr "होम"
 
 #: aurora/files/window.py:166 aurora/files/window.py:741
 #: aurora/settingsapp/system.py:97 aurora/shell/dock.py:301
-#, no-python-format
 msgid "Trash"
 msgstr "ट्रैश"
 
 #: aurora/files/window.py:180 aurora/files/window.py:746
-#, no-python-format
 msgid "Computer"
 msgstr "कंप्यूटर"
 
 #: aurora/files/window.py:248 aurora/welcome.py:48
-#, no-python-format
 msgid "Back"
 msgstr "पीछे"
 
 #: aurora/files/window.py:250
-#, no-python-format
 msgid "Forward"
 msgstr "आगे"
 
 #: aurora/files/window.py:270 aurora/files/window.py:1079
 #: aurora/shell/wallpaper.py:156
-#, no-python-format
 msgid "New File…"
 msgstr "नई फ़ाइल…"
 
 #: aurora/files/window.py:274
-#, no-python-format
 msgid "Undo"
 msgstr "पूर्ववत करें"
 
 #: aurora/files/window.py:275
-#, no-python-format
 msgid "Redo"
 msgstr "फिर से करें"
 
 #: aurora/files/window.py:278
-#, no-python-format
 msgid "Show Hidden Files"
 msgstr "छिपी फ़ाइलें दिखाएँ"
 
 #: aurora/files/window.py:279
-#, no-python-format
 msgid "List View"
 msgstr "सूची दृश्य"
 
 #: aurora/files/window.py:284
-#, no-python-format
 msgid "About Files"
 msgstr "फ़ाइलें के बारे में"
 
 #: aurora/files/window.py:289 aurora/settingsapp/devices.py:42
 #: aurora/shell/panel.py:351
-#, no-python-format
 msgid "Search"
 msgstr "खोजें"
 
 #: aurora/files/window.py:330 aurora/files/window.py:905
-#, no-python-format
 msgid "Folder is Empty"
 msgstr "फ़ोल्डर खाली है"
 
 #: aurora/files/window.py:357 aurora/files/window.py:1076
 #: aurora/files/window.py:1392 aurora/shell/dock.py:323
-#, no-python-format
 msgid "Empty Trash"
 msgstr "ट्रैश खाली करें"
 
 #: aurora/files/window.py:358
-#, no-python-format
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "ट्रैश खाली करने से आइटम स्थायी रूप से हट जाते हैं"
 
 #: aurora/files/window.py:365 aurora/shell/panel.py:227
-#, no-python-format
 msgid "Cancel transfer"
 msgstr "स्थानांतरण रद्द करें"
 
 #: aurora/files/window.py:369
-#, no-python-format
 msgid "Retry"
 msgstr "फिर प्रयास करें"
 
 #: aurora/files/window.py:413
-#, no-python-format
 msgid "Close Tab"
 msgstr "टैब बंद करें"
 
 #: aurora/files/window.py:903
-#, no-python-format
 msgid "No Results Found"
 msgstr "कोई परिणाम नहीं"
 
 #: aurora/files/window.py:904
-#, no-python-format
 msgid "Trash is Empty"
 msgstr "ट्रैश खाली है"
 
 #: aurora/files/window.py:1054
-#, no-python-format
 msgid "Restore"
 msgstr "पुनर्स्थापित करें"
 
 #: aurora/files/window.py:1055
-#, no-python-format
 msgid "Delete Permanently"
 msgstr "स्थायी रूप से हटाएँ"
 
 #: aurora/files/window.py:1057
-#, no-python-format
 msgid "Open With…"
 msgstr "इससे खोलें…"
 
 #: aurora/files/window.py:1058
-#, no-python-format
 msgid "Quick Look"
 msgstr "क्विक लुक"
 
 #: aurora/files/window.py:1060
-#, no-python-format
 msgid "Send to Nearby Device…"
 msgstr "पास के डिवाइस पर भेजें…"
 
 #: aurora/files/window.py:1063
-#, no-python-format
 msgid "Summarize with Aurora"
 msgstr "Aurora से सारांश"
 
 #: aurora/files/window.py:1064
-#, no-python-format
 msgid "Ask Aurora About This File…"
 msgstr "इस फ़ाइल के बारे में Aurora से पूछें…"
 
 #: aurora/files/window.py:1067
-#, no-python-format
 msgid "Cut"
 msgstr "काटें"
 
 #: aurora/files/window.py:1068
-#, no-python-format
 msgid "Duplicate"
 msgstr "प्रतिलिपि बनाएँ"
 
 #: aurora/files/window.py:1068 aurora/shell/desktopicons.py:166
-#, no-python-format
 msgid "Rename…"
 msgstr "नाम बदलें…"
 
 #: aurora/files/window.py:1070 aurora/files/window.py:1120
-#, fuzzy, no-python-format
 msgid "Rename Multiple…"
-msgstr "नाम बदलें…"
+msgstr "कई का नाम बदलें…"
 
 #: aurora/files/window.py:1071
-#, fuzzy, no-python-format
 msgid "Compare Folders"
-msgstr "नया फ़ोल्डर"
+msgstr "फ़ोल्डरों की तुलना करें"
 
 #: aurora/files/window.py:1072 aurora/files/window.py:1165
-#, no-python-format
 msgid "SHA-256 Checksums"
-msgstr ""
+msgstr "SHA-256 चेकसम"
 
 #: aurora/files/window.py:1073 aurora/shell/desktopicons.py:167
-#, no-python-format
 msgid "Move to Trash"
 msgstr "ट्रैश में ले जाएँ"
 
 #: aurora/files/window.py:1078 aurora/shell/wallpaper.py:157
-#, no-python-format
 msgid "New Folder…"
 msgstr "नया फ़ोल्डर…"
 
 #: aurora/files/window.py:1080
-#, no-python-format
 msgid "Paste"
 msgstr "चिपकाएँ"
 
 #: aurora/files/window.py:1081
-#, no-python-format
 msgid "Select All"
 msgstr "सभी चुनें"
 
 #: aurora/files/window.py:1086 aurora/files/window.py:1204
-#, fuzzy, no-python-format
 msgid "Summarize Git Changes…"
-msgstr "Aurora से सारांश"
+msgstr "Git परिवर्तनों का सारांश…"
 
 #: aurora/files/window.py:1121
-#, no-python-format
 msgid "Replace text in the selected names. No file is overwritten."
-msgstr ""
+msgstr "चुने गए नामों में पाठ बदलें। कोई फ़ाइल अधिलेखित नहीं होती।"
 
 #: aurora/files/window.py:1123
-#, no-python-format
 msgid "Find"
-msgstr ""
+msgstr "खोजें"
 
 #: aurora/files/window.py:1124
-#, fuzzy, no-python-format
 msgid "Replace with"
-msgstr "चयन बदलें"
+msgstr "इससे बदलें"
 
 #: aurora/files/window.py:1129 aurora/files/window.py:1441
 #: aurora/shell/desktopicons.py:176 aurora/shell/desktopicons.py:180
-#, no-python-format
 msgid "Rename"
 msgstr "नाम बदलें"
 
 #: aurora/files/window.py:1136
-#, fuzzy, no-python-format
 msgid "Enter text to find"
-msgstr "इन्हें कहाँ पाएँ"
+msgstr "खोजने के लिए पाठ दर्ज करें"
 
 #: aurora/files/window.py:1144
-#, no-python-format
 msgid "A destination name already exists"
-msgstr ""
+msgstr "गंतव्य नाम पहले से मौजूद है"
 
 #: aurora/files/window.py:1195
-#, no-python-format
 msgid "Select exactly two folders"
-msgstr ""
+msgstr "ठीक दो फ़ोल्डर चुनें"
 
 #: aurora/files/window.py:1205
-#, no-python-format
 msgid "Review the changes before sending them to Aurora AI."
-msgstr ""
+msgstr "Aurora AI को भेजने से पहले परिवर्तनों की समीक्षा करें।"
 
 #: aurora/files/window.py:1207 aurora/settingsapp/system.py:178
-#, fuzzy, no-python-format
 msgid "Loading…"
-msgstr "रिकॉर्ड हो रहा है…"
+msgstr "लोड हो रहा है…"
 
-#: aurora/files/window.py:1211 aurora/shell/app.py:525
-#, no-python-format
+#: aurora/files/window.py:1211 aurora/shell/app.py:537
 msgid "Ask Aurora"
 msgstr "Aurora से पूछें"
 
 #: aurora/files/window.py:1238
-#, fuzzy, no-python-format
 msgid "No Git changes found"
-msgstr "कोई डिवाइस नहीं मिला"
+msgstr "कोई Git परिवर्तन नहीं मिला"
 
 #: aurora/files/window.py:1240
-#, no-python-format, python-brace-format
 msgid "Provider: {name}. Review the text before sending."
-msgstr ""
+msgstr "प्रदाता: {name}। भेजने से पहले पाठ की समीक्षा करें।"
 
 #: aurora/files/window.py:1253
-#, no-python-format, python-brace-format
 msgid "{n} item(s) cut"
 msgstr "{n} आइटम काटे गए"
 
 #: aurora/files/window.py:1253
-#, no-python-format, python-brace-format
 msgid "{n} item(s) copied"
 msgstr "{n} आइटम कॉपी किए गए"
 
 #: aurora/files/window.py:1339
-#, no-python-format, python-brace-format
 msgid "{n} item(s) moved to the Trash"
 msgstr "{n} आइटम ट्रैश में ले जाए गए"
 
 #: aurora/files/window.py:1352
-#, no-python-format, python-brace-format
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "{n} आइटम स्थायी रूप से हटाएँ?"
 
 #: aurora/files/window.py:1353
-#, no-python-format
 msgid "Deleted items cannot be restored."
 msgstr "हटाए गए आइटम पुनर्स्थापित नहीं किए जा सकते।"
 
 #: aurora/files/window.py:1355 aurora/settingsapp/ai.py:336
-#, no-python-format
 msgid "Delete"
 msgstr "हटाएँ"
 
 #: aurora/files/window.py:1389
-#, no-python-format
 msgid "Empty Trash?"
 msgstr "ट्रैश खाली करें?"
 
 #: aurora/files/window.py:1390
-#, no-python-format
 msgid "All items in the Trash will be permanently deleted."
 msgstr "ट्रैश के सभी आइटम स्थायी रूप से हटा दिए जाएँगे।"
 
 #: aurora/greeter/app.py:116 aurora/welcome.py:74
-#, no-python-format
 msgid "Welcome to Aurora OS"
 msgstr "Aurora OS में आपका स्वागत है"
 
 #: aurora/greeter/app.py:121
-#, no-python-format
 msgid "Other…"
 msgstr "अन्य…"
 
 #: aurora/greeter/app.py:125 aurora/settingsapp/system.py:427
 #: aurora/settingsapp/system.py:595
-#, no-python-format
 msgid "Username"
 msgstr "उपयोगकर्ता नाम"
 
 #: aurora/greeter/app.py:128 aurora/settingsapp/system.py:261
-#: aurora/settingsapp/system.py:596 aurora/shell/quicksettings.py:354
-#, no-python-format
+#: aurora/settingsapp/system.py:596 aurora/shell/quicksettings.py:357
 msgid "Password"
 msgstr "पासवर्ड"
 
 #: aurora/greeter/app.py:146
-#, no-python-format
 msgid "Log In"
 msgstr "लॉग इन करें"
 
 #: aurora/greeter/app.py:156
-#, no-python-format
 msgid "Restart"
 msgstr "पुनः आरंभ करें"
 
 #: aurora/greeter/app.py:157 aurora/settingsapp/power.py:29
-#, no-python-format
 msgid "Power Off"
 msgstr "बंद करें"
 
 #: aurora/greeter/app.py:283
-#, no-python-format
 msgid "Login failed"
 msgstr "लॉग इन विफल"
 
 #: aurora/greeter/app.py:286
-#, no-python-format
 msgid "Could not start session"
 msgstr "सत्र शुरू नहीं हो सका"
 
 #: aurora/greeter/app.py:291
-#, no-python-format
 msgid "Wrong password. Please try again."
 msgstr "गलत पासवर्ड। फिर से कोशिश करें।"
 
 #: aurora/quicklook.py:66
-#, no-python-format
 msgid "Previous"
 msgstr "पिछला"
 
 #: aurora/quicklook.py:67 aurora/welcome.py:50 aurora/welcome.py:140
-#, no-python-format
 msgid "Next"
 msgstr "अगला"
 
 #: aurora/quicklook.py:131
-#, no-python-format
 msgid "Can’t Preview"
 msgstr "पूर्वावलोकन उपलब्ध नहीं"
 
 #: aurora/quicklook.py:140
-#, no-python-format, python-brace-format
 msgid "Open with {app}"
 msgstr "{app} में खोलें"
 
 #: aurora/quicklook.py:201
-#, no-python-format, python-brace-format
 msgid "{n} more pages"
 msgstr "{n} और पृष्ठ"
 
@@ -1591,515 +1383,364 @@ msgstr[0] "{n} आइटम"
 msgstr[1] "{n} आइटम"
 
 #: aurora/quicklook.py:264
-#, no-python-format, python-brace-format
 msgid "Modified {date}"
 msgstr "{date} को संशोधित"
 
 #: aurora/settingsapp/about.py:60 aurora/settingsapp/health.py:49
 #: aurora/weather.py:47
-#, no-python-format
 msgid "Unknown"
 msgstr "अज्ञात"
 
 #: aurora/settingsapp/about.py:65 aurora/shell/search.py:416
-#, no-python-format
 msgid "About"
 msgstr "परिचय"
 
 #: aurora/settingsapp/about.py:78
-#, no-python-format
 msgid "Device"
 msgstr "डिवाइस"
 
 #: aurora/settingsapp/about.py:79
-#, no-python-format
 msgid "Device name"
 msgstr "डिवाइस का नाम"
 
-#: aurora/settingsapp/about.py:83
-#, no-python-format
+#: aurora/settingsapp/about.py:83 aurora/shell/sysmon.py:124
 msgid "Processor"
 msgstr "प्रोसेसर"
 
 #: aurora/settingsapp/about.py:83 aurora/settingsapp/health.py:219
-#, no-python-format
+#: aurora/shell/sysmon.py:124
 msgid "Memory"
 msgstr "मेमोरी"
 
 #: aurora/settingsapp/about.py:84 aurora/settingsapp/system.py:663
-#, no-python-format
 msgid "Graphics"
 msgstr "ग्राफ़िक्स"
 
 #: aurora/settingsapp/about.py:84
-#, no-python-format
 msgid "Disk capacity"
 msgstr "डिस्क क्षमता"
 
 #: aurora/settingsapp/about.py:87
-#, no-python-format
 msgid "Software"
 msgstr "सॉफ़्टवेयर"
 
 #: aurora/settingsapp/about.py:90
-#, no-python-format
 msgid "Operating system"
 msgstr "ऑपरेटिंग सिस्टम"
 
 #: aurora/settingsapp/about.py:91
-#, no-python-format
 msgid "Based on"
 msgstr "आधारित"
 
-#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:173
-#, no-python-format
+#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:174
 msgid "Desktop"
 msgstr "डेस्कटॉप"
 
 #: aurora/settingsapp/about.py:93
-#, no-python-format
 msgid "Windowing system"
 msgstr "विंडोइंग सिस्टम"
 
 #: aurora/settingsapp/about.py:94
-#, no-python-format
 msgid "Kernel"
 msgstr "कर्नेल"
 
 #: aurora/settingsapp/about.py:106
-#, no-python-format
 msgid "Use letters, digits and hyphens only."
 msgstr "केवल अक्षर, अंक और हाइफ़न का उपयोग करें।"
 
 #: aurora/settingsapp/about.py:110
-#, no-python-format
 msgid "Device name changed"
 msgstr "डिवाइस का नाम बदला गया"
 
 #: aurora/settingsapp/ai.py:40
-#, no-python-format, python-brace-format
 msgid "Downloading {name}"
 msgstr "{name} डाउनलोड हो रहा है"
 
 #: aurora/settingsapp/ai.py:69 aurora/shell/search.py:414
-#, no-python-format
 msgid "AI"
 msgstr "AI"
 
 #: aurora/settingsapp/ai.py:77
-#, no-python-format
-msgid ""
-"A private assistant: ask questions from Spotlight with “?”, get commands in "
-"the terminal with ask and why, dictate text, have text read aloud and find "
-"documents by meaning. It runs on this computer; nothing is sent anywhere "
-"unless you choose a cloud provider below. Nothing is downloaded until you "
-"set up a feature."
-msgstr ""
-"एक निजी सहायक: Spotlight में \"?\" लिखकर सवाल पूछें, टर्मिनल में ask और why से कमांड "
-"पाएँ, टेक्स्ट बोलकर लिखवाएँ, टेक्स्ट पढ़कर सुनें और अर्थ से दस्तावेज़ खोजें। यह इसी कंप्यूटर पर "
-"चलता है; जब तक आप नीचे कोई क्लाउड सेवा नहीं चुनते, कुछ भी बाहर नहीं भेजा जाता। किसी "
-"सुविधा को सेट करने तक कुछ भी डाउनलोड नहीं होता।"
+msgid "A private assistant: ask questions from Spotlight with “?”, get commands in the terminal with ask and why, dictate text, have text read aloud and find documents by meaning. It runs on this computer; nothing is sent anywhere unless you choose a cloud provider below. Nothing is downloaded until you set up a feature."
+msgstr "एक निजी सहायक: Spotlight में \"?\" लिखकर सवाल पूछें, टर्मिनल में ask और why से कमांड पाएँ, टेक्स्ट बोलकर लिखवाएँ, टेक्स्ट पढ़कर सुनें और अर्थ से दस्तावेज़ खोजें। यह इसी कंप्यूटर पर चलता है; जब तक आप नीचे कोई क्लाउड सेवा नहीं चुनते, कुछ भी बाहर नहीं भेजा जाता। किसी सुविधा को सेट करने तक कुछ भी डाउनलोड नहीं होता।"
 
 #: aurora/settingsapp/ai.py:83
-#, no-python-format
 msgid "Assistant button in the top bar"
 msgstr "ऊपरी बार में सहायक बटन"
 
 #: aurora/settingsapp/ai.py:86
-#, no-python-format
 msgid "The Assistant is also in the dock and opens with Super+Shift+Space"
 msgstr "सहायक डॉक में भी है और Super+Shift+Space से खुलता है"
 
 #: aurora/settingsapp/ai.py:89
-#, no-python-format
 msgid "Answers Come From"
 msgstr "उत्तर कहाँ से आते हैं"
 
 #: aurora/settingsapp/ai.py:92
-#, no-python-format
 msgid "Provider"
 msgstr "प्रदाता"
 
 #: aurora/settingsapp/ai.py:92
-#, no-python-format
 msgid "This computer (private)"
 msgstr "यह कंप्यूटर (निजी)"
 
 #: aurora/settingsapp/ai.py:93
-#, no-python-format
 msgid "OpenAI-compatible API"
 msgstr "OpenAI-संगत API"
 
 #: aurora/settingsapp/ai.py:97
-#, no-python-format
 msgid "Model on This Computer"
 msgstr "इस कंप्यूटर पर मॉडल"
 
 #: aurora/settingsapp/ai.py:98
-#, no-python-format, python-brace-format
-msgid ""
-"Bigger models answer better but need more memory. This computer has "
-"{ram:.0f} GB."
+msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "बड़े मॉडल बेहतर उत्तर देते हैं पर ज़्यादा मेमोरी लेते हैं। इस कंप्यूटर में {ram:.0f} GB है।"
 
 #: aurora/settingsapp/ai.py:108
-#, no-python-format
 msgid "Cloud Provider"
 msgstr "क्लाउड सेवा"
 
 #: aurora/settingsapp/ai.py:109
-#, no-python-format
-msgid ""
-"Questions and the text you ask about are sent to the provider. Keys are kept "
-"in your login keyring. Claude and ChatGPT subscriptions work only in their "
-"own apps: Dev Hub installs Claude Code and Codex, which sign in with your "
-"subscription."
-msgstr ""
-"सवाल और जिस टेक्स्ट के बारे में आप पूछते हैं, वह प्रदाता को भेजा जाता है। कुंजियाँ आपके लॉगिन "
-"कीरिंग में रखी जाती हैं। Claude और ChatGPT सदस्यताएँ केवल उनके अपने ऐप्स में काम करती हैं: "
-"Dev Hub, Claude Code और Codex स्थापित करता है, जो आपकी सदस्यता से साइन इन करते हैं।"
+msgid "Questions and the text you ask about are sent to the provider. Keys are kept in your login keyring. Claude and ChatGPT subscriptions work only in their own apps: Dev Hub installs Claude Code and Codex, which sign in with your subscription."
+msgstr "सवाल और जिस टेक्स्ट के बारे में आप पूछते हैं, वह प्रदाता को भेजा जाता है। कुंजियाँ आपके लॉगिन कीरिंग में रखी जाती हैं। Claude और ChatGPT सदस्यताएँ केवल उनके अपने ऐप्स में काम करती हैं: Dev Hub, Claude Code और Codex स्थापित करता है, जो आपकी सदस्यता से साइन इन करते हैं।"
 
 #: aurora/settingsapp/ai.py:115
-#, no-python-format
 msgid "API keys are paid per use"
 msgstr "API कुंजियों का बिल उपयोग के अनुसार आता है"
 
 #: aurora/settingsapp/ai.py:116
-#, no-python-format
-msgid ""
-"Every answer uses credits billed by the provider, separately from any Claude "
-"Pro/Max or ChatGPT Plus subscription, which API keys don't use. Check prices "
-"and set a spending limit in the provider's console. Answers on this computer "
-"are free."
-msgstr ""
-"हर उत्तर क्रेडिट खर्च करता है, जिसका बिल प्रदाता किसी भी Claude Pro/Max या ChatGPT "
-"Plus सदस्यता से अलग भेजता है — API कुंजियाँ उसका उपयोग नहीं करतीं। कीमतें देखें और प्रदाता "
-"के कंसोल में खर्च की सीमा तय करें। इस कंप्यूटर पर उत्तर मुफ़्त हैं।"
+msgid "Every answer uses credits billed by the provider, separately from any Claude Pro/Max or ChatGPT Plus subscription, which API keys don't use. Check prices and set a spending limit in the provider's console. Answers on this computer are free."
+msgstr "हर उत्तर क्रेडिट खर्च करता है, जिसका बिल प्रदाता किसी भी Claude Pro/Max या ChatGPT Plus सदस्यता से अलग भेजता है — API कुंजियाँ उसका उपयोग नहीं करतीं। कीमतें देखें और प्रदाता के कंसोल में खर्च की सीमा तय करें। इस कंप्यूटर पर उत्तर मुफ़्त हैं।"
 
 #: aurora/settingsapp/ai.py:123
-#, no-python-format
 msgid "API key"
 msgstr "API कुंजी"
 
 #: aurora/settingsapp/ai.py:126
-#, no-python-format
 msgid "Claude model"
 msgstr "Claude मॉडल"
 
 #: aurora/settingsapp/ai.py:131
-#, no-python-format
 msgid "Choose a service…"
 msgstr "एक सेवा चुनें…"
 
 #: aurora/settingsapp/ai.py:136
-#, no-python-format
 msgid "Ollama on this computer"
 msgstr "इस कंप्यूटर पर Ollama"
 
 #: aurora/settingsapp/ai.py:143
-#, no-python-format
 msgid "Service"
 msgstr "सेवा"
 
 #: aurora/settingsapp/ai.py:144
-#, no-python-format
 msgid "Fills in the address; then add your key and a model name"
 msgstr "पता भर देता है; फिर अपनी कुंजी और मॉडल का नाम जोड़ें"
 
 #: aurora/settingsapp/ai.py:147
-#, no-python-format
 msgid "API address"
 msgstr "API पता"
 
 #: aurora/settingsapp/ai.py:152
-#, no-python-format
 msgid "Model"
 msgstr "मॉडल"
 
 #: aurora/settingsapp/ai.py:158
-#, no-python-format
 msgid "Where Aurora AI Helps"
 msgstr "Aurora AI कहाँ मदद करता है"
 
 #: aurora/settingsapp/ai.py:159
-#, no-python-format
-msgid ""
-"Turn off anything you don't want. Features with a download are set up the "
-"first time you switch them on."
-msgstr ""
-"जो नहीं चाहिए उसे बंद करें। डाउनलोड वाली सुविधाएँ पहली बार चालू करने पर सेट होती हैं।"
+msgid "Turn off anything you don't want. Features with a download are set up the first time you switch them on."
+msgstr "जो नहीं चाहिए उसे बंद करें। डाउनलोड वाली सुविधाएँ पहली बार चालू करने पर सेट होती हैं।"
 
 #: aurora/settingsapp/ai.py:162 aurora/settingsapp/inputs.py:27
-#, no-python-format
 msgid "Writing tools"
 msgstr "लेखन उपकरण"
 
 #: aurora/settingsapp/ai.py:163
-#, no-python-format
-msgid ""
-"Select text anywhere and press Super+Shift+W: proofread, rewrite, shorten, "
-"summarize, translate, then replace the selection"
-msgstr ""
-"कहीं भी टेक्स्ट चुनें और Super+Shift+W दबाएँ: ठीक करें, दोबारा लिखें, छोटा करें, सारांश दें, "
-"अनुवाद करें और चयन बदलें"
+msgid "Select text anywhere and press Super+Shift+W: proofread, rewrite, shorten, summarize, translate, then replace the selection"
+msgstr "कहीं भी टेक्स्ट चुनें और Super+Shift+W दबाएँ: ठीक करें, दोबारा लिखें, छोटा करें, सारांश दें, अनुवाद करें और चयन बदलें"
 
 #: aurora/settingsapp/ai.py:165
-#, no-python-format
-msgid ""
-"“Summarize” and “Ask About This File” in the Files menu, for text, code, PDF "
-"and documents"
+msgid "“Summarize” and “Ask About This File” in the Files menu, for text, code, PDF and documents"
 msgstr "फ़ाइलें मेनू में सारांश और इस फ़ाइल के बारे में पूछें, टेक्स्ट, कोड, PDF और दस्तावेज़ों के लिए"
 
 #: aurora/settingsapp/ai.py:167
-#, no-python-format
 msgid "Screenshots"
 msgstr "स्क्रीनशॉट"
 
 #: aurora/settingsapp/ai.py:168
-#, no-python-format
 msgid "“Ask Aurora” on the screenshot notification explains what's on screen"
 msgstr "स्क्रीनशॉट सूचना में \"Aurora से पूछें\" स्क्रीन पर जो है उसे समझाता है"
 
 #: aurora/settingsapp/ai.py:169 aurora/settingsapp/applications.py:127
 #: aurora/shell/notifications.py:310
-#, no-python-format
 msgid "Notifications"
 msgstr "सूचनाएँ"
 
 #: aurora/settingsapp/ai.py:170
-#, no-python-format
 msgid "A Summarize button when notifications pile up"
 msgstr "सूचनाएँ जमा होने पर सारांश बटन"
 
 #: aurora/settingsapp/ai.py:174
-#, no-python-format
 msgid "Ask from Spotlight"
 msgstr "Spotlight से पूछें"
 
 #: aurora/settingsapp/ai.py:176
-#, no-python-format
 msgid "Type ? and a question. Super+Shift+Space opens the Assistant."
 msgstr "? और अपना सवाल लिखें। Super+Shift+Space सहायक खोलता है।"
 
 #: aurora/settingsapp/ai.py:178
-#, no-python-format
 msgid "Terminal commands"
 msgstr "टर्मिनल कमांड"
 
 #: aurora/settingsapp/ai.py:180
-#, no-python-format
 msgid "ask \"what to do\" suggests a command; why explains the last error"
 msgstr "ask \"क्या करना है\" एक कमांड सुझाता है; why पिछली त्रुटि समझाता है"
 
 #: aurora/settingsapp/ai.py:184 aurora/settingsapp/inputs.py:24
-#, no-python-format
 msgid "Dictation"
 msgstr "डिक्टेशन"
 
 #: aurora/settingsapp/ai.py:185
-#, no-python-format
-msgid ""
-"Super+H, speak, Super+H again: the text is typed where you are. Speech "
-"recognition runs on this computer (Whisper)."
-msgstr ""
-"Super+H, बोलें, फिर Super+H: टेक्स्ट वहीं टाइप हो जाता है जहाँ आप हैं। वाणी पहचान इसी "
-"कंप्यूटर पर चलती है (Whisper)।"
+msgid "Super+H, speak, Super+H again: the text is typed where you are. Speech recognition runs on this computer (Whisper)."
+msgstr "Super+H, बोलें, फिर Super+H: टेक्स्ट वहीं टाइप हो जाता है जहाँ आप हैं। वाणी पहचान इसी कंप्यूटर पर चलती है (Whisper)।"
 
 #: aurora/settingsapp/ai.py:189
-#, no-python-format
 msgid "Dictation accuracy"
 msgstr "डिक्टेशन सटीकता"
 
 #: aurora/settingsapp/ai.py:190
-#, no-python-format
 msgid "Quick (Whisper base)"
 msgstr "तेज़ (Whisper base)"
 
 #: aurora/settingsapp/ai.py:190
-#, no-python-format
 msgid "Accurate (Whisper small)"
 msgstr "सटीक (Whisper small)"
 
 #: aurora/settingsapp/ai.py:194
-#, no-python-format
 msgid "Read aloud"
 msgstr "पढ़कर सुनाना"
 
 #: aurora/settingsapp/ai.py:195
-#, no-python-format
-msgid ""
-"Select text anywhere and press Super+Shift+R (a natural voice for your "
-"language, Piper)"
-msgstr ""
-"कहीं भी टेक्स्ट चुनें और Super+Shift+R दबाएँ (आपकी भाषा में स्वाभाविक आवाज़, Piper)"
+msgid "Select text anywhere and press Super+Shift+R (a natural voice for your language, Piper)"
+msgstr "कहीं भी टेक्स्ट चुनें और Super+Shift+R दबाएँ (आपकी भाषा में स्वाभाविक आवाज़, Piper)"
 
 #: aurora/settingsapp/ai.py:199
-#, no-python-format
 msgid "Search documents by meaning"
 msgstr "अर्थ से दस्तावेज़ खोजें"
 
 #: aurora/settingsapp/ai.py:201
-#, no-python-format
 msgid "Spotlight finds files by what they're about, not only their name"
 msgstr "Spotlight फ़ाइलें केवल नाम से नहीं, सामग्री से भी खोजता है"
 
 #: aurora/settingsapp/ai.py:203
-#, no-python-format
 msgid "Folders to index"
 msgstr "इंडेक्स करने वाले फ़ोल्डर"
 
 #: aurora/settingsapp/ai.py:208
-#, no-python-format
 msgid "Update the Index Now"
 msgstr "अभी इंडेक्स अपडेट करें"
 
 #: aurora/settingsapp/ai.py:214
-#, no-python-format
 msgid "Storage"
 msgstr "संग्रहण"
 
 #: aurora/settingsapp/ai.py:215
-#, no-python-format
 msgid "Space used by AI"
 msgstr "AI द्वारा उपयोग की गई जगह"
 
 #: aurora/settingsapp/ai.py:218
-#, no-python-format
 msgid "Remove All AI Downloads"
 msgstr "सभी AI डाउनलोड हटाएँ"
 
 #: aurora/settingsapp/ai.py:233
-#, no-python-format
 msgid "Languages"
 msgstr "भाषाएँ"
 
 #: aurora/settingsapp/ai.py:234
-#, no-python-format
-msgid ""
-"Aurora AI understands and answers in many languages. Ask it in any language, "
-"or tell it “reply in Italian”, whatever the system language is."
-msgstr ""
-"Aurora AI कई भाषाएँ समझता है और उनमें उत्तर देता है। किसी भी भाषा में पूछें, या कहें "
-"\"इतालवी में उत्तर दो\" — सिस्टम की भाषा चाहे जो हो।"
+msgid "Aurora AI understands and answers in many languages. Ask it in any language, or tell it “reply in Italian”, whatever the system language is."
+msgstr "Aurora AI कई भाषाएँ समझता है और उनमें उत्तर देता है। किसी भी भाषा में पूछें, या कहें \"इतालवी में उत्तर दो\" — सिस्टम की भाषा चाहे जो हो।"
 
 #: aurora/settingsapp/ai.py:238
-#, no-python-format
 msgid "The language I write in"
 msgstr "मैं जिस भाषा में लिखता हूँ"
 
 #: aurora/settingsapp/ai.py:240
-#, no-python-format
 msgid "Answers in"
 msgstr "उत्तर की भाषा"
 
 #: aurora/settingsapp/ai.py:242
-#, no-python-format
 msgid "Detect automatically"
 msgstr "अपने-आप पहचानें"
 
 #: aurora/settingsapp/ai.py:244
-#, no-python-format
 msgid "Dictation language"
 msgstr "डिक्टेशन भाषा"
 
 #: aurora/settingsapp/ai.py:251
-#, no-python-format
 msgid "Read-aloud voice"
 msgstr "पढ़कर सुनाने की आवाज़"
 
 #: aurora/settingsapp/ai.py:264
-#, no-python-format
 msgid "Downloaded"
 msgstr "डाउनलोड हो चुका"
 
 #: aurora/settingsapp/ai.py:266
-#, no-python-format
 msgid "Not downloaded yet"
 msgstr "अभी डाउनलोड नहीं हुआ"
 
 #: aurora/settingsapp/ai.py:267 aurora/settingsapp/ai.py:343
-#, no-python-format
+#: aurora/shell/sysmon.py:125
 msgid "Download"
 msgstr "डाउनलोड करें"
 
 #: aurora/settingsapp/ai.py:283
-#, no-python-format
 msgid "Voice ready"
 msgstr "आवाज़ तैयार है"
 
 #: aurora/settingsapp/ai.py:306
-#, no-python-format
 msgid "Now download a model below"
 msgstr "अब नीचे से एक मॉडल डाउनलोड करें"
 
 #: aurora/settingsapp/ai.py:317
-#, no-python-format
 msgid "Key saved in your keyring"
 msgstr "कुंजी कीरिंग में सहेजी गई"
 
 #: aurora/settingsapp/ai.py:331
-#, no-python-format
 msgid "In use"
 msgstr "उपयोग में"
 
 #: aurora/settingsapp/ai.py:333
-#, no-python-format
 msgid "Use"
 msgstr "उपयोग करें"
 
 #: aurora/settingsapp/ai.py:364
-#, no-python-format, python-brace-format
 msgid "Download failed: {error}"
 msgstr "डाउनलोड विफल: {error}"
 
 #: aurora/settingsapp/ai.py:380
-#, no-python-format
 msgid "Dictation is ready"
 msgstr "डिक्टेशन तैयार है"
 
 #: aurora/settingsapp/ai.py:391
-#, no-python-format
 msgid "Read aloud is ready"
 msgstr "पढ़कर सुनाना तैयार है"
 
 #: aurora/settingsapp/ai.py:402
-#, no-python-format
 msgid "Indexing your documents…"
 msgstr "दस्तावेज़ इंडेक्स हो रहे हैं…"
 
 #: aurora/settingsapp/ai.py:407
-#, no-python-format, python-brace-format
 msgid "Setup failed: {error}"
 msgstr "सेटअप विफल: {error}"
 
 #: aurora/settingsapp/ai.py:412
-#, no-python-format
 msgid "Updating the index in the background"
 msgstr "इंडेक्स पृष्ठभूमि में अपडेट हो रहा है"
 
 #: aurora/settingsapp/ai.py:419
-#, no-python-format
 msgid "AI downloads removed"
 msgstr "AI डाउनलोड हटा दिए गए"
-
-#: aurora/settingsapp/app.py:44 aurora/settingsapp/app.py:66
-#: aurora/settingsapp/app.py:78 aurora/settingsapp/app.py:79
-#: aurora/settingsapp/desktop.py:184 aurora/settingsapp/inputs.py:39
-#: aurora/shell/quicksettings.py:236 aurora/shell/search.py:433
-#: aurora/shell/wallpaper.py:162
-#, no-python-format
-msgid "Settings"
-msgstr "सेटिंग्स"
-
-#: aurora/settingsapp/app.py:98
-#, no-python-format
-msgid "This page could not be loaded"
-msgstr "यह पृष्ठ लोड नहीं हो सका"
-
-#: aurora/settingsapp/app.py:119
-#, no-python-format
-msgid "Open a specific page"
-msgstr "कोई विशेष पृष्ठ खोलें"
 
 #: aurora/settingsapp/appearance.py:14
 msgid "Blue"
@@ -2138,255 +1779,204 @@ msgid "Slate"
 msgstr "ग्रेफ़ाइट"
 
 #: aurora/settingsapp/appearance.py:72 aurora/shell/search.py:398
-#, no-python-format
 msgid "Appearance"
 msgstr "रूप-रंग"
 
-#: aurora/settingsapp/appearance.py:79 aurora/settingsapp/desktop.py:158
-#, no-python-format
+#: aurora/settingsapp/appearance.py:79 aurora/settingsapp/desktop.py:159
 msgid "Style"
 msgstr "शैली"
 
 #: aurora/settingsapp/appearance.py:82
-#, no-python-format
 msgid "Color scheme"
 msgstr "रंग योजना"
 
 #: aurora/settingsapp/appearance.py:82 aurora/welcome.py:81
-#, no-python-format
 msgid "Light"
 msgstr "हल्की"
 
 #: aurora/settingsapp/appearance.py:82 aurora/welcome.py:82
-#, no-python-format
 msgid "Dark"
 msgstr "गहरी"
 
 #: aurora/settingsapp/appearance.py:82
-#, no-python-format
 msgid "Auto"
 msgstr "स्वचालित"
 
 #: aurora/settingsapp/appearance.py:84
-#, no-python-format
 msgid "Auto switches to dark at sunset and back at sunrise"
 msgstr "स्वचालित सूर्यास्त पर गहरी और सूर्योदय पर वापस हल्की हो जाती है"
 
 #: aurora/settingsapp/appearance.py:87
-#, no-python-format
 msgid "Accent color"
 msgstr "एक्सेंट रंग"
 
 #: aurora/settingsapp/appearance.py:109
-#, no-python-format
 msgid "Icons"
 msgstr "आइकन"
 
 #: aurora/settingsapp/appearance.py:117
-#, no-python-format
 msgid "Pointer"
 msgstr "कर्सर"
 
 #: aurora/settingsapp/appearance.py:123 aurora/settingsapp/applications.py:217
-#, no-python-format
 msgid "Pointer size"
 msgstr "कर्सर का आकार"
 
 #: aurora/settingsapp/appearance.py:127
-#, no-python-format
 msgid "Animations"
 msgstr "एनिमेशन"
 
 #: aurora/settingsapp/appearance.py:135
-#, no-python-format
 msgid "Window animations"
 msgstr "विंडो एनिमेशन"
 
 #: aurora/settingsapp/appearance.py:137
-#, no-python-format
-msgid ""
-"Windows fade in as they open; files and folders float in as a folder opens"
+msgid "Windows fade in as they open; files and folders float in as a folder opens"
 msgstr "खुलते समय विंडो धीरे से दिखती हैं; फ़ोल्डर खोलने पर फ़ाइलें और फ़ोल्डर तैरते हुए आते हैं"
 
 #: aurora/settingsapp/appearance.py:140
-#, no-python-format
 msgid "Fonts"
 msgstr "फ़ॉन्ट"
 
 #: aurora/settingsapp/appearance.py:142
-#, no-python-format
 msgid "Interface"
 msgstr "इंटरफ़ेस"
 
 #: aurora/settingsapp/appearance.py:142
-#, no-python-format
 msgid "Documents"
 msgstr "दस्तावेज़"
 
 #: aurora/settingsapp/appearance.py:143
-#, no-python-format
 msgid "Monospace"
 msgstr "मोनोस्पेस"
 
 #: aurora/settingsapp/appearance.py:145
-#, no-python-format
 msgid "Scaling"
 msgstr "स्केलिंग"
 
 #: aurora/settingsapp/appearance.py:157
-#, no-python-format
 msgid "Anti-aliasing"
 msgstr "एंटीएलियासिंग"
 
 #: aurora/settingsapp/appearance.py:157
-#, no-python-format
 msgid "Standard (grayscale)"
 msgstr "मानक (ग्रेस्केल)"
 
 #: aurora/settingsapp/appearance.py:158
-#, no-python-format
 msgid "Subpixel (for LCD screens)"
 msgstr "सबपिक्सेल (LCD स्क्रीन के लिए)"
 
 #: aurora/settingsapp/appearance.py:158 aurora/settingsapp/appearance.py:163
-#: aurora/settingsapp/inputs.py:181
-#, no-python-format
+#: aurora/settingsapp/inputs.py:184
 msgid "None"
 msgstr "कोई नहीं"
 
 #: aurora/settingsapp/appearance.py:163
-#, no-python-format
 msgid "Hinting"
 msgstr "हिंटिंग"
 
 #: aurora/settingsapp/appearance.py:163
-#, no-python-format
 msgid "Slight"
 msgstr "हल्की"
 
 #: aurora/settingsapp/appearance.py:163 aurora/settingsapp/applications.py:172
-#, no-python-format
 msgid "Medium"
 msgstr "मध्यम"
 
 #: aurora/settingsapp/appearance.py:163
-#, no-python-format
 msgid "Full"
 msgstr "पूर्ण"
 
 #: aurora/settingsapp/appearance.py:168
-#, no-python-format
 msgid "Background"
 msgstr "पृष्ठभूमि"
 
 #: aurora/settingsapp/appearance.py:170
-#, no-python-format
 msgid "Add Picture…"
 msgstr "चित्र जोड़ें…"
 
 #: aurora/settingsapp/appearance.py:190
-#, no-python-format
 msgid "Rotate wallpapers"
 msgstr "वॉलपेपर बदलते रहें"
 
 #: aurora/settingsapp/appearance.py:193
-#, no-python-format
 msgid "Cycle through the included wallpapers offline"
 msgstr "शामिल वॉलपेपर ऑफ़लाइन बदलें"
 
 #: aurora/settingsapp/appearance.py:196
-#, no-python-format
 msgid "Change every"
 msgstr "हर इतने समय में बदलें"
 
 #: aurora/settingsapp/appearance.py:197
-#, no-python-format
 msgid "15 minutes"
 msgstr "15 मिनट"
 
 #: aurora/settingsapp/appearance.py:197
-#, no-python-format
 msgid "1 hour"
 msgstr "1 घंटा"
 
 #: aurora/settingsapp/appearance.py:197
-#, no-python-format
 msgid "6 hours"
 msgstr "6 घंटे"
 
 #: aurora/settingsapp/appearance.py:197
-#, no-python-format
 msgid "24 hours"
 msgstr "24 घंटे"
 
 #: aurora/settingsapp/appearance.py:203 aurora/settingsapp/appearance.py:204
 #: aurora/shell/quicksettings.py:173
-#, no-python-format
 msgid "Night Light"
 msgstr "रात्रि प्रकाश"
 
 #: aurora/settingsapp/appearance.py:203
-#, no-python-format
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "गर्म रंग शाम को आँखों के लिए आरामदायक होते हैं।"
 
 #: aurora/settingsapp/appearance.py:208
-#, no-python-format
 msgid "Schedule"
 msgstr "समय-सारणी"
 
 #: aurora/settingsapp/appearance.py:208
-#, no-python-format
 msgid "Sunset to Sunrise"
 msgstr "सूर्यास्त से सूर्योदय तक"
 
 #: aurora/settingsapp/appearance.py:208
-#, no-python-format
 msgid "Manual"
 msgstr "मैन्युअल"
 
 #: aurora/settingsapp/appearance.py:209
-#, no-python-format
 msgid "All the Time"
 msgstr "हमेशा"
 
 #: aurora/settingsapp/appearance.py:211
-#, no-python-format
 msgid "Sunset and sunrise follow your time zone"
 msgstr "सूर्यास्त और सूर्योदय आपके समय क्षेत्र से निकाले जाते हैं"
 
 #: aurora/settingsapp/appearance.py:214
-#, no-python-format
 msgid "From"
 msgstr "से"
 
 #: aurora/settingsapp/appearance.py:214
-#, no-python-format
 msgid "To"
 msgstr "तक"
 
 #: aurora/settingsapp/appearance.py:221
-#, no-python-format
 msgid "Color temperature"
 msgstr "रंग तापमान"
 
 #: aurora/settingsapp/appearance.py:294 aurora/settingsapp/appearance.py:300
-#, no-python-format
 msgid "Dynamic"
 msgstr "गतिशील"
 
 #: aurora/settingsapp/appearance.py:307
-#, no-python-format
 msgid "Changes with the time of day: dawn, day, dusk and night"
 msgstr "दिन के समय के साथ बदलता है: भोर, दिन, संध्या और रात"
 
 #: aurora/settingsapp/appearance.py:347
-#, no-python-format
 msgid "Choose a Background"
 msgstr "पृष्ठभूमि चुनें"
 
 #: aurora/settingsapp/appearance.py:348 aurora/settingsapp/system.py:511
-#, no-python-format
 msgid "Images"
 msgstr "चित्र"
 
@@ -2418,114 +2008,91 @@ msgstr "फ़ोटो"
 msgid "PDF"
 msgstr "PDF"
 
-#: aurora/settingsapp/applications.py:27 aurora/settingsapp/desktop.py:183
-#, no-python-format
+#: aurora/settingsapp/applications.py:27 aurora/settingsapp/desktop.py:184
 msgid "Apps"
 msgstr "ऐप्स"
 
 #: aurora/settingsapp/applications.py:31
-#, no-python-format
 msgid "Default Apps"
 msgstr "डिफ़ॉल्ट ऐप्स"
 
 #: aurora/settingsapp/applications.py:53
-#, no-python-format
 msgid "Startup Apps"
 msgstr "स्टार्टअप ऐप्स"
 
 #: aurora/settingsapp/applications.py:54
-#, no-python-format
 msgid "Apps that open automatically when you log in."
 msgstr "लॉग इन करने पर अपने-आप खुलने वाले ऐप्स।"
 
 #: aurora/settingsapp/applications.py:56
-#, no-python-format
 msgid "Add Startup App"
 msgstr "स्टार्टअप ऐप जोड़ें"
 
 #: aurora/settingsapp/applications.py:72
-#, no-python-format
 msgid "No startup apps"
 msgstr "कोई स्टार्टअप ऐप नहीं"
 
-#: aurora/settingsapp/applications.py:83 aurora/settingsapp/inputs.py:246
+#: aurora/settingsapp/applications.py:83 aurora/settingsapp/inputs.py:249
 #: aurora/settingsapp/language.py:213 aurora/settingsapp/system.py:135
 #: aurora/settingsapp/system.py:625
-#, no-python-format
 msgid "Remove"
 msgstr "हटाएँ"
 
 #: aurora/settingsapp/applications.py:134 aurora/shell/notifications.py:325
 #: aurora/shell/quicksettings.py:176
-#, no-python-format
 msgid "Do Not Disturb"
 msgstr "परेशान न करें"
 
 #: aurora/settingsapp/applications.py:136
-#, no-python-format
-msgid ""
-"Only urgent notifications will pop up. Everything still appears in the "
-"notification center."
+msgid "Only urgent notifications will pop up. Everything still appears in the notification center."
 msgstr "केवल ज़रूरी सूचनाएँ दिखेंगी। बाकी सब सूचना केंद्र में रहेगा।"
 
 #: aurora/settingsapp/applications.py:138
-#, no-python-format
 msgid "Where to find them"
 msgstr "इन्हें कहाँ पाएँ"
 
 #: aurora/settingsapp/applications.py:139
-#, no-python-format
 msgid "Click the clock in the top bar"
 msgstr "ऊपरी बार में घड़ी पर क्लिक करें"
 
 #: aurora/settingsapp/applications.py:140
-#, no-python-format
 msgid "to see past notifications and the calendar."
 msgstr "पिछली सूचनाएँ और कैलेंडर देखने के लिए।"
 
 #: aurora/settingsapp/applications.py:144
-#, no-python-format
 msgid "App Notifications"
 msgstr "ऐप सूचनाएँ"
 
 #: aurora/settingsapp/applications.py:145
-#, no-python-format
 msgid "Apps appear here after their first notification."
 msgstr "ऐप्स अपनी पहली सूचना के बाद यहाँ दिखते हैं।"
 
 #: aurora/settingsapp/applications.py:148
-#, no-python-format
 msgid "No notifications yet"
 msgstr "अभी कोई सूचना नहीं"
 
 #: aurora/settingsapp/applications.py:158
-#, no-python-format
 msgid "Removable Media"
 msgstr "हटाने योग्य मीडिया"
 
 #: aurora/settingsapp/applications.py:159
-#, no-python-format
 msgid "Show a notification"
 msgstr "एक सूचना दिखाएँ"
 
 #: aurora/settingsapp/applications.py:159 aurora/shell/desktopicons.py:160
-#, no-python-format
 msgid "Open in Files"
 msgstr "फ़ाइलें में खोलें"
 
 #: aurora/settingsapp/applications.py:160
-#, no-python-format
 msgid "Do nothing"
 msgstr "कुछ न करें"
 
 #: aurora/settingsapp/applications.py:163
-#, no-python-format
 msgid "When a drive is connected"
 msgstr "जब कोई ड्राइव जोड़ी जाए"
 
 #: aurora/settingsapp/applications.py:171
 #: aurora/settingsapp/applications.py:172 aurora/settingsapp/devices.py:140
-#, no-python-format
 msgid "Default"
 msgstr "डिफ़ॉल्ट"
 
@@ -2548,7 +2115,6 @@ msgid "Fast"
 msgstr "तेज़"
 
 #: aurora/settingsapp/applications.py:175 aurora/settingsapp/display.py:18
-#, no-python-format
 msgid "Normal"
 msgstr "सामान्य"
 
@@ -2561,156 +2127,134 @@ msgid "Slowest"
 msgstr "सबसे धीमा"
 
 #: aurora/settingsapp/applications.py:198
-#, no-python-format
 msgid "Accessibility"
 msgstr "सुलभता"
 
 #: aurora/settingsapp/applications.py:208
-#, no-python-format
 msgid "Seeing"
 msgstr "दृष्टि"
 
 #: aurora/settingsapp/applications.py:210
-#, no-python-format
 msgid "High contrast"
 msgstr "उच्च कंट्रास्ट"
 
 #: aurora/settingsapp/applications.py:213
-#, no-python-format
 msgid "Text size"
 msgstr "टेक्स्ट का आकार"
 
 #: aurora/settingsapp/applications.py:221
-#, no-python-format
 msgid "Reduce animation"
 msgstr "एनिमेशन कम करें"
 
 #: aurora/settingsapp/applications.py:223
-#, no-python-format
 msgid "Always show scrollbars"
 msgstr "स्क्रॉलबार हमेशा दिखाएँ"
 
 #: aurora/settingsapp/applications.py:234
-#, no-python-format
 msgid "Screen reader"
 msgstr "स्क्रीन रीडर"
 
 #: aurora/settingsapp/applications.py:236
-#, no-python-format
 msgid "Reads the screen aloud (Orca)"
 msgstr "स्क्रीन को पढ़कर सुनाता है (Orca)"
 
 #: aurora/settingsapp/applications.py:238
-#, no-python-format
 msgid "Zoom"
 msgstr "ज़ूम"
 
 #: aurora/settingsapp/applications.py:238
-#, no-python-format
-msgid ""
-"Super+Alt+8 turns zoom on and off; Super+Alt+= and Super+Alt+− zoom in and "
-"out."
-msgstr ""
-"Super+Alt+8 ज़ूम चालू और बंद करता है; Super+Alt+= और Super+Alt+− ज़ूम इन और आउट करते "
-"हैं।"
+msgid "Super+Alt+8 turns zoom on and off; Super+Alt+= and Super+Alt+− zoom in and out."
+msgstr "Super+Alt+8 ज़ूम चालू और बंद करता है; Super+Alt+= और Super+Alt+− ज़ूम इन और आउट करते हैं।"
 
 #: aurora/settingsapp/applications.py:241
-#, no-python-format
 msgid "Magnification"
 msgstr "आवर्धन"
 
 #: aurora/settingsapp/applications.py:245
-#, no-python-format
 msgid "Zoom area"
 msgstr "ज़ूम क्षेत्र"
 
 #: aurora/settingsapp/applications.py:245
-#, no-python-format
 msgid "Whole screen"
 msgstr "पूरी स्क्रीन"
 
 #: aurora/settingsapp/applications.py:245
-#, no-python-format
 msgid "Lens around the pointer"
 msgstr "पॉइंटर के चारों ओर लेंस"
 
 #: aurora/settingsapp/applications.py:250
-#, no-python-format
 msgid "Hearing"
 msgstr "श्रवण"
 
 #: aurora/settingsapp/applications.py:253
-#, no-python-format
 msgid "Alert sounds"
 msgstr "चेतावनी ध्वनियाँ"
 
 #: aurora/settingsapp/applications.py:255
-#, no-python-format
 msgid "Captions"
 msgstr "कैप्शन"
 
 #: aurora/settingsapp/applications.py:256
-#, no-python-format
-msgid ""
-"Firefox and Videos show subtitles when a video has them; Aurora AI can "
-"dictate what you say."
-msgstr ""
-"वीडियो में उपशीर्षक हों तो Firefox और वीडियो उन्हें दिखाते हैं; Aurora AI आपकी बात लिख "
-"सकता है।"
+msgid "Firefox and Videos show subtitles when a video has them; Aurora AI can dictate what you say."
+msgstr "वीडियो में उपशीर्षक हों तो Firefox और वीडियो उन्हें दिखाते हैं; Aurora AI आपकी बात लिख सकता है।"
 
-#: aurora/settingsapp/applications.py:259 aurora/settingsapp/inputs.py:165
-#, no-python-format
+#: aurora/settingsapp/applications.py:259 aurora/settingsapp/inputs.py:168
 msgid "Typing"
 msgstr "टाइपिंग"
 
 #: aurora/settingsapp/applications.py:261
-#, no-python-format
 msgid "Screen keyboard"
 msgstr "स्क्रीन कीबोर्ड"
 
 #: aurora/settingsapp/applications.py:263
-#, no-python-format
-msgid ""
-"A keyboard on the screen, for touch screens or when a keyboard is hard to use"
+msgid "A keyboard on the screen, for touch screens or when a keyboard is hard to use"
 msgstr "स्क्रीन पर एक कीबोर्ड, टच स्क्रीन के लिए या जब कीबोर्ड इस्तेमाल करना कठिन हो"
 
 #: aurora/settingsapp/applications.py:266
-#, no-python-format
 msgid "Blinking text cursor"
 msgstr "टिमटिमाता टेक्स्ट कर्सर"
 
 #: aurora/settingsapp/applications.py:268
-#, no-python-format
 msgid "Repeat keys"
 msgstr "कुंजी दोहराव"
 
 #: aurora/settingsapp/applications.py:269
-#, no-python-format
 msgid "Repeat delay and speed are in Keyboard."
 msgstr "दोहराव विलंब और गति कीबोर्ड में हैं।"
 
 #: aurora/settingsapp/applications.py:271
-#, no-python-format
 msgid "Pointing & Clicking"
 msgstr "पॉइंटिंग और क्लिकिंग"
 
 #: aurora/settingsapp/applications.py:274
-#, no-python-format
 msgid "Double-click delay"
 msgstr "डबल-क्लिक विलंब"
 
-#: aurora/settingsapp/applications.py:277 aurora/settingsapp/inputs.py:138
-#, no-python-format
+#: aurora/settingsapp/applications.py:277 aurora/settingsapp/inputs.py:141
 msgid "Pointer speed"
 msgstr "पॉइंटर गति"
 
 #: aurora/settingsapp/applications.py:278
-#, no-python-format
 msgid "Speed, left-handed use and gestures are in Mouse & Touchpad."
 msgstr "गति, बाएँ हाथ का उपयोग और इशारे माउस और टचपैड में हैं।"
 
-#: aurora/settingsapp/desktop.py:12 aurora/shell/sysnotify.py:42
-#, no-python-format
+#: aurora/settingsapp/app.py:44 aurora/settingsapp/app.py:66
+#: aurora/settingsapp/app.py:78 aurora/settingsapp/app.py:79
+#: aurora/settingsapp/desktop.py:185 aurora/settingsapp/inputs.py:42
+#: aurora/shell/quicksettings.py:239 aurora/shell/search.py:433
+#: aurora/shell/wallpaper.py:162
+msgid "Settings"
+msgstr "सेटिंग्स"
+
+#: aurora/settingsapp/app.py:98
+msgid "This page could not be loaded"
+msgstr "यह पृष्ठ लोड नहीं हो सका"
+
+#: aurora/settingsapp/app.py:119
+msgid "Open a specific page"
+msgstr "कोई विशेष पृष्ठ खोलें"
+
+#: aurora/settingsapp/desktop.py:12 aurora/shell/sysnotify.py:55
 msgid "Aurora"
 msgstr "Aurora"
 
@@ -2743,587 +2287,475 @@ msgid "Dock hides until you need it"
 msgstr "डॉक ज़रूरत पड़ने तक छिपा रहता है"
 
 #: aurora/settingsapp/desktop.py:54
-#, fuzzy, no-python-format
 msgid "Desktop Profiles"
-msgstr "डेस्कटॉप"
+msgstr "डेस्कटॉप प्रोफ़ाइल"
 
 #: aurora/settingsapp/desktop.py:59
-#, fuzzy, no-python-format
 msgid "Ready-made profiles"
-msgstr "पढ़कर सुनाने की आवाज़"
+msgstr "तैयार प्रोफ़ाइल"
 
 #: aurora/settingsapp/desktop.py:60
-#, no-python-format
 msgid "Apply a set of dock, notification, animation and power settings."
-msgstr ""
+msgstr "डॉक, सूचनाओं, एनिमेशन और पावर की सेटिंग्स का एक सेट लागू करें।"
 
 #: aurora/settingsapp/desktop.py:61
-#, no-python-format
 msgid "Work"
-msgstr ""
+msgstr "कार्य"
 
 #: aurora/settingsapp/desktop.py:61
-#, no-python-format
 msgid "Gaming"
-msgstr ""
+msgstr "गेमिंग"
 
 #: aurora/settingsapp/desktop.py:62 aurora/settingsapp/health.py:218
 #: aurora/settingsapp/power.py:125
-#, no-python-format
 msgid "Battery"
 msgstr "बैटरी"
 
 #: aurora/settingsapp/desktop.py:67
-#, no-python-format
 msgid "Saved profiles"
-msgstr ""
+msgstr "सहेजी गई प्रोफ़ाइल"
 
 #: aurora/settingsapp/desktop.py:69
-#, no-python-format
 msgid "Save current setup…"
-msgstr ""
+msgstr "वर्तमान सेटअप सहेजें…"
 
 #: aurora/settingsapp/desktop.py:87
-#, no-python-format
 msgid "Profile applied"
-msgstr ""
+msgstr "प्रोफ़ाइल लागू की गई"
 
 #: aurora/settingsapp/desktop.py:91
-#, no-python-format
 msgid "Save current setup"
-msgstr ""
+msgstr "वर्तमान सेटअप सहेजें"
 
 #: aurora/settingsapp/desktop.py:92
-#, fuzzy, no-python-format
 msgid "Profile name"
-msgstr "फ़ाइल का नाम"
+msgstr "प्रोफ़ाइल का नाम"
 
 #: aurora/settingsapp/desktop.py:103
-#, no-python-format
 msgid "Profile saved"
-msgstr ""
+msgstr "प्रोफ़ाइल सहेजी गई"
 
 #: aurora/settingsapp/desktop.py:105
-#, no-python-format
 msgid "Enter a valid profile name"
-msgstr ""
+msgstr "मान्य प्रोफ़ाइल नाम दर्ज करें"
 
 #: aurora/settingsapp/desktop.py:112
-#, no-python-format
 msgid "Desktop & Dock"
 msgstr "डेस्कटॉप और डॉक"
 
 #: aurora/settingsapp/desktop.py:118
-#, no-python-format
 msgid "Settings schema not installed"
 msgstr "सेटिंग्स स्कीमा स्थापित नहीं है"
 
 #: aurora/settingsapp/desktop.py:122
-#, no-python-format
 msgid "Layout"
 msgstr "लेआउट"
 
 #: aurora/settingsapp/desktop.py:122
-#, no-python-format
 msgid "Start from a preset, then fine-tune below."
 msgstr "किसी प्रीसेट से शुरू करें, फिर नीचे बदलाव करें।"
 
 #: aurora/settingsapp/desktop.py:146
-#, no-python-format
 msgid "Top Bar"
 msgstr "ऊपरी बार"
 
-#: aurora/settingsapp/desktop.py:147 aurora/settingsapp/desktop.py:155
-#, no-python-format
+#: aurora/settingsapp/desktop.py:147 aurora/settingsapp/desktop.py:156
 msgid "Position"
 msgstr "स्थिति"
 
 #: aurora/settingsapp/desktop.py:148
-#, no-python-format
 msgid "Top"
 msgstr "ऊपर"
 
-#: aurora/settingsapp/desktop.py:148 aurora/settingsapp/desktop.py:156
-#, no-python-format
+#: aurora/settingsapp/desktop.py:148 aurora/settingsapp/desktop.py:157
 msgid "Bottom"
 msgstr "नीचे"
 
 #: aurora/settingsapp/desktop.py:149
-#, no-python-format
 msgid "Clock"
 msgstr "घड़ी"
 
-#: aurora/settingsapp/desktop.py:150 aurora/settingsapp/desktop.py:156
-#: aurora/settingsapp/desktop.py:167 aurora/settingsapp/sound.py:123
-#, no-python-format
+#: aurora/settingsapp/desktop.py:150 aurora/settingsapp/desktop.py:157
+#: aurora/settingsapp/desktop.py:168 aurora/settingsapp/sound.py:123
 msgid "Right"
 msgstr "दाएँ"
 
 #: aurora/settingsapp/desktop.py:150
-#, no-python-format
 msgid "Center"
 msgstr "बीच में"
 
 #: aurora/settingsapp/desktop.py:151
-#, no-python-format
 msgid "Opacity"
 msgstr "अपारदर्शिता"
 
 #: aurora/settingsapp/desktop.py:152
-#, no-python-format
 msgid "Show seconds"
 msgstr "सेकंड दिखाएँ"
 
-#: aurora/settingsapp/desktop.py:154
-#, no-python-format
+#: aurora/settingsapp/desktop.py:153 aurora/shell/sysmon.py:114
+msgid "System monitor"
+msgstr "सिस्टम मॉनिटर"
+
+#: aurora/settingsapp/desktop.py:155
 msgid "Dock"
 msgstr "डॉक"
 
-#: aurora/settingsapp/desktop.py:156 aurora/settingsapp/desktop.py:167
+#: aurora/settingsapp/desktop.py:157 aurora/settingsapp/desktop.py:168
 #: aurora/settingsapp/sound.py:121
-#, no-python-format
 msgid "Left"
 msgstr "बाएँ"
 
-#: aurora/settingsapp/desktop.py:157
-#, no-python-format
+#: aurora/settingsapp/desktop.py:158
 msgid "Hidden"
 msgstr "छिपा हुआ"
 
-#: aurora/settingsapp/desktop.py:159
-#, no-python-format
+#: aurora/settingsapp/desktop.py:160
 msgid "Floating"
 msgstr "तैरता"
 
-#: aurora/settingsapp/desktop.py:159
-#, no-python-format
+#: aurora/settingsapp/desktop.py:160
 msgid "Full-width panel"
 msgstr "पूरी चौड़ाई वाला पैनल"
 
-#: aurora/settingsapp/desktop.py:160
-#, no-python-format
+#: aurora/settingsapp/desktop.py:161
 msgid "Icon size"
 msgstr "आइकन का आकार"
 
-#: aurora/settingsapp/desktop.py:161
-#, no-python-format
+#: aurora/settingsapp/desktop.py:162
 msgid "Magnify icons on hover"
 msgstr "होवर करने पर आइकन बड़े करें"
 
-#: aurora/settingsapp/desktop.py:162
-#, no-python-format
+#: aurora/settingsapp/desktop.py:163
 msgid "Automatically hide"
 msgstr "अपने-आप छिपाएँ"
 
-#: aurora/settingsapp/desktop.py:163
-#, no-python-format
+#: aurora/settingsapp/desktop.py:164
 msgid "Show Trash"
 msgstr "ट्रैश दिखाएँ"
 
-#: aurora/settingsapp/desktop.py:165 aurora/settingsapp/inputs.py:354
-#, no-python-format
+#: aurora/settingsapp/desktop.py:166 aurora/settingsapp/inputs.py:357
 msgid "Windows"
 msgstr "विंडो"
 
-#: aurora/settingsapp/desktop.py:166
-#, no-python-format
+#: aurora/settingsapp/desktop.py:167
 msgid "Buttons"
 msgstr "बटन"
 
-#: aurora/settingsapp/desktop.py:168
-#, no-python-format
+#: aurora/settingsapp/desktop.py:169
 msgid "Button style"
 msgstr "बटन शैली"
 
-#: aurora/settingsapp/desktop.py:169
-#, no-python-format
+#: aurora/settingsapp/desktop.py:170
 msgid "Colored circles"
 msgstr "रंगीन वृत्त"
 
-#: aurora/settingsapp/desktop.py:169
-#, no-python-format
+#: aurora/settingsapp/desktop.py:170
 msgid "Monochrome icons"
 msgstr "एकरंगी आइकन"
 
-#: aurora/settingsapp/desktop.py:170
-#, no-python-format
+#: aurora/settingsapp/desktop.py:171
 msgid "Corner radius"
 msgstr "कोनों की गोलाई"
 
-#: aurora/settingsapp/desktop.py:171
-#, no-python-format
+#: aurora/settingsapp/desktop.py:172
 msgid "Gaps around snapped windows"
 msgstr "स्नैप की गई विंडो के आसपास की जगह"
 
-#: aurora/settingsapp/desktop.py:174
-#, no-python-format
+#: aurora/settingsapp/desktop.py:175
 msgid "Show files from the Desktop folder"
 msgstr "डेस्कटॉप फ़ोल्डर की फ़ाइलें दिखाएँ"
 
-#: aurora/settingsapp/desktop.py:175
-#, no-python-format
+#: aurora/settingsapp/desktop.py:176
 msgid "Icon position"
 msgstr "आइकन की स्थिति"
 
-#: aurora/settingsapp/desktop.py:176 aurora/settingsapp/inputs.py:345
-#, no-python-format
+#: aurora/settingsapp/desktop.py:177 aurora/settingsapp/inputs.py:348
 msgid "Top left"
 msgstr "ऊपर बाएँ"
 
-#: aurora/settingsapp/desktop.py:176 aurora/settingsapp/inputs.py:345
-#, no-python-format
+#: aurora/settingsapp/desktop.py:177 aurora/settingsapp/inputs.py:348
 msgid "Top right"
 msgstr "ऊपर दाएँ"
 
-#: aurora/settingsapp/desktop.py:178
-#, no-python-format
+#: aurora/settingsapp/desktop.py:179
 msgid "Super Key"
 msgstr "Super कुंजी"
 
-#: aurora/settingsapp/desktop.py:179
-#, no-python-format
+#: aurora/settingsapp/desktop.py:180
 msgid "Super opens"
 msgstr "Super खोलता है"
 
-#: aurora/settingsapp/desktop.py:180
-#, no-python-format
+#: aurora/settingsapp/desktop.py:181
 msgid "Spotlight search"
 msgstr "Spotlight खोज"
 
-#: aurora/settingsapp/desktop.py:180
-#, no-python-format
+#: aurora/settingsapp/desktop.py:181
 msgid "Launchpad (all apps)"
 msgstr "Launchpad (सभी ऐप्स)"
 
-#: aurora/settingsapp/desktop.py:182
-#, no-python-format
+#: aurora/settingsapp/desktop.py:183
 msgid "Search Results"
 msgstr "खोज परिणाम"
 
-#: aurora/settingsapp/desktop.py:182
-#, no-python-format
+#: aurora/settingsapp/desktop.py:183
 msgid "What Spotlight shows as you type."
 msgstr "टाइप करते समय Spotlight क्या दिखाता है।"
 
-#: aurora/settingsapp/desktop.py:183
-#, no-python-format
+#: aurora/settingsapp/desktop.py:184
 msgid "Recent files"
 msgstr "हाल की फ़ाइलें"
 
-#: aurora/settingsapp/desktop.py:184
-#, no-python-format
+#: aurora/settingsapp/desktop.py:185
 msgid "Code projects"
 msgstr "कोड प्रोजेक्ट"
 
-#: aurora/settingsapp/desktop.py:185
-#, no-python-format
+#: aurora/settingsapp/desktop.py:186
 msgid "Calculator"
 msgstr "कैलकुलेटर"
 
-#: aurora/settingsapp/desktop.py:186
-#, no-python-format
+#: aurora/settingsapp/desktop.py:187
 msgid "Unit and currency conversion"
 msgstr "इकाई और मुद्रा रूपांतरण"
 
-#: aurora/settingsapp/desktop.py:187
-#, no-python-format
+#: aurora/settingsapp/desktop.py:188
 msgid "Ask Aurora AI"
 msgstr "Aurora AI से पूछें"
 
-#: aurora/settingsapp/desktop.py:187
-#, no-python-format
+#: aurora/settingsapp/desktop.py:188
 msgid "Web search"
 msgstr "वेब खोज"
 
 #: aurora/settingsapp/devices.py:16 aurora/settingsapp/devices.py:38
 #: aurora/shell/quicksettings.py:168
-#, no-python-format
 msgid "Bluetooth"
 msgstr "ब्लूटूथ"
 
 #: aurora/settingsapp/devices.py:29
-#, no-python-format
 msgid "Devices"
 msgstr "डिवाइस"
 
 #: aurora/settingsapp/devices.py:33
-#, no-python-format
 msgid "No Bluetooth adapter found"
 msgstr "कोई ब्लूटूथ एडेप्टर नहीं मिला"
 
 #: aurora/settingsapp/devices.py:45
-#, no-python-format
 msgid "Advanced Bluetooth Settings…"
 msgstr "उन्नत ब्लूटूथ सेटिंग्स…"
 
 #: aurora/settingsapp/devices.py:108 aurora/settingsapp/network.py:108
-#, no-python-format
 msgid "Connected"
 msgstr "कनेक्ट है"
 
 #: aurora/settingsapp/devices.py:109 aurora/settingsapp/devices.py:120
-#, no-python-format
 msgid "Paired"
 msgstr "पेयर है"
 
 #: aurora/settingsapp/devices.py:109
-#, no-python-format
 msgid "Not set up"
 msgstr "सेट नहीं है"
 
 #: aurora/settingsapp/devices.py:112
-#, no-python-format
 msgid "Disconnect"
 msgstr "डिस्कनेक्ट करें"
 
-#: aurora/settingsapp/devices.py:115 aurora/shell/quicksettings.py:355
-#, no-python-format
+#: aurora/settingsapp/devices.py:115 aurora/shell/quicksettings.py:358
 msgid "Connect"
 msgstr "कनेक्ट करें"
 
 #: aurora/settingsapp/devices.py:118
-#, no-python-format
 msgid "Pair"
 msgstr "पेयर करें"
 
 #: aurora/settingsapp/devices.py:129 aurora/settingsapp/devices.py:133
-#, no-python-format
 msgid "Printers"
 msgstr "प्रिंटर"
 
 #: aurora/settingsapp/devices.py:133
-#, no-python-format
 msgid "Most network and USB printers are found automatically."
 msgstr "ज़्यादातर नेटवर्क और USB प्रिंटर अपने-आप मिल जाते हैं।"
 
 #: aurora/settingsapp/devices.py:137
-#, no-python-format
 msgid "No printers"
 msgstr "कोई प्रिंटर नहीं"
 
 #: aurora/settingsapp/devices.py:143
-#, no-python-format
 msgid "Make Default"
 msgstr "डिफ़ॉल्ट बनाएँ"
 
 #: aurora/settingsapp/devices.py:145
-#, no-python-format
 msgid "Default printer changed"
 msgstr "डिफ़ॉल्ट प्रिंटर बदला गया"
 
 #: aurora/settingsapp/devices.py:149
-#, no-python-format
 msgid "Add or Configure Printers…"
 msgstr "प्रिंटर जोड़ें या कॉन्फ़िगर करें…"
 
 #: aurora/settingsapp/display.py:18
-#, no-python-format
 msgid "90° Clockwise"
 msgstr "दक्षिणावर्त 90°"
 
 #: aurora/settingsapp/display.py:19
-#, no-python-format
 msgid "Upside Down"
 msgstr "उल्टा"
 
 #: aurora/settingsapp/display.py:19
-#, no-python-format
 msgid "90° Counterclockwise"
 msgstr "वामावर्त 90°"
 
 #: aurora/settingsapp/display.py:32 aurora/shell/search.py:400
-#, no-python-format
 msgid "Displays"
 msgstr "डिस्प्ले"
 
 #: aurora/settingsapp/display.py:45
-#, no-python-format
 msgid "No displays found"
 msgstr "कोई डिस्प्ले नहीं मिला"
 
 #: aurora/settingsapp/display.py:46
-#, no-python-format
 msgid "Display configuration needs a running Aurora session."
 msgstr "डिस्प्ले कॉन्फ़िगर करने के लिए चालू Aurora सत्र चाहिए।"
 
 #: aurora/settingsapp/display.py:57
-#, no-python-format
 msgid "Enabled"
 msgstr "सक्षम"
 
 #: aurora/settingsapp/display.py:75
-#, no-python-format
 msgid "Resolution"
 msgstr "रिज़ॉल्यूशन"
 
 #: aurora/settingsapp/display.py:80
-#, no-python-format
 msgid "Scale"
 msgstr "स्केल"
 
 #: aurora/settingsapp/display.py:85
-#, no-python-format
 msgid "Orientation"
 msgstr "दिशा"
 
 #: aurora/settingsapp/display.py:95
-#, no-python-format, python-brace-format
 msgid "Could not change display: {err}"
 msgstr "डिस्प्ले नहीं बदला जा सका: {err}"
 
 #: aurora/settingsapp/fingerprint.py:16
-#, no-python-format
 msgid "Good. Lift your finger and touch the reader again."
 msgstr "अच्छा। उँगली उठाएँ और सेंसर को फिर से छुएँ।"
 
 #: aurora/settingsapp/fingerprint.py:17
-#, no-python-format
 msgid "Try again."
 msgstr "फिर से कोशिश करें।"
 
 #: aurora/settingsapp/fingerprint.py:18
-#, no-python-format
 msgid "Swipe was too short. Try again."
 msgstr "स्वाइप बहुत छोटा था। फिर से कोशिश करें।"
 
 #: aurora/settingsapp/fingerprint.py:19
-#, no-python-format
 msgid "Center your finger on the reader and try again."
 msgstr "उँगली सेंसर के बीच में रखें और फिर से कोशिश करें।"
 
 #: aurora/settingsapp/fingerprint.py:20
-#, no-python-format
 msgid "Lift your finger and try again."
 msgstr "उँगली उठाएँ और फिर से कोशिश करें।"
 
 #: aurora/settingsapp/fingerprint.py:21
-#, no-python-format
 msgid "This finger is already enrolled."
 msgstr "यह उँगली पहले से दर्ज है।"
 
 #: aurora/settingsapp/fingerprint.py:45 aurora/settingsapp/fingerprint.py:50
 #: aurora/settingsapp/fingerprint.py:68
-#, no-python-format
 msgid "Fingerprint"
 msgstr "फ़िंगरप्रिंट"
 
 #: aurora/settingsapp/fingerprint.py:46
-#, no-python-format
 msgid "No fingerprint reader found"
 msgstr "कोई फ़िंगरप्रिंट रीडर नहीं मिला"
 
 #: aurora/settingsapp/fingerprint.py:49
-#, no-python-format
 msgid "Use your finger instead of the password for sudo and admin prompts"
 msgstr "sudo और व्यवस्थापक अनुरोधों के लिए पासवर्ड की जगह उँगली का उपयोग करें"
 
 #: aurora/settingsapp/fingerprint.py:51
-#, no-python-format
 msgid "Add Finger…"
 msgstr "उँगली जोड़ें…"
 
 #: aurora/settingsapp/fingerprint.py:51
-#, no-python-format
 msgid "Set Up…"
 msgstr "सेट करें…"
 
 #: aurora/settingsapp/fingerprint.py:57
-#, no-python-format
 msgid "Delete Fingerprints"
 msgstr "फ़िंगरप्रिंट हटाएँ"
 
 #: aurora/settingsapp/fingerprint.py:76
-#, no-python-format
 msgid "Finger"
 msgstr "उँगली"
 
 #: aurora/settingsapp/fingerprint.py:81
-#, no-python-format
 msgid "Choose a finger, then press Start and touch the reader several times."
 msgstr "एक उँगली चुनें, शुरू करें दबाएँ और रीडर को कई बार छुएँ।"
 
 #: aurora/settingsapp/fingerprint.py:87
-#, no-python-format
 msgid "Start"
 msgstr "शुरू करें"
 
 #: aurora/settingsapp/fingerprint.py:101
-#, no-python-format
 msgid "Touch the fingerprint reader."
 msgstr "फ़िंगरप्रिंट रीडर को छुएँ।"
 
 #: aurora/settingsapp/fingerprint.py:124
-#, no-python-format
 msgid "Fingerprint saved."
 msgstr "फ़िंगरप्रिंट सहेजा गया।"
 
 #: aurora/settingsapp/fingerprint.py:127
-#, no-python-format
 msgid "Enrollment failed. Please try again."
 msgstr "दर्ज करना विफल रहा। फिर से कोशिश करें।"
 
 #: aurora/settingsapp/fingerprint.py:138 aurora/welcome.py:140
-#, no-python-format
 msgid "Done"
 msgstr "हो गया"
 
 #: aurora/settingsapp/health.py:40
-#, no-python-format
 msgid "System"
 msgstr "सिस्टम"
 
 #: aurora/settingsapp/health.py:51
-#, no-python-format, python-brace-format
 msgid "{label}: {free} free ({pct:.0f}%)"
 msgstr "{label}: {free} खाली ({pct:.0f}%)"
 
-#: aurora/settingsapp/health.py:54
-#, no-python-format
+#: aurora/settingsapp/health.py:54 aurora/shell/sysnotify.py:104
 msgid "See What Uses Space"
 msgstr "देखें कि जगह किसने ली है"
 
-#: aurora/settingsapp/health.py:70
-#, no-python-format
+#: aurora/settingsapp/health.py:70 aurora/shell/sysmon.py:126
 msgid "Disk"
 msgstr "डिस्क"
 
 #: aurora/settingsapp/health.py:76
-#, no-python-format
 msgid "the disk reports that it is failing"
 msgstr "डिस्क खराब होने की सूचना दे रही है"
 
 #: aurora/settingsapp/health.py:78
-#, no-python-format, python-brace-format
 msgid "{n} bad sectors"
 msgstr "{n} खराब सेक्टर"
 
 #: aurora/settingsapp/health.py:81
-#, no-python-format, python-brace-format
 msgid "critical warning: {w}"
 msgstr "गंभीर चेतावनी: {w}"
 
 #: aurora/settingsapp/health.py:82
-#, no-python-format
 msgid "critical warning"
 msgstr "गंभीर चेतावनी"
 
 #: aurora/settingsapp/health.py:96
-#, no-python-format
 msgid "Disk health isn't available on this computer"
 msgstr "इस कंप्यूटर पर डिस्क की स्थिति उपलब्ध नहीं है"
 
 #: aurora/settingsapp/health.py:98
-#, no-python-format
 msgid "No disks report health data (normal in virtual machines)"
 msgstr "कोई डिस्क स्थिति की जानकारी नहीं देती (वर्चुअल मशीन में सामान्य)"
 
 #: aurora/settingsapp/health.py:101
-#, no-python-format
 msgid "Back up your files now. "
 msgstr "अभी अपनी फ़ाइलों का बैकअप लें। "
 
 #: aurora/settingsapp/health.py:102
-#, no-python-format
 msgid "Open Disks"
 msgstr "डिस्क खोलें"
 
@@ -3341,304 +2773,241 @@ msgid_plural "{n} updates available"
 msgstr[0] "{n} अपडेट उपलब्ध है"
 msgstr[1] "{n} अपडेट उपलब्ध हैं"
 
-#: aurora/settingsapp/health.py:112 aurora/shell/sysnotify.py:64
-#, no-python-format
+#: aurora/settingsapp/health.py:112 aurora/shell/sysnotify.py:77
 msgid "Update"
 msgstr "अपडेट करें"
 
 #: aurora/settingsapp/health.py:113
-#, no-python-format
 msgid "Software is up to date"
 msgstr "सॉफ़्टवेयर अद्यतित है"
 
 #: aurora/settingsapp/health.py:118
-#, no-python-format
 msgid "Firmware updates aren't supported here"
 msgstr "यहाँ फ़र्मवेयर अपडेट समर्थित नहीं हैं"
 
 #: aurora/settingsapp/health.py:127
-#, no-python-format, python-brace-format
 msgid "Firmware updates for {names}"
 msgstr "{names} के लिए फ़र्मवेयर अपडेट"
 
 #: aurora/settingsapp/health.py:128
-#, no-python-format
 msgid "Open Firmware"
 msgstr "फ़र्मवेयर खोलें"
 
 #: aurora/settingsapp/health.py:129
-#, no-python-format
 msgid "Firmware is up to date"
 msgstr "फ़र्मवेयर अद्यतित है"
 
 #: aurora/settingsapp/health.py:136
-#, no-python-format, python-brace-format
 msgid "Stopped with an error: {names}"
 msgstr "त्रुटि के साथ रुके: {names}"
 
 #: aurora/settingsapp/health.py:137
-#, no-python-format
 msgid "Open Logs"
 msgstr "लॉग खोलें"
 
 #: aurora/settingsapp/health.py:138
-#, no-python-format
 msgid "All system services are running"
 msgstr "सभी सिस्टम सेवाएँ चल रही हैं"
 
 #: aurora/settingsapp/health.py:143 aurora/settingsapp/health.py:151
-#, no-python-format
 msgid "No extra drivers needed"
 msgstr "किसी अतिरिक्त ड्राइवर की ज़रूरत नहीं"
 
 #: aurora/settingsapp/health.py:148
-#, no-python-format
 msgid "The NVIDIA driver is installed"
 msgstr "NVIDIA ड्राइवर स्थापित है"
 
 #: aurora/settingsapp/health.py:149
-#, no-python-format, python-brace-format
 msgid "An NVIDIA graphics card could use its own driver ({pkg})"
 msgstr "NVIDIA ग्राफ़िक्स कार्ड अपने ड्राइवर ({pkg}) का उपयोग कर सकता है"
 
 #: aurora/settingsapp/health.py:150 aurora/settingsapp/system.py:661
-#, no-python-format
 msgid "Additional Drivers"
 msgstr "अतिरिक्त ड्राइवर"
 
 #: aurora/settingsapp/health.py:161
-#, no-python-format
 msgid "The firewall is on"
 msgstr "फ़ायरवॉल चालू है"
 
 #: aurora/settingsapp/health.py:162
-#, no-python-format
 msgid "The firewall is off"
 msgstr "फ़ायरवॉल बंद है"
 
 #: aurora/settingsapp/health.py:163 aurora/settingsapp/system.py:42
-#, no-python-format
 msgid "Privacy & Security"
 msgstr "गोपनीयता और सुरक्षा"
 
 #: aurora/settingsapp/health.py:169
-#, no-python-format
 msgid "Snapshots need btrfs; this system uses another file system"
 msgstr "स्नैपशॉट के लिए btrfs चाहिए; यह सिस्टम दूसरी फ़ाइल सिस्टम का उपयोग करता है"
 
 #: aurora/settingsapp/health.py:171
-#, no-python-format
 msgid "Automatic snapshots aren't set up"
 msgstr "स्वचालित स्नैपशॉट सेट नहीं हैं"
 
 #: aurora/settingsapp/health.py:172
-#, no-python-format
 msgid "Open Timeshift"
 msgstr "Timeshift खोलें"
 
 #: aurora/settingsapp/health.py:174
-#, no-python-format
 msgid "Snapshots before updates are turned off"
 msgstr "अपडेट से पहले स्नैपशॉट बंद हैं"
 
 #: aurora/settingsapp/health.py:175 aurora/settingsapp/system.py:641
-#, no-python-format
 msgid "Software Updates"
 msgstr "सॉफ़्टवेयर अपडेट"
 
 #: aurora/settingsapp/health.py:176
-#, no-python-format
 msgid "A snapshot is taken before every update"
 msgstr "हर अपडेट से पहले एक स्नैपशॉट बनाया जाता है"
 
 #: aurora/settingsapp/health.py:188
-#, no-python-format, python-brace-format
 msgid "The battery holds {pct:.0f}% of its original charge"
 msgstr "बैटरी अपनी मूल क्षमता का {pct:.0f}% रखती है"
 
 #: aurora/settingsapp/health.py:190
-#, no-python-format
 msgid "(consider replacing it)"
 msgstr "(बदलने पर विचार करें)"
 
 #: aurora/settingsapp/health.py:202
-#, no-python-format, python-brace-format
 msgid "{free} of {total} free"
 msgstr "{total} में से {free} खाली"
 
 #: aurora/settingsapp/health.py:205
-#, no-python-format
 msgid "See What Uses Memory"
 msgstr "देखें कि मेमोरी कौन इस्तेमाल कर रहा है"
 
 #: aurora/settingsapp/health.py:210
-#, no-python-format
 msgid "Disk space"
 msgstr "डिस्क स्थान"
 
 #: aurora/settingsapp/health.py:211
-#, no-python-format
 msgid "Disk health"
 msgstr "डिस्क की स्थिति"
 
 #: aurora/settingsapp/health.py:212
-#, no-python-format
 msgid "Software updates"
 msgstr "सॉफ़्टवेयर अपडेट"
 
 #: aurora/settingsapp/health.py:213
-#, no-python-format
 msgid "Firmware"
 msgstr "फ़र्मवेयर"
 
 #: aurora/settingsapp/health.py:214
-#, no-python-format
 msgid "System services"
 msgstr "सिस्टम सेवाएँ"
 
 #: aurora/settingsapp/health.py:215
-#, no-python-format
 msgid "Graphics drivers"
 msgstr "ग्राफ़िक्स ड्राइवर"
 
 #: aurora/settingsapp/health.py:216 aurora/settingsapp/system.py:86
 #: aurora/settingsapp/system.py:95
-#, no-python-format
 msgid "Firewall"
 msgstr "फ़ायरवॉल"
 
 #: aurora/settingsapp/health.py:217
-#, no-python-format
 msgid "System snapshots"
 msgstr "सिस्टम स्नैपशॉट"
 
 #: aurora/settingsapp/health.py:226 aurora/settingsapp/health.py:238
-#, no-python-format
 msgid "Aurora Doctor"
 msgstr "Aurora Doctor"
 
 #: aurora/settingsapp/health.py:234 aurora/shell/search.py:412
-#, no-python-format
 msgid "System Health"
 msgstr "सिस्टम स्वास्थ्य"
 
 #: aurora/settingsapp/health.py:239
-#, no-python-format
-msgid ""
-"Checks your computer for common problems. Nothing is changed without you "
-"clicking."
+msgid "Checks your computer for common problems. Nothing is changed without you clicking."
 msgstr "आम समस्याओं के लिए कंप्यूटर की जाँच करता है। आपके क्लिक के बिना कुछ नहीं बदलता।"
 
 #: aurora/settingsapp/health.py:241 aurora/settingsapp/health.py:335
 #: aurora/settingsapp/system.py:655 aurora/settingsapp/system.py:663
-#, no-python-format
 msgid "Checking…"
 msgstr "जाँच हो रही है…"
 
 #: aurora/settingsapp/health.py:244
-#, no-python-format
 msgid "Check Again"
 msgstr "फिर से जाँचें"
 
 #: aurora/settingsapp/health.py:249
-#, no-python-format
 msgid "Copy report"
 msgstr "रिपोर्ट कॉपी करें"
 
 #: aurora/settingsapp/health.py:255 aurora/settingsapp/health.py:263
-#, no-python-format
 msgid "Guided Diagnostics"
 msgstr "निर्देशित निदान"
 
 #: aurora/settingsapp/health.py:256
-#, no-python-format
 msgid "Choose a problem, review the report, then save it yourself."
 msgstr "समस्या चुनें, रिपोर्ट जाँचें, फिर स्वयं सहेजें।"
 
 #: aurora/settingsapp/health.py:257
-#, no-python-format
 msgid "Create Diagnostic Report…"
 msgstr "निदान रिपोर्ट बनाएँ…"
 
 #: aurora/settingsapp/health.py:264
-#, no-python-format
 msgid "No report is uploaded automatically."
 msgstr "कोई रिपोर्ट अपने आप अपलोड नहीं होती।"
 
 #: aurora/settingsapp/health.py:267
-#, no-python-format
 msgid "Problem"
 msgstr "समस्या"
 
 #: aurora/settingsapp/health.py:268
-#, no-python-format
 msgid "Installation"
 msgstr "स्थापना"
 
 #: aurora/settingsapp/health.py:268
-#, no-python-format
 msgid "Startup or login"
 msgstr "शुरुआत या लॉगिन"
 
 #: aurora/settingsapp/health.py:268
-#, no-python-format
 msgid "Applications"
 msgstr "अनुप्रयोग"
 
 #: aurora/settingsapp/health.py:269
-#, no-python-format
 msgid "Include detailed logs"
 msgstr "विस्तृत लॉग शामिल करें"
 
 #: aurora/settingsapp/health.py:270
-#, no-python-format
-msgid ""
-"Logs may contain personal information. Review the report before sharing it."
+msgid "Logs may contain personal information. Review the report before sharing it."
 msgstr "लॉग में निजी जानकारी हो सकती है। साझा करने से पहले रिपोर्ट जाँचें।"
 
 #: aurora/settingsapp/health.py:276
-#, no-python-format
 msgid "Create Report"
 msgstr "रिपोर्ट बनाएँ"
 
 #: aurora/settingsapp/health.py:284
-#, no-python-format
 msgid "Collecting diagnostics…"
 msgstr "निदान जानकारी एकत्र हो रही है…"
 
 #: aurora/settingsapp/health.py:292
-#, no-python-format
 msgid "Review Diagnostic Report"
 msgstr "निदान रिपोर्ट जाँचें"
 
 #: aurora/settingsapp/health.py:293
-#, no-python-format
-msgid ""
-"Nothing is sent automatically. Remove anything you do not want to share."
+msgid "Nothing is sent automatically. Remove anything you do not want to share."
 msgstr "कुछ भी अपने आप भेजा नहीं जाता। जो साझा नहीं करना चाहते, उसे हटाएँ।"
 
 #: aurora/settingsapp/health.py:302
-#, no-python-format
 msgid "Save Report…"
 msgstr "रिपोर्ट सहेजें…"
 
 #: aurora/settingsapp/health.py:311
-#, no-python-format
 msgid "Save Diagnostic Report"
 msgstr "निदान रिपोर्ट सहेजें"
 
 #: aurora/settingsapp/health.py:319
-#, no-python-format
 msgid "Diagnostic report saved"
 msgstr "निदान रिपोर्ट सहेजी गई"
 
 #: aurora/settingsapp/health.py:327
-#, no-python-format
 msgid "Report copied"
 msgstr "रिपोर्ट कॉपी हो गई"
 
 #: aurora/settingsapp/health.py:353
-#, no-python-format
 msgid "Everything looks good"
 msgstr "सब ठीक है"
 
@@ -3650,666 +3019,532 @@ msgstr[0] "{n} आइटम पर ध्यान देना है"
 msgstr[1] "{n} आइटम पर ध्यान देना है"
 
 #: aurora/settingsapp/inputs.py:20
-#, no-python-format
 msgid "Search and Launchpad"
 msgstr "खोज और लॉन्चपैड"
 
 #: aurora/settingsapp/inputs.py:21 aurora/shell/panel.py:240
-#, no-python-format
 msgid "Control Center"
 msgstr "नियंत्रण केंद्र"
 
 #: aurora/settingsapp/inputs.py:22
-#, no-python-format
 msgid "Clipboard history"
 msgstr "क्लिपबोर्ड इतिहास"
 
 #: aurora/settingsapp/inputs.py:23
-#, no-python-format
 msgid "Emoji picker"
 msgstr "इमोजी चयनकर्ता"
 
 #: aurora/settingsapp/inputs.py:25
-#, no-python-format
 msgid "Read selected text aloud"
 msgstr "चुना हुआ पाठ ज़ोर से पढ़ें"
 
 #: aurora/settingsapp/inputs.py:28
-#, no-python-format
 msgid "Show all windows"
 msgstr "सभी विंडो दिखाएँ"
 
 #: aurora/settingsapp/inputs.py:29
-#, no-python-format
 msgid "Screenshot of the screen"
 msgstr "स्क्रीन का स्क्रीनशॉट"
 
 #: aurora/settingsapp/inputs.py:30
-#, no-python-format
 msgid "Screenshot of an area"
 msgstr "किसी क्षेत्र का स्क्रीनशॉट"
 
 #: aurora/settingsapp/inputs.py:31
-#, no-python-format
 msgid "Copy text from the screen"
 msgstr "स्क्रीन से पाठ कॉपी करें"
 
 #: aurora/settingsapp/inputs.py:32
-#, no-python-format
+msgid "Pick a color from the screen"
+msgstr "स्क्रीन से रंग चुनें"
+
+#: aurora/settingsapp/inputs.py:33
+msgid "Show keyboard shortcuts"
+msgstr "कीबोर्ड शॉर्टकट दिखाएँ"
+
+#: aurora/settingsapp/inputs.py:34 aurora/shell/quicksettings.py:181
+msgid "Keep Awake"
+msgstr "जागृत रखें"
+
+#: aurora/settingsapp/inputs.py:35
 msgid "Volume up"
 msgstr "आवाज़ बढ़ाएँ"
 
-#: aurora/settingsapp/inputs.py:33
-#, no-python-format
+#: aurora/settingsapp/inputs.py:36
 msgid "Volume down"
 msgstr "आवाज़ घटाएँ"
 
-#: aurora/settingsapp/inputs.py:34 aurora/settingsapp/sound.py:83
-#, no-python-format
+#: aurora/settingsapp/inputs.py:37 aurora/settingsapp/sound.py:83
 msgid "Mute"
 msgstr "म्यूट"
 
-#: aurora/settingsapp/inputs.py:35
-#, no-python-format
+#: aurora/settingsapp/inputs.py:38
 msgid "Brightness up"
 msgstr "चमक बढ़ाएँ"
 
-#: aurora/settingsapp/inputs.py:36
-#, no-python-format
+#: aurora/settingsapp/inputs.py:39
 msgid "Brightness down"
 msgstr "चमक घटाएँ"
 
-#: aurora/settingsapp/inputs.py:37
-#, no-python-format
+#: aurora/settingsapp/inputs.py:40
 msgid "New terminal window"
 msgstr "नई टर्मिनल विंडो"
 
-#: aurora/settingsapp/inputs.py:40
-#, no-python-format
+#: aurora/settingsapp/inputs.py:43
 msgid "Lock screen"
 msgstr "स्क्रीन लॉक करें"
 
-#: aurora/settingsapp/inputs.py:43
-#, no-python-format
+#: aurora/settingsapp/inputs.py:46
 msgid "Next window"
 msgstr "अगली विंडो"
 
-#: aurora/settingsapp/inputs.py:44
-#, no-python-format
+#: aurora/settingsapp/inputs.py:47
 msgid "Previous window"
 msgstr "पिछली विंडो"
 
-#: aurora/settingsapp/inputs.py:45
-#, no-python-format
+#: aurora/settingsapp/inputs.py:48
 msgid "Close window"
 msgstr "विंडो बंद करें"
 
-#: aurora/settingsapp/inputs.py:46
-#, no-python-format
+#: aurora/settingsapp/inputs.py:49
 msgid "Maximize window"
 msgstr "विंडो बड़ी करें"
 
-#: aurora/settingsapp/inputs.py:47
-#, no-python-format
+#: aurora/settingsapp/inputs.py:50
 msgid "Restore window size"
 msgstr "विंडो का आकार पुनर्स्थापित करें"
 
-#: aurora/settingsapp/inputs.py:48
-#, no-python-format
+#: aurora/settingsapp/inputs.py:51
 msgid "Minimize window"
 msgstr "विंडो छोटी करें"
 
-#: aurora/settingsapp/inputs.py:49
-#, no-python-format
+#: aurora/settingsapp/inputs.py:52
 msgid "Full screen"
 msgstr "पूर्ण स्क्रीन"
 
-#: aurora/settingsapp/inputs.py:50
-#, no-python-format
+#: aurora/settingsapp/inputs.py:53
 msgid "Zoom on or off"
 msgstr "ज़ूम चालू या बंद करें"
 
-#: aurora/settingsapp/inputs.py:51
-#, no-python-format
+#: aurora/settingsapp/inputs.py:54
 msgid "Zoom in"
 msgstr "ज़ूम इन"
 
-#: aurora/settingsapp/inputs.py:52
-#, no-python-format
+#: aurora/settingsapp/inputs.py:55
 msgid "Zoom out"
 msgstr "ज़ूम आउट"
 
-#: aurora/settingsapp/inputs.py:53
-#, no-python-format
+#: aurora/settingsapp/inputs.py:56
 msgid "Window menu"
 msgstr "विंडो मेनू"
 
-#: aurora/settingsapp/inputs.py:62
-#, no-python-format
+#: aurora/settingsapp/inputs.py:65
 msgid "Snap window left"
 msgstr "विंडो को बाईं ओर लगाएँ"
 
-#: aurora/settingsapp/inputs.py:62
-#, no-python-format
+#: aurora/settingsapp/inputs.py:65
 msgid "Snap window right"
 msgstr "विंडो को दाईं ओर लगाएँ"
 
-#: aurora/settingsapp/inputs.py:64
-#, no-python-format
+#: aurora/settingsapp/inputs.py:67
 msgid "Move window to the top-left quarter"
 msgstr "विंडो को ऊपर-बाएँ चौथाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:65
-#, no-python-format
+#: aurora/settingsapp/inputs.py:68
 msgid "Move window to the top-right quarter"
 msgstr "विंडो को ऊपर-दाएँ चौथाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:66
-#, no-python-format
+#: aurora/settingsapp/inputs.py:69
 msgid "Move window to the bottom-left quarter"
 msgstr "विंडो को नीचे-बाएँ चौथाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:67
-#, no-python-format
+#: aurora/settingsapp/inputs.py:70
 msgid "Move window to the bottom-right quarter"
 msgstr "विंडो को नीचे-दाएँ चौथाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:68
-#, no-python-format
+#: aurora/settingsapp/inputs.py:71
 msgid "Move window to the left third"
 msgstr "विंडो को बाएँ तिहाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:69
-#, no-python-format
+#: aurora/settingsapp/inputs.py:72
 msgid "Move window to the center third"
 msgstr "विंडो को बीच के तिहाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:70
-#, no-python-format
+#: aurora/settingsapp/inputs.py:73
 msgid "Move window to the right third"
 msgstr "विंडो को दाएँ तिहाई में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:76
-#, no-python-format
+#: aurora/settingsapp/inputs.py:79
 msgid "Previous workspace"
 msgstr "पिछला कार्यक्षेत्र"
 
-#: aurora/settingsapp/inputs.py:78
-#, no-python-format
+#: aurora/settingsapp/inputs.py:81
 msgid "Next workspace"
 msgstr "अगला कार्यक्षेत्र"
 
-#: aurora/settingsapp/inputs.py:79
-#, no-python-format, python-brace-format
+#: aurora/settingsapp/inputs.py:82
 msgid "Go to workspace {n}"
 msgstr "कार्यक्षेत्र {n} पर जाएँ"
 
-#: aurora/settingsapp/inputs.py:81
-#, no-python-format, python-brace-format
+#: aurora/settingsapp/inputs.py:84
 msgid "Move window to workspace {n}"
 msgstr "विंडो को कार्यक्षेत्र {n} में ले जाएँ"
 
-#: aurora/settingsapp/inputs.py:87
-#, no-python-format
+#: aurora/settingsapp/inputs.py:90
 msgid "Mouse & Touchpad"
 msgstr "माउस और टचपैड"
 
-#: aurora/settingsapp/inputs.py:92
-#, no-python-format
+#: aurora/settingsapp/inputs.py:95
 msgid "General"
 msgstr "सामान्य"
 
-#: aurora/settingsapp/inputs.py:93
-#, no-python-format
+#: aurora/settingsapp/inputs.py:96
 msgid "Left-handed"
 msgstr "बाएँ हाथ वाला"
 
-#: aurora/settingsapp/inputs.py:97
-#, no-python-format
+#: aurora/settingsapp/inputs.py:100
 msgid "Mouse"
 msgstr "माउस"
 
-#: aurora/settingsapp/inputs.py:101
-#, no-python-format
+#: aurora/settingsapp/inputs.py:104
 msgid "Acceleration"
 msgstr "त्वरण"
 
-#: aurora/settingsapp/inputs.py:101
-#, no-python-format
+#: aurora/settingsapp/inputs.py:104
 msgid "Adaptive"
 msgstr "अनुकूली"
 
-#: aurora/settingsapp/inputs.py:101
-#, no-python-format
+#: aurora/settingsapp/inputs.py:104
 msgid "Flat"
 msgstr "समतल"
 
-#: aurora/settingsapp/inputs.py:104 aurora/settingsapp/inputs.py:113
-#, no-python-format
+#: aurora/settingsapp/inputs.py:107 aurora/settingsapp/inputs.py:116
 msgid "Natural scrolling"
 msgstr "प्राकृतिक स्क्रॉलिंग"
 
-#: aurora/settingsapp/inputs.py:107
-#, no-python-format
+#: aurora/settingsapp/inputs.py:110
 msgid "Content moves in the direction of the wheel"
 msgstr "सामग्री व्हील की दिशा में चलती है"
 
-#: aurora/settingsapp/inputs.py:109
-#, no-python-format
+#: aurora/settingsapp/inputs.py:112
 msgid "Touchpad"
 msgstr "टचपैड"
 
-#: aurora/settingsapp/inputs.py:111
-#, no-python-format
+#: aurora/settingsapp/inputs.py:114
 msgid "Tap to click"
 msgstr "क्लिक के लिए टैप करें"
 
-#: aurora/settingsapp/inputs.py:116
-#, no-python-format
+#: aurora/settingsapp/inputs.py:119
 msgid "Disable while typing"
 msgstr "टाइप करते समय बंद करें"
 
-#: aurora/settingsapp/inputs.py:121
-#, no-python-format
+#: aurora/settingsapp/inputs.py:124
 msgid "Scroll method"
 msgstr "स्क्रॉल विधि"
 
-#: aurora/settingsapp/inputs.py:121
-#, no-python-format
+#: aurora/settingsapp/inputs.py:124
 msgid "Two fingers"
 msgstr "दो उँगलियाँ"
 
-#: aurora/settingsapp/inputs.py:121
-#, no-python-format
+#: aurora/settingsapp/inputs.py:124
 msgid "Edge"
 msgstr "किनारा"
 
-#: aurora/settingsapp/inputs.py:126
-#, no-python-format
+#: aurora/settingsapp/inputs.py:129
 msgid "Secondary click"
 msgstr "द्वितीयक क्लिक"
 
-#: aurora/settingsapp/inputs.py:126
-#, no-python-format
+#: aurora/settingsapp/inputs.py:129
 msgid "Two-finger click"
 msgstr "दो उँगलियों से क्लिक"
 
-#: aurora/settingsapp/inputs.py:126
-#, no-python-format
+#: aurora/settingsapp/inputs.py:129
 msgid "Bottom-right corner"
 msgstr "नीचे दायाँ कोना"
 
-#: aurora/settingsapp/inputs.py:131
-#, no-python-format
+#: aurora/settingsapp/inputs.py:134
 msgid "Gestures"
 msgstr "इशारे"
 
-#: aurora/settingsapp/inputs.py:133
-#, no-python-format
-msgid ""
-"Three fingers: up for all windows, down for the desktop, sideways to change "
-"workspace. Pinch with four fingers for Launchpad."
-msgstr ""
-"तीन उँगलियाँ: ऊपर सभी विंडो, नीचे डेस्कटॉप, बगल में वर्कस्पेस बदलें। Launchpad के लिए चार "
-"उँगलियों से पिंच करें।"
+#: aurora/settingsapp/inputs.py:136
+msgid "Three fingers: up for all windows, down for the desktop, sideways to change workspace. Pinch with four fingers for Launchpad."
+msgstr "तीन उँगलियाँ: ऊपर सभी विंडो, नीचे डेस्कटॉप, बगल में वर्कस्पेस बदलें। Launchpad के लिए चार उँगलियों से पिंच करें।"
 
-#: aurora/settingsapp/inputs.py:160 aurora/settingsapp/language.py:144
-#, no-python-format
+#: aurora/settingsapp/inputs.py:163 aurora/settingsapp/language.py:144
 msgid "Keyboard"
 msgstr "कीबोर्ड"
 
-#: aurora/settingsapp/inputs.py:166
-#, no-python-format
+#: aurora/settingsapp/inputs.py:169
 msgid "Keyboard layouts are in Language & Region."
 msgstr "कीबोर्ड लेआउट भाषा और क्षेत्र में हैं।"
 
-#: aurora/settingsapp/inputs.py:167
-#, no-python-format
+#: aurora/settingsapp/inputs.py:170
 msgid "Repeat delay (ms)"
 msgstr "दोहराव विलंब (ms)"
 
-#: aurora/settingsapp/inputs.py:169
-#, no-python-format
+#: aurora/settingsapp/inputs.py:172
 msgid "Repeat rate (per second)"
 msgstr "दोहराव दर (प्रति सेकंड)"
 
-#: aurora/settingsapp/inputs.py:171
-#, no-python-format
+#: aurora/settingsapp/inputs.py:174
 msgid "Num Lock on at login"
 msgstr "लॉग इन पर Num Lock चालू"
 
-#: aurora/settingsapp/inputs.py:178
-#, no-python-format
+#: aurora/settingsapp/inputs.py:181
 msgid "Special Characters"
 msgstr "विशेष वर्ण"
 
-#: aurora/settingsapp/inputs.py:179
-#, no-python-format
-msgid ""
-"Press the Compose key, then a sequence: ' then e gives é, o then c gives ©, "
-"= then e gives €."
-msgstr ""
-"Compose कुंजी दबाएँ, फिर एक क्रम: ' फिर e से é, o फिर c से ©, = फिर e से € बनता है।"
+#: aurora/settingsapp/inputs.py:182
+msgid "Press the Compose key, then a sequence: ' then e gives é, o then c gives ©, = then e gives €."
+msgstr "Compose कुंजी दबाएँ, फिर एक क्रम: ' फिर e से é, o फिर c से ©, = फिर e से € बनता है।"
 
-#: aurora/settingsapp/inputs.py:181
-#, no-python-format
+#: aurora/settingsapp/inputs.py:184
 msgid "Right Alt"
 msgstr "दायाँ Alt"
 
-#: aurora/settingsapp/inputs.py:182
-#, no-python-format
+#: aurora/settingsapp/inputs.py:185
 msgid "Right Super"
 msgstr "दायाँ Super"
 
-#: aurora/settingsapp/inputs.py:182
-#, no-python-format
+#: aurora/settingsapp/inputs.py:185
 msgid "Menu key"
 msgstr "मेनू कुंजी"
 
-#: aurora/settingsapp/inputs.py:183
-#, no-python-format
+#: aurora/settingsapp/inputs.py:186
 msgid "Right Ctrl"
 msgstr "दायाँ Ctrl"
 
-#: aurora/settingsapp/inputs.py:183
-#, no-python-format
+#: aurora/settingsapp/inputs.py:186
 msgid "Caps Lock"
 msgstr "Caps Lock"
 
-#: aurora/settingsapp/inputs.py:186
-#, no-python-format
+#: aurora/settingsapp/inputs.py:189
 msgid "Compose key"
 msgstr "Compose कुंजी"
 
-#: aurora/settingsapp/inputs.py:189
-#, no-python-format
+#: aurora/settingsapp/inputs.py:192
 msgid "Emoji"
 msgstr "इमोजी"
 
-#: aurora/settingsapp/inputs.py:190
-#, no-python-format
+#: aurora/settingsapp/inputs.py:193
 msgid "Super+. opens the emoji picker in any app."
 msgstr "Super+. किसी भी ऐप में इमोजी पिकर खोलता है।"
 
-#: aurora/settingsapp/inputs.py:192
-#, no-python-format
+#: aurora/settingsapp/inputs.py:195
 msgid "Shortcuts"
 msgstr "शॉर्टकट"
 
-#: aurora/settingsapp/inputs.py:193
-#, no-python-format
+#: aurora/settingsapp/inputs.py:196
 msgid "Built-in shortcuts, plus your own commands."
 msgstr "अंतर्निहित शॉर्टकट, साथ में आपके अपने कमांड।"
 
-#: aurora/settingsapp/inputs.py:195 aurora/settingsapp/inputs.py:258
-#, no-python-format
+#: aurora/settingsapp/inputs.py:198 aurora/settingsapp/inputs.py:261
 msgid "Add Custom Shortcut"
 msgstr "कस्टम शॉर्टकट जोड़ें"
 
-#: aurora/settingsapp/inputs.py:232
-#, no-python-format
+#: aurora/settingsapp/inputs.py:235 aurora/shell/shortcuts.py:84
 msgid "Super"
 msgstr "Super"
 
-#: aurora/settingsapp/inputs.py:259
-#, no-python-format
+#: aurora/settingsapp/inputs.py:262
 msgid "Press the key combination, then enter the command to run."
 msgstr "कुंजियों का संयोजन दबाएँ, फिर चलाने के लिए कमांड लिखें।"
 
-#: aurora/settingsapp/inputs.py:261
-#, no-python-format
+#: aurora/settingsapp/inputs.py:264
 msgid "Press keys…"
 msgstr "कुंजियाँ दबाएँ…"
 
-#: aurora/settingsapp/inputs.py:262
-#, no-python-format
+#: aurora/settingsapp/inputs.py:265
 msgid "Command, e.g. firefox-esr --private-window"
 msgstr "कमांड, जैसे firefox-esr --private-window"
 
-#: aurora/settingsapp/inputs.py:267 aurora/settingsapp/system.py:607
-#, no-python-format
+#: aurora/settingsapp/inputs.py:270 aurora/settingsapp/system.py:607
 msgid "Add"
 msgstr "जोड़ें"
 
-#: aurora/settingsapp/inputs.py:320
-#, no-python-format
+#: aurora/settingsapp/inputs.py:323
 msgid "Multitasking"
 msgstr "मल्टीटास्किंग"
 
-#: aurora/settingsapp/inputs.py:325
-#, no-python-format
+#: aurora/settingsapp/inputs.py:328
 msgid "Workspaces"
 msgstr "वर्कस्पेस"
 
-#: aurora/settingsapp/inputs.py:326
-#, no-python-format
+#: aurora/settingsapp/inputs.py:329
 msgid "Switch with Super+1…9 or Ctrl+Alt+Left/Right."
 msgstr "Super+1…9 या Ctrl+Alt+बाएँ/दाएँ से बदलें।"
 
-#: aurora/settingsapp/inputs.py:329
-#, no-python-format
+#: aurora/settingsapp/inputs.py:332
 msgid "Number of workspaces"
 msgstr "वर्कस्पेस की संख्या"
 
-#: aurora/settingsapp/inputs.py:336
-#, no-python-format
+#: aurora/settingsapp/inputs.py:339
 msgid "Hot Corners"
 msgstr "हॉट कॉर्नर"
 
-#: aurora/settingsapp/inputs.py:337
-#, no-python-format
+#: aurora/settingsapp/inputs.py:340
 msgid "Push the pointer into a corner of the screen to…"
 msgstr "पॉइंटर को स्क्रीन के कोने में ले जाकर…"
 
-#: aurora/settingsapp/inputs.py:338
-#, no-python-format
+#: aurora/settingsapp/inputs.py:341
 msgid "Do Nothing"
 msgstr "कुछ न करें"
 
-#: aurora/settingsapp/inputs.py:338
-#, no-python-format
+#: aurora/settingsapp/inputs.py:341
 msgid "Show All Windows"
 msgstr "सभी विंडो दिखाएँ"
 
-#: aurora/settingsapp/inputs.py:339
-#, no-python-format
+#: aurora/settingsapp/inputs.py:342
 msgid "Show Apps (Launchpad)"
 msgstr "ऐप्स दिखाएँ (Launchpad)"
 
-#: aurora/settingsapp/inputs.py:340 aurora/shell/overview.py:95
-#, no-python-format
+#: aurora/settingsapp/inputs.py:343 aurora/shell/overview.py:95
 msgid "Show Desktop"
 msgstr "डेस्कटॉप दिखाएँ"
 
-#: aurora/settingsapp/inputs.py:341
-#, no-python-format
+#: aurora/settingsapp/inputs.py:344
 msgid "Open Control Center"
 msgstr "नियंत्रण केंद्र खोलें"
 
-#: aurora/settingsapp/inputs.py:342
-#, no-python-format
+#: aurora/settingsapp/inputs.py:345
 msgid "Open Notifications"
 msgstr "सूचनाएँ खोलें"
 
-#: aurora/settingsapp/inputs.py:343 aurora/shell/panel.py:301
-#, no-python-format
+#: aurora/settingsapp/inputs.py:346 aurora/shell/panel.py:301
 msgid "Lock Screen"
 msgstr "स्क्रीन लॉक करें"
 
-#: aurora/settingsapp/inputs.py:343
-#, no-python-format
+#: aurora/settingsapp/inputs.py:346
 msgid "Turn Screen Off"
 msgstr "स्क्रीन बंद करें"
 
-#: aurora/settingsapp/inputs.py:346
-#, no-python-format
+#: aurora/settingsapp/inputs.py:349
 msgid "Bottom left"
 msgstr "नीचे बाएँ"
 
-#: aurora/settingsapp/inputs.py:347
-#, no-python-format
+#: aurora/settingsapp/inputs.py:350
 msgid "Bottom right"
 msgstr "नीचे दाएँ"
 
-#: aurora/settingsapp/inputs.py:355
-#, no-python-format
-msgid ""
-"Super+W shows all windows. Super+Left/Right fills half the screen, "
-"Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. Hold Super while "
-"dragging a window to drop it into a quarter or third."
-msgstr ""
-"Super+W सभी विंडो दिखाता है। Super+बाएँ/दाएँ आधी स्क्रीन, Super+Ctrl+U/I/J/K "
-"चौथाई, Super+Ctrl+D/F/G तिहाई। विंडो खींचते समय Super दबाए रखें ताकि उसे चौथाई या "
-"तिहाई में रख सकें।"
-
 #: aurora/settingsapp/inputs.py:358
-#, no-python-format
+msgid "Super+W shows all windows. Super+Left/Right fills half the screen, Super+Ctrl+U/I/J/K a quarter, Super+Ctrl+D/F/G a third. Hold Super while dragging a window to drop it into a quarter or third."
+msgstr "Super+W सभी विंडो दिखाता है। Super+बाएँ/दाएँ आधी स्क्रीन, Super+Ctrl+U/I/J/K चौथाई, Super+Ctrl+D/F/G तिहाई। विंडो खींचते समय Super दबाए रखें ताकि उसे चौथाई या तिहाई में रख सकें।"
+
+#: aurora/settingsapp/inputs.py:361
 msgid "Snap windows to screen edges"
 msgstr "विंडो को स्क्रीन के किनारों पर स्नैप करें"
 
-#: aurora/settingsapp/inputs.py:361
-#, no-python-format
+#: aurora/settingsapp/inputs.py:364
 msgid "Drag a window to an edge to fill half the screen"
 msgstr "विंडो को किनारे तक खींचें ताकि वह आधी स्क्रीन भरे"
 
-#: aurora/settingsapp/inputs.py:362
-#, no-python-format
+#: aurora/settingsapp/inputs.py:365
 msgid "Drag to the top to maximize"
 msgstr "अधिकतम करने के लिए ऊपर खींचें"
 
-#: aurora/settingsapp/inputs.py:365
-#, no-python-format
+#: aurora/settingsapp/inputs.py:368
 msgid "Focus follows the pointer"
 msgstr "फ़ोकस पॉइंटर के साथ चलता है"
 
 #: aurora/settingsapp/language.py:120 aurora/shell/search.py:406
-#, no-python-format
 msgid "Language & Region"
 msgstr "भाषा और क्षेत्र"
 
 #: aurora/settingsapp/language.py:128 aurora/settingsapp/language.py:132
-#, no-python-format
 msgid "Language"
 msgstr "भाषा"
 
 #: aurora/settingsapp/language.py:129
-#, no-python-format
 msgid "Changes take effect the next time you log in."
 msgstr "बदलाव अगली बार लॉग इन करने पर लागू होंगे।"
 
 #: aurora/settingsapp/language.py:135
-#, no-python-format
 msgid "Formats"
 msgstr "प्रारूप"
 
 #: aurora/settingsapp/language.py:136
-#, no-python-format
 msgid "Dates, times, numbers and units"
 msgstr "तारीख, समय, संख्याएँ और इकाइयाँ"
 
 #: aurora/settingsapp/language.py:139
-#, no-python-format
 msgid "Log Out Now"
 msgstr "अभी लॉग आउट करें"
 
 #: aurora/settingsapp/language.py:145
-#, no-python-format
 msgid "Add several layouts and switch with Alt+Shift."
 msgstr "कई लेआउट जोड़ें और Alt+Shift से बदलें।"
 
 #: aurora/settingsapp/language.py:149
-#, no-python-format
 msgid "Add layout"
 msgstr "लेआउट जोड़ें"
 
 #: aurora/settingsapp/language.py:172
-#, no-python-format
 msgid "Language will change after you log out."
 msgstr "लॉग आउट करने के बाद भाषा बदल जाएगी।"
 
 #: aurora/settingsapp/network.py:35 aurora/shell/search.py:404
-#, no-python-format
 msgid "Network"
 msgstr "नेटवर्क"
 
 #: aurora/settingsapp/network.py:40
-#, no-python-format
 msgid "Status"
 msgstr "स्थिति"
 
 #: aurora/settingsapp/network.py:41
-#, no-python-format
 msgid "VPN and Advanced"
 msgstr "VPN और उन्नत"
 
 #: aurora/settingsapp/network.py:42
-#, no-python-format
-msgid ""
-"VPNs (WireGuard, OpenVPN, OpenConnect), static IP addresses, proxies, "
-"hotspots and every other connection option."
-msgstr ""
-"VPN (WireGuard, OpenVPN, OpenConnect), स्थिर IP पते, प्रॉक्सी, हॉटस्पॉट और बाकी "
-"सभी कनेक्शन विकल्प।"
+msgid "VPNs (WireGuard, OpenVPN, OpenConnect), static IP addresses, proxies, hotspots and every other connection option."
+msgstr "VPN (WireGuard, OpenVPN, OpenConnect), स्थिर IP पते, प्रॉक्सी, हॉटस्पॉट और बाकी सभी कनेक्शन विकल्प।"
 
 #: aurora/settingsapp/network.py:44
-#, no-python-format
 msgid "Open Connection Editor…"
 msgstr "कनेक्शन एडिटर खोलें…"
 
 #: aurora/settingsapp/network.py:47 aurora/settingsapp/network.py:53
 #: aurora/shell/quicksettings.py:164
-#, no-python-format
 msgid "Wi-Fi"
 msgstr "Wi-Fi"
 
 #: aurora/settingsapp/network.py:51
-#, no-python-format
 msgid "NetworkManager is not running"
 msgstr "NetworkManager नहीं चल रहा है"
 
 #: aurora/settingsapp/network.py:57
-#, no-python-format
 msgid "Scan"
 msgstr "स्कैन करें"
 
 #: aurora/settingsapp/network.py:75
-#, no-python-format
 msgid "Disconnected"
 msgstr "डिस्कनेक्ट"
 
 #: aurora/settingsapp/network.py:110 aurora/settingsapp/network.py:146
-#, no-python-format
 msgid "Share Wi-Fi"
 msgstr "Wi-Fi साझा करें"
 
 #: aurora/settingsapp/network.py:120
-#, no-python-format, python-brace-format
 msgid "Connected to {ssid}"
 msgstr "{ssid} से कनेक्ट"
 
 #: aurora/settingsapp/network.py:121
-#, no-python-format, python-brace-format
 msgid "Could not connect to {ssid}"
 msgstr "{ssid} से कनेक्ट नहीं हो सका"
 
 #: aurora/settingsapp/network.py:133
-#, no-python-format
 msgid "QR codes need the python3-qrcode package"
 msgstr "QR कोड के लिए python3-qrcode पैकेज चाहिए"
 
 #: aurora/settingsapp/network.py:141
-#, no-python-format, python-brace-format
 msgid "Point a phone's camera at the code to join “{ssid}”."
 msgstr "\"{ssid}\" से जुड़ने के लिए फ़ोन का कैमरा कोड पर रखें।"
 
 #: aurora/settingsapp/network.py:144
-#, no-python-format, python-brace-format
 msgid "Password: {p}"
 msgstr "पासवर्ड: {p}"
 
 #: aurora/settingsapp/power.py:29 aurora/settingsapp/power.py:31
-#: aurora/shell/quicksettings.py:292
-#, no-python-format
+#: aurora/shell/quicksettings.py:295
 msgid "Suspend"
 msgstr "स्लीप"
 
@@ -4322,27 +3557,22 @@ msgid "Nothing"
 msgstr "कुछ नहीं"
 
 #: aurora/settingsapp/power.py:48 aurora/shell/quicksettings.py:17
-#, no-python-format
 msgid "Power Saver"
 msgstr "पावर सेवर"
 
 #: aurora/settingsapp/power.py:48 aurora/shell/quicksettings.py:16
-#, no-python-format
 msgid "Balanced"
 msgstr "संतुलित"
 
 #: aurora/settingsapp/power.py:49 aurora/shell/quicksettings.py:16
-#, no-python-format
 msgid "Performance"
 msgstr "प्रदर्शन"
 
 #: aurora/settingsapp/power.py:59 aurora/shell/search.py:410
-#, no-python-format
 msgid "Power"
 msgstr "पावर"
 
 #: aurora/settingsapp/power.py:64
-#, no-python-format
 msgid "Screen"
 msgstr "स्क्रीन"
 
@@ -4354,1368 +3584,1069 @@ msgstr[0] "{n} मिनट"
 msgstr[1] "{n} मिनट"
 
 #: aurora/settingsapp/power.py:66 aurora/settingsapp/power.py:86
-#, no-python-format
 msgid "Never"
 msgstr "कभी नहीं"
 
 #: aurora/settingsapp/power.py:79
-#, no-python-format
 msgid "Screen blank"
 msgstr "स्क्रीन बंद"
 
 #: aurora/settingsapp/power.py:80
-#, no-python-format
 msgid "Turn the screen off after a period of inactivity"
 msgstr "कुछ देर निष्क्रिय रहने पर स्क्रीन बंद करें"
 
 #: aurora/settingsapp/power.py:81
-#, no-python-format
 msgid "Automatic screen lock"
 msgstr "स्क्रीन अपने-आप लॉक करें"
 
 #: aurora/settingsapp/power.py:84
-#, no-python-format
 msgid "Automatic Suspend"
 msgstr "स्वचालित निलंबन"
 
 #: aurora/settingsapp/power.py:85
-#, no-python-format
 msgid "Suspend the computer when it has not been used for a while."
 msgstr "कुछ देर इस्तेमाल न होने पर कंप्यूटर को निलंबित करें।"
 
 #: aurora/settingsapp/power.py:99
-#, no-python-format
 msgid "On battery"
 msgstr "बैटरी पर"
 
 #: aurora/settingsapp/power.py:100
-#, no-python-format
 msgid "When plugged in"
 msgstr "प्लग इन होने पर"
 
 #: aurora/settingsapp/power.py:102
-#, no-python-format
 msgid "Power Button and Lid"
 msgstr "पावर बटन और ढक्कन"
 
 #: aurora/settingsapp/power.py:105
-#, no-python-format
 msgid "Power button"
 msgstr "पावर बटन"
 
 #: aurora/settingsapp/power.py:111
-#, no-python-format
 msgid "Closing the lid"
 msgstr "ढक्कन बंद करने पर"
 
 #: aurora/settingsapp/power.py:116 aurora/settingsapp/power.py:119
-#, no-python-format
 msgid "Power mode"
 msgstr "पावर मोड"
 
 #: aurora/settingsapp/power.py:126
-#, no-python-format
 msgid "Charge"
 msgstr "चार्ज"
 
 #: aurora/settingsapp/power.py:128
-#, no-python-format
 msgid "Show battery percentage"
 msgstr "बैटरी प्रतिशत दिखाएँ"
 
 #: aurora/settingsapp/power.py:131
-#, no-python-format
 msgid "Next to the battery icon in the top bar"
 msgstr "ऊपरी बार में बैटरी आइकन के पास"
 
 #: aurora/settingsapp/power.py:134
-#, no-python-format
 msgid "Battery health"
 msgstr "बैटरी की स्थिति"
 
 #: aurora/settingsapp/power.py:136
-#, no-python-format
 msgid "Limit charging to 80%"
 msgstr "चार्जिंग 80% तक सीमित करें"
 
 #: aurora/settingsapp/power.py:137
-#, no-python-format
-msgid ""
-"Keeping a battery below full makes it last years longer. Turn off before a "
-"trip for a full charge."
-msgstr ""
-"बैटरी को पूरा न भरने से वह सालों ज़्यादा चलती है। यात्रा से पहले पूरे चार्ज के लिए इसे बंद करें।"
+msgid "Keeping a battery below full makes it last years longer. Turn off before a trip for a full charge."
+msgstr "बैटरी को पूरा न भरने से वह सालों ज़्यादा चलती है। यात्रा से पहले पूरे चार्ज के लिए इसे बंद करें।"
 
 #: aurora/settingsapp/power.py:151
-#, no-python-format, python-brace-format
 msgid "{pct} of its original capacity"
 msgstr "मूल क्षमता का {pct}"
 
 #: aurora/settingsapp/power.py:157
-#, no-python-format
 msgid "Charging stops at 80%"
 msgstr "चार्जिंग 80% पर रुकती है"
 
 #: aurora/settingsapp/power.py:157
-#, no-python-format
 msgid "Charging to 100%"
 msgstr "100% तक चार्ज हो रहा है"
 
 #: aurora/settingsapp/sound.py:19 aurora/shell/search.py:402
-#, no-python-format
 msgid "Sound"
 msgstr "ध्वनि"
 
 #: aurora/settingsapp/sound.py:23
-#, no-python-format
 msgid "Output"
 msgstr "आउटपुट"
 
 #: aurora/settingsapp/sound.py:24
-#, no-python-format
 msgid "Input"
 msgstr "इनपुट"
 
 #: aurora/settingsapp/sound.py:31
-#, no-python-format
 msgid "Over-amplification"
 msgstr "अति-प्रवर्धन"
 
 #: aurora/settingsapp/sound.py:34
-#, no-python-format
 msgid "Allow the volume above 100%. Sound may be distorted."
 msgstr "आवाज़ को 100% से ऊपर जाने दें। ध्वनि विकृत हो सकती है।"
 
 #: aurora/settingsapp/sound.py:36
-#, no-python-format
 msgid "System Sounds"
 msgstr "सिस्टम ध्वनियाँ"
 
 #: aurora/settingsapp/sound.py:37
-#, no-python-format
 msgid "Startup and shutdown sounds"
 msgstr "स्टार्टअप और शटडाउन ध्वनियाँ"
 
 #: aurora/settingsapp/sound.py:39
-#, no-python-format
 msgid "The Aurora sound when you log in, shut down, restart or log out"
 msgstr "लॉग इन, बंद, पुनः आरंभ या लॉग आउट पर Aurora ध्वनि"
 
 #: aurora/settingsapp/sound.py:42
-#, no-python-format
 msgid "Startup sound"
 msgstr "स्टार्टअप ध्वनि"
 
 #: aurora/settingsapp/sound.py:43
-#, no-python-format
 msgid "Shutdown sound"
 msgstr "शटडाउन ध्वनि"
 
 #: aurora/settingsapp/sound.py:46
-#, no-python-format
 msgid "Play"
 msgstr "चलाएँ"
 
 #: aurora/settingsapp/sound.py:59
-#, no-python-format
 msgid "Output device"
 msgstr "आउटपुट डिवाइस"
 
 #: aurora/settingsapp/sound.py:61
-#, no-python-format
 msgid "Input device"
 msgstr "इनपुट डिवाइस"
 
-#: aurora/settingsapp/sound.py:69 aurora/shell/quicksettings.py:344
-#, no-python-format
+#: aurora/settingsapp/sound.py:69 aurora/shell/quicksettings.py:347
 msgid "No devices found"
 msgstr "कोई डिवाइस नहीं मिला"
 
 #: aurora/settingsapp/sound.py:80
-#, no-python-format
 msgid "Volume"
 msgstr "आवाज़"
 
 #: aurora/settingsapp/sound.py:106
-#, no-python-format
 msgid "Balance"
 msgstr "संतुलन"
 
 #: aurora/settingsapp/system.py:30
-#, no-python-format
 msgid "Authorization was cancelled"
 msgstr "प्राधिकरण रद्द किया गया"
 
 #: aurora/settingsapp/system.py:49
-#, no-python-format
 msgid "Screen Lock"
 msgstr "लॉक स्क्रीन"
 
 #: aurora/settingsapp/system.py:51
-#, no-python-format
 msgid "Lock automatically"
 msgstr "अपने-आप लॉक करें"
 
 #: aurora/settingsapp/system.py:53
-#, no-python-format
 msgid "When the screen turns off or the computer sleeps"
 msgstr "जब स्क्रीन बंद हो या कंप्यूटर स्लीप में जाए"
 
 #: aurora/settingsapp/system.py:54
-#, no-python-format
 msgid "Lock now"
 msgstr "अभी लॉक करें"
 
 #: aurora/settingsapp/system.py:56
-#, no-python-format
 msgid "File History"
 msgstr "फ़ाइल इतिहास"
 
 #: aurora/settingsapp/system.py:58
-#, no-python-format
 msgid "Remember recent files"
 msgstr "हाल की फ़ाइलें याद रखें"
 
 #: aurora/settingsapp/system.py:61
-#, no-python-format
 msgid "Clear History…"
 msgstr "इतिहास साफ़ करें…"
 
 #: aurora/settingsapp/system.py:65 aurora/settingsapp/system.py:115
-#, no-python-format
 msgid "Clipboard History"
 msgstr "क्लिपबोर्ड इतिहास"
 
 #: aurora/settingsapp/system.py:66
-#, no-python-format
-msgid ""
-"Copied text is kept on this computer only, for Spotlight (Super+V). "
-"Passwords copied from password managers are skipped."
-msgstr ""
-"कॉपी किया गया टेक्स्ट केवल इसी कंप्यूटर पर, Spotlight के लिए रखा जाता है (Super+V)। "
-"पासवर्ड मैनेजर से कॉपी किए गए पासवर्ड छोड़ दिए जाते हैं।"
+msgid "Copied text is kept on this computer only, for Spotlight (Super+V). Passwords copied from password managers are skipped."
+msgstr "कॉपी किया गया टेक्स्ट केवल इसी कंप्यूटर पर, Spotlight के लिए रखा जाता है (Super+V)। पासवर्ड मैनेजर से कॉपी किए गए पासवर्ड छोड़ दिए जाते हैं।"
 
 #: aurora/settingsapp/system.py:69
-#, no-python-format
 msgid "Remember copied text"
 msgstr "कॉपी किया गया टेक्स्ट याद रखें"
 
 #: aurora/settingsapp/system.py:71
-#, no-python-format
 msgid "Clear Clipboard History"
 msgstr "क्लिपबोर्ड इतिहास साफ़ करें"
 
 #: aurora/settingsapp/system.py:74
-#, fuzzy, no-python-format
 msgid "Manage Clipboard History…"
-msgstr "क्लिपबोर्ड इतिहास"
+msgstr "क्लिपबोर्ड इतिहास प्रबंधित करें…"
 
 #: aurora/settingsapp/system.py:78
-#, no-python-format
 msgid "Online Services"
 msgstr "ऑनलाइन सेवाएँ"
 
 #: aurora/settingsapp/system.py:81
-#, no-python-format
 msgid "Weather next to the calendar"
 msgstr "कैलेंडर के पास मौसम"
 
 #: aurora/settingsapp/system.py:83
-#, no-python-format
-msgid ""
-"Asks Open-Meteo for the weather of your time zone’s main city. No account, "
-"no exact location."
-msgstr ""
-"आपके समय क्षेत्र के मुख्य शहर का मौसम Open-Meteo से पूछता है। कोई खाता नहीं, कोई सटीक "
-"स्थान नहीं।"
+msgid "Asks Open-Meteo for the weather of your time zone’s main city. No account, no exact location."
+msgstr "आपके समय क्षेत्र के मुख्य शहर का मौसम Open-Meteo से पूछता है। कोई खाता नहीं, कोई सटीक स्थान नहीं।"
 
 #: aurora/settingsapp/system.py:87
-#, no-python-format
-msgid ""
-"Blocks unrequested incoming connections. Outgoing traffic is not affected."
+msgid "Blocks unrequested incoming connections. Outgoing traffic is not affected."
 msgstr "बिना माँगे आने वाले कनेक्शन रोकता है। बाहर जाने वाला ट्रैफ़िक प्रभावित नहीं होता।"
 
 #: aurora/settingsapp/system.py:99
-#, no-python-format
 msgid "Automatically empty Trash"
 msgstr "ट्रैश अपने-आप खाली करें"
 
 #: aurora/settingsapp/system.py:102
-#, no-python-format
 msgid "Items older than 30 days"
 msgstr "30 दिन से पुराने आइटम"
 
 #: aurora/settingsapp/system.py:106
-#, no-python-format
 msgid "History cleared"
 msgstr "इतिहास साफ़ किया गया"
 
 #: aurora/settingsapp/system.py:111
-#, no-python-format
 msgid "Clipboard history cleared"
 msgstr "क्लिपबोर्ड इतिहास साफ़ किया गया"
 
 #: aurora/settingsapp/system.py:129
-#, no-python-format
 msgid "Unpin"
-msgstr ""
+msgstr "अनपिन करें"
 
 #: aurora/settingsapp/system.py:129
-#, fuzzy, no-python-format
 msgid "Pin"
-msgstr "गुलाबी"
+msgstr "पिन करें"
 
 #: aurora/settingsapp/system.py:148
-#, no-python-format
 msgid "Firewall enabled"
 msgstr "फ़ायरवॉल चालू किया गया"
 
 #: aurora/settingsapp/system.py:148
-#, no-python-format
 msgid "Firewall disabled"
 msgstr "फ़ायरवॉल बंद किया गया"
 
 #: aurora/settingsapp/system.py:153
-#, fuzzy, no-python-format
 msgid "App Permissions"
-msgstr "अनुमतियाँ"
+msgstr "ऐप अनुमतियाँ"
 
 #: aurora/settingsapp/system.py:158
-#, fuzzy, no-python-format
 msgid "Sandboxed Apps"
-msgstr "Android ऐप्स"
+msgstr "सैंडबॉक्स ऐप"
 
 #: aurora/settingsapp/system.py:159
-#, no-python-format
-msgid ""
-"Review remembered file, camera, microphone and screen grants. Native apps "
-"are not sandboxed; manifest permissions are shown for reference and may "
-"still give broader access."
-msgstr ""
+msgid "Review remembered file, camera, microphone and screen grants. Native apps are not sandboxed; manifest permissions are shown for reference and may still give broader access."
+msgstr "फ़ाइल, कैमरा, माइक्रोफ़ोन और स्क्रीन की याद रखी गई अनुमतियों की समीक्षा करें। नेटिव ऐप सैंडबॉक्स में नहीं होते; मैनिफ़ेस्ट अनुमतियाँ संदर्भ के लिए दिखाई जाती हैं और फिर भी व्यापक पहुँच दे सकती हैं।"
 
 #: aurora/settingsapp/system.py:164
-#, no-python-format
 msgid "No Flatpak apps installed"
-msgstr ""
+msgstr "कोई Flatpak ऐप इंस्टॉल नहीं है"
 
 #: aurora/settingsapp/system.py:176
-#, no-python-format
 msgid "Select a remembered grant to revoke it."
-msgstr ""
+msgstr "रद्द करने के लिए याद रखी गई अनुमति चुनें।"
 
 #: aurora/settingsapp/system.py:189
-#, fuzzy, no-python-format
 msgid "Remembered grants"
-msgstr "हाल की फ़ाइलें याद रखें"
+msgstr "याद रखी गई अनुमतियाँ"
 
 #: aurora/settingsapp/system.py:189
-#, no-python-format
 msgid "No remembered grants"
-msgstr ""
+msgstr "कोई याद रखी गई अनुमति नहीं"
 
 #: aurora/settingsapp/system.py:193
-#, no-python-format
 msgid "Revoke"
-msgstr ""
+msgstr "रद्द करें"
 
 #: aurora/settingsapp/system.py:199
-#, no-python-format
 msgid "Declared sandbox access"
-msgstr ""
+msgstr "घोषित सैंडबॉक्स पहुँच"
 
 #: aurora/settingsapp/system.py:214
-#, no-python-format
 msgid "Revoked; restart the app to apply"
-msgstr ""
+msgstr "रद्द किया गया; लागू करने के लिए ऐप फिर से शुरू करें"
 
 #: aurora/settingsapp/system.py:217
-#, no-python-format
 msgid "Could not revoke this grant"
-msgstr ""
+msgstr "यह अनुमति रद्द नहीं की जा सकी"
 
 #: aurora/settingsapp/system.py:224
-#, no-python-format
 msgid "Sharing"
 msgstr "साझा करना"
 
 #: aurora/settingsapp/system.py:231
-#, no-python-format
 msgid "Remote Login"
 msgstr "रिमोट लॉगिन"
 
 #: aurora/settingsapp/system.py:232
-#, no-python-format
 msgid "Allow connecting to this computer with SSH."
 msgstr "SSH से इस कंप्यूटर से कनेक्ट करने की अनुमति दें।"
 
 #: aurora/settingsapp/system.py:235
-#, no-python-format
 msgid "OpenSSH server is not installed"
 msgstr "OpenSSH सर्वर स्थापित नहीं है"
 
 #: aurora/settingsapp/system.py:238
-#, no-python-format
 msgid "Secure Shell (SSH)"
 msgstr "Secure Shell (SSH)"
 
 #: aurora/settingsapp/system.py:242
-#, no-python-format
 msgid "Connect with"
 msgstr "इससे कनेक्ट करें"
 
 #: aurora/settingsapp/system.py:247
-#, no-python-format
 msgid "Screen Sharing"
 msgstr "स्क्रीन साझा करना"
 
 #: aurora/settingsapp/system.py:248
-#, no-python-format
-msgid ""
-"Let someone see and control this screen from another computer with a VNC app "
-"(Remmina, TigerVNC, RealVNC). Connections are encrypted and need the "
-"password below."
-msgstr ""
-"किसी को दूसरे कंप्यूटर से VNC ऐप (Remmina, TigerVNC, RealVNC) द्वारा यह स्क्रीन देखने "
-"और नियंत्रित करने दें। कनेक्शन एन्क्रिप्टेड होते हैं और नीचे दिया पासवर्ड चाहिए।"
+msgid "Let someone see and control this screen from another computer with a VNC app (Remmina, TigerVNC, RealVNC). Connections are encrypted and need the password below."
+msgstr "किसी को दूसरे कंप्यूटर से VNC ऐप (Remmina, TigerVNC, RealVNC) द्वारा यह स्क्रीन देखने और नियंत्रित करने दें। कनेक्शन एन्क्रिप्टेड होते हैं और नीचे दिया पासवर्ड चाहिए।"
 
 #: aurora/settingsapp/system.py:252
-#, no-python-format
 msgid "wayvnc is not installed"
 msgstr "wayvnc स्थापित नहीं है"
 
 #: aurora/settingsapp/system.py:255
-#, no-python-format
 msgid "Share this screen"
 msgstr "यह स्क्रीन साझा करें"
 
 #: aurora/settingsapp/system.py:259
-#, no-python-format
 msgid "Connect to"
 msgstr "कनेक्ट करें"
 
 #: aurora/settingsapp/system.py:264
-#, no-python-format
 msgid "New Password"
 msgstr "नया पासवर्ड"
 
 #: aurora/settingsapp/system.py:275
-#, no-python-format
 msgid "Screen sharing is on"
 msgstr "स्क्रीन साझा करना चालू"
 
 #: aurora/settingsapp/system.py:275
-#, no-python-format
 msgid "Screen sharing is off"
 msgstr "स्क्रीन साझा करना बंद"
 
 #: aurora/settingsapp/system.py:278
-#, no-python-format
 msgid "Nearby Sharing"
 msgstr "पास में साझा करें"
 
 #: aurora/settingsapp/system.py:279
-#, no-python-format
-msgid ""
-"Send files to phones and computers around you with LocalSend, like AirDrop "
-"but with every system: Android, iPhone, Windows, macOS and Linux. In Files, "
-"right-click a file and choose “Send to Nearby Device…”."
-msgstr ""
-"LocalSend से पास के फ़ोन और कंप्यूटर पर फ़ाइलें भेजें — AirDrop जैसा, पर हर सिस्टम के साथ: "
-"Android, iPhone, Windows, macOS और Linux। फ़ाइलें में किसी फ़ाइल पर राइट-क्लिक करें "
-"और \"पास के डिवाइस पर भेजें…\" चुनें।"
+msgid "Send files to phones and computers around you with LocalSend, like AirDrop but with every system: Android, iPhone, Windows, macOS and Linux. In Files, right-click a file and choose “Send to Nearby Device…”."
+msgstr "LocalSend से पास के फ़ोन और कंप्यूटर पर फ़ाइलें भेजें — AirDrop जैसा, पर हर सिस्टम के साथ: Android, iPhone, Windows, macOS और Linux। फ़ाइलें में किसी फ़ाइल पर राइट-क्लिक करें और \"पास के डिवाइस पर भेजें…\" चुनें।"
 
 #: aurora/settingsapp/system.py:284
-#, no-python-format
 msgid "LocalSend is not installed"
 msgstr "LocalSend स्थापित नहीं है"
 
 #: aurora/settingsapp/system.py:286
-#, no-python-format
 msgid "Let nearby devices find this computer"
 msgstr "पास के डिवाइस को यह कंप्यूटर खोजने दें"
 
 #: aurora/settingsapp/system.py:288
-#, no-python-format
 msgid "Opens port 53317 in the firewall"
 msgstr "फ़ायरवॉल में पोर्ट 53317 खोलता है"
 
 #: aurora/settingsapp/system.py:292
-#, no-python-format
 msgid "Nearby devices can find this computer"
 msgstr "पास के डिवाइस यह कंप्यूटर खोज सकते हैं"
 
 #: aurora/settingsapp/system.py:293
-#, no-python-format
 msgid "Nearby sharing blocked"
 msgstr "पास में साझा करना रोका गया"
 
 #: aurora/settingsapp/system.py:296
-#, no-python-format
 msgid "Phone"
 msgstr "फ़ोन"
 
 #: aurora/settingsapp/system.py:297
-#, no-python-format
-msgid ""
-"Connect your Android phone or iPhone with KDE Connect: see phone "
-"notifications here, send files both ways, share the clipboard and use the "
-"phone as a touchpad. Install the KDE Connect app on the phone and keep both "
-"on the same network."
-msgstr ""
-"KDE Connect से Android फ़ोन या iPhone जोड़ें: फ़ोन की सूचनाएँ यहाँ देखें, दोनों ओर फ़ाइलें "
-"भेजें, क्लिपबोर्ड साझा करें और फ़ोन को टचपैड की तरह इस्तेमाल करें। फ़ोन पर KDE Connect ऐप "
-"स्थापित करें और दोनों को एक ही नेटवर्क पर रखें।"
+msgid "Connect your Android phone or iPhone with KDE Connect: see phone notifications here, send files both ways, share the clipboard and use the phone as a touchpad. Install the KDE Connect app on the phone and keep both on the same network."
+msgstr "KDE Connect से Android फ़ोन या iPhone जोड़ें: फ़ोन की सूचनाएँ यहाँ देखें, दोनों ओर फ़ाइलें भेजें, क्लिपबोर्ड साझा करें और फ़ोन को टचपैड की तरह इस्तेमाल करें। फ़ोन पर KDE Connect ऐप स्थापित करें और दोनों को एक ही नेटवर्क पर रखें।"
 
 #: aurora/settingsapp/system.py:303
-#, no-python-format
 msgid "KDE Connect is not installed"
 msgstr "KDE Connect स्थापित नहीं है"
 
 #: aurora/settingsapp/system.py:306
-#, no-python-format
 msgid "Allow phones to connect"
 msgstr "फ़ोन को कनेक्ट करने दें"
 
 #: aurora/settingsapp/system.py:307
-#, no-python-format
 msgid "Opens the KDE Connect ports (1714–1764) in the firewall"
 msgstr "फ़ायरवॉल में KDE Connect पोर्ट (1714–1764) खोलता है"
 
 #: aurora/settingsapp/system.py:308
-#, no-python-format
 msgid "Paired devices"
 msgstr "पेयर किए गए डिवाइस"
 
 #: aurora/settingsapp/system.py:309
-#, no-python-format
 msgid "Pair, browse the phone’s files, ring it, send files"
 msgstr "पेयर करें, फ़ोन की फ़ाइलें देखें, उसकी घंटी बजाएँ, फ़ाइलें भेजें"
 
 #: aurora/settingsapp/system.py:316
-#, no-python-format
 msgid "Phones can connect"
 msgstr "फ़ोन कनेक्ट हो सकते हैं"
 
 #: aurora/settingsapp/system.py:316
-#, no-python-format
 msgid "Phone connections blocked"
 msgstr "फ़ोन कनेक्शन रोके गए"
 
 #: aurora/settingsapp/system.py:329
-#, no-python-format
 msgid "SSH enabled"
 msgstr "SSH चालू किया गया"
 
 #: aurora/settingsapp/system.py:329
-#, no-python-format
 msgid "SSH disabled"
 msgstr "SSH बंद किया गया"
 
 #: aurora/settingsapp/system.py:390
-#, no-python-format
 msgid "Users"
 msgstr "उपयोगकर्ता"
 
 #: aurora/settingsapp/system.py:412
-#, no-python-format
 msgid "Change Picture…"
 msgstr "चित्र बदलें…"
 
 #: aurora/settingsapp/system.py:420
-#, no-python-format
 msgid "Your Account"
 msgstr "आपका खाता"
 
 #: aurora/settingsapp/system.py:421 aurora/settingsapp/system.py:460
 #: aurora/settingsapp/system.py:594
-#, no-python-format
 msgid "Full name"
 msgstr "पूरा नाम"
 
 #: aurora/settingsapp/system.py:428
-#, no-python-format
 msgid "Change Password…"
 msgstr "पासवर्ड बदलें…"
 
 #: aurora/settingsapp/system.py:437 aurora/settingsapp/system.py:440
-#, no-python-format
 msgid "Online Accounts"
 msgstr "ऑनलाइन खाते"
 
 #: aurora/settingsapp/system.py:438
-#, no-python-format
-msgid ""
-"Sign in to Google, Microsoft, Nextcloud and others: Calendar, Contacts, "
-"Files and Mail use them."
-msgstr ""
-"Google, Microsoft, Nextcloud और अन्य में साइन इन करें: कैलेंडर, संपर्क, फ़ाइलें और मेल "
-"इनका उपयोग करते हैं।"
+msgid "Sign in to Google, Microsoft, Nextcloud and others: Calendar, Contacts, Files and Mail use them."
+msgstr "Google, Microsoft, Nextcloud और अन्य में साइन इन करें: कैलेंडर, संपर्क, फ़ाइलें और मेल इनका उपयोग करते हैं।"
 
 #: aurora/settingsapp/system.py:445
-#, no-python-format
 msgid "Login"
 msgstr "लॉग इन"
 
 #: aurora/settingsapp/system.py:447
-#, no-python-format
 msgid "Log in automatically"
 msgstr "अपने-आप लॉग इन करें"
 
 #: aurora/settingsapp/system.py:449
-#, no-python-format
 msgid "Skip the login screen when the computer starts"
 msgstr "कंप्यूटर शुरू होने पर लॉग इन स्क्रीन छोड़ें"
 
 #: aurora/settingsapp/system.py:451
-#, no-python-format
 msgid "Other Users"
 msgstr "अन्य उपयोगकर्ता"
 
 #: aurora/settingsapp/system.py:453 aurora/settingsapp/system.py:592
-#, no-python-format
 msgid "Add User"
 msgstr "उपयोगकर्ता जोड़ें"
 
 #: aurora/settingsapp/system.py:503 aurora/settingsapp/system.py:565
 #: aurora/settingsapp/system.py:735
-#, no-python-format
 msgid "Saved"
 msgstr "सहेजा गया"
 
 #: aurora/settingsapp/system.py:510
-#, no-python-format
 msgid "Choose a Picture"
 msgstr "चित्र चुनें"
 
 #: aurora/settingsapp/system.py:529
-#, no-python-format
 msgid "Change Password"
 msgstr "पासवर्ड बदलें"
 
 #: aurora/settingsapp/system.py:531
-#, no-python-format
 msgid "Current password"
 msgstr "मौजूदा पासवर्ड"
 
 #: aurora/settingsapp/system.py:532
-#, no-python-format
 msgid "New password"
 msgstr "नया पासवर्ड"
 
 #: aurora/settingsapp/system.py:533
-#, no-python-format
 msgid "Confirm new password"
 msgstr "नए पासवर्ड की पुष्टि करें"
 
 #: aurora/settingsapp/system.py:538
-#, no-python-format
 msgid "Change"
 msgstr "बदलें"
 
 #: aurora/settingsapp/system.py:545
-#, no-python-format
 msgid "The new passwords do not match"
 msgstr "नए पासवर्ड मेल नहीं खाते"
 
 #: aurora/settingsapp/system.py:548
-#, no-python-format
 msgid "Password changed"
 msgstr "पासवर्ड बदला गया"
 
 #: aurora/settingsapp/system.py:548
-#, no-python-format
 msgid "Could not change password"
 msgstr "पासवर्ड नहीं बदला जा सका"
 
 #: aurora/settingsapp/system.py:577 aurora/settingsapp/system.py:597
-#, no-python-format
 msgid "Administrator"
 msgstr "व्यवस्थापक"
 
 #: aurora/settingsapp/system.py:578
-#, no-python-format
 msgid "Standard"
 msgstr "मानक"
 
 #: aurora/settingsapp/system.py:581
-#, no-python-format
 msgid "Remove User"
 msgstr "उपयोगकर्ता हटाएँ"
 
 #: aurora/settingsapp/system.py:587
-#, no-python-format
 msgid "No other users"
 msgstr "कोई अन्य उपयोगकर्ता नहीं"
 
 #: aurora/settingsapp/system.py:616
-#, no-python-format
 msgid "User added"
 msgstr "उपयोगकर्ता जोड़ा गया"
 
 #: aurora/settingsapp/system.py:616
-#, no-python-format
 msgid "Could not add user"
 msgstr "उपयोगकर्ता नहीं जोड़ा जा सका"
 
 #: aurora/settingsapp/system.py:622
-#, no-python-format, python-brace-format
 msgid "Remove {user}?"
 msgstr "{user} को हटाएँ?"
 
 #: aurora/settingsapp/system.py:623
-#, no-python-format
 msgid "Their home folder and all their files will be deleted."
 msgstr "उनका होम फ़ोल्डर और सभी फ़ाइलें हटा दी जाएँगी।"
 
 #: aurora/settingsapp/system.py:631
-#, no-python-format
 msgid "User removed"
 msgstr "उपयोगकर्ता हटाया गया"
 
 #: aurora/settingsapp/system.py:645
-#, no-python-format
 msgid "Updates"
 msgstr "अपडेट"
 
 #: aurora/settingsapp/system.py:645
-#, no-python-format
-msgid ""
-"Aurora keeps itself secure by installing security updates automatically in "
-"the background."
+msgid "Aurora keeps itself secure by installing security updates automatically in the background."
 msgstr "Aurora पृष्ठभूमि में सुरक्षा अपडेट अपने-आप स्थापित करके आपको सुरक्षित रखता है।"
 
 #: aurora/settingsapp/system.py:653
-#, no-python-format
 msgid "Install security updates automatically"
 msgstr "सुरक्षा अपडेट अपने-आप स्थापित करें"
 
 #: aurora/settingsapp/system.py:655
-#, no-python-format
 msgid "Available updates"
 msgstr "उपलब्ध अपडेट"
 
 #: aurora/settingsapp/system.py:657
-#, no-python-format
 msgid "Open App Center to Update…"
 msgstr "अपडेट के लिए ऐप केंद्र खोलें…"
 
 #: aurora/settingsapp/system.py:662
-#, no-python-format
 msgid "Proprietary drivers for hardware that needs them."
 msgstr "जिस हार्डवेयर को ज़रूरत है उसके लिए स्वामित्व वाले ड्राइवर।"
 
 #: aurora/settingsapp/system.py:669
-#, no-python-format
 msgid "System Snapshots"
 msgstr "सिस्टम स्नैपशॉट"
 
 #: aurora/settingsapp/system.py:670
-#, no-python-format
-msgid ""
-"Aurora takes a snapshot of the system before every update. If something "
-"breaks, pick “Aurora OS snapshots” in the boot menu to start yesterday’s "
-"system, then restore it in Timeshift. Your files in Home are never rolled "
-"back."
-msgstr ""
-"Aurora हर अपडेट से पहले सिस्टम का स्नैपशॉट लेता है। अगर कुछ टूट जाए, तो कल का सिस्टम शुरू "
-"करने के लिए बूट मेनू में \"Aurora OS snapshots\" चुनें, फिर Timeshift में उसे पुनर्स्थापित "
-"करें। होम फ़ोल्डर की फ़ाइलें कभी पीछे नहीं ले जाई जातीं।"
+msgid "Aurora takes a snapshot of the system before every update. If something breaks, pick “Aurora OS snapshots” in the boot menu to start yesterday’s system, then restore it in Timeshift. Your files in Home are never rolled back."
+msgstr "Aurora हर अपडेट से पहले सिस्टम का स्नैपशॉट लेता है। अगर कुछ टूट जाए, तो कल का सिस्टम शुरू करने के लिए बूट मेनू में \"Aurora OS snapshots\" चुनें, फिर Timeshift में उसे पुनर्स्थापित करें। होम फ़ोल्डर की फ़ाइलें कभी पीछे नहीं ले जाई जातीं।"
 
 #: aurora/settingsapp/system.py:674
-#, no-python-format
-msgid ""
-"Automatic snapshots need the btrfs file system (the installer’s default). On "
-"this system, Timeshift can still make copies."
-msgstr ""
-"स्वचालित स्नैपशॉट के लिए btrfs फ़ाइल सिस्टम चाहिए (इंस्टॉलर का डिफ़ॉल्ट)। इस सिस्टम पर "
-"Timeshift फिर भी प्रतियाँ बना सकता है।"
+msgid "Automatic snapshots need the btrfs file system (the installer’s default). On this system, Timeshift can still make copies."
+msgstr "स्वचालित स्नैपशॉट के लिए btrfs फ़ाइल सिस्टम चाहिए (इंस्टॉलर का डिफ़ॉल्ट)। इस सिस्टम पर Timeshift फिर भी प्रतियाँ बना सकता है।"
 
 #: aurora/settingsapp/system.py:677
-#, no-python-format
 msgid "Snapshot before every update"
 msgstr "हर अपडेट से पहले स्नैपशॉट"
 
 #: aurora/settingsapp/system.py:680
-#, no-python-format
 msgid "Keeps the last 10, plus daily and weekly ones"
 msgstr "आखिरी 10, साथ में दैनिक और साप्ताहिक रखता है"
 
 #: aurora/settingsapp/system.py:681
-#, no-python-format
 msgid "Take a Snapshot Now"
 msgstr "अभी स्नैपशॉट लें"
 
 #: aurora/settingsapp/system.py:684
-#, no-python-format
 msgid "Open Timeshift…"
 msgstr "Timeshift खोलें…"
 
 #: aurora/settingsapp/system.py:696
-#, no-python-format
 msgid "Taking a snapshot…"
 msgstr "स्नैपशॉट लिया जा रहा है…"
 
 #: aurora/settingsapp/system.py:700
-#, no-python-format
 msgid "Snapshot saved"
 msgstr "स्नैपशॉट सहेजा गया"
 
 #: aurora/settingsapp/system.py:706
-#, no-python-format
 msgid "Your system is up to date"
 msgstr "सिस्टम अद्यतित है"
 
 #: aurora/settingsapp/system.py:707
-#, no-python-format, python-brace-format
 msgid "{n} updates available"
 msgstr "{n} अपडेट उपलब्ध"
 
 #: aurora/settingsapp/system.py:715
-#, no-python-format, python-brace-format
 msgid "NVIDIA card found. Recommended driver: {pkg}"
 msgstr "NVIDIA ग्राफ़िक्स कार्ड मिला। अनुशंसित ड्राइवर: {pkg}"
 
 #: aurora/settingsapp/system.py:721
-#, no-python-format
 msgid "Your graphics use open-source drivers that are already installed."
 msgstr "ग्राफ़िक्स पहले से स्थापित मुक्त ड्राइवरों का उपयोग करते हैं।"
 
 #: aurora/settingsapp/system.py:731
-#, no-python-format
 msgid "Installing graphics driver"
 msgstr "ग्राफ़िक्स ड्राइवर स्थापित हो रहा है"
 
 #: aurora/settingsapp/timedate.py:21 aurora/shell/search.py:408
-#, no-python-format
 msgid "Date & Time"
 msgstr "तारीख और समय"
 
 #: aurora/settingsapp/timedate.py:27
-#, no-python-format
 msgid "Current time"
 msgstr "वर्तमान समय"
 
 #: aurora/settingsapp/timedate.py:32
-#, no-python-format
 msgid "Automatic date & time"
 msgstr "स्वचालित तारीख और समय"
 
 #: aurora/settingsapp/timedate.py:33
-#, no-python-format
 msgid "Requires an internet connection"
 msgstr "इंटरनेट कनेक्शन चाहिए"
 
 #: aurora/settingsapp/timedate.py:38
-#, no-python-format
 msgid "Time zone"
 msgstr "समय क्षेत्र"
 
 #: aurora/settingsapp/timedate.py:44
-#, no-python-format
 msgid "24-hour clock"
 msgstr "24-घंटे का समय"
 
-#: aurora/shell/app.py:192
-#, no-python-format
+#: aurora/shell/app.py:194
 msgid "Graphics fallback started"
-msgstr ""
-
-#: aurora/shell/app.py:193
-#, no-python-format
-msgid ""
-"Wayfire could not start. Aurora opened the safe desktop instead. Select this "
-"notification to review the startup report."
-msgstr ""
+msgstr "ग्राफ़िक्स वैकल्पिक मोड शुरू हुआ"
 
 #: aurora/shell/app.py:195
-#, fuzzy, no-python-format
-msgid "Open System Health"
-msgstr "सिस्टम स्वास्थ्य"
+msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
+msgstr "Wayfire शुरू नहीं हो सका। Aurora ने इसके बजाय सुरक्षित डेस्कटॉप खोला। स्टार्टअप रिपोर्ट देखने के लिए यह सूचना चुनें।"
 
-#: aurora/shell/app.py:336
-#, no-python-format
+#: aurora/shell/app.py:197
+msgid "Open System Health"
+msgstr "सिस्टम स्वास्थ्य खोलें"
+
+#: aurora/shell/app.py:338
 msgid "Writing tools are off"
 msgstr "लेखन उपकरण बंद हैं"
 
-#: aurora/shell/app.py:399
-#, no-python-format
+#: aurora/shell/app.py:411
 msgid "Set it up in Settings → AI."
 msgstr "सेटिंग्स → AI में सेट करें।"
 
-#: aurora/shell/app.py:405
-#, no-python-format
+#: aurora/shell/app.py:417
 msgid "Dictation is off"
 msgstr "डिक्टेशन बंद है"
 
-#: aurora/shell/app.py:412
-#, no-python-format
+#: aurora/shell/app.py:424
 msgid "Dictation isn't installed yet"
 msgstr "डिक्टेशन अभी स्थापित नहीं है"
 
-#: aurora/shell/app.py:416
-#, no-python-format
+#: aurora/shell/app.py:428
 msgid "Listening… press Super+H to stop"
 msgstr "सुन रहा हूँ… रोकने के लिए Super+H दबाएँ"
 
-#: aurora/shell/app.py:418
-#, no-python-format
+#: aurora/shell/app.py:430
 msgid "Writing it down…"
 msgstr "लिखा जा रहा है…"
 
-#: aurora/shell/app.py:432
-#, no-python-format
+#: aurora/shell/app.py:444
 msgid "Nothing was heard"
 msgstr "कुछ सुनाई नहीं दिया"
 
-#: aurora/shell/app.py:441
-#, no-python-format
+#: aurora/shell/app.py:453
 msgid "Read aloud is off"
 msgstr "पढ़कर सुनाना बंद है"
 
-#: aurora/shell/app.py:448
-#, no-python-format
+#: aurora/shell/app.py:460
 msgid "Select some text first"
 msgstr "पहले कुछ टेक्स्ट चुनें"
 
-#: aurora/shell/app.py:516
-#, no-python-format
+#: aurora/shell/app.py:528
 msgid "Screenshot captured"
 msgstr "स्क्रीनशॉट लिया गया"
 
-#: aurora/shell/app.py:517
-#, no-python-format, python-brace-format
+#: aurora/shell/app.py:529
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "{path} में सहेजा गया और क्लिपबोर्ड पर कॉपी किया गया।"
 
-#: aurora/shell/app.py:522
-#, no-python-format
+#: aurora/shell/app.py:534
 msgid "Annotate"
 msgstr "टिप्पणी करें"
 
-#: aurora/shell/app.py:522
-#, no-python-format
+#: aurora/shell/app.py:534
 msgid "Copy Text"
 msgstr "टेक्स्ट कॉपी करें"
 
-#: aurora/shell/app.py:571 aurora/shell/app.py:578
-#, no-python-format
+#: aurora/shell/app.py:583 aurora/shell/app.py:590
 msgid "Text Recognition"
 msgstr "टेक्स्ट पहचान"
 
-#: aurora/shell/app.py:571
-#, no-python-format
+#: aurora/shell/app.py:583
 msgid "No text found"
 msgstr "कोई टेक्स्ट नहीं मिला"
 
-#: aurora/shell/app.py:572
-#, no-python-format
+#: aurora/shell/app.py:584
 msgid "Try a larger or sharper area."
 msgstr "बड़ा या साफ़ क्षेत्र आज़माएँ।"
 
-#: aurora/shell/app.py:578
-#, no-python-format
+#: aurora/shell/app.py:590
 msgid "Text copied"
 msgstr "टेक्स्ट कॉपी किया गया"
 
-#: aurora/shell/app.py:617 aurora/shell/quicksettings.py:179
-#, no-python-format
+#: aurora/shell/app.py:629 aurora/shell/quicksettings.py:179
 msgid "Screen Recording"
 msgstr "स्क्रीन रिकॉर्डिंग"
 
-#: aurora/shell/app.py:617
-#, no-python-format
+#: aurora/shell/app.py:629
 msgid "Screen recording saved"
 msgstr "स्क्रीन रिकॉर्डिंग सहेजी गई"
 
-#: aurora/shell/app.py:618
-#, no-python-format, python-brace-format
+#: aurora/shell/app.py:630
 msgid "Saved to {path}."
 msgstr "{path} में सहेजा गया।"
 
+#: aurora/shell/colorpicker.py:60 aurora/shell/colorpicker.py:66
+msgid "Color Picker"
+msgstr "रंग चयनकर्ता"
+
+#: aurora/shell/colorpicker.py:61
+msgid "{color} copied"
+msgstr "{color} कॉपी किया गया"
+
+#: aurora/shell/colorpicker.py:66
+msgid "Couldn't read the color"
+msgstr "रंग पढ़ा नहीं जा सका"
+
 #: aurora/shell/dock.py:146 aurora/shell/dock.py:187 aurora/shell/dock.py:243
-#: aurora/shell/panel.py:401 aurora/shell/panel.py:438
-#, no-python-format
+#: aurora/shell/panel.py:408 aurora/shell/panel.py:445
 msgid "Window"
 msgstr "विंडो"
 
 #: aurora/shell/dock.py:201 aurora/shell/overview.py:61
-#, no-python-format
 msgid "Minimized"
 msgstr "छोटा किया गया"
 
 #: aurora/shell/dock.py:264 aurora/shell/launcher.py:72
-#, no-python-format
 msgid "Remove from Dock"
 msgstr "डॉक से हटाएँ"
 
 #: aurora/shell/dock.py:266 aurora/shell/launcher.py:75
-#, no-python-format
 msgid "Keep in Dock"
 msgstr "डॉक में रखें"
 
 #: aurora/shell/dock.py:268
-#, no-python-format
 msgid "Quit"
 msgstr "बंद करें"
 
-#: aurora/shell/dock.py:269 aurora/shell/panel.py:465
-#, no-python-format, python-brace-format
+#: aurora/shell/dock.py:269 aurora/shell/panel.py:472
 msgid "Quit {n} Windows"
 msgstr "{n} विंडो बंद करें"
 
 #: aurora/shell/dock.py:516
-#, no-python-format
 msgid "Launchpad"
 msgstr "Launchpad"
 
 #: aurora/shell/launcher.py:77
-#, no-python-format
 msgid "Add to Desktop"
 msgstr "डेस्कटॉप पर जोड़ें"
 
 #: aurora/shell/launcher.py:78 aurora/shell/launcher.py:138
-#, no-python-format
 msgid "Show in Files"
 msgstr "फ़ाइलें में दिखाएँ"
 
 #: aurora/shell/launcher.py:146
-#, no-python-format
 msgid "Ask Aurora about this file"
 msgstr "इस फ़ाइल के बारे में Aurora से पूछें"
 
 #: aurora/shell/launcher.py:176
-#, no-python-format
-msgid ""
-"Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
+msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
 msgstr "ऐप्स, फ़ाइलें, प्रोजेक्ट, गणना, 10 km in mi, :emoji, clip:, ? Aurora से पूछें"
 
 #: aurora/shell/notifications.py:313
-#, no-python-format
 msgid "Aurora AI summarizes your notifications"
 msgstr "Aurora AI आपकी सूचनाओं का सारांश देता है"
 
 #: aurora/shell/notifications.py:332
-#, no-python-format
 msgid "Clear"
 msgstr "साफ़ करें"
 
 #: aurora/shell/notifications.py:363
-#, no-python-format
 msgid "No Notifications"
 msgstr "कोई सूचना नहीं"
 
-#: aurora/shell/overview.py:44 aurora/shell/panel.py:463
-#, no-python-format
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:470
 msgid "Close Window"
 msgstr "विंडो बंद करें"
 
 #: aurora/shell/overview.py:89
-#, no-python-format
 msgid "Type to filter windows"
 msgstr "विंडो फ़िल्टर करने के लिए टाइप करें"
 
 #: aurora/shell/overview.py:106
-#, no-python-format
 msgid "No open windows"
 msgstr "कोई खुली विंडो नहीं"
 
 #: aurora/shell/panel.py:86
-#, no-python-format, python-brace-format
 msgid "{sky} · H {high:.0f}° L {low:.0f}°"
 msgstr "{sky} · अधिकतम {high:.0f}° न्यूनतम {low:.0f}°"
 
 #: aurora/shell/panel.py:121
-#, no-python-format
 msgid "Open Calendar"
 msgstr "कैलेंडर खोलें"
 
 #: aurora/shell/panel.py:170 aurora/shell/panel.py:199
-#, no-python-format
 msgid "Activities"
 msgstr "गतिविधियाँ"
 
 #: aurora/shell/panel.py:187
-#, no-python-format, python-brace-format
 msgid "Activities ({n} running)"
 msgstr "गतिविधियाँ ({n} चल रही हैं)"
 
 #: aurora/shell/panel.py:202
-#, no-python-format
 msgid "No recent activities"
 msgstr "कोई हाल की गतिविधि नहीं"
 
 #: aurora/shell/panel.py:211
-#, no-python-format
 msgid "Failed"
 msgstr "विफल"
 
 #: aurora/shell/panel.py:215
-#, no-python-format
 msgid "Finished"
 msgstr "पूरा हुआ"
 
 #: aurora/shell/panel.py:249
-#, no-python-format
 msgid "Recording the screen"
 msgstr "स्क्रीन रिकॉर्ड हो रही है"
 
 #: aurora/shell/panel.py:270
-#, no-python-format
 msgid "Not connected"
 msgstr "कनेक्ट नहीं"
 
 #: aurora/shell/panel.py:290
-#, no-python-format
 msgid "Aurora Menu"
 msgstr "Aurora मेनू"
 
 #: aurora/shell/panel.py:294
-#, no-python-format
 msgid "About This Computer"
 msgstr "इस कंप्यूटर के बारे में"
 
 #: aurora/shell/panel.py:295
-#, no-python-format
 msgid "System Settings…"
 msgstr "सिस्टम सेटिंग्स…"
 
 #: aurora/shell/panel.py:296
-#, no-python-format
 msgid "App Center…"
 msgstr "ऐप केंद्र…"
 
 #: aurora/shell/panel.py:297
-#, no-python-format
 msgid "Dev Hub…"
 msgstr "Dev Hub…"
 
-#: aurora/shell/panel.py:298
-#, no-python-format
+#: aurora/shell/panel.py:298 aurora/shell/sysmon.py:136
 msgid "System Health…"
 msgstr "सिस्टम स्वास्थ्य…"
 
 #: aurora/shell/panel.py:298
-#, no-python-format
 msgid "Force Quit…"
 msgstr "ज़बरदस्ती बंद करें…"
 
 #: aurora/shell/panel.py:299
-#, no-python-format
 msgid "Sleep"
 msgstr "स्लीप"
 
-#: aurora/shell/panel.py:299 aurora/shell/quicksettings.py:292
-#, no-python-format
+#: aurora/shell/panel.py:299 aurora/shell/quicksettings.py:295
 msgid "Restart…"
 msgstr "पुनः आरंभ करें…"
 
 #: aurora/shell/panel.py:300
-#, no-python-format
 msgid "Shut Down…"
 msgstr "बंद करें…"
 
-#: aurora/shell/panel.py:301 aurora/shell/quicksettings.py:293
-#, no-python-format
+#: aurora/shell/panel.py:301 aurora/shell/quicksettings.py:296
 msgid "Log Out"
 msgstr "लॉग आउट"
 
 #: aurora/shell/panel.py:343
-#, no-python-format
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora सहायक (Super+Shift+Space)"
 
-#: aurora/shell/panel.py:462
-#, no-python-format
+#: aurora/shell/panel.py:469
 msgid "Minimize"
 msgstr "छोटा करें"
 
 #: aurora/shell/quicksettings.py:166
-#, no-python-format
 msgid "Wired"
 msgstr "वायर्ड"
 
-#: aurora/shell/quicksettings.py:170 aurora/shell/quicksettings.py:189
-#, no-python-format
+#: aurora/shell/quicksettings.py:170 aurora/shell/quicksettings.py:192
 msgid "Power Mode"
 msgstr "पावर मोड"
 
 #: aurora/shell/quicksettings.py:175
-#, no-python-format
 msgid "Dark Style"
 msgstr "गहरी शैली"
 
 #: aurora/shell/quicksettings.py:178
-#, no-python-format
 msgid "Airplane Mode"
 msgstr "हवाई जहाज़ मोड"
 
-#: aurora/shell/quicksettings.py:188
-#, no-python-format
+#: aurora/shell/quicksettings.py:191
 msgid "Wi-Fi Networks"
 msgstr "Wi-Fi नेटवर्क"
 
-#: aurora/shell/quicksettings.py:188
-#, no-python-format
+#: aurora/shell/quicksettings.py:191
 msgid "Bluetooth Devices"
 msgstr "ब्लूटूथ डिवाइस"
 
-#: aurora/shell/quicksettings.py:189
-#, no-python-format
+#: aurora/shell/quicksettings.py:192
 msgid "Sound Output"
 msgstr "ध्वनि आउटपुट"
 
-#: aurora/shell/quicksettings.py:190
-#, no-python-format
+#: aurora/shell/quicksettings.py:193
 msgid "Sound Input"
 msgstr "ध्वनि इनपुट"
 
-#: aurora/shell/quicksettings.py:194
-#, no-python-format
+#: aurora/shell/quicksettings.py:197
 msgid "Network Settings"
 msgstr "नेटवर्क सेटिंग्स"
 
-#: aurora/shell/quicksettings.py:196
-#, no-python-format
+#: aurora/shell/quicksettings.py:199
 msgid "Bluetooth Settings"
 msgstr "ब्लूटूथ सेटिंग्स"
 
-#: aurora/shell/quicksettings.py:198
-#, no-python-format
+#: aurora/shell/quicksettings.py:201
 msgid "Power Settings"
 msgstr "पावर सेटिंग्स"
 
-#: aurora/shell/quicksettings.py:199 aurora/shell/quicksettings.py:200
-#, no-python-format
+#: aurora/shell/quicksettings.py:202 aurora/shell/quicksettings.py:203
 msgid "Sound Settings"
 msgstr "ध्वनि सेटिंग्स"
 
-#: aurora/shell/quicksettings.py:234
-#, no-python-format
+#: aurora/shell/quicksettings.py:237
 msgid "Screenshot"
 msgstr "स्क्रीनशॉट"
 
-#: aurora/shell/quicksettings.py:237
-#, no-python-format
+#: aurora/shell/quicksettings.py:240
 msgid "Lock"
 msgstr "लॉक करें"
 
-#: aurora/shell/quicksettings.py:243
-#, no-python-format
+#: aurora/shell/quicksettings.py:246
 msgid "Power Off / Log Out"
 msgstr "बंद करें / लॉग आउट"
 
-#: aurora/shell/quicksettings.py:293
-#, no-python-format
+#: aurora/shell/quicksettings.py:296
 msgid "Power Off…"
 msgstr "बंद करें…"
 
-#: aurora/shell/quicksettings.py:322
-#, no-python-format
+#: aurora/shell/quicksettings.py:325
 msgid "No networks found"
 msgstr "कोई नेटवर्क नहीं मिला"
 
-#: aurora/shell/quicksettings.py:323
-#, no-python-format
+#: aurora/shell/quicksettings.py:326
 msgid "Wi-Fi is off"
 msgstr "Wi-Fi बंद है"
 
-#: aurora/shell/quicksettings.py:329
-#, no-python-format
+#: aurora/shell/quicksettings.py:332
 msgid "No paired devices"
 msgstr "कोई पेयर किया डिवाइस नहीं"
 
-#: aurora/shell/quicksettings.py:330
-#, no-python-format
+#: aurora/shell/quicksettings.py:333
 msgid "Bluetooth is off"
 msgstr "ब्लूटूथ बंद है"
 
-#: aurora/shell/quicksettings.py:430
-#, no-python-format
+#: aurora/shell/quicksettings.py:428
+msgid "Screen stays on"
+msgstr "स्क्रीन चालू रहती है"
+
+#: aurora/shell/quicksettings.py:435
 msgid "Recording…"
 msgstr "रिकॉर्ड हो रहा है…"
 
 #: aurora/shell/search.py:130 aurora/shell/search.py:160
-#, no-python-format
 msgid "Press Enter to copy the result"
 msgstr "परिणाम कॉपी करने के लिए Enter दबाएँ"
 
 #: aurora/shell/search.py:149
-#, no-python-format
 msgid "Getting today’s exchange rates…"
 msgstr "आज की विनिमय दरें लाई जा रही हैं…"
 
 #: aurora/shell/search.py:149
-#, no-python-format
 msgid "European Central Bank"
 msgstr "यूरोपीय केंद्रीय बैंक"
 
 #: aurora/shell/search.py:152
-#, no-python-format
 msgid "Exchange rate: European Central Bank"
 msgstr "दर: यूरोपीय केंद्रीय बैंक"
 
 #: aurora/shell/search.py:155
-#, no-python-format
 msgid "Unit conversion"
 msgstr "इकाई रूपांतरण"
 
 #: aurora/shell/search.py:219
-#, no-python-format
 msgid "Emoji · Press Enter to copy"
 msgstr "इमोजी · कॉपी के लिए Enter"
 
 #: aurora/shell/search.py:239
-#, no-python-format, python-brace-format
 msgid "Clipboard · {n} lines"
 msgstr "क्लिपबोर्ड · {n} प्रविष्टियाँ"
 
 #: aurora/shell/search.py:240 aurora/shell/search.py:249
-#, no-python-format
 msgid "Clipboard"
 msgstr "क्लिपबोर्ड"
 
 #: aurora/shell/search.py:243 aurora/shell/search.py:249
-#, fuzzy, no-python-format
 msgid "Image"
-msgstr "चित्र"
+msgstr "छवि"
 
 #: aurora/shell/search.py:253
-#, no-python-format
 msgid "Clipboard history is empty"
 msgstr "क्लिपबोर्ड इतिहास खाली है"
 
 #: aurora/shell/search.py:253
-#, no-python-format
 msgid "No matches"
 msgstr "कोई मेल नहीं"
 
 #: aurora/shell/search.py:254
-#, no-python-format
 msgid "Copied text shows up here. Turn it off in Settings → Privacy."
 msgstr "कॉपी किया गया टेक्स्ट यहाँ दिखता है। सेटिंग्स → गोपनीयता में बंद करें।"
 
 #: aurora/shell/search.py:329
-#, no-python-format, python-brace-format
 msgid "Project · {where}"
 msgstr "प्रोजेक्ट · {where}"
 
 #: aurora/shell/search.py:351
-#, no-python-format
 msgid "Type a question after the ?"
 msgstr "? के बाद सवाल लिखें"
 
 #: aurora/shell/search.py:353
-#, no-python-format, python-brace-format
 msgid "Ask Aurora: “{q}”"
 msgstr "Aurora से पूछें: \"{q}\""
 
 #: aurora/shell/search.py:353
-#, no-python-format
 msgid "Aurora AI · opens the Assistant"
 msgstr "Aurora AI · सहायक खोलता है"
 
 #: aurora/shell/search.py:383
-#, no-python-format, python-brace-format
 msgid "By meaning · {where} · “{excerpt}…”"
 msgstr "अर्थ से · {where} · \"{excerpt}…\""
 
@@ -5748,14 +4679,11 @@ msgid "battery sleep suspend screen blank lock"
 msgstr "बैटरी स्लीप स्क्रीन बंद लॉक पावर"
 
 #: aurora/shell/search.py:413
-msgid ""
-"doctor diagnostics problems disk space smart firmware drivers repair check"
+msgid "doctor diagnostics problems disk space smart firmware drivers repair check"
 msgstr "डॉक्टर निदान समस्याएँ डिस्क स्थान smart फ़र्मवेयर ड्राइवर ठीक करें जाँच स्वास्थ्य"
 
 #: aurora/shell/search.py:415
-msgid ""
-"artificial intelligence assistant chat model dictation voice speech read "
-"aloud"
+msgid "artificial intelligence assistant chat model dictation voice speech read aloud"
 msgstr "कृत्रिम बुद्धिमत्ता ai सहायक चैट मॉडल डिक्टेशन आवाज़ वाणी पढ़कर सुनाना"
 
 #: aurora/shell/search.py:417
@@ -5763,89 +4691,109 @@ msgid "system information version hardware memory disk"
 msgstr "सिस्टम जानकारी संस्करण हार्डवेयर मेमोरी डिस्क परिचय"
 
 #: aurora/shell/search.py:449
-#, no-python-format
 msgid "Recent file"
 msgstr "हाल की फ़ाइल"
 
 #: aurora/shell/search.py:463
-#, no-python-format, python-brace-format
 msgid "Run “{cmd}”"
 msgstr "\"{cmd}\" चलाएँ"
 
 #: aurora/shell/search.py:463
-#, no-python-format
 msgid "Command"
 msgstr "कमांड"
 
 #: aurora/shell/search.py:468
-#, no-python-format, python-brace-format
 msgid "Search the web for “{q}”"
 msgstr "वेब पर \"{q}\" खोजें"
 
 #: aurora/shell/services.py:190
-#, no-python-format, python-brace-format
 msgid "{t} until full"
 msgstr "पूरा होने में {t}"
 
 #: aurora/shell/services.py:191
-#, no-python-format, python-brace-format
 msgid "{t} left"
 msgstr "{t} शेष"
 
 #: aurora/shell/services.py:193
-#, no-python-format
 msgid "charging"
 msgstr "चार्ज हो रहा है"
 
-#: aurora/shell/sysnotify.py:60
-#, no-python-format
+#: aurora/shell/shortcuts.py:40
+msgid "Keyboard Shortcuts"
+msgstr "कीबोर्ड शॉर्टकट"
+
+#: aurora/shell/shortcuts.py:50
+msgid "Press any key to close"
+msgstr "बंद करने के लिए कोई भी कुंजी दबाएँ"
+
+#: aurora/shell/shortcuts.py:51
+msgid "Change Shortcuts…"
+msgstr "शॉर्टकट बदलें…"
+
+#: aurora/shell/sysmon.py:125
+msgid "Temperature"
+msgstr "तापमान"
+
+#: aurora/shell/sysmon.py:126
+msgid "Upload"
+msgstr "अपलोड"
+
+#: aurora/shell/sysmon.py:169
+msgid "Processor {cpu}% · Memory {mem}%"
+msgstr "प्रोसेसर {cpu}% · मेमोरी {mem}%"
+
+#: aurora/shell/sysmon.py:181
+msgid "{free} free of {total}"
+msgstr "{total} में से {free} खाली"
+
+#: aurora/shell/sysnotify.py:73
 msgid "Software updates available"
 msgstr "सॉफ़्टवेयर अपडेट उपलब्ध"
 
-#: aurora/shell/sysnotify.py:61
+#: aurora/shell/sysnotify.py:74
 #, python-brace-format
 msgid "{n} update is ready to install."
 msgid_plural "{n} updates are ready to install."
 msgstr[0] "{n} अपडेट स्थापित होने के लिए तैयार है।"
 msgstr[1] "{n} अपडेट स्थापित होने के लिए तैयार हैं।"
 
-#: aurora/shell/sysnotify.py:64
-#, no-python-format
+#: aurora/shell/sysnotify.py:77 aurora/shell/sysnotify.py:104
 msgid "Later"
 msgstr "बाद में"
 
-#: aurora/shell/sysnotify.py:80
-#, no-python-format
+#: aurora/shell/sysnotify.py:99
+msgid "Disk almost full"
+msgstr "डिस्क लगभग भर गई"
+
+#: aurora/shell/sysnotify.py:100
+msgid "Only {free} is free. Programs and updates can fail when the disk is full: remove files you don't need, or AI models in Settings → AI."
+msgstr "केवल {free} खाली है। डिस्क भरने पर प्रोग्राम और अपडेट विफल हो सकते हैं: अनावश्यक फ़ाइलें हटाएँ, या सेटिंग्स → AI में AI मॉडल।"
+
+#: aurora/shell/sysnotify.py:122
 msgid "Battery low"
 msgstr "बैटरी कम है"
 
-#: aurora/shell/sysnotify.py:80
-#, no-python-format
+#: aurora/shell/sysnotify.py:122
 msgid "Battery critically low"
 msgstr "बैटरी बहुत कम है"
 
-#: aurora/shell/sysnotify.py:81
-#, no-python-format, python-brace-format
+#: aurora/shell/sysnotify.py:123
 msgid "{p}% remaining. Plug in your computer."
 msgstr "{p}% शेष। कंप्यूटर को चार्जर से जोड़ें।"
 
-#: aurora/shell/sysnotify.py:111
-#, no-python-format, python-brace-format
+#: aurora/shell/sysnotify.py:153
 msgid "{name} connected"
 msgstr "{name} जुड़ा"
 
-#: aurora/shell/sysnotify.py:112
-#, no-python-format
+#: aurora/shell/sysnotify.py:154
 msgid "The drive is ready to use."
 msgstr "ड्राइव उपयोग के लिए तैयार है।"
 
 #: aurora/shell/wallpaper.py:160
-#, no-python-format
 msgid "Change Background…"
 msgstr "पृष्ठभूमि बदलें…"
 
 #: aurora/shell/wallpaper.py:161
-#, no-python-format
 msgid "Display Settings"
 msgstr "डिस्प्ले सेटिंग्स"
 
@@ -5938,89 +4886,69 @@ msgid "Thunderstorm with hail"
 msgstr "ओलों के साथ आँधी-तूफ़ान"
 
 #: aurora/welcome.py:17
-#, no-python-format
 msgid "Open the app launcher and search"
 msgstr "ऐप लॉन्चर और खोज खोलें"
 
 #: aurora/welcome.py:18
-#, no-python-format
 msgid "Open a terminal"
 msgstr "टर्मिनल खोलें"
 
 #: aurora/welcome.py:20
-#, no-python-format
 msgid "Snap a window to the left or right half"
 msgstr "विंडो को बाएँ या दाएँ आधे में स्नैप करें"
 
 #: aurora/welcome.py:21
-#, no-python-format
 msgid "Maximize the window"
 msgstr "विंडो को अधिकतम करें"
 
 #: aurora/welcome.py:22
-#, no-python-format
 msgid "Switch between windows"
 msgstr "विंडो के बीच बदलें"
 
 #: aurora/welcome.py:23
-#, no-python-format
 msgid "Switch workspace"
 msgstr "वर्कस्पेस बदलें"
 
 #: aurora/welcome.py:24
-#, no-python-format
 msgid "Screenshot of the screen / an area"
 msgstr "स्क्रीनशॉट / क्षेत्र"
 
 #: aurora/welcome.py:25
-#, no-python-format
 msgid "Lock the screen"
 msgstr "स्क्रीन लॉक करें"
 
 #: aurora/welcome.py:39
-#, no-python-format
 msgid "Welcome"
 msgstr "स्वागत है"
 
 #: aurora/welcome.py:75
-#, no-python-format
-msgid ""
-"A calm, fast desktop built on Debian. Let's take a minute to make it yours."
+msgid "A calm, fast desktop built on Debian. Let's take a minute to make it yours."
 msgstr "Debian पर आधारित एक शांत, तेज़ डेस्कटॉप। इसे अपना बनाने के लिए एक मिनट लें।"
 
 #: aurora/welcome.py:96
-#, no-python-format
 msgid "Light or Dark?"
 msgstr "हल्की या गहरी?"
 
 #: aurora/welcome.py:97
-#, no-python-format
-msgid ""
-"You can change this, the accent color and the background at any time in "
-"Settings → Appearance."
+msgid "You can change this, the accent color and the background at any time in Settings → Appearance."
 msgstr "आप इसे, एक्सेंट रंग और पृष्ठभूमि को कभी भी सेटिंग्स → रूप-रंग में बदल सकते हैं।"
 
 #: aurora/welcome.py:109
-#, no-python-format
 msgid "Handy Shortcuts"
 msgstr "उपयोगी शॉर्टकट"
 
 #: aurora/welcome.py:116
-#, no-python-format
 msgid "Install Aurora OS…"
 msgstr "Aurora OS स्थापित करें…"
 
 #: aurora/welcome.py:121
-#, no-python-format
 msgid "Open Settings"
 msgstr "सेटिंग्स खोलें"
 
 #: aurora/welcome.py:125
-#, no-python-format
 msgid "You're All Set"
 msgstr "सब तैयार है"
 
 #: aurora/welcome.py:126
-#, no-python-format
 msgid "Press the Super key to find apps, files and settings."
 msgstr "ऐप्स, फ़ाइलें और सेटिंग्स खोजने के लिए Super कुंजी दबाएँ।"

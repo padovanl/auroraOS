@@ -122,6 +122,8 @@ class Shell(Adw.Application):
         from aurora.shell.sysnotify import SystemNotifications
         self.sysnotify = SystemNotifications(self)
         GLib.idle_add(self._notify_compositor_fallback)
+        from aurora.shell.keepawake import KeepAwake
+        self.keep_awake = KeepAwake()
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
@@ -357,6 +359,16 @@ class Shell(Adw.Application):
                 self.screenshot(area=(arg == "area"))
         elif cmd == "record":
             self.recorder.toggle()
+        elif cmd == "colorpick":
+            from aurora.shell.colorpicker import pick
+            pick(self)
+        elif cmd == "shortcuts":
+            from aurora.shell.shortcuts import ShortcutsOverlay
+            if getattr(self, "shortcuts_overlay", None) is None:
+                self.shortcuts_overlay = ShortcutsOverlay(self)
+            self.shortcuts_overlay.toggle()
+        elif cmd == "keep-awake":
+            self.keep_awake.set_active(not self.keep_awake.active)
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
                 panel.open_quick_settings()

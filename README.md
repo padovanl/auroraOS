@@ -106,7 +106,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 ### Desktop
 | | |
 |---|---|
-| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
+| **Menu bar** | Aurora menu (About, Settings, App Center, Dev Hub, System Health, Force Quit, Sleep/Restart/Shut Down, Lock, Log Out), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, an optional **system monitor** (processor and memory at a glance; its popover adds temperature, download and upload speed, free disk space; Settings → Desktop & Dock → Top Bar), status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
 | **Dock** | Pinned and running apps with one dot per open window (up to three), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, floating or full-width. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
@@ -118,10 +118,10 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Personal and rotating wallpapers** | Add a picture in Settings → Appearance, or rotate the included gallery every 15 minutes, 1 hour, 6 hours or 24 hours. Rotation works offline; the lock screen follows the active picture. |
 | **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
 | **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. |
-| **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). |
+| **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> is a **color picker**: click any pixel and its hex code is copied. |
 | **Weather** | Current weather and the next hours next to the calendar (can be turned off), using the city selected in GNOME Weather when available. |
 | **Sounds** | An Aurora sound when you log in and when you shut down, restart or log out (on by default, Settings → Sound). |
-| **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
+| **Control Center** | Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, **Keep Awake** (no screen blanking, locking or automatic suspend until turned off), Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
@@ -372,6 +372,8 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>U</kbd> <kbd>I</kbd> <kbd>J</kbd> <kbd>K</kbd> | Snap window to the top-left, top-right, bottom-left, bottom-right quarter |
 | <kbd>Super</kbd>+<kbd>Ctrl</kbd>+<kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> | Snap window to the left, center, right third |
 | <kbd>Super</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd> | Maximize / restore |
+| <kbd>Super</kbd>+<kbd>/</kbd> | All keyboard shortcuts at a glance |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> | Pick a color from the screen (hex code copied) |
 | <kbd>Super</kbd>+<kbd>M</kbd> | Minimize |
 | <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> | Aurora Assistant |
 | <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd> | Writing Tools for the selected text |
@@ -1226,6 +1228,11 @@ set up a feature, and every place it appears has its own switch.
   bundle is over 1 GB (CUDA included), and PyTorch stacks are several GB. None of them is
   in Debian, so Aurora downloads the runtime only when you set it up, **pinned by
   SHA-256** like everything in the AI catalog.
+  A download only starts if the disk keeps enough room for the system afterwards (5% of
+  the disk, at least 2 GB and at most 10 GB); a full disk mid-download removes the
+  partial file. Models live in `~/.local/share/aurora/ai`, outside the system snapshots,
+  so a removed model frees its space at once. Settings → AI shows the space used and
+  removes each model; the shell warns when any disk gets that full.
 - **On demand, not always on:** `aurora/ai/server.py` starts the server on the first
   question, on `127.0.0.1` only, and a small reaper stops it after 10 idle minutes, so a
   model only uses memory while you use it.

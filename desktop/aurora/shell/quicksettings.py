@@ -178,6 +178,9 @@ class QuickSettings(Gtk.Popover):
         self.t_air = Toggle("airplane-mode-symbolic", _("Airplane Mode"), self._set_airplane)
         self.t_rec = Toggle("media-record-symbolic", _("Screen Recording"),
                             lambda v: self._record())
+        self.t_awake = Toggle("view-reveal-symbolic", _("Keep Awake"),
+                              shell.keep_awake.set_active)
+        shell.keep_awake.connect("changed", lambda *_: self.refresh())
         self.grid = Gtk.Grid(column_spacing=8, row_spacing=8, column_homogeneous=True)
         box.append(self.grid)
 
@@ -421,7 +424,9 @@ class QuickSettings(Gtk.Popover):
         self.t_night.set_state(s is not None and s.get_boolean("night-light"))
         self.t_dark.set_state(Adw.StyleManager.get_default().get_dark())
         self.t_dnd.set_state(s is not None and s.get_boolean("do-not-disturb"))
-        toggles += [self.t_night, self.t_dark, self.t_dnd]
+        self.t_awake.set_state(sh.keep_awake.active,
+                               _("Screen stays on") if sh.keep_awake.active else None)
+        toggles += [self.t_night, self.t_dark, self.t_dnd, self.t_awake]
         if net.wifi_device() is not None or sh.bluetooth.available:
             self.t_air.set_state(self._airplane_on())
             toggles.append(self.t_air)

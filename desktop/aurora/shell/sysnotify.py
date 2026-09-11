@@ -1,7 +1,10 @@
 """Background notifications the system sends by itself, like Ubuntu does:
-updates available, low battery, and removable drives (automounted).
+updates available, low battery, a nearly full disk, and removable drives
+(automounted).
 """
 
+import os
+import shutil
 import subprocess
 
 from gi.repository import Gio, GLib
@@ -12,6 +15,14 @@ from aurora.i18n import _, ngettext
 UPDATE_CHECK_FIRST_S = 5 * 60        # first check a few minutes after login
 UPDATE_CHECK_EVERY_S = 6 * 60 * 60   # then every six hours
 BATTERY_WARN = (10, 5)               # percent
+DISK_CHECK_EVERY_S = 10 * 60
+
+
+def disk_low(total, free):
+    """Below the room Aurora keeps free for the system (the same rule as AI
+    downloads): 5% of the disk, at least 2 GB and at most 10 GB."""
+    from aurora.ai.download import reserve_for
+    return free < reserve_for(total)
 
 
 def count_updates():
@@ -32,6 +43,8 @@ class SystemNotifications:
         self._action_ids = {}
 
         GLib.timeout_add_seconds(UPDATE_CHECK_FIRST_S, self._check_updates)
+        self._disk_warned = set()
+        GLib.timeout_add_seconds(60, self._check_disks)
         shell.battery.connect("changed", lambda *a: self._check_battery())
         self.volumes = Gio.VolumeMonitor.get()
         self.volumes.connect("volume-added", self._on_volume_added)
@@ -65,6 +78,35 @@ class SystemNotifications:
                          lambda key: key == "update" and apps.spawn(
                              ["gnome-software", "--mode=updates"]))
         GLib.timeout_add_seconds(UPDATE_CHECK_EVERY_S, self._check_updates)
+        return GLib.SOURCE_REMOVE
+
+    # --- disk space ---
+
+    def _check_disks(self):
+        seen = set()
+        for path in ("/", os.path.expanduser("~")):
+            try:
+                st = os.stat(path)
+                disk = shutil.disk_usage(path)
+            except OSError:
+                continue
+            if st.st_dev in seen:  # home on the same file system as / (btrfs)
+                continue
+            seen.add(st.st_dev)
+            low = disk_low(disk.total, disk.free)
+            if low and st.st_dev not in self._disk_warned:
+                self._disk_warned.add(st.st_dev)
+                self.notify(_("Disk almost full"),
+                            _("Only {free} is free. Programs and updates can fail when the "
+                              "disk is full: remove files you don't need, or AI models in "
+                              "Settings → AI.").format(free=GLib.format_size(disk.free)),
+                            "drive-harddisk-symbolic",
+                            [("usage", _("See What Uses Space")), ("later", _("Later"))],
+                            lambda key: key == "usage" and apps.spawn(["baobab"]),
+                            urgency=2)
+            elif not low:
+                self._disk_warned.discard(st.st_dev)  # warn again next time it fills up
+        GLib.timeout_add_seconds(DISK_CHECK_EVERY_S, self._check_disks)
         return GLib.SOURCE_REMOVE
 
     # --- battery ---

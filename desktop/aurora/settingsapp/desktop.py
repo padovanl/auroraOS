@@ -150,6 +150,7 @@ class Desktop(Page):
                     [("right", _("Right")), ("center", _("Center"))])
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
+        self._switch(bar, _("System monitor"), "panel-system-monitor")
 
         dock = self.group(_("Dock"))
         self._combo(dock, _("Position"), "dock-position",
@@ -198,7 +199,8 @@ class Desktop(Page):
         if key in LOOK_KEYS:
             look.apply()
         if not self._syncing and key not in ("clock-show-seconds", "desktop-icons",
-                                                    "desktop-icons-position"):
+                                                    "desktop-icons-position",
+                                                    "panel-system-monitor"):
             self.s.set_string("layout", "custom")
             self._sync_presets()
 
