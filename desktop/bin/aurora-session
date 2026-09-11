@@ -41,6 +41,18 @@ rm -f "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out"
 # Renderers that draw correctly on this machine (software ones in VMs).
 . /usr/libexec/aurora-render-env
 
+# Hyper-V's display has no 3D, so Wayfire 0.9 must draw with Mesa's software
+# GLES there, and its frames flicker on hyperv_drm (full rerendering, linear
+# buffers, a software cursor and legacy KMS flips did not cure it). labwc draws
+# with wlroots' pixman renderer, which is steady on that display; the shell's
+# and GTK's own transitions still run. "wayfire" in ~/.config/aurora/compositor
+# brings Wayfire back there.
+if [ "$compositor" = wayfire ] && [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ] &&
+   [ "$(cat "$HOME/.config/aurora/compositor" 2>/dev/null)" != wayfire ]; then
+    compositor=labwc
+    export AURORA_COMPOSITOR=labwc
+fi
+
 # Keep labwc's configuration for the fallback session and as Aurora Settings'
 # shared source. Wayfire gets an INI rendered from the same preferences.
 cfg="$HOME/.config/labwc"

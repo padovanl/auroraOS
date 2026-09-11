@@ -1,5 +1,22 @@
 #!/bin/bash
-# Install both EFI paths; also called after package updates on managed systems.
+# Install the UEFI boot loader so the disk starts on any firmware.
+#
+# Debian's signed chain (shim -> signed GRUB) goes to \EFI\debian, and a full
+# copy of shim and GRUB to the removable-media path \EFI\BOOT (Debian's own
+# --force-extra-removable, kept on GRUB updates by the grub2/
+# force_efi_extra_removable debconf switch). The signed GRUB always reads
+# \EFI\debian\grub.cfg, so both paths reach the same menu. \EFI\BOOT gets no
+# fbx64.efi: that fallback tool would try to rewrite NVRAM boot entries.
+#
+# Hyper-V Generation 2: boot entries written by the guest are unreliable
+# (Debian #949751, Launchpad #1272664); after an install the VM skipped the
+# disk and went to PXE, while the same disk started in a VM whose firmware had
+# no guest-written entries, through "EFI SCSI Device" (\EFI\BOOT\BOOTX64.EFI).
+# So on Hyper-V no entry is written (grub2/update_nvram false) and the ones
+# Calamares' bootloader module just created for this disk are removed.
+#
+# Called by the installer with --install and by apt after package changes
+# (/etc/apt/apt.conf.d/99aurora-efi) on systems the installer set up.
 set -euo pipefail
 
 marker=/var/lib/aurora/efi-managed
@@ -9,57 +26,58 @@ fi
 [ -d /sys/firmware/efi ] || exit 0
 mountpoint -q /boot/efi || { echo 'EFI system partition is not mounted' >&2; exit 1; }
 
-args=(--target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=debian)
-mode=shim
-# Avoid the shim/firmware handoff on Hyper-V with Secure Boot off. The
-# SecureBoot variable can be absent when disabled (as it is with OVMF); the
-# unsigned live ISO cannot start on Hyper-V while Secure Boot is enabled.
-sb=/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c
-sb_state=0
-if [ -e "$sb" ]; then
-    sb_state=$(od -An -tu1 -j4 -N1 "$sb" 2>/dev/null | tr -d ' ')
-fi
+hyperv=0
 if [ "$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || true)" = 'Microsoft Corporation' ] &&
-   [ "$(cat /sys/class/dmi/id/product_name 2>/dev/null || true)" = 'Virtual Machine' ] &&
-   [ "$sb_state" = 0 ]; then
-    args+=(--no-uefi-secure-boot)
-    mode=direct
-    # Debian's package scripts otherwise register shim again on upgrades.
-    # Keep the direct entry we install below; refresh binaries without
-    # changing the user's firmware boot order in later apt transactions.
+   [ "$(cat /sys/class/dmi/id/product_name 2>/dev/null || true)" = 'Virtual Machine' ]; then
+    hyperv=1
+fi
+
+printf 'grub-efi-amd64 grub2/force_efi_extra_removable boolean true\n' | debconf-set-selections
+if [ "$hyperv" = 1 ]; then
     printf 'grub-efi-amd64 grub2/update_nvram boolean false\n' | debconf-set-selections
 fi
 
-echo "Aurora EFI installation: $mode"
-# First make the disk independently bootable, even if NVRAM cannot be written.
-grub-install "${args[@]}" --removable --no-nvram --recheck
-# Only the installer changes boot order. Package updates refresh the files.
-if [ "${1:-}" = --install ]; then
-    if ! grub-install "${args[@]}" --recheck; then
-        echo 'Cannot register EFI boot entry; keeping the disk fallback path' >&2
-        grub-install "${args[@]}" --no-nvram --recheck
+args=(--target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=debian
+      --uefi-secure-boot --force-extra-removable --recheck)
+# Only the installer adds a boot entry, and never on Hyper-V; updates just
+# refresh the files and leave the firmware's boot order alone.
+if [ "${1:-}" = --install ] && [ "$hyperv" = 0 ]; then
+    if ! grub-install "${args[@]}"; then
+        echo 'Cannot register an EFI boot entry; the disk still boots through \EFI\BOOT' >&2
+        grub-install "${args[@]}" --no-nvram
     fi
 else
-    grub-install "${args[@]}" --no-nvram --recheck
+    grub-install "${args[@]}" --no-nvram
 fi
-if [ "$mode" = direct ]; then
-    # grub-install's ordinary unsigned image needs external modules in
-    # /@/boot/grub. On a zstd-compressed Btrfs root it reaches grub rescue
-    # (or a menu with missing linux/initrd commands). Debian's monolithic
-    # image includes those modules and boots directly without shim.
-    monolithic=/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi
-    test -s "$monolithic"
-    install -m 0644 "$monolithic" /boot/efi/EFI/debian/grubx64.efi
-    install -m 0644 "$monolithic" /boot/efi/EFI/BOOT/BOOTX64.EFI
-    cmp -s /boot/efi/EFI/debian/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
+
+if [ "$hyperv" = 1 ] && [ "${1:-}" = --install ] && command -v efibootmgr >/dev/null; then
+    # Remove the entries the bootloader module wrote for this disk's EFI
+    # partition, so Hyper-V starts it through "EFI SCSI Device".
+    esp=$(findmnt -no SOURCE /boot/efi)
+    partuuid=$(lsblk -no PARTUUID "$esp" | tr '[:upper:]' '[:lower:]')
+    efibootmgr -v 2>/dev/null | while read -r num rest; do
+        case "$num" in Boot[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]*) ;; *) continue ;; esac
+        if [ -n "$partuuid" ] && printf '%s' "$rest" | tr '[:upper:]' '[:lower:]' | grep -q "$partuuid"; then
+            id=${num#Boot}; id=${id%\*}
+            echo "Removing EFI boot entry Boot$id (Hyper-V starts the disk through \\EFI\\BOOT)"
+            efibootmgr -q -b "$id" -B || true
+        fi
+    done
 fi
-test -s /boot/efi/EFI/BOOT/BOOTX64.EFI
-test -s /boot/efi/EFI/debian/grubx64.efi
-if [ "$mode" = shim ]; then
-    test -s /boot/efi/EFI/BOOT/grubx64.efi
-    test -s /boot/efi/EFI/debian/shimx64.efi
-fi
+
+# Both paths must be complete, with no fallback tool in \EFI\BOOT.
+esp_dir=/boot/efi/EFI
+test -s "$esp_dir/debian/shimx64.efi"
+test -s "$esp_dir/debian/grubx64.efi"
+grep -q '^search' "$esp_dir/debian/grub.cfg"
+cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$esp_dir/debian/shimx64.efi"
+cmp -s "$esp_dir/BOOT/grubx64.efi" "$esp_dir/debian/grubx64.efi"
+test ! -e "$esp_dir/BOOT/fbx64.efi"
 grub-script-check /boot/grub/grub.cfg
+
+mode=shim
+[ "$hyperv" = 1 ] && mode=shim-no-nvram
+echo "Aurora EFI installation: $mode"
 mkdir -p /var/lib/aurora
 printf '%s\n' "$mode" > "$marker"
 sync -f /boot/efi

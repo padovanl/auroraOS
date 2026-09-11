@@ -259,28 +259,33 @@ def check_installed(args, disk, out, results):
             code, output = vm.run(command, timeout=300)
             results.append((desc, code == 0, output.strip()[:200]))
         if args.firmware == "uefi":
-            mode = "direct" if args.hyperv_identity else "shim"
+            mode = "shim-no-nvram" if args.hyperv_identity else "shim"
             code, output = vm.run(f"test \"$(cat /var/lib/aurora/efi-managed)\" = {mode}")
             results.append((f"EFI mode is {mode}", code == 0, output))
+            # Both paths complete: shim + signed GRUB in \EFI\debian and \EFI\BOOT,
+            # the config GRUB reads in \EFI\debian, no fallback tool in \EFI\BOOT.
+            both = ("cd /boot/efi/EFI && cmp -s BOOT/BOOTX64.EFI debian/shimx64.efi && "
+                    "cmp -s BOOT/grubx64.efi debian/grubx64.efi && "
+                    "grep -q '^search' debian/grub.cfg && test ! -e BOOT/fbx64.efi")
+            code, output = vm.run(both)
+            results.append(("both EFI paths hold the signed chain", code == 0, output))
             # Exercise the real package hooks that may overwrite EFI binaries.
             code, output = vm.run("DEBIAN_FRONTEND=noninteractive apt-get install -y --reinstall "
                                   "grub-efi-amd64 grub-efi-amd64-signed shim-signed", timeout=300)
             results.append(("bootloader packages reinstalled", code == 0, output[-500:]))
             code, output = vm.run(f"test \"$(cat /var/lib/aurora/efi-managed)\" = {mode}")
             results.append(("EFI policy survives package reinstall", code == 0, output))
+            code, output = vm.run(both)
+            results.append(("both EFI paths survive package reinstall", code == 0, output))
             if args.hyperv_identity:
                 code, output = vm.run("lsinitramfs /initrd.img | grep -E '/hv_storvsc\\.ko(\\.|$)'")
                 results.append(("Hyper-V storage driver in initramfs", code == 0, output))
+                # Like a fresh Hyper-V VM (the only way the disk was seen to start
+                # there): no firmware entry for this disk, started via \EFI\BOOT.
                 code, output = vm.run(
-                    r"current=$(efibootmgr | sed -n 's/BootCurrent: //p'); "
-                    r'entry=$(efibootmgr -v | grep "^Boot$current"); '
-                    r'case "$entry" in *"File(\EFI\debian\grubx64.efi)"*|*"UEFI Misc Device"*) exit 0;; *) exit 1;; esac')
-                results.append(("booted via direct entry or disk fallback", code == 0, output))
-                code, output = vm.run("cmp -s /boot/efi/EFI/BOOT/BOOTX64.EFI "
-                                      "/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi && "
-                                      "cmp -s /boot/efi/EFI/debian/grubx64.efi "
-                                      "/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi")
-                results.append(("both EFI paths contain monolithic GRUB", code == 0, output))
+                    "uuid=$(lsblk -no PARTUUID $(findmnt -no SOURCE /boot/efi)); "
+                    "! efibootmgr -v | grep -qi \"$uuid\"")
+                results.append(("no firmware boot entry written on Hyper-V", code == 0, output))
         _c, grubcfg = vm.run("cat /boot/grub/grub-btrfs.cfg 2>/dev/null | head -60")
         with open(os.path.join(out, f"grub-btrfs-{args.firmware}.cfg"), "w") as f:
             f.write(grubcfg)
@@ -317,10 +322,9 @@ def main():
                     results.append((f"boots {name}", up, ""))
                     if up and args.hyperv_identity and name.endswith("-nvram"):
                         code, output = vm.run(
-                            r"current=$(efibootmgr | sed -n 's/BootCurrent: //p'); "
-                            r'entry=$(efibootmgr -v | grep "^Boot$current"); '
-                            r'case "$entry" in *"File(\EFI\debian\grubx64.efi)"*|*"UEFI Misc Device"*) exit 0;; *) exit 1;; esac')
-                        results.append(("updates preserve disk boot path", code == 0, output))
+                            "uuid=$(lsblk -no PARTUUID $(findmnt -no SOURCE /boot/efi)); "
+                            "! efibootmgr -v | grep -qi \"$uuid\"")
+                        results.append(("updates write no firmware boot entry", code == 0, output))
                     if up:
                         vm.run("sync", timeout=120)
                 finally:

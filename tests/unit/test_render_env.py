@@ -38,9 +38,10 @@ def test_renderer_selection(tmp_path, vendor, render_node, hyperv):
     assert result.stdout == expected + ("|1" if hyperv else "|")
 
 
-@pytest.mark.parametrize("hyperv", [False, True])
-def test_wayfire_is_launched_on_software_display(tmp_path, hyperv):
-    """Hyper-V changes Wayfire's redraw mode, never preemptively starts labwc."""
+@pytest.mark.parametrize(("hyperv", "forced"), [(False, False), (True, False), (True, True)])
+def test_compositor_on_software_display(tmp_path, hyperv, forced):
+    """Hyper-V starts labwc (Wayfire's software GLES flickers there) unless the
+    user asks for Wayfire; other software displays keep Wayfire."""
     script = Path(__file__).resolve().parents[2] / "desktop/bin/aurora-session"
     session = tmp_path / "session"
     session.write_text(script.read_text().replace(
@@ -55,7 +56,12 @@ def test_wayfire_is_launched_on_software_display(tmp_path, hyperv):
     gtk = home / ".config/gtk-4.0"
     gtk.mkdir(parents=True)
     (gtk / "gtk.css").touch()
+    if forced:
+        (home / ".config/aurora").mkdir(parents=True)
+        (home / ".config/aurora/compositor").write_text("wayfire\n")
     for command, body in (
+        ("labwc", "#!/bin/sh\nprintf 'labwc|%s|%s|%s' \"$*\" \"$AURORA_COMPOSITOR\" "
+         "\"$WLR_RENDERER\" > \"$AURORA_TEST_LOG\"\n"),
         ("aurora-wayfire-config", "#!/bin/sh\necho /tmp/test-wayfire.ini\n"),
         ("wayfire", "#!/bin/sh\nprintf '%s|%s|%s|%s' \"$*\" "
          "\"$AURORA_COMPOSITOR\" \"${WLR_DRM_NO_MODIFIERS:-}\" "
@@ -73,6 +79,10 @@ def test_wayfire_is_launched_on_software_display(tmp_path, hyperv):
                AURORA_TEST_LOG=str(log), WLR_RENDERER="pixman",
                AURORA_HYPERV_SOFTWARE="1" if hyperv else "0")
     subprocess.run([str(session), "wayfire"], env=env, check=True, timeout=10)
+    if hyperv and not forced:
+        started, args, compositor, renderer = log.read_text().split("|")
+        assert (started, compositor, renderer) == ("labwc", "labwc", "pixman")
+        return
     args, compositor, modifiers, renderer = log.read_text().split("|")
     assert args.startswith("-R -c ") if hyperv else args.startswith("-c ")
     assert compositor == "wayfire"

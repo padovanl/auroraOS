@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""On UEFI machines, make the disk bootable through the fallback path too.
+"""On UEFI machines, make the disk start on every firmware.
 
-Firmware that doesn't keep boot entries (Hyper-V when you pick the disk as the
-first device, many laptops after a firmware update, a disk moved to another
-PC) starts \\EFI\\BOOT\\BOOTX64.EFI. Calamares' installEFIFallback copies a
-single file there, but with Secure Boot support that file is shim, which also
-needs GRUB and its small config next to it: the machine then skipped the disk
-and tried to boot from the network. The shared EFI installer writes both
-paths, selects direct GRUB on Hyper-V with Secure Boot off, and verifies the
-result. The same helper refreshes these files after package updates.
-Runs after the bootloader module.
+/usr/local/lib/aurora/efi-install installs Debian's signed chain in \\EFI\\debian
+and a complete copy in the removable path \\EFI\\BOOT (grub-install
+--force-extra-removable), and verifies both. On Hyper-V it writes no firmware
+boot entry and removes the ones the bootloader module just made: guest-written
+entries there sent the VM to PXE after installing. Runs after the bootloader
+module; the same helper refreshes the files after package updates.
 """
 
 import os

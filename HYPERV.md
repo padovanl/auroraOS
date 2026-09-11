@@ -72,15 +72,18 @@ What these settings do:
 | 8 GB of RAM, static | The live system runs from memory, and a local AI model needs a lot. Use at least 4 GB. Dynamic memory confuses the live system. |
 | 4 processors | More makes the desktop and installs faster. |
 | 60 GB disk | At least 20 GB is needed to install, more to keep snapshots and AI models. |
-| Secure Boot **off** | Required for the live ISO and for the direct GRUB boot path installed on Hyper-V. Keep it off after installation. |
+| Secure Boot **off** | Required for the live ISO, whose boot loader is not signed. |
 | 1920×1080 | Hyper-V's default screen is small. Pick your monitor's resolution. |
 | Enhanced session off | Enhanced session (RDP) doesn't work with Aurora's Wayland desktop and would show a black window. |
 
-The default **Aurora** session uses Wayfire and window animations. On Hyper-V's
-software display Aurora starts it with full damage rerendering, modifier-free
-buffers and a software cursor to avoid stale frames. This is an in-guest
-configuration; no Windows graphics setting enables 3D acceleration for the VM.
-The **Aurora Compatibility** session uses labwc if Wayfire still misbehaves.
+On a PC, the **Aurora** session uses Wayfire and its window animations. Hyper-V's
+display has no 3D: Wayfire would have to draw with a software renderer, and there
+its frames flicker. So on Hyper-V Aurora starts labwc instead, which draws
+steadily there; the desktop's own transitions (menus, Files, Launchpad…) still
+run, only the compositor's window animations are missing. No Windows setting
+gives the VM 3D acceleration. To try Wayfire anyway, run
+`echo wayfire > ~/.config/aurora/compositor` in Aurora's terminal and log in
+again (`rm ~/.config/aurora/compositor` goes back).
 After copying a newly built ISO, check its SHA-256 against the adjacent
 `.iso.sha256` file so an earlier image is not mistaken for the new build.
 
@@ -102,11 +105,16 @@ Session".
    Set-VMDvdDrive -VMName "Aurora" -Path $null
    Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "Aurora" | Select-Object -First 1)
    ```
-5. Keep Secure Boot **off**. On Hyper-V with Secure Boot disabled, the installer
-   installs GRUB directly in both the Debian EFI directory and the disk fallback
-   path, avoiding the shim handoff. Package updates refresh both paths. Other
-   UEFI systems retain Debian's signed shim chain. This policy is tested with
-   Hyper-V SMBIOS identity in QEMU; that does not emulate Hyper-V firmware.
+5. How the installed disk starts: the installer puts Debian's signed chain (shim and
+   GRUB) both in `\EFI\debian` and in the disk's fallback path `\EFI\BOOT`
+   (Debian's `--force-extra-removable`). On Hyper-V it writes **no** boot entry into
+   the VM's firmware and removes the one the installer's bootloader step creates:
+   Hyper-V then starts the disk through its own "EFI SCSI Device" entry. Entries
+   written by the guest are a known source of trouble there ([Debian
+   #949751](https://bugs.debian.org/949751)), and they sent the VM to PXE after
+   installing. Package updates keep both paths and never add an entry. This is
+   tested in QEMU with Hyper-V's SMBIOS identity, which exercises the installer's
+   behavior but not Hyper-V's firmware itself.
 
 The Hyper-V integration daemons are already in Aurora: clean shutdown from Hyper-V
 Manager, time sync and heartbeat work out of the box.
@@ -232,16 +240,44 @@ No need to create the VM again:
 Aurora already installed on the virtual disk keeps itself up to date with **Settings →
 Updates**, with no ISO needed.
 
+### Repair an older installation
+
+If Aurora was installed with an ISO from before 29 Sep 2026 and the VM goes to PXE
+instead of starting it, you don't need to reinstall. Start the VM from a current ISO
+(run the script in part 1 again: it keeps the disk), choose **Try Aurora OS**, open
+the **Terminal** and paste:
+
+```sh
+ROOT=$(lsblk -nrpo NAME,FSTYPE /dev/sda | awk '$2=="btrfs"{print $1; exit}')
+ESP=$(lsblk -nrpo NAME,FSTYPE /dev/sda | awk '$2=="vfat"{print $1; exit}')
+sudo mount -o subvol=@ "$ROOT" /mnt
+sudo mount "$ESP" /mnt/boot/efi
+for d in dev proc sys run; do sudo mount --rbind /$d /mnt/$d; done
+sudo mkdir -p /mnt/usr/local/lib/aurora
+sudo cp /usr/local/lib/aurora/efi-install /mnt/usr/local/lib/aurora/efi-install
+sudo chroot /mnt /bin/bash /usr/local/lib/aurora/efi-install --install
+sudo umount -R /mnt; sudo poweroff
+```
+
+The last line of the output before `umount` must read `Aurora EFI installation:
+shim-no-nvram`. Then, in PowerShell, remove the ISO and start from the disk:
+
+```powershell
+Set-VMDvdDrive -VMName "Aurora" -Path $null
+Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "Aurora" | Select-Object -First 1)
+Start-VM -Name "Aurora"; vmconnect.exe localhost Aurora
+```
+
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
 | "Start PXE over IPv4", "The image's hash and certificate are not allowed", or the VM starts from the network | Keep Secure Boot **off**: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`. To install, put the DVD first; after installation, remove the ISO. |
-| After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | Check that the installed VHDX is attached and Secure Boot is off. The current installer writes and checks both EFI paths; older installations are not repaired merely by attaching a new ISO. |
+| After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | Make "Hard Drive" the first boot device (step 4). Installations made with ISOs from before 29 Sep 2026 wrote a firmware boot entry that Hyper-V can't start: reinstall with a current ISO, or start the live ISO and run, in its terminal, the commands in [Repair an older installation](#repair-an-older-installation). |
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
 | Slow or stuttering desktop | Give the VM 4 processors and static memory. The virtual display has no 3D, so Aurora uses a software renderer made for it. |
-| Flickering windows or cursor trails | First check that you booted the latest ISO and that Enhanced Session is off. The default Wayfire session applies Hyper-V-specific redraw settings automatically. If it still flickers, choose **Aurora Compatibility** at login and report the ISO checksum plus `~/.local/state/aurora/compositor-failure.log` if present. This remains a Wayfire/Hyper-V issue, not a confirmed fix. |
+| Flickering windows or cursor trails | Check that you booted an ISO from 29 Sep 2026 or later (on Hyper-V these start labwc, not Wayfire) and that Enhanced Session is off. `echo $AURORA_COMPOSITOR` in the terminal should print `labwc`; if `~/.config/aurora/compositor` exists and says `wayfire`, remove it and log in again. |
 | No network | The VM's network adapter must use "Default Switch" (or an external switch). |
 | Aurora AI can't reach Ollama | Check `OLLAMA_HOST=0.0.0.0`, the firewall rule, and Windows' address: it can change when Windows restarts. Run the `Get-NetIPAddress` command again and update the address in Settings → AI. For a fixed address, create an *External* virtual switch and use your PC's LAN address instead. |
 | Answers are slow | Use a smaller model, or check in Task Manager that Ollama is using the GPU, not the CPU. |
