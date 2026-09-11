@@ -76,14 +76,17 @@ What these settings do:
 | 1920×1080 | Hyper-V's default screen is small. Pick your monitor's resolution. |
 | Enhanced session off | Enhanced session (RDP) doesn't work with Aurora's Wayland desktop and would show a black window. |
 
-On a PC, the **Aurora** session uses Wayfire and its window animations. Hyper-V's
-display has no 3D: Wayfire would have to draw with a software renderer, and there
-its frames flicker. So on Hyper-V Aurora starts labwc instead, which draws
-steadily there; the desktop's own transitions (menus, Files, Launchpad…) still
-run, only the compositor's window animations are missing. No Windows setting
-gives the VM 3D acceleration. To try Wayfire anyway, run
-`echo wayfire > ~/.config/aurora/compositor` in Aurora's terminal and log in
-again (`rm ~/.config/aurora/compositor` goes back).
+The **Aurora** session uses Wayfire and its window animations, on Hyper-V too.
+Hyper-V's display has no 3D, so Wayfire draws with Mesa's software renderer
+(llvmpipe). Hyper-V's display driver copies every frame into the video memory the
+host shows, at the moment the compositor hands it over; llvmpipe normally finishes
+drawing in background threads, so half-drawn frames could reach the screen and
+flicker. On Hyper-V Aurora therefore runs llvmpipe without worker threads
+(`LP_NUM_THREADS=0`), so each frame is complete before it is copied. No Windows
+setting gives the VM 3D acceleration. If Wayfire still misbehaves, run
+`echo labwc > ~/.config/aurora/compositor` in Aurora's terminal and log in again
+(or pick **Aurora Compatibility** at login); `rm ~/.config/aurora/compositor`
+goes back to Wayfire.
 After copying a newly built ISO, check its SHA-256 against the adjacent
 `.iso.sha256` file so an earlier image is not mistaken for the new build.
 
@@ -277,7 +280,7 @@ Start-VM -Name "Aurora"; vmconnect.exe localhost Aurora
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
 | Slow or stuttering desktop | Give the VM 4 processors and static memory. The virtual display has no 3D, so Aurora uses a software renderer made for it. |
-| Flickering windows or cursor trails | Check that you booted an ISO from 29 Sep 2026 or later (on Hyper-V these start labwc, not Wayfire) and that Enhanced Session is off. `echo $AURORA_COMPOSITOR` in the terminal should print `labwc`; if `~/.config/aurora/compositor` exists and says `wayfire`, remove it and log in again. |
+| Flickering windows or cursor trails | Check that you booted an ISO from 29 Sep 2026 or later and that Enhanced Session is off. In Aurora's terminal, `tr '\0' '\n' </proc/$(pgrep -xo wayfire)/environ \| grep LP_NUM_THREADS` must print `LP_NUM_THREADS=0`. If it still flickers, send `~/.local/state/aurora/compositor-failure.log` and a short phone video of the screen, and use labwc meanwhile: `echo labwc > ~/.config/aurora/compositor`, then log out and in. |
 | No network | The VM's network adapter must use "Default Switch" (or an external switch). |
 | Aurora AI can't reach Ollama | Check `OLLAMA_HOST=0.0.0.0`, the firewall rule, and Windows' address: it can change when Windows restarts. Run the `Get-NetIPAddress` command again and update the address in Settings → AI. For a fixed address, create an *External* virtual switch and use your PC's LAN address instead. |
 | Answers are slow | Use a smaller model, or check in Task Manager that Ollama is using the GPU, not the CPU. |

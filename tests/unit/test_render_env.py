@@ -38,10 +38,11 @@ def test_renderer_selection(tmp_path, vendor, render_node, hyperv):
     assert result.stdout == expected + ("|1" if hyperv else "|")
 
 
-@pytest.mark.parametrize(("hyperv", "forced"), [(False, False), (True, False), (True, True)])
-def test_compositor_on_software_display(tmp_path, hyperv, forced):
-    """Hyper-V starts labwc (Wayfire's software GLES flickers there) unless the
-    user asks for Wayfire; other software displays keep Wayfire."""
+@pytest.mark.parametrize(("hyperv", "choice"), [(False, None), (True, None), (True, "labwc")])
+def test_compositor_on_software_display(tmp_path, hyperv, choice):
+    """Wayfire on software displays, with synchronous llvmpipe on Hyper-V (its
+    driver copies each frame when it is committed); "labwc" in
+    ~/.config/aurora/compositor picks labwc."""
     script = Path(__file__).resolve().parents[2] / "desktop/bin/aurora-session"
     session = tmp_path / "session"
     session.write_text(script.read_text().replace(
@@ -56,35 +57,37 @@ def test_compositor_on_software_display(tmp_path, hyperv, forced):
     gtk = home / ".config/gtk-4.0"
     gtk.mkdir(parents=True)
     (gtk / "gtk.css").touch()
-    if forced:
+    if choice:
         (home / ".config/aurora").mkdir(parents=True)
-        (home / ".config/aurora/compositor").write_text("wayfire\n")
+        (home / ".config/aurora/compositor").write_text(choice + "\n")
     for command, body in (
         ("labwc", "#!/bin/sh\nprintf 'labwc|%s|%s|%s' \"$*\" \"$AURORA_COMPOSITOR\" "
          "\"$WLR_RENDERER\" > \"$AURORA_TEST_LOG\"\n"),
         ("aurora-wayfire-config", "#!/bin/sh\necho /tmp/test-wayfire.ini\n"),
-        ("wayfire", "#!/bin/sh\nprintf '%s|%s|%s|%s' \"$*\" "
+        ("wayfire", "#!/bin/sh\nprintf '%s|%s|%s|%s|%s' \"$*\" "
          "\"$AURORA_COMPOSITOR\" \"${WLR_DRM_NO_MODIFIERS:-}\" "
-         "\"$WLR_RENDERER\" > \"$AURORA_TEST_LOG\"\n"),
+         "\"$WLR_RENDERER\" \"${LP_NUM_THREADS:-}\" > \"$AURORA_TEST_LOG\"\n"),
     ):
         executable = binaries / command
         executable.write_text(body)
         executable.chmod(0o755)
     runtime = tmp_path / "runtime"
     runtime.mkdir()
-    log = tmp_path / "wayfire-args"
+    log = tmp_path / "compositor-args"
     env = os.environ.copy()
+    env.pop("LP_NUM_THREADS", None)
     env.update(HOME=str(home), XDG_RUNTIME_DIR=str(runtime),
                XDG_STATE_HOME=str(tmp_path / "state"),
                AURORA_TEST_LOG=str(log), WLR_RENDERER="pixman",
                AURORA_HYPERV_SOFTWARE="1" if hyperv else "0")
     subprocess.run([str(session), "wayfire"], env=env, check=True, timeout=10)
-    if hyperv and not forced:
-        started, args, compositor, renderer = log.read_text().split("|")
+    if choice == "labwc":
+        started, _args, compositor, renderer = log.read_text().split("|")
         assert (started, compositor, renderer) == ("labwc", "labwc", "pixman")
         return
-    args, compositor, modifiers, renderer = log.read_text().split("|")
+    args, compositor, modifiers, renderer, threads = log.read_text().split("|")
     assert args.startswith("-R -c ") if hyperv else args.startswith("-c ")
     assert compositor == "wayfire"
     assert modifiers == ("1" if hyperv else "")
     assert renderer == "gles2"
+    assert threads == ("0" if hyperv else "")

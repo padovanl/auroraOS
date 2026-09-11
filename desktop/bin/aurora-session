@@ -41,17 +41,15 @@ rm -f "${XDG_RUNTIME_DIR:-/tmp}/aurora-logging-out"
 # Renderers that draw correctly on this machine (software ones in VMs).
 . /usr/libexec/aurora-render-env
 
-# Hyper-V's display has no 3D, so Wayfire 0.9 must draw with Mesa's software
-# GLES there, and its frames flicker on hyperv_drm (full rerendering, linear
-# buffers, a software cursor and legacy KMS flips did not cure it). labwc draws
-# with wlroots' pixman renderer, which is steady on that display; the shell's
-# and GTK's own transitions still run. "wayfire" in ~/.config/aurora/compositor
-# brings Wayfire back there.
-if [ "$compositor" = wayfire ] && [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ] &&
-   [ "$(cat "$HOME/.config/aurora/compositor" 2>/dev/null)" != wayfire ]; then
-    compositor=labwc
-    export AURORA_COMPOSITOR=labwc
-fi
+# The user can pick the compositor: "labwc" or "wayfire" in
+# ~/.config/aurora/compositor (the Aurora Compatibility session is labwc).
+choice=$(cat "$HOME/.config/aurora/compositor" 2>/dev/null)
+case "$choice" in
+    labwc|wayfire) [ "$compositor" = wayfire ] && compositor=$choice ;;
+esac
+# Safe graphics (boot menu): the plainest path, labwc with pixman.
+[ "${AURORA_SAFE_GRAPHICS:-0}" = 1 ] && compositor=labwc
+export AURORA_COMPOSITOR="$compositor"
 
 # Keep labwc's configuration for the fallback session and as Aurora Settings'
 # shared source. Wayfire gets an INI rendered from the same preferences.
@@ -98,7 +96,13 @@ if [ "${AURORA_HYPERV_SOFTWARE:-0}" = 1 ]; then
     WLR_DRM_NO_MODIFIERS=1
     WLR_EGL_NO_MODIFIERS=1
     WLR_NO_HARDWARE_CURSORS=1
-    export WLR_DRM_NO_MODIFIERS WLR_EGL_NO_MODIFIERS WLR_NO_HARDWARE_CURSORS
+    # hyperv_drm copies each frame into the host-visible video memory when
+    # wlroots commits it, right after glFlush(); llvmpipe's worker threads may
+    # still be drawing that frame then, and half-drawn frames reach the screen
+    # (flicker). With no worker threads, llvmpipe draws inside glFlush(), so
+    # every frame is complete before the copy.
+    LP_NUM_THREADS=0
+    export WLR_DRM_NO_MODIFIERS WLR_EGL_NO_MODIFIERS WLR_NO_HARDWARE_CURSORS LP_NUM_THREADS
     set -- -R
 fi
 wayfire_cfg=$(aurora-wayfire-config) || {

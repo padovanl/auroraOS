@@ -243,7 +243,7 @@ CHAPTER_ICONS = {
     "look-and-feel": "🎨", "session-services": "⚙️", "apps": "🧩",
     "security-and-privacy": "🔒", "developer-experience": "⌨️", "internationalization": "🌍",
     "aurora-s-own-packages-and-repository": "📦", "game-hub": "🎮", "build-system": "🏗️",
-    "testing": "🧪", "website": "🌐",
+    "testing": "🧪", "bugs-we-found-and-how-we-fixed-them": "🐞", "website": "🌐",
 }
 
 
@@ -277,6 +277,8 @@ CHAPTER_BLURBS = {
     "game-hub": "Steam, Proton, Heroic, Lutris, Bottles and Waydroid: gaming set up in one click.",
     "build-system": "Docker, staged build scripts and the steps from source to a bootable ISO.",
     "testing": "Static checks, unit and smoke tests, and real boots and installs in QEMU.",
+    "bugs-we-found-and-how-we-fixed-them": "Real bugs met while building and using Aurora, "
+                                           "what caused them and how they were fixed.",
     "website": "This website: static pages, generated docs and screenshots from the real ISO.",
 }
 

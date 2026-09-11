@@ -27,7 +27,7 @@ def quote(s):
 
 
 class VM:
-    def __init__(self, iso, out, firmware="bios", vga="virtio-vga"):
+    def __init__(self, iso, out, firmware="bios", vga="virtio-vga", grub_keys=()):
         self.out = out
         os.makedirs(out, exist_ok=True)
         self.tmp = tempfile.mkdtemp(prefix="aurora-interact-")
@@ -37,6 +37,9 @@ class VM:
         self.step = 0
         cmd = ["qemu-system-x86_64", "-enable-kvm", "-cpu", "host", "-machine", "q35",
                "-smp", "4", "-m", "6144", "-cdrom", iso, "-boot", "d",
+               # Only this display, as on real machines and Hyper-V: without
+               # -vga none, QEMU adds a second, empty standard VGA screen.
+               "-vga", "none",
                "-device", f"{vga},xres={W},yres={H}" if vga.startswith("virtio") else vga,
                "-display", "none", "-nic", "user,model=virtio-net-pci",
                "-monitor", f"unix:{self.mon},server,nowait",
@@ -49,6 +52,12 @@ class VM:
             ovmf = next(p for p in bt.OVMF_CANDIDATES if os.path.exists(p))
             cmd += ["-drive", f"if=pflash,format=raw,readonly=on,file={ovmf}"]
         self.qemu = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if grub_keys:
+            # Pick another boot menu entry, e.g. ("down", "down", "ret") for
+            # "Try Aurora OS (safe graphics)".
+            time.sleep(7 if firmware == "uefi" else 4)
+            for key in grub_keys:
+                bt.monitor(self.mon, f"sendkey {key}")
         self.agent = bt.Agent(self.qga)
         for _ in range(100):
             try:

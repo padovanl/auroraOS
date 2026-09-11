@@ -26,8 +26,11 @@ def main():
     ap.add_argument("out")
     ap.add_argument("--firmware", default="bios")
     ap.add_argument("--vga", default="virtio-vga")
+    ap.add_argument("--grub-keys", default="",
+                    help="keys for the boot menu, e.g. down,down,ret for safe graphics")
     args = ap.parse_args()
-    vm = VM(args.iso, args.out, args.firmware, args.vga)
+    vm = VM(args.iso, args.out, args.firmware, args.vga,
+            [k for k in args.grub_keys.split(",") if k])
     if os.path.exists(SOCK):
         os.remove(SOCK)
     server = socket.socket(socket.AF_UNIX)

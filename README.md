@@ -125,7 +125,7 @@ laptops, desktops and virtual machines, with BIOS or UEFI firmware.
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
-| **Windows** | Wayfire manages the default **Aurora** session, with snapping to halves and quarters, workspaces and a window switcher. On Hyper-V's display, which has no 3D, Wayfire's software rendering flickers, so the session starts labwc there (`wayfire` in `~/.config/aurora/compositor` overrides it). **Aurora Compatibility** always uses labwc, and labwc also takes over if Wayfire cannot start, leaving a startup report in System Health. GTK apps keep Aurora's styled title bars. |
+| **Windows** | Wayfire manages the default **Aurora** session, with snapping to halves and quarters, workspaces and a window switcher. On Hyper-V's display, which has no 3D, Wayfire draws with software rendering and llvmpipe runs without worker threads, so every frame is complete when Hyper-V's driver copies it to the screen. `labwc` in `~/.config/aurora/compositor` switches to labwc. **Aurora Compatibility** always uses labwc, and labwc also takes over if Wayfire cannot start, leaving a startup report in System Health. GTK apps keep Aurora's styled title bars. |
 | **Animations** | Wayfire animates opening, closing, minimization and restoration of windows. Settings → Appearance can turn the compositor effects and GTK/Files transitions off together. The labwc fallback has GTK/Files transitions only. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
@@ -681,7 +681,7 @@ This is the part most people find mysterious. The ISO contains:
 1. **squashfs.** `mksquashfs` packs the root file system into one compressed, read-only
    file, a fraction of its size (the whole ISO is about 2.3 GB).
 2. **grub.cfg.** Written by the stage: entries for Try, Install, safe graphics
-   (`nomodeset`), a submenu with 20 languages (it passes `aurora.lang=` and
+   (`aurora.safegraphics nouveau.noaccel=1`: software rendering and labwc, keeping the kernel's display driver; plain `nomodeset` would leave Debian's kernel, which has no `simpledrm`, with only a text console), a submenu with 20 languages (it passes `aurora.lang=` and
    `aurora.kbd=` to the kernel), boot from disk, and UEFI firmware settings. All entries
    boot `/live/vmlinuz` with `boot=live`. Each entry has a `--class` (try, install,
    language…) that the theme turns into an icon; the theme (`branding/grub/theme.txt`,
@@ -1492,6 +1492,34 @@ set up a feature, and every place it appears has its own switch.
     cracklib dictionary wasn't installed;
   - installing was impossible: `unsquashfs` (squashfs-tools) was missing from the image,
     so Calamares couldn't copy the system to the disk.
+
+### Bugs we found and how we fixed them
+Real bugs met while building Aurora, most of them by using the system the way a person
+does (on real hardware, in QEMU and on Hyper-V). Each fix has a test that would catch it
+coming back.
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| On Hyper-V, after installing, the VM skipped the disk and tried the network (PXE). | Boot entries written by the guest into the VM's firmware are unreliable on Hyper-V ([Debian #949751](https://bugs.debian.org/949751)), and the disk's fallback path held shim without the GRUB and config it loads (Debian's signed GRUB always reads `\EFI\debian\grub.cfg`). | The installer uses Debian's `--force-extra-removable` (the full signed chain in `\EFI\debian` and `\EFI\BOOT`, no `fbx64.efi`), writes no firmware entry on Hyper-V and removes the one the bootloader step made. The install test boots the disk with an empty NVRAM, like a fresh Hyper-V VM. |
+| Wayfire flickered on Hyper-V. | Hyper-V's display driver copies each frame to the host's video memory when the compositor commits it, right after `glFlush()`, while Mesa's software renderer can still be drawing it in background threads. | On Hyper-V, llvmpipe runs without worker threads (`LP_NUM_THREADS=0`): each frame is complete before it is copied. |
+| On Hyper-V, the live ISO didn't start with Secure Boot on (PXE). | The live ISO's boot loader isn't signed. | The Hyper-V script and guide turn Secure Boot off for the ISO; installed systems boot through Debian's signed shim. |
+| "Try Aurora OS (safe graphics)" only reached a text login. | It used `nomodeset`, and Debian's kernel has no `simpledrm`: without a KMS driver a Wayland compositor has no display. | Safe graphics keeps the display driver and forces software rendering and labwc (`aurora.safegraphics nouveau.noaccel=1`). |
+| "Boot from hard disk" did nothing on UEFI. | It chained to the disk's boot sector, which only BIOS has. | On UEFI it returns to the firmware, which starts the next device. |
+| The shell didn't start on Hyper-V. | UPower's display device there isn't a battery, and reading it raised an error. | The battery code reads the device kind; every hardware service fails safe instead of stopping the shell. |
+| Double-clicking a file on the desktop did nothing, then took down the whole shell. | `Gtk.FileLauncher` goes through the portal, which can't handle the shell's layer surfaces: a Wayland protocol error. | Files open in their default app directly; the session restarts the shell if it ever exits. |
+| Double-clicking a desktop icon never opened it. | The icon button's own gesture claimed the presses, so the second click never arrived. | The double-click gesture runs in the capture phase. |
+| Hot corners never fired. | The compositor gives no pointer input to a fully transparent surface. | The corners are 1% opaque: invisible, but they receive the pointer. |
+| A top-bar menu opened by shortcut ignored Esc and kept the keyboard. | The menu opened before the bar had keyboard focus, and the bar kept it afterwards. | The bar takes the keyboard first, then opens the menu, and gives it back when it closes. |
+| Files' context menu never appeared. | `translate_coordinates()` returns two values in the PyGObject Debian ships, not three. | The call accepts both forms. |
+| Text containing "&" vanished in Settings ("Date & Time"). | Adwaita reads row titles as markup. | Rows show plain text; group titles are escaped. |
+| The dock stayed magnified, or animated forever under a still pointer. | Resizing icons makes GTK report the pointer again at the same place, which restarted the animation. | Motion at an unchanged position is ignored; magnification is recomputed after the dock rebuilds. |
+| The dock's right-click menu listed "Terminal" three times. | Renaming apps at build time also renamed their actions (New Window, Preferences…). | Only the `[Desktop Entry]` group is renamed; an image check guards it. |
+| Every installed machine had the same SSH host keys. | `openssh-server` generated them at build time. | The image ships without keys; sshd creates them on each machine. |
+| Stale, half-erased regions on screen in virtual machines. | GLES and GTK's GL renderers on Mesa's software rasterizers redraw partially wrong there. | Without a real GPU the compositor uses pixman and GTK uses cairo. |
+| GTK 3 apps (Firefox, LibreOffice) crashed when started from the dock. | They inherited the shell's GTK 4 layer-shell preload. | The shell removes the preload before starting apps; the boot test checks it. |
+| The boot menu's highlight overlapped the next entry. | GRUB offsets the selected entry's text by its box's border. | The other entries get an invisible box with the same borders. |
+| A local AI model could fill the disk. | Downloads didn't check free space. | A download only starts if the disk keeps 5% free (2–10 GB); a full disk mid-download removes the partial file; the shell warns when a disk gets that full. |
+| The installer couldn't copy the system, then refused every password. | `squashfs-tools` and the cracklib dictionary were missing from the image. | Both are in the package lists; the install test runs the real installer end to end. |
 
 ### Website
 - **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub

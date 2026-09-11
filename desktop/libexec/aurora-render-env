@@ -32,6 +32,15 @@ aurora_hyperv_gpu() {
     return 1
 }
 
+# "Try Aurora OS (safe graphics)": software rendering whatever the GPU. (Not
+# nomodeset: Debian's kernel has no simpledrm, so without a KMS driver there is
+# no display a Wayland compositor can use, only a text console.)
+if grep -qw aurora.safegraphics /proc/cmdline 2>/dev/null; then
+    : "${WLR_RENDERER:=pixman}" "${GSK_RENDERER:=cairo}"
+    AURORA_SAFE_GRAPHICS=1
+    export WLR_RENDERER GSK_RENDERER AURORA_SAFE_GRAPHICS
+fi
+
 if aurora_software_gpu; then
     : "${WLR_RENDERER:=pixman}" "${GSK_RENDERER:=cairo}"
     export WLR_RENDERER GSK_RENDERER

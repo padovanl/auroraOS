@@ -73,7 +73,7 @@ menuentry "Install $AURORA_NAME" --class install {
     initrd /live/initrd.img
 }
 menuentry "Try $AURORA_NAME (safe graphics)" --class safe {
-    linux /live/vmlinuz $BOOT nomodeset
+    linux /live/vmlinuz $BOOT aurora.safegraphics nouveau.noaccel=1
     initrd /live/initrd.img
 }
 submenu "Language  ·  Lingua  ·  Sprache  ·  Idioma" --class language {
