@@ -66,6 +66,18 @@ fi
 # First login: write the GTK stylesheet imports for the chosen window style.
 [ -f "$HOME/.config/gtk-4.0/gtk.css" ] || aurora-look >/dev/null 2>&1
 
+# A virtual GPU with a render node but no 3D (virtio-gpu without virgl,
+# VirtualBox or VMware without 3D): wlroots opens that node for EGL, Mesa then
+# refuses to switch to software rendering, and forcing its kms_swrast driver
+# crashes Wayfire at the first modeset. labwc draws there with pixman. (Hyper-V,
+# bochs and other displays without a render node run Wayfire in software.)
+if [ "$compositor" = wayfire ] && [ "${WLR_RENDERER:-}" = pixman ] &&
+   [ "${AURORA_HYPERV_SOFTWARE:-0}" != 1 ] && ls "${AURORA_DRI_DEVICES:-/dev/dri}"/renderD* >/dev/null 2>&1 &&
+   [ "$(cat "$HOME/.config/aurora/compositor" 2>/dev/null)" != wayfire ]; then
+    compositor=labwc
+    export AURORA_COMPOSITOR=labwc
+fi
+
 if [ "$compositor" = labwc ]; then
     exec labwc -C "$cfg"
 fi

@@ -38,8 +38,10 @@ def test_renderer_selection(tmp_path, vendor, render_node, hyperv):
     assert result.stdout == expected + ("|1" if hyperv else "|")
 
 
-@pytest.mark.parametrize(("hyperv", "choice"), [(False, None), (True, None), (True, "labwc")])
-def test_compositor_on_software_display(tmp_path, hyperv, choice):
+@pytest.mark.parametrize(("hyperv", "choice", "render_node"),
+                         [(False, None, False), (True, None, False), (True, "labwc", False),
+                          (False, None, True), (False, "wayfire", True)])
+def test_compositor_on_software_display(tmp_path, hyperv, choice, render_node):
     """Wayfire on software displays, with synchronous llvmpipe on Hyper-V (its
     driver copies each frame when it is committed); "labwc" in
     ~/.config/aurora/compositor picks labwc."""
@@ -73,15 +75,19 @@ def test_compositor_on_software_display(tmp_path, hyperv, choice):
         executable.chmod(0o755)
     runtime = tmp_path / "runtime"
     runtime.mkdir()
+    dri = tmp_path / "dri"
+    dri.mkdir()
+    if render_node:  # a virtual GPU without 3D (virtio-gpu, VirtualBox)
+        (dri / "renderD128").touch()
     log = tmp_path / "compositor-args"
     env = os.environ.copy()
     env.pop("LP_NUM_THREADS", None)
     env.update(HOME=str(home), XDG_RUNTIME_DIR=str(runtime),
                XDG_STATE_HOME=str(tmp_path / "state"),
-               AURORA_TEST_LOG=str(log), WLR_RENDERER="pixman",
+               AURORA_TEST_LOG=str(log), WLR_RENDERER="pixman", AURORA_DRI_DEVICES=str(dri),
                AURORA_HYPERV_SOFTWARE="1" if hyperv else "0")
     subprocess.run([str(session), "wayfire"], env=env, check=True, timeout=10)
-    if choice == "labwc":
+    if choice == "labwc" or (render_node and choice != "wayfire"):
         started, _args, compositor, renderer = log.read_text().split("|")
         assert (started, compositor, renderer) == ("labwc", "labwc", "pixman")
         return
