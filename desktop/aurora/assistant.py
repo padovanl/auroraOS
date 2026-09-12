@@ -40,9 +40,10 @@ button.jump-latest { min-width: 42px; min-height: 42px; border-radius: 999px; ma
 button.jump-latest.unread { background: @accent_bg_color; color: @accent_fg_color;
   box-shadow: 0 0 0 3px alpha(@accent_bg_color, 0.25); }
 @keyframes aurora-jump-nudge {
-  0%, 100% { transform: translateY(0); }
+  0% { transform: translateY(0); }
   30% { transform: translateY(-5px); }
   60% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
 }
 button.jump-latest.unread image { animation: aurora-jump-nudge 0.7s ease-in-out 2; }
 """
@@ -60,9 +61,12 @@ def _markup(text):
     return out
 
 
-def messages_for_provider(history, which):
-    """Strip UI metadata and refuse to export file attachments to cloud APIs."""
-    if which != "local" and any(item.get("local_only") for item in history):
+def messages_for_provider(history, which, private=None):
+    """Strip UI metadata and refuse to export file attachments to cloud APIs
+    (a model on this computer or the local network is fine)."""
+    if private is None:
+        private = which == "local"
+    if not private and any(item.get("local_only") for item in history):
         raise ValueError(_("Attachments require the local AI model"))
     return [{"role": item["role"], "content": item["content"]} for item in history[-12:]]
 
@@ -505,10 +509,11 @@ class AssistantWindow(Adw.ApplicationWindow):
         self.refresh()
         if not ai.enabled():
             return
-        if self.attachments and ai.provider() != "local":
-            self.entry.set_placeholder_text(_("Attachments require the local AI model"))
+        if self.attachments and not ai.stays_private():
+            self.entry.set_placeholder_text(
+                _("Attachments stay private: use a model on this computer or your network"))
             return
-        if ai.provider() != "local" and any(m.get("local_only") for m in self.history):
+        if not ai.stays_private() and any(m.get("local_only") for m in self.history):
             self.entry.set_placeholder_text(_("Start a new chat before using a cloud provider"))
             return
         self.entry.set_text("")
@@ -547,7 +552,7 @@ class AssistantWindow(Adw.ApplicationWindow):
         parts = []
         error = None
         try:
-            messages = messages_for_provider(history, ai.provider())
+            messages = messages_for_provider(history, ai.provider(), ai.stays_private())
             for piece in chat(messages):
                 if stop_event.is_set():
                     break

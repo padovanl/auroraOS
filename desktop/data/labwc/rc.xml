@@ -21,6 +21,11 @@
       <!-- A small gap from the edges ("down" already stops above the dock). -->
       <action name="MoveRelative" x="-16" y="-16" />
     </windowRule>
+    <!-- File dialogs open from the floating Assistant (attach a file) and must
+         not end up underneath it: keep them above other windows too. -->
+    <windowRule identifier="xdg-desktop-portal-gtk">
+      <action name="ToggleAlwaysOnTop" />
+    </windowRule>
   </windowRules>
 
   <placement>

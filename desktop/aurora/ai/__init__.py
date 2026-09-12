@@ -59,3 +59,33 @@ def feature(name):
 def provider():
     s = settings.get()
     return s.get_string("ai-provider") if s else "local"
+
+
+def is_private_host(host):
+    """This computer or the local network: loopback, private and link-local
+    addresses, single-label names and .local, .lan, .home.arpa names."""
+    import ipaddress
+    host = (host or "").strip("[]").lower()
+    if not host:
+        return False
+    try:
+        ip = ipaddress.ip_address(host)
+        return ip.is_loopback or ip.is_private or ip.is_link_local
+    except ValueError:
+        pass
+    return (host == "localhost" or "." not in host
+            or host.endswith((".local", ".lan", ".home.arpa", ".internal")))
+
+
+def stays_private():
+    """Does the chosen model run on this computer or the local network? Only
+    then may files the user attaches be sent to it (never to a cloud service)."""
+    which = provider()
+    if which == "local":
+        return True
+    if which == "openai":
+        from urllib.parse import urlparse
+        s = settings.get()
+        url = s.get_string("ai-openai-url") if s else ""
+        return is_private_host(urlparse(url).hostname)
+    return False

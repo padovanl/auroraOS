@@ -134,6 +134,14 @@ for f in assistant writing; do
         echo "ok: $f"
     fi
 done
+# Chat follows the reply to the bottom; attachments reach a local model only.
+if PYTHONPATH=/src/desktop python3 -X faulthandler /src/tests/assistant-interactions.py \
+        >"$out/smoke/assistant-interactions.log" 2>&1; then
+    echo "ok: assistant interactions"
+else
+    echo "FAILED: assistant interactions"; fail=1; tail -20 "$out/smoke/assistant-interactions.log"
+fi
+gsettings reset org.aurora.desktop ai-provider; gsettings reset org.aurora.desktop ai-openai-url
 aurora-shell search "? how do I free disk space"; sleep 1.5; grim "$out/smoke/spotlight-ask.png"
 aurora-shell launcher spotlight
 
