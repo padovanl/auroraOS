@@ -208,10 +208,47 @@ def grub(out):
     box.write_to_png(os.path.join(out, "terminal_box_c.png"))
 
 
+def installer_marks(out, size=22):
+    """The installer's checkbox tick, radio dot and "mixed" dash as PNGs: Qt
+    style sheets only load SVG with an extra image plugin the image lacks."""
+    os.makedirs(out, exist_ok=True)
+
+    def mark(name, draw):
+        surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, size, size)
+        c = cairo.Context(surf)
+        c.scale(size / 22, size / 22)
+        c.set_source_rgba(1, 1, 1, 1)
+        c.set_line_cap(cairo.LINE_CAP_ROUND)
+        c.set_line_join(cairo.LINE_JOIN_ROUND)
+        draw(c)
+        surf.write_to_png(os.path.join(out, f"{name}.png"))
+
+    def tick(c):
+        c.set_line_width(2.6)
+        c.move_to(6.2, 11.4)
+        c.line_to(9.6, 14.6)
+        c.line_to(15.9, 7.6)
+        c.stroke()
+
+    def dot(c):
+        c.arc(11, 11, 4.2, 0, 2 * math.pi)
+        c.fill()
+
+    def dash(c):
+        c.set_line_width(2.6)
+        c.move_to(6.5, 11)
+        c.line_to(15.5, 11)
+        c.stroke()
+
+    for name, draw in (("check", tick), ("radio", dot), ("dash", dash)):
+        mark(name, draw)
+
+
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else "build"
     plymouth(os.path.join(out, "plymouth"))
     grub(os.path.join(out, "grub"))
+    installer_marks(os.path.join(out, "calamares"))
 
 
 if __name__ == "__main__":

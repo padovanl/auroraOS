@@ -43,40 +43,42 @@ QLineEdit:focus, QComboBox:focus { border-color: #a970ff; }
 
 QRadioButton, QCheckBox, QLabel { color: #f2eefa; background: transparent; }
 
-/* Explicit indicators: the platform's light-theme controls are illegible
-   against the installer's dark background. Keep all states distinct. */
-QCheckBox, QRadioButton { spacing: 12px; padding: 7px 0; }
+/* Checkboxes and radio buttons: soft outlines, a violet glow on hover, and a
+   violet-to-rose fill with a white mark when chosen. The marks are PNGs made
+   by branding/render.py (style sheets would need an extra plugin for SVG). */
+QCheckBox, QRadioButton { spacing: 12px; padding: 8px 0; }
 QCheckBox::indicator, QRadioButton::indicator {
     width: 20px;
     height: 20px;
-    border: 2px solid #8f819f;
-    background-color: #221d30;
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    background-color: rgba(255, 255, 255, 0.05);
 }
-QCheckBox::indicator { border-radius: 6px; }
-QRadioButton::indicator { border-radius: 12px; }
-QCheckBox::indicator:hover, QRadioButton::indicator:hover { border-color: #cba4ff; }
-QCheckBox::indicator:focus, QRadioButton::indicator:focus { border-color: #f2eefa; }
+QCheckBox::indicator { border-radius: 7px; }
+QRadioButton::indicator { border-radius: 11px; }
+QCheckBox::indicator:hover, QRadioButton::indicator:hover {
+    border-color: #cba4ff;
+    background-color: rgba(169, 112, 255, 0.16);
+}
+QCheckBox::indicator:focus, QRadioButton::indicator:focus { border: 1px solid #e7d8ff; }
 QCheckBox::indicator:checked, QCheckBox::indicator:indeterminate,
 QRadioButton::indicator:checked {
-    background-color: #a970ff;
-    border-color: #a970ff;
+    border: 1px solid #c79dff;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                                      stop: 0 #a970ff, stop: 1 #ff6f91);
 }
-QCheckBox::indicator:checked {
-    image: url(/etc/calamares/branding/aurora/check.svg);
+QCheckBox::indicator:checked:hover, QRadioButton::indicator:checked:hover {
+    border-color: #ffffff;
 }
-QCheckBox::indicator:indeterminate {
-    image: url(/etc/calamares/branding/aurora/dash.svg);
-}
-QRadioButton::indicator:checked {
-    image: url(/etc/calamares/branding/aurora/radio.svg);
-}
-QCheckBox:disabled, QRadioButton:disabled { color: #9b91aa; }
+QCheckBox::indicator:checked { image: url(/etc/calamares/branding/aurora/check.png); }
+QCheckBox::indicator:indeterminate { image: url(/etc/calamares/branding/aurora/dash.png); }
+QRadioButton::indicator:checked { image: url(/etc/calamares/branding/aurora/radio.png); }
+QCheckBox:disabled, QRadioButton:disabled { color: #8d8399; }
 QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {
-    border-color: #574a69;
-    background-color: #2a2438;
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.03);
 }
 QCheckBox::indicator:checked:disabled, QRadioButton::indicator:checked:disabled {
-    background-color: #665080;
+    background-color: #4d3f63;
 }
 
 QProgressBar {
