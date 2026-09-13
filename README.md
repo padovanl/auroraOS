@@ -1520,6 +1520,10 @@ coming back.
 | The boot menu's highlight overlapped the next entry. | GRUB offsets the selected entry's text by its box's border. | The other entries get an invisible box with the same borders. |
 | A local AI model could fill the disk. | Downloads didn't check free space. | A download only starts if the disk keeps 5% free (2–10 GB); a full disk mid-download removes the partial file; the shell warns when a disk gets that full. |
 | The installer couldn't copy the system, then refused every password. | `squashfs-tools` and the cracklib dictionary were missing from the image. | Both are in the package lists; the install test runs the real installer end to end. |
+| The Assistant refused attachments with Ollama or LM Studio on the network. | It only allowed attachments for the built-in local model. | Attachments go to any model on this computer or a private network address, never to a cloud endpoint; a headless test checks both. |
+| “Attach file” seemed to do nothing. | The file chooser opened behind the always-on-top Assistant. | labwc and Wayfire keep the portal's file chooser on top too. |
+| Wayfire exited at once on virtio-gpu without 3D. | Mesa refuses software rendering when a render node exists, and forcing it crashes Wayfire. | That setup starts labwc; `~/.config/aurora/compositor` can still choose Wayfire. |
+| The installer's checkboxes were flat squares with no tick. | The image has no Qt SVG image plugin, so the SVG marks weren't drawn. | The marks are PNGs rendered at build time. |
 
 ### Website
 - **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub
