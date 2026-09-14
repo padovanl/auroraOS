@@ -50,8 +50,17 @@ class WeatherWidget(Gtk.Button):
                     self._place = chosen.get_city_name() or chosen.get_name()
         except (GLib.Error, ImportError, AttributeError, TypeError, ValueError):
             pass
-        if (s is not None and not s.get_boolean("weather-widget")) or loc is None:
+        if s is not None and not s.get_boolean("weather-widget"):
             self.set_visible(False)
+            return
+        if loc is None:
+            # No city for this time zone (UTC, as in the live system): ask for
+            # one instead of hiding. Weather's first city is used from then on.
+            self._clear_hours()
+            self.icon.set_from_icon_name("find-location-symbolic")
+            self.temp.set_label(_("Weather"))
+            self.desc.set_label(_("Choose your city in Weather"))
+            self.set_visible(True)
             return
         fahrenheit = weather.uses_fahrenheit()
         data = weather.cached(*loc, fahrenheit=fahrenheit)
@@ -77,6 +86,10 @@ class WeatherWidget(Gtk.Button):
         if data is not None:
             self._show(data)
 
+    def _clear_hours(self):
+        while (c := self.hours.get_first_child()) is not None:
+            self.hours.remove(c)
+
     def _show(self, data):
         from aurora import weather
         text, icon = weather.describe(data["code"], data["is_day"])
@@ -86,8 +99,7 @@ class WeatherWidget(Gtk.Button):
         summary = _("{sky} · H {high:.0f}° L {low:.0f}°").format(
             sky=_(text), high=data["high"], low=data["low"])
         self.desc.set_label(f"{self._place} · {summary}" if self._place else summary)
-        while (c := self.hours.get_first_child()) is not None:
-            self.hours.remove(c)
+        self._clear_hours()
         for hour, temp, code in data["hours"]:
             col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
             col.append(Gtk.Label(label=hour, css_classes=["dim-label", "caption"]))

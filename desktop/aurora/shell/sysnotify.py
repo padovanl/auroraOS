@@ -25,6 +25,30 @@ def disk_low(total, free):
     return free < reserve_for(total)
 
 
+MEMORY_FS = {"overlay", "tmpfs", "ramfs", "squashfs", "iso9660"}
+
+
+def fs_type(path, mounts=None):
+    """File system type of the mount holding path (the longest matching mount
+    point in /proc/self/mounts)."""
+    if mounts is None:
+        try:
+            with open("/proc/self/mounts") as f:
+                mounts = f.read()
+        except OSError:
+            return ""
+    best, kind = "", ""
+    for line in mounts.splitlines():
+        fields = line.split()
+        if len(fields) < 3:
+            continue
+        point = fields[1].replace("\\040", " ")
+        inside = path == point or path.startswith(point.rstrip("/") + "/")
+        if inside and len(point) >= len(best):
+            best, kind = point, fields[2]
+    return kind
+
+
 def count_updates():
     """Packages with a newer version in the (already refreshed) apt lists."""
     try:
@@ -91,6 +115,8 @@ class SystemNotifications:
             except OSError:
                 continue
             if st.st_dev in seen:  # home on the same file system as / (btrfs)
+                continue
+            if fs_type(path) in MEMORY_FS:  # the live system: its "disk" is RAM
                 continue
             seen.add(st.st_dev)
             low = disk_low(disk.total, disk.free)

@@ -138,3 +138,19 @@ def test_disk_low_threshold():
     assert not disk_low(100 * gb, 10 * gb)     # 10% free
     assert disk_low(1000 * gb, 8 * gb)         # big disks keep at most 10 GB free
     assert not disk_low(1000 * gb, 40 * gb)
+
+
+def test_disk_warning_skips_the_live_system():
+    from aurora.shell.sysnotify import MEMORY_FS, fs_type
+    live = ("overlay / overlay rw 0 0\n"
+            "tmpfs /run tmpfs rw 0 0\n"
+            "/dev/sr0 /run/live/medium iso9660 ro 0 0\n")
+    assert fs_type("/", live) in MEMORY_FS
+    assert fs_type("/home/aurora", live) in MEMORY_FS
+    installed = ("/dev/vda2 / btrfs rw 0 0\n"
+                 "/dev/vda1 /boot/efi vfat rw 0 0\n"
+                 "/dev/vdb1 /home ext4 rw 0 0\n"
+                 "tmpfs /home/me/cache tmpfs rw 0 0\n")
+    assert fs_type("/", installed) == "btrfs"
+    assert fs_type("/home/me", installed) == "ext4"
+    assert fs_type("/homework", installed) == "btrfs"
