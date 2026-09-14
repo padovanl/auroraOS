@@ -258,6 +258,14 @@ sudo apt install qemu-system-x86 qemu-utils ovmf   # Debian/Ubuntu; "qemu-kvm ed
 make run          # live system in a QEMU window (BIOS)
 make run-uefi     # the same with UEFI firmware
 ```
+`build/run-qemu.sh` takes a few options for everything else:
+```sh
+build/run-qemu.sh --uefi --disk aurora.qcow2 aurora-os-0.1-amd64.iso   # install on a 40 GB virtual disk
+build/run-qemu.sh --uefi --disk aurora.qcow2 ''                        # start the installed system
+build/run-qemu.sh --software aurora-os-0.1-amd64.iso                   # no 3D, like Hyper-V
+```
+With `--uefi --disk`, the firmware's boot entries are kept in `aurora.qcow2.vars`, as on
+a real PC.
 
 **Just the ISO**, with no repository:
 ```sh
@@ -267,9 +275,11 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
   -device intel-hda -device hda-duplex \
   -nic user,model=virtio-net-pci -usb -device usb-tablet
 ```
-- `-device virtio-vga-gl -display gtk,gl=on` gives the VM 3D acceleration. If your host
-  can't do that (for example over SSH), use `-device virtio-vga -display gtk`: Aurora
-  notices there is no GPU and switches to its software renderers, which draw correctly.
+- `-device virtio-vga-gl -display gtk,gl=on` gives the VM 3D acceleration, and Wayfire
+  uses the host's GPU. If your host can't do that (for example over SSH), use `-vga std
+  -display gtk`: Wayfire then draws on the CPU, as on Hyper-V. (`-device virtio-vga`
+  without `-gl` starts labwc instead: Mesa won't draw on the CPU there, see
+  [Bugs we found](#bugs-we-found-and-how-we-fixed-them).)
 - `usb-tablet` makes the pointer follow your mouse without capturing it.
 - Add `-drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd` to
   boot with UEFI (on Fedora the file is `/usr/share/edk2/ovmf/OVMF_CODE.fd`).
@@ -289,6 +299,25 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
 ```
 Keep the same firmware (BIOS or UEFI, with the same `-drive if=pflash…` line) for the
 installation and for later boots.
+
+**On a Linux server, watched from another computer**: a QEMU window over `ssh -Y` is
+slow, since every frame travels as X11. Serve the screen with SPICE on the server
+instead, and open it through an SSH tunnel:
+```sh
+# on the server (inside tmux or screen, so it keeps running)
+build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-0.1-amd64.iso
+# on your computer (Windows: PowerShell or cmd)
+ssh -L 5930:127.0.0.1:5930 user@server
+remote-viewer spice://127.0.0.1:5930    # virt-viewer; on Windows from virt-manager.org
+```
+`--vnc 1` does the same with VNC on port 5901, for any VNC viewer. The port only
+listens on the server's loopback, so it is reachable through the tunnel only.
+
+**On Windows 11 with WSL 2**: WSL runs Linux with nested virtualization and shows its
+windows on the Windows desktop, so the QEMU commands above work there. In Ubuntu on WSL,
+check that `/dev/kvm` exists, `sudo apt install qemu-system-x86 qemu-utils ovmf`, add
+yourself to the `kvm` group (`sudo usermod -aG kvm $USER`, then `wsl --shutdown` in
+PowerShell), and start the VM with `--software` (WSLg's window has no OpenGL for QEMU).
 
 **Prefer a window to a command?** GNOME Boxes and Virtual Machine Manager (virt-manager)
 open the ISO directly: choose "Debian 13" as the operating system, give it 4 GB of memory
@@ -1524,6 +1553,8 @@ coming back.
 | “Attach file” seemed to do nothing. | The file chooser opened behind the always-on-top Assistant. | labwc and Wayfire keep the portal's file chooser on top too. |
 | Wayfire exited at once on virtio-gpu without 3D. | Mesa refuses software rendering when a render node exists, and forcing it crashes Wayfire. | That setup starts labwc; `~/.config/aurora/compositor` can still choose Wayfire. |
 | The installer's checkboxes were flat squares with no tick. | The image has no Qt SVG image plugin, so the SVG marks weren't drawn. | The marks are PNGs rendered at build time. |
+| The live system warned “Disk almost full”. | Its root is an overlay in RAM with about 2 GB free. | The warning skips file systems in memory (overlay, tmpfs); a unit test checks it. |
+| The weather under the calendar disappeared in the live system. | Its time zone is UTC, which has no city to take the location from. | It asks to choose a city in Weather instead of hiding. |
 
 ### Website
 - **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub
