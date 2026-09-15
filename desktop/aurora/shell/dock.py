@@ -229,6 +229,9 @@ class DockItem(Gtk.Button):
             self.dock.shell.launch_app(self.app)
 
     def _on_click(self, *_a):
+        launcher = self.dock.shell.launcher
+        if launcher.get_visible():
+            launcher.hide_launcher()      # the dock works over Launchpad, like on a Mac
         if not self.windows:
             self.launch()
             return
