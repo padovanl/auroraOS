@@ -109,6 +109,17 @@ def fetch(lat, lon, fahrenheit=False, timeout=6):
     return weather
 
 
+def measurement_locale(env=None):
+    """The locale that picks units, by glibc's rule: LC_ALL, then LC_MEASUREMENT,
+    then LANG. (Python has no locale.LC_MEASUREMENT, and the text locale can
+    differ: English text with Italian formats is common.)"""
+    env = os.environ if env is None else env
+    for name in ("LC_ALL", "LC_MEASUREMENT", "LANG"):
+        if env.get(name):
+            return env[name]
+    return ""
+
+
 def uses_fahrenheit(loc=None):
     """Follow the same GWeather unit preference used by GNOME Weather."""
     from gi.repository import Gio
@@ -117,7 +128,26 @@ def uses_fahrenheit(loc=None):
         choice = Gio.Settings.new("org.gnome.GWeather4").get_string("temperature-unit")
         if choice in ("fahrenheit", "centigrade", "kelvin"):
             return choice == "fahrenheit"
-    import locale
-    loc = loc or locale.getlocale(locale.LC_MEASUREMENT if hasattr(locale, "LC_MEASUREMENT")
-                                  else locale.LC_CTYPE)[0] or os.environ.get("LANG", "")
+    loc = loc or measurement_locale()
     return any(loc.startswith(p) for p in ("en_US", "en_LR", "my_MM"))
+
+
+def place():
+    """((latitude, longitude), city name or None) for the forecast: the first
+    city chosen in the Weather app, else the time zone's reference city."""
+    from aurora import sun
+    loc, name = sun.location(), None
+    try:
+        import gi
+        gi.require_version("GWeather", "4.0")
+        from gi.repository import Gio, GWeather
+        places = Gio.Settings.new("org.gnome.Weather").get_value("locations")
+        if places.n_children():
+            chosen = GWeather.Location.get_world().deserialize(
+                places.get_child_value(0).get_variant())
+            if chosen is not None and chosen.has_coords():
+                loc = chosen.get_coords()
+                name = chosen.get_city_name() or chosen.get_name()
+    except Exception:  # noqa: BLE001 - no GWeather or no chosen city
+        pass
+    return loc, name

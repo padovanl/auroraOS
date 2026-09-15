@@ -1,5 +1,7 @@
 """Desktop & Dock: layout presets and every knob behind them."""
 
+import subprocess
+
 from gi.repository import Adw, Gtk
 
 from aurora import look, settings
@@ -152,6 +154,16 @@ class Desktop(Page):
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
 
+        widgets = self.group(_("Desktop Widgets"),
+                             _("Clock, calendar, weather, system, Git projects, containers, "
+                               "GPU, games and more, on the desktop under your windows."))
+        self._switch(widgets, _("Show widgets"), "desktop-widgets")
+        edit = Adw.ButtonRow(title=_("Edit Widgets…")) if hasattr(Adw, "ButtonRow") else None
+        if edit is not None:
+            edit.connect("activated", lambda *_: subprocess.Popen(
+                ["aurora-shell", "edit-widgets"], start_new_session=True))
+            widgets.add(edit)
+
         dock = self.group(_("Dock"))
         self._combo(dock, _("Position"), "dock-position",
                     [("bottom", _("Bottom")), ("left", _("Left")), ("right", _("Right")),
@@ -200,7 +212,8 @@ class Desktop(Page):
             look.apply()
         if not self._syncing and key not in ("clock-show-seconds", "desktop-icons",
                                                     "desktop-icons-position",
-                                                    "panel-system-monitor"):
+                                                    "panel-system-monitor",
+                                                    "desktop-widgets"):
             self.s.set_string("layout", "custom")
             self._sync_presets()
 

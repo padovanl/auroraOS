@@ -229,3 +229,12 @@ def test_night_light_arguments(monkeypatch, schedule, expected):
     cycle = daycycle.DayCycle.__new__(daycycle.DayCycle)
     cycle.location = (41.9, 12.483)
     assert cycle.night_light_args() == expected
+
+
+def test_weather_units_follow_the_measurement_locale():
+    # English text with Italian formats: Celsius, as GNOME Weather shows.
+    env = {"LANG": "en_US.UTF-8", "LC_MEASUREMENT": "it_IT.UTF-8"}
+    assert weather.measurement_locale(env) == "it_IT.UTF-8"
+    assert not weather.uses_fahrenheit(weather.measurement_locale(env))
+    assert weather.measurement_locale({"LANG": "en_US.UTF-8"}) == "en_US.UTF-8"
+    assert weather.measurement_locale({"LC_ALL": "de_DE", "LC_MEASUREMENT": "en_US"}) == "de_DE"

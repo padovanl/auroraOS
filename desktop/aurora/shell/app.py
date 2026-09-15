@@ -78,11 +78,14 @@ class Shell(Adw.Application):
         for name, cb, ptype in (
             ("open-terminal", lambda *_: self._open_desktop_terminal(), None),
             ("open-files", lambda *_: self._open_files(), None),
+            ("edit-widgets", lambda *_: self.handle(["edit-widgets"]), None),
             ("settings", lambda _a, p: self.open_settings(p.get_string()), "s"),
             ("launcher", lambda *_: self.launcher.toggle(), None),
-            ("software", lambda *_: apps.spawn(["gnome-software"]), None),
-            ("devhub", lambda *_: apps.spawn(["aurora-devhub"]), None),
-            ("force-quit", lambda *_: apps.spawn(["gnome-system-monitor", "-p"]), None),
+            ("software", lambda *_a: self.open_app(["gnome-software"], "org.gnome.Software",
+                                                   _("Opening App Center…")), None),
+            ("devhub", lambda *_: self.open_app(["aurora-devhub"], "org.aurora.DevHub"), None),
+            ("force-quit", lambda *_: self.open_app(["gnome-system-monitor", "-p"],
+                                                    "org.gnome.SystemMonitor"), None),
             ("suspend", lambda *_: self.power.suspend(), None),
             ("reboot", lambda *_: self.power.reboot(), None),
             ("poweroff", lambda *_: self.power.poweroff(), None),
@@ -124,6 +127,8 @@ class Shell(Adw.Application):
         GLib.idle_add(self._notify_compositor_fallback)
         from aurora.shell.keepawake import KeepAwake
         self.keep_awake = KeepAwake()
+        from aurora.shell.refit import WindowRefit
+        self.window_refit = WindowRefit(self)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
@@ -367,6 +372,10 @@ class Shell(Adw.Application):
             if getattr(self, "shortcuts_overlay", None) is None:
                 self.shortcuts_overlay = ShortcutsOverlay(self)
             self.shortcuts_overlay.toggle()
+        elif cmd == "edit-widgets":
+            layer = getattr(self, "widget_layer", None)
+            if layer is not None:
+                layer.set_editing(True)
         elif cmd == "keep-awake":
             self.keep_awake.set_active(not self.keep_awake.active)
         elif cmd == "quick-settings":
@@ -395,7 +404,21 @@ class Shell(Adw.Application):
         argv = ["aurora-settings"]
         if page:
             argv += ["--page", page]
+        self.open_app(argv, "org.aurora.Settings")
+
+    def open_app(self, argv, app_id, starting=None):
+        """Run an app's command and make sure its window comes forward.
+
+        An app that is already open gets the command (a Settings page, say)
+        but can't raise itself on Wayland without an activation token: the
+        shell activates its window instead. A slow first start (App Center
+        loads its catalog) shows that something is happening."""
+        running = self.toplevels.for_app(app_id)
         apps.spawn(argv)
+        if running:
+            GLib.timeout_add(350, lambda: (running[0].activate(), False)[1])
+        elif starting:
+            self.osd.show_message("content-loading-symbolic", starting, timeout_ms=2500)
 
     def _open_files(self):
         app = apps.app_by_id("org.aurora.Files.desktop")

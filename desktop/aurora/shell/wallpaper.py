@@ -38,6 +38,7 @@ class Wallpaper(LayerWindow):
             overlay.add_overlay(self._selection_box)
             self._selection_rect = None
             self._selection_origin = None
+            self._dragging_widget = False
             select_drag = Gtk.GestureDrag()
             select_drag.connect("drag-begin", self._selection_begin)
             select_drag.connect("drag-update", self._selection_update)
@@ -50,6 +51,10 @@ class Wallpaper(LayerWindow):
             drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             drop.connect("drop", self._on_drop)
             overlay.add_controller(drop)
+            # Widgets sit above the icons, each only as big as itself.
+            from aurora.shell.widgets import WidgetLayer
+            self.widgets = WidgetLayer(app, overlay, monitor)
+            app.widget_layer = self.widgets
         self._menu = self._build_menu(overlay)
 
         click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
@@ -72,16 +77,42 @@ class Wallpaper(LayerWindow):
         self._icons.select(None)
 
     def _selection_begin(self, gesture, x, y):
+        """One drag, one job: move the widget under the pointer, or draw the
+        selection rectangle on empty desktop, never both."""
         picked = self.get_child().pick(x, y, Gtk.PickFlags.DEFAULT)
         from aurora.shell.desktopicons import DesktopIcon
+        self._selection_origin = None
+        self._dragging_widget = False
         if picked is not None and (isinstance(picked, DesktopIcon) or
                                    picked.get_ancestor(DesktopIcon) is not None):
-            self._selection_origin = None
+            gesture.set_state(Gtk.EventSequenceState.DENIED)
+            return
+        if picked is not None and (picked is self.widgets.gallery or
+                                   picked.is_ancestor(self.widgets.gallery)):
+            gesture.set_state(Gtk.EventSequenceState.DENIED)
+            return
+        from aurora.shell.widgets import DesktopWidget
+        on_widget = picked if isinstance(picked, DesktopWidget) else (
+            picked.get_ancestor(DesktopWidget) if picked is not None else None)
+        if on_widget is not None:
+            widget = self.widgets.widget_at(picked)
+            if widget is None:          # text in a Notes widget: select it instead
+                gesture.set_state(Gtk.EventSequenceState.DENIED)
+                return
+            self._dragging_widget = True
+            self.widgets.drag_begin(widget, x, y)
+            return
+        if self.widgets.editing:
+            # Arranging widgets: no selection rectangle (it works everywhere
+            # else, outside edit mode).
             gesture.set_state(Gtk.EventSequenceState.DENIED)
             return
         self._selection_origin = (x, y, set(self._icons._selected))
 
     def _selection_update(self, _gesture, dx, dy):
+        if self._dragging_widget:
+            self.widgets.drag_update(dx, dy)
+            return
         if self._selection_origin is None:
             return
         x, y, original = self._selection_origin
@@ -92,6 +123,9 @@ class Wallpaper(LayerWindow):
         self._icons.select_rect(*start, *end, original)
 
     def _selection_end(self, *_args):
+        if self._dragging_widget:
+            self._dragging_widget = False
+            self.widgets.drag_end()
         self._selection_origin = None
         self._selection_rect = None
         self._selection_box.queue_draw()
@@ -157,7 +191,8 @@ class Wallpaper(LayerWindow):
              (_("New Folder…"), "desktop.new-folder", None)],
             [(_("Open Terminal"), "app.open-terminal", None),
              (_("Open Files"), "app.open-files", None)],
-            [(_("Change Background…"), "app.settings", "appearance"),
+            [(_("Edit Widgets…"), "app.edit-widgets", None),
+             (_("Change Background…"), "app.settings", "appearance"),
              (_("Display Settings"), "app.settings", "display"),
              (_("Settings"), "app.settings", "")],
         ]

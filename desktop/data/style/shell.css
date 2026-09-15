@@ -26,17 +26,34 @@ window.aurora-layer {
 .aurora-panel.panel-top .panel-bar { border-bottom: 1px solid @shell_border; }
 .aurora-panel.panel-bottom .panel-bar { border-top: 1px solid @shell_border; }
 
-.panel-button {
+/* One highlight per button. A MenuButton is a box around a real button, and
+   libadwaita colours that inner button too: style only the inner one, or hover
+   shows two boxes of different sizes. */
+button.panel-button,
+menubutton.panel-button > button {
   min-height: 22px;
   padding: 1px 9px;
   margin: 3px 0;
   border-radius: 7px;
   color: @shell_fg;
+  background: none;
+  box-shadow: none;
+  transition: background-color 120ms ease-out, box-shadow 120ms ease-out;
 }
+menubutton.panel-button { padding: 0; margin: 0; background: none; box-shadow: none; }
 
-.panel-button:hover { background-color: @shell_hover; }
-.panel-button:checked,
-.panel-button:active { background-color: @shell_active; }
+button.panel-button:hover,
+menubutton.panel-button > button:hover {
+  background-image: linear-gradient(to bottom, alpha(#ffffff, 0.13), alpha(#ffffff, 0.06));
+  box-shadow: inset 0 1px alpha(#ffffff, 0.08);
+}
+button.panel-button:active,
+button.panel-button:checked,
+menubutton.panel-button > button:active,
+menubutton.panel-button > button:checked {
+  background-image: linear-gradient(to bottom, alpha(@aurora_violet, 0.34), alpha(@aurora_violet, 0.20));
+  box-shadow: inset 0 1px alpha(#ffffff, 0.10);
+}
 
 .panel-logo image {
   color: @aurora_amber;
@@ -327,11 +344,11 @@ popover.aurora-context-menu contents {
 popover.aurora-context-menu separator { background: #41444b; margin: 6px 10px; min-height: 1px; }
 popover.aurora-context-menu button.model { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
 popover.aurora-context-menu button.model:hover,
-popover.aurora-context-menu button.model:focus { background-color: #414650; color: #ffffff; }
+popover.aurora-context-menu button.model:focus-visible { background-color: #414650; color: #ffffff; }
 popover.aurora-context-menu button.model:disabled { color: #868b94; }
 popover.aurora-context-menu button.context-action { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
 popover.aurora-context-menu button.context-action:hover,
-popover.aurora-context-menu button.context-action:focus { background-color: #414650; color: #ffffff; }
+popover.aurora-context-menu button.context-action:focus-visible { background-color: #414650; color: #ffffff; }
 popover.aurora-context-menu button.context-action:disabled { color: #868b94; }
 
 /* ---- Keyboard shortcuts overlay (Super+/) ---- */
@@ -342,3 +359,133 @@ window.aurora-shortcuts { background: rgba(8, 6, 14, 0.55); }
 
 /* ---- System monitor in the top bar ---- */
 .panel-sysmon-label { font-size: 0.9em; font-weight: 600; }
+
+/* ---- Desktop widgets ---- */
+/* Frosted cards on the wallpaper, in the system's accent color. .light follows
+   the light style; sizes come from the code (they follow the screen height). */
+.desktop-widget {
+  padding: 12px 14px;
+  border-radius: 22px;
+  color: #f4f0fb;
+  background-image: linear-gradient(160deg, rgba(46, 36, 70, 0.66), rgba(18, 14, 28, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.30), inset 0 1px rgba(255, 255, 255, 0.07);
+  transition: box-shadow 160ms ease-out, opacity 160ms ease-out;
+}
+.desktop-widget:hover { border-color: rgba(255, 255, 255, 0.16); }
+.desktop-widget.light {
+  color: #231d31;
+  background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.78), rgba(244, 240, 252, 0.66));
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 30px rgba(30, 20, 60, 0.18), inset 0 1px rgba(255, 255, 255, 0.8);
+}
+.desktop-widget.dragging {
+  opacity: 0.94;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.45), 0 0 0 2px alpha(@accent_bg_color, 0.55);
+}
+/* Edit mode: a softly pulsing accent outline (a rotating "wiggle" leaves
+   streaks with software rendering). */
+@keyframes widget-editing {
+  0% { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.30), 0 0 0 1px alpha(@accent_bg_color, 0.35); }
+  50% { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.30), 0 0 0 3px alpha(@accent_bg_color, 0.75); }
+  100% { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.30), 0 0 0 1px alpha(@accent_bg_color, 0.35); }
+}
+.desktop-widget.editing { animation: widget-editing 1.6s ease-in-out infinite; }
+.desktop-widget.editing.dragging { animation: none; }
+.widget-ghost {
+  margin: 9px;
+  border-radius: 22px;
+  border: 2px dashed alpha(@accent_bg_color, 0.85);
+  background-color: alpha(@accent_bg_color, 0.12);
+}
+
+.desktop-widget .widget-title {
+  font-size: 0.78em; font-weight: 800; letter-spacing: 0.08em;
+  color: @accent_bg_color;
+}
+.desktop-widget .widget-caption { font-size: 0.86em; opacity: 0.72; }
+.desktop-widget .widget-big { font-size: 2.3em; font-weight: 300; }
+.desktop-widget .widget-time { font-size: 1.5em; font-weight: 600; }
+.desktop-widget .widget-weekday { font-size: 0.72em; font-weight: 700; opacity: 0.55; }
+.desktop-widget .widget-day { font-size: 0.8em; min-height: 17px; min-width: 17px; border-radius: 999px; }
+.desktop-widget .widget-day.today {
+  background-color: @accent_bg_color; color: @accent_fg_color; font-weight: 800;
+}
+.widget-weather image { color: @aurora_amber; -gtk-icon-shadow: 0 0 10px alpha(@aurora_amber, 0.45); }
+.desktop-widget .widget-art { border-radius: 12px; background-color: alpha(currentColor, 0.08); }
+.desktop-widget .widget-notes,
+.desktop-widget .widget-notes text {
+  background: transparent; color: inherit; font-size: 0.95em;
+}
+.desktop-widget scrolledwindow { background: transparent; }
+.desktop-widget button.flat { color: inherit; border-radius: 10px; }
+.desktop-widget button.flat:hover { background-color: alpha(currentColor, 0.09); }
+.desktop-widget .widget-row { padding: 4px 6px; min-height: 0; }
+.desktop-widget .widget-cover { border-radius: 8px; }
+.desktop-widget .widget-game { padding: 2px; }
+
+button.widget-remove {
+  min-width: 22px; min-height: 22px; padding: 0;
+  background-color: rgba(30, 24, 42, 0.92); color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+button.widget-remove:hover { background-color: @aurora_rose; }
+
+.widget-gallery {
+  padding: 16px 20px 18px; border-radius: 26px;
+  background-image: linear-gradient(170deg, rgba(40, 32, 60, 0.96), rgba(20, 16, 30, 0.96));
+  color: #f4f0fb;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px rgba(255, 255, 255, 0.08);
+}
+.widget-gallery-title { font-size: 1.15em; font-weight: 800; }
+.widget-gallery-hint { font-size: 0.85em; opacity: 0.6; }
+.widget-gallery-section {
+  font-size: 0.72em; font-weight: 800; letter-spacing: 0.1em; opacity: 0.55;
+  margin-left: 4px;
+}
+.widget-gallery separator { background: rgba(255, 255, 255, 0.08); }
+.widget-gallery-item { padding: 8px 4px; border-radius: 14px; min-width: 74px; color: inherit; }
+.widget-gallery-item:hover { background-color: rgba(255, 255, 255, 0.07); }
+.widget-gallery-item:active { background-color: alpha(@accent_bg_color, 0.25); }
+.widget-gallery-icon {
+  min-width: 40px; min-height: 40px; border-radius: 12px;
+  color: #ffffff;
+  background-image: linear-gradient(145deg, alpha(@accent_bg_color, 0.95), alpha(@accent_bg_color, 0.55));
+  box-shadow: 0 4px 12px alpha(@accent_bg_color, 0.30), inset 0 1px rgba(255, 255, 255, 0.25);
+}
+.widget-gallery-icon.section-system { background-image: linear-gradient(145deg, #4fd1c5, #2b8f9e); box-shadow: 0 4px 12px rgba(79, 209, 197, 0.25); }
+.widget-gallery-icon.section-developers { background-image: linear-gradient(145deg, #60a5fa, #3b5bdb); box-shadow: 0 4px 12px rgba(96, 165, 250, 0.25); }
+.widget-gallery-icon.section-gamers { background-image: linear-gradient(145deg, #ff8a65, #e8467c); box-shadow: 0 4px 12px rgba(255, 111, 145, 0.28); }
+
+/* New widget details */
+.desktop-widget .widget-row-title { font-weight: 600; font-size: 0.92em; }
+.desktop-widget .widget-row-time { font-size: 1.05em; font-weight: 700; }
+.desktop-widget .widget-daynight.day { color: @aurora_amber; }
+.desktop-widget .widget-daynight.night { color: #a5b4fc; }
+.desktop-widget .widget-rate { font-size: 1.05em; font-weight: 700; }
+.desktop-widget .widget-port {
+  font-weight: 800; padding: 1px 7px; border-radius: 999px;
+  background-color: alpha(@accent_bg_color, 0.22); color: inherit;
+}
+.desktop-widget button.widget-accent-button {
+  background-color: @accent_bg_color; color: @accent_fg_color; min-width: 34px; min-height: 34px;
+}
+.desktop-widget togglebutton.widget-profile { padding: 5px 10px; border-radius: 10px; color: inherit; }
+.desktop-widget togglebutton.widget-profile:checked {
+  background-color: alpha(@accent_bg_color, 0.30); font-weight: 700;
+}
+.desktop-widget.widget-photo-card { padding: 6px; }
+.desktop-widget .widget-photo { border-radius: 17px; }
+
+/* Widget options */
+.desktop-widget .widget-clock-big { font-size: 2.6em; font-weight: 300; }
+.desktop-widget.note-yellow { background-image: linear-gradient(160deg, rgba(255, 214, 102, 0.85), rgba(250, 190, 70, 0.78)); color: #3a2c05; }
+.desktop-widget.note-pink { background-image: linear-gradient(160deg, rgba(255, 150, 180, 0.85), rgba(240, 110, 150, 0.78)); color: #3d0b1c; }
+.desktop-widget.note-blue { background-image: linear-gradient(160deg, rgba(140, 190, 255, 0.85), rgba(100, 150, 240, 0.78)); color: #0a1f3d; }
+.desktop-widget.note-green { background-image: linear-gradient(160deg, rgba(150, 230, 170, 0.85), rgba(100, 200, 130, 0.78)); color: #0b2e15; }
+.desktop-widget.note-yellow .widget-title, .desktop-widget.note-pink .widget-title,
+.desktop-widget.note-blue .widget-title, .desktop-widget.note-green .widget-title { color: inherit; opacity: 0.7; }
+popover.widget-customize contents { border-radius: 16px; min-width: 260px; }
+.widget-customize-title { font-weight: 800; }

@@ -33,23 +33,9 @@ class WeatherWidget(Gtk.Button):
         self._busy = False
 
     def refresh(self):
-        from aurora import sun, weather
+        from aurora import weather
         s = settings.get()
-        loc = sun.location()
-        self._place = None
-        try:
-            import gi
-            gi.require_version("GWeather", "4.0")
-            from gi.repository import GWeather
-            places = Gio.Settings.new("org.gnome.Weather").get_value("locations")
-            if places.n_children():
-                chosen = GWeather.Location.get_world().deserialize(
-                    places.get_child_value(0).get_variant())
-                if chosen is not None and chosen.has_coords():
-                    loc = chosen.get_coords()
-                    self._place = chosen.get_city_name() or chosen.get_name()
-        except (GLib.Error, ImportError, AttributeError, TypeError, ValueError):
-            pass
+        loc, self._place = weather.place()
         if s is not None and not s.get_boolean("weather-widget"):
             self.set_visible(False)
             return
