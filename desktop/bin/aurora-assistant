@@ -1,6 +1,27 @@
 #!/usr/bin/python3
+import ctypes.util
 import os
 import sys
+
+# The Assistant floats in a corner as a layer-shell surface: gtk4-layer-shell
+# must be loaded before libwayland-client. Re-exec once with it preloaded, then
+# drop it from the environment again (apps started from here inherit it, and
+# GTK 3 apps crash with GTK 4 preloaded). Writing Tools is an ordinary window.
+if "--writing" not in sys.argv:
+    if os.environ.pop("AURORA_ASSISTANT_PRELOADED", None) is None:
+        lib = ctypes.util.find_library("gtk4-layer-shell")
+        if lib and os.environ.get("WAYLAND_DISPLAY"):
+            os.environ["LD_PRELOAD"] = (lib + " " + os.environ.get("LD_PRELOAD", "")).strip()
+            os.environ["AURORA_ASSISTANT_PRELOADED"] = lib
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+    else:
+        os.environ["AURORA_ASSISTANT_LAYER"] = "1"   # read by aurora.assistant
+        rest = " ".join(p for p in os.environ.get("LD_PRELOAD", "").split()
+                        if "gtk4-layer-shell" not in p)
+        if rest:
+            os.environ["LD_PRELOAD"] = rest
+        else:
+            os.environ.pop("LD_PRELOAD", None)
 
 sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
 

@@ -16,8 +16,6 @@ import subprocess
 import time
 import zipfile
 
-import numpy as np
-
 from aurora import settings
 from aurora.ai import base_dir
 
@@ -137,6 +135,7 @@ def update(embed, db=None, progress=None, should_stop=None):
 
 
 def _pack(vec):
+    import numpy as np   # only for vectors: reading files works without it
     v = np.asarray(vec, dtype=np.float32)
     n = np.linalg.norm(v)
     return (v / n if n else v).tobytes()
@@ -148,6 +147,7 @@ def search(query_vec, db=None, limit=8):
     rows = db.execute("SELECT path, text, vec FROM passages").fetchall()
     if not rows:
         return []
+    import numpy as np
     q = np.asarray(query_vec, dtype=np.float32)
     q /= np.linalg.norm(q) or 1.0
     mat = np.frombuffer(b"".join(r[2] for r in rows), dtype=np.float32).reshape(len(rows), -1)

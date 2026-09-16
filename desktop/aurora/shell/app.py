@@ -334,7 +334,8 @@ class Shell(Adw.Application):
         elif cmd == "read-aloud":
             self.read_aloud()
         elif cmd == "assistant":
-            apps.spawn(["aurora-assistant"])
+            # From the keyboard shortcut: typing should go to the Assistant.
+            apps.spawn(["aurora-assistant", "--focus"])
         elif cmd == "writing":
             from aurora import ai
             if ai.feature("writing-tools"):

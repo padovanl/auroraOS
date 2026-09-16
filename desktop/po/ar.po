@@ -73,205 +73,245 @@ msgstr "تعذّر التعرّف على الكلام"
 msgid "speech synthesis failed"
 msgstr "تعذّر توليد الكلام"
 
-#: aurora/assistant.py:70
+#: aurora/assistant.py:77
 msgid "Attachments require the local AI model"
 msgstr "تتطلب المرفقات نموذج الذكاء الاصطناعي المحلي"
 
-#: aurora/assistant.py:123 aurora/assistant.py:584 aurora/assistant.py:685
+#: aurora/assistant.py:130 aurora/assistant.py:844 aurora/assistant.py:959
 #: aurora/files/window.py:1067 aurora/shell/desktopicons.py:164
 msgid "Copy"
 msgstr "نسخ"
 
-#: aurora/assistant.py:153 aurora/assistant.py:164
+#: aurora/assistant.py:206 aurora/assistant.py:235 aurora/assistant.py:269
 #: aurora/settingsapp/inputs.py:26
 msgid "Aurora Assistant"
 msgstr "مساعد Aurora"
 
-#: aurora/assistant.py:167 aurora/assistant.py:416
+#: aurora/assistant.py:238 aurora/assistant.py:664
 msgid "New Chat"
 msgstr "محادثة جديدة"
 
-#: aurora/assistant.py:171
+#: aurora/assistant.py:243
 msgid "Conversations"
 msgstr "المحادثات"
 
-#: aurora/assistant.py:174 aurora/files/window.py:1166
+#: aurora/assistant.py:247 aurora/files/window.py:1166
 #: aurora/settingsapp/health.py:301 aurora/settingsapp/system.py:143
 #: aurora/settingsapp/system.py:185
 msgid "Close"
 msgstr "إغلاق"
 
-#: aurora/assistant.py:179 aurora/assistant.py:287
+#: aurora/assistant.py:252 aurora/assistant.py:437
+msgid "Minimize to a bar"
+msgstr "تصغير إلى شريط"
+
+#: aurora/assistant.py:263
+msgid "Choose the model"
+msgstr "اختر النموذج"
+
+#: aurora/assistant.py:274 aurora/assistant.py:457
 msgid "Expand"
 msgstr "توسيع"
 
-#: aurora/assistant.py:183
+#: aurora/assistant.py:279
 msgid "AI Settings"
 msgstr "إعدادات الذكاء الاصطناعي"
 
-#: aurora/assistant.py:188
+#: aurora/assistant.py:285
 msgid "Aurora AI is off"
 msgstr "Aurora AI متوقف"
 
-#: aurora/assistant.py:189
+#: aurora/assistant.py:286
 msgid "Turn it on in Settings → AI. It runs on this computer, or with the cloud provider you choose."
 msgstr "شغّله من الإعدادات ← الذكاء الاصطناعي. يعمل على هذا الحاسوب أو عبر خدمة سحابية تختارها."
 
-#: aurora/assistant.py:191
+#: aurora/assistant.py:288 aurora/assistant.py:295
 msgid "Open AI Settings"
 msgstr "فتح إعدادات الذكاء الاصطناعي"
 
-#: aurora/assistant.py:201
+#: aurora/assistant.py:294 aurora/assistant.py:510
+msgid "No model yet"
+msgstr "لا يوجد نموذج بعد"
+
+#: aurora/assistant.py:305
 msgid "How can I help?"
 msgstr "كيف يمكنني المساعدة؟"
 
-#: aurora/assistant.py:202
+#: aurora/assistant.py:306
 msgid "Ask anything, or pick an action for the text you copied."
 msgstr "اسأل عن أي شيء، أو اختر إجراءً للنص المنسوخ."
 
-#: aurora/assistant.py:217
+#: aurora/assistant.py:321
 msgid "Jump to latest"
 msgstr "الانتقال إلى أحدث رسالة"
 
-#: aurora/assistant.py:228 aurora/assistant.py:640
+#: aurora/assistant.py:332 aurora/assistant.py:900
 #: aurora/shell/notifications.py:312
 msgid "Summarize"
 msgstr "تلخيص"
 
-#: aurora/assistant.py:229
+#: aurora/assistant.py:333
 msgid "Improve Writing"
 msgstr "تحسين الكتابة"
 
-#: aurora/assistant.py:231 aurora/assistant.py:642
+#: aurora/assistant.py:335 aurora/assistant.py:902
 msgid "Translate"
 msgstr "ترجمة"
 
-#: aurora/assistant.py:233
+#: aurora/assistant.py:337
 msgid "Explain"
 msgstr "شرح"
 
-#: aurora/assistant.py:236
+#: aurora/assistant.py:340
 msgid "Uses the text you copied"
 msgstr "يستخدم النص المنسوخ"
 
-#: aurora/assistant.py:252 aurora/shell/search.py:351
+#: aurora/assistant.py:356 aurora/shell/search.py:351
 msgid "Ask Aurora…"
 msgstr "اسأل Aurora…"
 
-#: aurora/assistant.py:255 aurora/assistant.py:303
+#: aurora/assistant.py:359 aurora/assistant.py:551
 msgid "Attach files or photos"
 msgstr "إرفاق ملفات أو صور"
 
-#: aurora/assistant.py:264
+#: aurora/assistant.py:368
 msgid "Stop generating"
 msgstr "إيقاف التوليد"
 
-#: aurora/assistant.py:287
+#: aurora/assistant.py:437 aurora/files/window.py:124
+#: aurora/files/window.py:1057 aurora/quicklook.py:141 aurora/shell/app.py:558
+#: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:325
+#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
+#: aurora/shell/sysnotify.py:181
+msgid "Open"
+msgstr "فتح"
+
+#: aurora/assistant.py:457
 msgid "Make Smaller"
 msgstr "تصغير"
 
-#: aurora/assistant.py:293
+#: aurora/assistant.py:496
 msgid "On this computer"
 msgstr "على هذا الحاسوب"
 
-#: aurora/assistant.py:294
+#: aurora/assistant.py:497
 msgid "OpenAI-compatible"
 msgstr "متوافق مع OpenAI"
 
-#: aurora/assistant.py:329
+#: aurora/assistant.py:500
+msgid "Server not reachable"
+msgstr "تعذّر الوصول إلى الخادم"
+
+#: aurora/assistant.py:501
+msgid "The AI server doesn't answer"
+msgstr "خادم الذكاء الاصطناعي لا يستجيب"
+
+#: aurora/assistant.py:502
+msgid "Check that it is running, or its address in Settings → AI."
+msgstr "تحقق من أنه يعمل، أو من عنوانه في الإعدادات ← الذكاء الاصطناعي."
+
+#: aurora/assistant.py:512
+msgid "Download a model in Settings → AI, or connect to Ollama or LM Studio."
+msgstr "نزّل نموذجًا من الإعدادات ← الذكاء الاصطناعي، أو اتصل بـ Ollama أو LM Studio."
+
+#: aurora/assistant.py:513
+msgid "This server offers no chat models."
+msgstr "لا يوفّر هذا الخادم نماذج محادثة."
+
+#: aurora/assistant.py:577
 msgid "Up to four attachments per message"
 msgstr "أربعة مرفقات كحد أقصى لكل رسالة"
 
-#: aurora/assistant.py:337
+#: aurora/assistant.py:585
 msgid "Can't attach {name}"
 msgstr "تعذّر إرفاق {name}"
 
-#: aurora/assistant.py:339
+#: aurora/assistant.py:587
 msgid "Reading {name}…"
 msgstr "جارٍ قراءة {name}…"
 
-#: aurora/assistant.py:369
+#: aurora/assistant.py:617
 msgid "Can't read text from {name}"
 msgstr "تعذّرت قراءة النص من {name}"
 
-#: aurora/assistant.py:374
+#: aurora/assistant.py:622
 msgid "Remove attachment"
 msgstr "إزالة المرفق"
 
-#: aurora/assistant.py:377
+#: aurora/assistant.py:625
 msgid "Summarize this file in a few bullet points."
 msgstr "لخّص هذا الملف في بضع نقاط."
 
-#: aurora/assistant.py:379
+#: aurora/assistant.py:627
 msgid "Ask about {name}…"
 msgstr "اسأل عن {name}…"
 
-#: aurora/assistant.py:420
+#: aurora/assistant.py:668
 msgid "Delete conversation"
 msgstr "حذف المحادثة"
 
-#: aurora/assistant.py:425
+#: aurora/assistant.py:673
 msgid "No saved conversations"
 msgstr "لا توجد محادثات محفوظة"
 
-#: aurora/assistant.py:499
+#: aurora/assistant.py:752
 msgid "Copy some text first, then pick an action."
 msgstr "انسخ بعض النص أولًا، ثم اختر إجراءً."
 
-#: aurora/assistant.py:514
+#: aurora/assistant.py:772
 msgid "Attachments stay private: use a model on this computer or your network"
 msgstr "تبقى المرفقات خاصة: استخدم نموذجًا على هذا الحاسوب أو على شبكتك"
 
-#: aurora/assistant.py:517
+#: aurora/assistant.py:775
 msgid "Start a new chat before using a cloud provider"
 msgstr "ابدأ محادثة جديدة قبل استخدام مزوّد سحابي"
 
-#: aurora/assistant.py:579 aurora/assistant.py:713
+#: aurora/assistant.py:837 aurora/assistant.py:987
 msgid "Something went wrong: {error}"
 msgstr "حدث خطأ: {error}"
 
-#: aurora/assistant.py:588
+#: aurora/assistant.py:848
 msgid "Regenerate"
 msgstr "إعادة التوليد"
 
-#: aurora/assistant.py:593
+#: aurora/assistant.py:853
 msgid "Read Aloud"
 msgstr "قراءة بصوت عالٍ"
 
-#: aurora/assistant.py:632
+#: aurora/assistant.py:892
 msgid "Proofread"
 msgstr "تصحيح"
 
-#: aurora/assistant.py:634
+#: aurora/assistant.py:894
 msgid "Friendlier"
 msgstr "أكثر ودًّا"
 
-#: aurora/assistant.py:636
+#: aurora/assistant.py:896
 msgid "More Professional"
 msgstr "أكثر احترافية"
 
-#: aurora/assistant.py:638
+#: aurora/assistant.py:898
 msgid "Shorter"
 msgstr "أقصر"
 
-#: aurora/assistant.py:641
+#: aurora/assistant.py:901
 msgid "Key Points"
 msgstr "النقاط الرئيسية"
 
-#: aurora/assistant.py:661 aurora/assistant.py:665
+#: aurora/assistant.py:935 aurora/assistant.py:939
 msgid "Writing Tools"
 msgstr "أدوات الكتابة"
 
-#: aurora/assistant.py:666 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:433
+#: aurora/assistant.py:940 aurora/settingsapp/ai.py:76
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:434
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
-#: aurora/assistant.py:687
+#: aurora/assistant.py:961
 msgid "Replace Selection"
 msgstr "استبدال التحديد"
 
-#: aurora/assistant.py:699
+#: aurora/assistant.py:973
 msgid "Working…"
 msgstr "جارٍ العمل…"
 
@@ -1047,21 +1087,13 @@ msgstr "الأذونات"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} من العناصر"
 
-#: aurora/files/window.py:124 aurora/files/window.py:1057
-#: aurora/quicklook.py:141 aurora/shell/app.py:557
-#: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:322
-#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
-#: aurora/shell/sysnotify.py:181
-msgid "Open"
-msgstr "فتح"
-
 #: aurora/files/window.py:126 aurora/files/window.py:282
 #: aurora/files/window.py:308
 msgid "New Tab"
 msgstr "علامة تبويب جديدة"
 
 #: aurora/files/window.py:127 aurora/files/window.py:283
-#: aurora/shell/dock.py:253 aurora/shell/dock.py:256
+#: aurora/shell/dock.py:256 aurora/shell/dock.py:259
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:465
 msgid "New Window"
 msgstr "نافذة جديدة"
@@ -1085,7 +1117,7 @@ msgid "Home"
 msgstr "المنزل"
 
 #: aurora/files/window.py:166 aurora/files/window.py:741
-#: aurora/settingsapp/system.py:97 aurora/shell/dock.py:301
+#: aurora/settingsapp/system.py:97 aurora/shell/dock.py:304
 msgid "Trash"
 msgstr "المهملات"
 
@@ -1136,7 +1168,7 @@ msgid "Folder is Empty"
 msgstr "المجلد فارغ"
 
 #: aurora/files/window.py:357 aurora/files/window.py:1076
-#: aurora/files/window.py:1392 aurora/shell/dock.py:323
+#: aurora/files/window.py:1392 aurora/shell/dock.py:326
 msgid "Empty Trash"
 msgstr "إفراغ المهملات"
 
@@ -1274,7 +1306,7 @@ msgstr "راجع التغييرات قبل إرسالها إلى Aurora AI."
 msgid "Loading…"
 msgstr "جارٍ التحميل…"
 
-#: aurora/files/window.py:1211 aurora/shell/app.py:560
+#: aurora/files/window.py:1211 aurora/shell/app.py:561
 msgid "Ask Aurora"
 msgstr "اسأل Aurora"
 
@@ -4302,83 +4334,83 @@ msgstr "تعذر تشغيل Wayfire. فتح Aurora سطح المكتب الآم�
 msgid "Open System Health"
 msgstr "فتح صحة النظام"
 
-#: aurora/shell/app.py:343
+#: aurora/shell/app.py:344
 msgid "Writing tools are off"
 msgstr "أدوات الكتابة متوقفة"
 
-#: aurora/shell/app.py:434
+#: aurora/shell/app.py:435
 msgid "Set it up in Settings → AI."
 msgstr "اضبطها في الإعدادات ← الذكاء الاصطناعي."
 
-#: aurora/shell/app.py:440
+#: aurora/shell/app.py:441
 msgid "Dictation is off"
 msgstr "الإملاء الصوتي متوقف"
 
-#: aurora/shell/app.py:447
+#: aurora/shell/app.py:448
 msgid "Dictation isn't installed yet"
 msgstr "الإملاء الصوتي غير مثبت بعد"
 
-#: aurora/shell/app.py:451
+#: aurora/shell/app.py:452
 msgid "Listening… press Super+H to stop"
 msgstr "جارٍ الاستماع… اضغط Super+H للإيقاف"
 
-#: aurora/shell/app.py:453
+#: aurora/shell/app.py:454
 msgid "Writing it down…"
 msgstr "جارٍ التفريغ…"
 
-#: aurora/shell/app.py:467
+#: aurora/shell/app.py:468
 msgid "Nothing was heard"
 msgstr "لم يُسمع شيء"
 
-#: aurora/shell/app.py:476
+#: aurora/shell/app.py:477
 msgid "Read aloud is off"
 msgstr "القراءة بصوت عالٍ متوقفة"
 
-#: aurora/shell/app.py:483
+#: aurora/shell/app.py:484
 msgid "Select some text first"
 msgstr "حدّد بعض النص أولًا"
 
-#: aurora/shell/app.py:551
+#: aurora/shell/app.py:552
 msgid "Screenshot captured"
 msgstr "أُخذت لقطة الشاشة"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:553
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "حُفظت في {path} ونُسخت إلى الحافظة."
 
-#: aurora/shell/app.py:557
+#: aurora/shell/app.py:558
 msgid "Annotate"
 msgstr "إضافة تعليقات"
 
-#: aurora/shell/app.py:557
+#: aurora/shell/app.py:558
 msgid "Copy Text"
 msgstr "نسخ النص"
 
-#: aurora/shell/app.py:606 aurora/shell/app.py:613
+#: aurora/shell/app.py:607 aurora/shell/app.py:614
 msgid "Text Recognition"
 msgstr "التعرّف على النص"
 
-#: aurora/shell/app.py:606
+#: aurora/shell/app.py:607
 msgid "No text found"
 msgstr "لم يُعثر على نص"
 
-#: aurora/shell/app.py:607
+#: aurora/shell/app.py:608
 msgid "Try a larger or sharper area."
 msgstr "جرّب منطقة أكبر أو أوضح."
 
-#: aurora/shell/app.py:613
+#: aurora/shell/app.py:614
 msgid "Text copied"
 msgstr "نُسخ النص"
 
-#: aurora/shell/app.py:652 aurora/shell/quicksettings.py:179
+#: aurora/shell/app.py:653 aurora/shell/quicksettings.py:179
 msgid "Screen Recording"
 msgstr "تسجيل الشاشة"
 
-#: aurora/shell/app.py:652
+#: aurora/shell/app.py:653
 msgid "Screen recording saved"
 msgstr "حُفظ تسجيل الشاشة"
 
-#: aurora/shell/app.py:653
+#: aurora/shell/app.py:654
 msgid "Saved to {path}."
 msgstr "حُفظ في {path}."
 
@@ -4476,7 +4508,7 @@ msgstr "فتح Game Hub"
 msgid "Install Steam from Game Hub and your games appear here"
 msgstr "ثبّت Steam من Game Hub وستظهر ألعابك هنا"
 
-#: aurora/shell/dock.py:146 aurora/shell/dock.py:187 aurora/shell/dock.py:243
+#: aurora/shell/dock.py:146 aurora/shell/dock.py:187 aurora/shell/dock.py:246
 #: aurora/shell/panel.py:406 aurora/shell/panel.py:443
 msgid "Window"
 msgstr "نافذة"
@@ -4485,23 +4517,23 @@ msgstr "نافذة"
 msgid "Minimized"
 msgstr "مُصغّرة"
 
-#: aurora/shell/dock.py:264 aurora/shell/launcher.py:72
+#: aurora/shell/dock.py:267 aurora/shell/launcher.py:72
 msgid "Remove from Dock"
 msgstr "إزالة من شريط التطبيقات"
 
-#: aurora/shell/dock.py:266 aurora/shell/launcher.py:75
+#: aurora/shell/dock.py:269 aurora/shell/launcher.py:75
 msgid "Keep in Dock"
 msgstr "الإبقاء في شريط التطبيقات"
 
-#: aurora/shell/dock.py:268
+#: aurora/shell/dock.py:271
 msgid "Quit"
 msgstr "إنهاء"
 
-#: aurora/shell/dock.py:269 aurora/shell/panel.py:470
+#: aurora/shell/dock.py:272 aurora/shell/panel.py:470
 msgid "Quit {n} Windows"
 msgstr "إغلاق {n} من النوافذ"
 
-#: aurora/shell/dock.py:516
+#: aurora/shell/dock.py:519
 msgid "Launchpad"
 msgstr "Launchpad"
 

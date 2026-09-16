@@ -28,7 +28,14 @@ from aurora.i18n import N_, _  # noqa: E402
 
 CSS = """
 window.assistant-float { border-radius: 20px; }
+window.assistant-float.pip { border: 1px solid alpha(currentColor, 0.12);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.35); }
 window.assistant-float headerbar { min-height: 40px; }
+window.assistant-float.collapsed headerbar { min-height: 46px; }
+.assistant-unread { min-width: 9px; min-height: 9px; border-radius: 999px;
+  background-color: @accent_bg_color; box-shadow: 0 0 0 3px alpha(@accent_bg_color, 0.25); }
+button.model-picker { padding: 0 8px; min-height: 24px; font-size: 0.82em; font-weight: 600; }
+.model-row { padding: 6px 10px; }
 .bubble { border-radius: 16px; padding: 10px 14px; }
 .bubble.user { background-color: alpha(@accent_bg_color, 0.85); color: @accent_fg_color; }
 .bubble.assistant { background-color: alpha(currentColor, 0.06); }
@@ -134,6 +141,38 @@ COMPACT = (400, 580)
 DOCK_ROOM, BAR_ROOM = 110, 46
 
 
+def _layer_shell():
+    """gtk4-layer-shell, when the compositor supports it and the library was
+    preloaded (bin/aurora-assistant does that), else None."""
+    if os.environ.pop("AURORA_ASSISTANT_LAYER", None) != "1":
+        return None
+    try:
+        gi.require_version("Gtk4LayerShell", "1.0")
+        from gi.repository import Gtk4LayerShell as LS
+    except (ValueError, ImportError):
+        return None
+    return LS if LS.is_supported() else None
+
+
+def pip_bottom_margin(position="bottom", style="floating", icon=48, **_ignored):
+    """How far above the screen's bottom edge the corner Assistant sits: just
+    above a dock at the bottom (it can grow as wide as the screen with many
+    windows open, and pops up over it when auto-hidden), else near the edge."""
+    if position != "bottom":
+        return 12
+    bar = icon + 28                                   # the dock's bar (dock.BAR_PADDING)
+    return bar + (6 if style == "floating" else 0) + 8
+
+
+def _dock_layout():
+    from aurora import settings as aurora_settings
+    s = aurora_settings.get()
+    if s is None:
+        return {}
+    return {"position": s.get_string("dock-position"), "style": s.get_string("dock-style"),
+            "icon": s.get_int("dock-icon-size")}
+
+
 def compact_height():
     """580 px, or less on a small screen, so the whole window stays visible."""
     display = Gdk.Display.get_default()
@@ -145,14 +184,37 @@ def compact_height():
 
 
 class AssistantWindow(Adw.ApplicationWindow):
-    """A floating assistant, like a picture-in-picture video: it stays above other
-    windows and on every workspace (a labwc window rule), in a corner, so it can stay
-    open while you work elsewhere. Drag it by its bar; expand it for long answers."""
+    """A floating assistant, like a picture-in-picture video: in the bottom-right
+    corner, above every window and on every workspace. It never takes the
+    keyboard from the app you are using: it gets it when you click into it (or
+    open it with Super+Shift+Space). Collapse it to a small bar, like a chat
+    in a corner of a web page, or expand it for long answers.
+
+    It is a layer-shell surface where the compositor allows (both of Aurora's);
+    elsewhere an ordinary window that window rules keep on top."""
 
     def __init__(self, app):
         super().__init__(application=app, title=_("Aurora Assistant"),
                          default_width=COMPACT[0], default_height=compact_height())
         self.add_css_class("assistant-float")
+        self.LS = _layer_shell()
+        self.collapsed = False
+        self.big = False
+        if self.LS is not None:
+            LS = self.LS
+            LS.init_for_window(self)
+            LS.set_namespace(self, "aurora-assistant")
+            LS.set_layer(self, LS.Layer.TOP)
+            for edge in (LS.Edge.BOTTOM, LS.Edge.RIGHT):
+                LS.set_anchor(self, edge, True)
+            self._place_pip()
+            LS.set_margin(self, LS.Edge.RIGHT, 16)
+            LS.set_keyboard_mode(self, LS.KeyboardMode.ON_DEMAND)
+            # Margins from the screen's edges, not from the room the dock and
+            # the top bar leave: pip_bottom_margin() keeps it clear of the dock
+            # itself, and lets it go down beside a floating one.
+            LS.set_exclusive_zone(self, -1)
+            self.add_css_class("pip")
         self.history = []
         self.busy = False
         self.conversation_id = uuid.uuid4().hex
@@ -165,24 +227,50 @@ class AssistantWindow(Adw.ApplicationWindow):
         header = Adw.HeaderBar(title_widget=self.title, show_start_title_buttons=False,
                                show_end_title_buttons=False, css_classes=["flat"])
         new = Gtk.Button(icon_name="list-add-symbolic", tooltip_text=_("New Chat"))
+        self._full_only = [new]
         new.connect("clicked", lambda *_: self.new_chat())
         header.pack_start(new)
         past = Gtk.Button(icon_name="document-open-recent-symbolic",
                           tooltip_text=_("Conversations"))
         past.connect("clicked", self._show_conversations)
         header.pack_start(past)
+        self._full_only.append(past)
         close = Gtk.Button(icon_name="window-close-symbolic", tooltip_text=_("Close"),
                            css_classes=["circular"])
         close.connect("clicked", lambda *_: self.close())
         header.pack_end(close)
+        self.collapse_btn = Gtk.Button(icon_name="go-down-symbolic",
+                                       tooltip_text=_("Minimize to a bar"))
+        self.collapse_btn.connect("clicked", lambda *_: self.set_collapsed(not self.collapsed))
+        header.pack_end(self.collapse_btn)
+        self.unread = Gtk.Box(css_classes=["assistant-unread"], valign=Gtk.Align.CENTER,
+                              visible=False)
+        header.pack_start(self.unread)
+        # A collapsed bar opens again with a click anywhere on it.
+        reopen = Gtk.GestureClick()
+        reopen.connect("released", lambda *_: self.collapsed and self.set_collapsed(False))
+        header.add_controller(reopen)
+        self.model_btn = Gtk.MenuButton(css_classes=["flat", "model-picker"],
+                                        tooltip_text=_("Choose the model"))
+        self.model_pop = Gtk.Popover()
+        self.model_pop.connect("show", lambda *_: self._fill_models())
+        self.model_btn.set_popover(self.model_pop)
+        self.title.set_subtitle("")
+        title_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        title_box.append(Gtk.Label(label=_("Aurora Assistant"), css_classes=["heading"]))
+        self.model_btn.set_halign(Gtk.Align.CENTER)
+        title_box.append(self.model_btn)
+        header.set_title_widget(title_box)
         self.expand_btn = Gtk.Button(icon_name="aurora-window-expand-symbolic",
                                      tooltip_text=_("Expand"))
         self.expand_btn.connect("clicked", lambda *_: self.toggle_size())
         self.connect("notify::maximized", self._on_maximized)
         header.pack_end(self.expand_btn)
+        self._full_only.append(self.expand_btn)
         prefs = Gtk.Button(icon_name="emblem-system-symbolic", tooltip_text=_("AI Settings"))
         prefs.connect("clicked", lambda *_: apps.spawn(["aurora-settings", "--page", "ai"]))
         header.pack_end(prefs)
+        self._full_only.append(prefs)
 
         self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE)
         off = Adw.StatusPage(icon_name="aurora-assistant-symbolic", title=_("Aurora AI is off"),
@@ -193,6 +281,13 @@ class AssistantWindow(Adw.ApplicationWindow):
         open_btn.connect("clicked", lambda *_: apps.spawn(["aurora-settings", "--page", "ai"]))
         off.set_child(open_btn)
         self.stack.add_named(off, "off")
+        self.nomodel = Adw.StatusPage(icon_name="aurora-assistant-symbolic",
+                                      title=_("No model yet"))
+        get_model = Gtk.Button(label=_("Open AI Settings"), halign=Gtk.Align.CENTER,
+                               css_classes=["pill", "suggested-action"])
+        get_model.connect("clicked", lambda *_: apps.spawn(["aurora-settings", "--page", "ai"]))
+        self.nomodel.set_child(get_model)
+        self.stack.add_named(self.nomodel, "nomodel")
 
         chat = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.list = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, margin_top=16,
@@ -234,7 +329,7 @@ class AssistantWindow(Adw.ApplicationWindow):
         ):
             b = Gtk.Button(label=label, css_classes=["flat"],
                            tooltip_text=_("Uses the text you copied"))
-            b.connect("clicked", lambda _b, p=prompt: self.on_clipboard(p))
+            b.connect("clicked", lambda _b, p=prompt, l=label: self.on_clipboard(p, l))
             quick.append(b)
         # FlowBox children take focus and hover highlight of their own; the
         # buttons already have both.
@@ -271,28 +366,168 @@ class AssistantWindow(Adw.ApplicationWindow):
         view = Adw.ToolbarView(content=self.stack)
         view.add_top_bar(header)
         self.set_content(view)
+        # Settings → AI changes show at once: turning AI on, another provider
+        # or model.
+        from aurora import settings as aurora_settings
+        s = aurora_settings.get()
+        if s is not None:
+            self._settings_handler = s.connect("changed", self._on_setting)
+        self._models = None
         self.refresh()
 
     def toggle_size(self):
-        # The compositor remembers the corner and size, and puts it back.
-        if self.is_maximized():
-            self.unmaximize()
+        if self.LS is None:
+            # The compositor remembers the corner and size, and puts it back.
+            if self.is_maximized():
+                self.unmaximize()
+            else:
+                self.maximize()
+            return
+        self.big = not self.big
+        self.set_collapsed(False)
+        self._resize()
+        self._on_maximized()
+
+    def _place_pip(self):
+        self.LS.set_margin(self, self.LS.Edge.BOTTOM, pip_bottom_margin(**_dock_layout()))
+
+    def _screen(self):
+        display = Gdk.Display.get_default()
+        monitors = display.get_monitors() if display else None
+        if monitors and monitors.get_n_items():
+            geometry = monitors.get_item(0).get_geometry()
+            return geometry.width, geometry.height
+        return 1280, 800
+
+    def _resize(self):
+        width, height = self._screen()
+        if self.LS is not None:
+            self._place_pip()
+        if self.collapsed:
+            size = (COMPACT[0] - 60, 1)
+        elif self.big:
+            size = (min(760, width - 64), height - DOCK_ROOM - BAR_ROOM - 16)
         else:
-            self.maximize()
+            size = (COMPACT[0], compact_height())
+        self.set_default_size(*size)
+        self.set_size_request(size[0], size[1] if size[1] > 1 else -1)
+
+    def set_collapsed(self, collapsed):
+        """A small bar in the corner, like a minimized chat; a reply that
+        arrives meanwhile lights a dot."""
+        self.collapsed = collapsed
+        self.stack.set_visible(not collapsed)
+        for button in self._full_only:
+            button.set_visible(not collapsed)
+        (self.add_css_class if collapsed else self.remove_css_class)("collapsed")
+        self.collapse_btn.set_icon_name("go-up-symbolic" if collapsed else "go-down-symbolic")
+        self.collapse_btn.set_tooltip_text(_("Open") if collapsed else _("Minimize to a bar"))
+        if not collapsed:
+            self.unread.set_visible(False)
+        if self.LS is not None:
+            self._resize()
+
+    def take_keyboard(self):
+        """Opened from the keyboard: take it once, so typing goes here; then
+        give it back to whatever the user clicks next."""
+        if self.LS is None:
+            return
+        self.LS.set_keyboard_mode(self, self.LS.KeyboardMode.EXCLUSIVE)
+        self.entry.grab_focus()
+        GLib.timeout_add(400, lambda: (self.LS.set_keyboard_mode(
+            self, self.LS.KeyboardMode.ON_DEMAND), False)[1])
 
     def _on_maximized(self, *_a):
-        big = self.is_maximized()
+        big = self.big if self.LS is not None else self.is_maximized()
         self.expand_btn.set_icon_name("aurora-window-restore-symbolic" if big
                                       else "aurora-window-expand-symbolic")
         self.expand_btn.set_tooltip_text(_("Make Smaller") if big else _("Expand"))
 
+    MODEL_KEYS = ("ai-enabled", "ai-provider", "ai-model", "ai-openai-url",
+                  "ai-openai-model", "ai-anthropic-model")
+
+    def _on_setting(self, _settings, key):
+        if key.startswith("dock-") and self.LS is not None:
+            self._place_pip()
+            self._resize()
+        if key in self.MODEL_KEYS:
+            self._models = None
+            self.refresh()
+
     def refresh(self):
+        """Show the chat, or say what is missing: AI off, or no model to use."""
         on = ai.enabled()
-        self.stack.set_visible_child_name("chat" if on else "off")
-        which = ai.provider()
-        label = {"local": _("On this computer"), "anthropic": "Claude",
-                 "openai": _("OpenAI-compatible")}.get(which, which)
-        self.title.set_subtitle(label if on else "")
+        self.model_btn.set_visible(on)
+        if not on:
+            self.stack.set_visible_child_name("off")
+            return
+        self.stack.set_visible_child_name("chat")
+        self._load_models()
+
+    def _load_models(self):
+        """Look up the models in a thread (a network server can be slow)."""
+        from aurora.ai import models
+
+        def work():
+            try:
+                result = models.available()
+                error = None
+            except OSError as err:
+                result, error = None, str(err)
+            GLib.idle_add(self._models_loaded, result, error)
+        threading.Thread(target=work, daemon=True).start()
+
+    def _models_loaded(self, result, error):
+        if not ai.enabled():
+            return False
+        where = {"local": _("On this computer"), "anthropic": "Claude",
+                 "openai": _("OpenAI-compatible")}
+        if error is not None:
+            self._models = None
+            self.model_btn.set_label(_("Server not reachable"))
+            self.nomodel.set_title(_("The AI server doesn't answer"))
+            self.nomodel.set_description(GLib.markup_escape_text(
+                _("Check that it is running, or its address in Settings → AI.") + f"\n{error}"))
+            self.stack.set_visible_child_name("nomodel")
+            return False
+        which, found, current = result
+        self._models = result
+        if not found:
+            self.model_btn.set_label(where.get(which, which))
+            self.nomodel.set_title(_("No model yet"))
+            self.nomodel.set_description(
+                _("Download a model in Settings → AI, or connect to Ollama or LM Studio.")
+                if which == "local" else _("This server offers no chat models."))
+            self.stack.set_visible_child_name("nomodel")
+            return False
+        names = dict(found)
+        if current not in names:
+            # The chosen model is gone (or was never set): use the first one.
+            from aurora.ai import models
+            current = found[0][0]
+            models.choose(which, current)
+        self.model_btn.set_label(names[current])
+        self.model_btn.set_sensitive(len(found) > 1)
+        self.stack.set_visible_child_name("chat")
+        return False
+
+    def _fill_models(self):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, margin_top=6,
+                      margin_bottom=6, margin_start=6, margin_end=6)
+        if self._models is not None:
+            which, found, current = self._models
+            from aurora.ai import models
+            for model_id, label in found:
+                row = Gtk.Button(css_classes=["flat", "model-row"])
+                line = Gtk.Box(spacing=8)
+                line.append(Gtk.Image(icon_name="object-select-symbolic",
+                                      opacity=1 if model_id == current else 0))
+                line.append(Gtk.Label(label=label, xalign=0))
+                row.set_child(line)
+                row.connect("clicked", lambda _b, m=model_id, w=which: (
+                    models.choose(w, m), self.model_pop.popdown()))
+                box.append(row)
+        self.model_pop.set_child(box)
 
     def attach_file(self, path, summarize=False):
         """Open a file from Files, keeping it visibly attached until the user sends."""
@@ -352,9 +587,9 @@ class AssistantWindow(Adw.ApplicationWindow):
                 else:
                     content = extract(path)
                     kind = "text"
-            except (OSError, RuntimeError) as err:
+            except Exception as err:  # noqa: BLE001 - any failure must end "Reading…"
                 content = ""
-                print(f"aurora-assistant: attachment: {err}")
+                print(f"aurora-assistant: attachment: {err!r}")
                 kind = "text"
             GLib.idle_add(self._attachment_ready, chip, path, content, kind, summarize)
         threading.Thread(target=work, daemon=True).start()
@@ -489,20 +724,30 @@ class AssistantWindow(Adw.ApplicationWindow):
         self.latest.set_visible(False)
         GLib.idle_add(self._scroll_down)
 
-    def on_clipboard(self, prompt):
-        def got(clip, res):
-            try:
-                text = clip.read_text_finish(res) or ""
-            except GLib.Error:
-                text = ""
-            if not text.strip():
-                toast = _("Copy some text first, then pick an action.")
-                self.entry.set_placeholder_text(toast)
-                return
-            self.send(prompt.replace("{lang}", _user_language_name()).format(text.strip()[:12000]))
-        Gdk.Display.get_default().get_clipboard().read_text_async(None, got)
+    def on_clipboard(self, prompt, label=""):
+        """Run a quick action on the text you copied (or, failing that, selected).
 
-    def send(self, text):
+        GTK only sees the clipboard while this window has the keyboard, which a
+        corner assistant usually doesn't: wl-paste reads it anyway (through the
+        compositor's data-control protocol)."""
+        def work():
+            text = _clipboard_text()
+            GLib.idle_add(done, text)
+
+        def done(text):
+            if not text.strip():
+                self.entry.set_placeholder_text(_("Copy some text first, then pick an action."))
+                return False
+            text = text.strip()[:12000]
+            shown = text if len(text) <= 280 else text[:280] + "…"
+            self.send(prompt.replace("{lang}", _user_language_name()).replace("{}", text),
+                      display=f"{label}\n{shown}" if label else None)
+            return False
+        threading.Thread(target=work, daemon=True).start()
+
+    def send(self, text, display=None):
+        """Ask the model. `display` is what the chat shows instead of the full
+        prompt (a quick action shows its name and the text, not the instructions)."""
         text = text.strip()
         if not text or self.busy:
             return
@@ -519,7 +764,7 @@ class AssistantWindow(Adw.ApplicationWindow):
         self.entry.set_text("")
         if self.empty.get_parent() is not None:
             self.list.remove(self.empty)
-        display_text = text
+        display_text = display or text
         if self.attachments:
             display_text += "\n" + " ".join(
                 ("📷 " if item["kind"] == "OCR" else "📄 ") + item["name"]
@@ -581,6 +826,8 @@ class AssistantWindow(Adw.ApplicationWindow):
         self.history.append({"role": "assistant", "content": text})
         self._save_chat()
         reply.set_text(text, streaming=False)
+        if self.collapsed:
+            self.unread.set_visible(True)
         copy = Gtk.Button(icon_name="edit-copy-symbolic", tooltip_text=_("Copy"),
                           css_classes=["flat", "circular"])
         copy.connect("clicked", lambda *_: Gdk.Display.get_default().get_clipboard().set(text))
@@ -641,6 +888,20 @@ WRITING_ACTIONS = [
     ("points", N_("Key Points"), "List the key points of this as short bullets, same language."),
     ("translate", N_("Translate"), "Translate this into {lang}. Reply with the translation only."),
 ]
+
+
+def _clipboard_text():
+    """The copied text, else the selected text ('' if neither)."""
+    import subprocess
+    for argv in (["wl-paste", "--no-newline", "--type", "text"],
+                 ["wl-paste", "--no-newline", "--primary", "--type", "text"]):
+        try:
+            res = subprocess.run(argv, capture_output=True, text=True, timeout=3)
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if res.returncode == 0 and res.stdout.strip():
+            return res.stdout
+    return ""
 
 
 def _user_language_name():
@@ -767,6 +1028,10 @@ class AssistantApp(Adw.Application):
             self.window = AssistantWindow(self)
         self.window.present()
         self.window.refresh()
+        if self.window.collapsed:
+            self.window.set_collapsed(False)
+        if "--focus" in args:
+            self.window.take_keyboard()
         if args[:1] == ["--ask"] and len(args) > 1:
             self.window.send(" ".join(args[1:]))
         elif args[:1] == ["--file"] and len(args) > 1:

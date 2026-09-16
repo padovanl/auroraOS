@@ -73,205 +73,245 @@ msgstr "Spracherkennung fehlgeschlagen"
 msgid "speech synthesis failed"
 msgstr "Sprachausgabe fehlgeschlagen"
 
-#: aurora/assistant.py:70
+#: aurora/assistant.py:77
 msgid "Attachments require the local AI model"
 msgstr "Anhänge benötigen das lokale KI-Modell"
 
-#: aurora/assistant.py:123 aurora/assistant.py:584 aurora/assistant.py:685
+#: aurora/assistant.py:130 aurora/assistant.py:844 aurora/assistant.py:959
 #: aurora/files/window.py:1067 aurora/shell/desktopicons.py:164
 msgid "Copy"
 msgstr "Kopieren"
 
-#: aurora/assistant.py:153 aurora/assistant.py:164
+#: aurora/assistant.py:206 aurora/assistant.py:235 aurora/assistant.py:269
 #: aurora/settingsapp/inputs.py:26
 msgid "Aurora Assistant"
 msgstr "Aurora Assistent"
 
-#: aurora/assistant.py:167 aurora/assistant.py:416
+#: aurora/assistant.py:238 aurora/assistant.py:664
 msgid "New Chat"
 msgstr "Neuer Chat"
 
-#: aurora/assistant.py:171
+#: aurora/assistant.py:243
 msgid "Conversations"
 msgstr "Unterhaltungen"
 
-#: aurora/assistant.py:174 aurora/files/window.py:1166
+#: aurora/assistant.py:247 aurora/files/window.py:1166
 #: aurora/settingsapp/health.py:301 aurora/settingsapp/system.py:143
 #: aurora/settingsapp/system.py:185
 msgid "Close"
 msgstr "Schließen"
 
-#: aurora/assistant.py:179 aurora/assistant.py:287
+#: aurora/assistant.py:252 aurora/assistant.py:437
+msgid "Minimize to a bar"
+msgstr "Zu einer Leiste verkleinern"
+
+#: aurora/assistant.py:263
+msgid "Choose the model"
+msgstr "Modell wählen"
+
+#: aurora/assistant.py:274 aurora/assistant.py:457
 msgid "Expand"
 msgstr "Vergrößern"
 
-#: aurora/assistant.py:183
+#: aurora/assistant.py:279
 msgid "AI Settings"
 msgstr "KI-Einstellungen"
 
-#: aurora/assistant.py:188
+#: aurora/assistant.py:285
 msgid "Aurora AI is off"
 msgstr "Aurora KI ist aus"
 
-#: aurora/assistant.py:189
+#: aurora/assistant.py:286
 msgid "Turn it on in Settings → AI. It runs on this computer, or with the cloud provider you choose."
 msgstr "Schalte sie in Einstellungen → KI ein. Sie läuft auf diesem Computer oder mit dem Cloud-Anbieter deiner Wahl."
 
-#: aurora/assistant.py:191
+#: aurora/assistant.py:288 aurora/assistant.py:295
 msgid "Open AI Settings"
 msgstr "KI-Einstellungen öffnen"
 
-#: aurora/assistant.py:201
+#: aurora/assistant.py:294 aurora/assistant.py:510
+msgid "No model yet"
+msgstr "Noch kein Modell"
+
+#: aurora/assistant.py:305
 msgid "How can I help?"
 msgstr "Wie kann ich helfen?"
 
-#: aurora/assistant.py:202
+#: aurora/assistant.py:306
 msgid "Ask anything, or pick an action for the text you copied."
 msgstr "Frag irgendetwas oder wähle eine Aktion für den kopierten Text."
 
-#: aurora/assistant.py:217
+#: aurora/assistant.py:321
 msgid "Jump to latest"
 msgstr "Zur neuesten Nachricht springen"
 
-#: aurora/assistant.py:228 aurora/assistant.py:640
+#: aurora/assistant.py:332 aurora/assistant.py:900
 #: aurora/shell/notifications.py:312
 msgid "Summarize"
 msgstr "Zusammenfassen"
 
-#: aurora/assistant.py:229
+#: aurora/assistant.py:333
 msgid "Improve Writing"
 msgstr "Text verbessern"
 
-#: aurora/assistant.py:231 aurora/assistant.py:642
+#: aurora/assistant.py:335 aurora/assistant.py:902
 msgid "Translate"
 msgstr "Übersetzen"
 
-#: aurora/assistant.py:233
+#: aurora/assistant.py:337
 msgid "Explain"
 msgstr "Erklären"
 
-#: aurora/assistant.py:236
+#: aurora/assistant.py:340
 msgid "Uses the text you copied"
 msgstr "Verwendet den kopierten Text"
 
-#: aurora/assistant.py:252 aurora/shell/search.py:351
+#: aurora/assistant.py:356 aurora/shell/search.py:351
 msgid "Ask Aurora…"
 msgstr "Aurora fragen …"
 
-#: aurora/assistant.py:255 aurora/assistant.py:303
+#: aurora/assistant.py:359 aurora/assistant.py:551
 msgid "Attach files or photos"
 msgstr "Dateien oder Fotos anhängen"
 
-#: aurora/assistant.py:264
+#: aurora/assistant.py:368
 msgid "Stop generating"
 msgstr "Generierung stoppen"
 
-#: aurora/assistant.py:287
+#: aurora/assistant.py:437 aurora/files/window.py:124
+#: aurora/files/window.py:1057 aurora/quicklook.py:141 aurora/shell/app.py:558
+#: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:325
+#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
+#: aurora/shell/sysnotify.py:181
+msgid "Open"
+msgstr "Öffnen"
+
+#: aurora/assistant.py:457
 msgid "Make Smaller"
 msgstr "Verkleinern"
 
-#: aurora/assistant.py:293
+#: aurora/assistant.py:496
 msgid "On this computer"
 msgstr "Auf diesem Computer"
 
-#: aurora/assistant.py:294
+#: aurora/assistant.py:497
 msgid "OpenAI-compatible"
 msgstr "OpenAI-kompatibel"
 
-#: aurora/assistant.py:329
+#: aurora/assistant.py:500
+msgid "Server not reachable"
+msgstr "Server nicht erreichbar"
+
+#: aurora/assistant.py:501
+msgid "The AI server doesn't answer"
+msgstr "Der KI-Server antwortet nicht"
+
+#: aurora/assistant.py:502
+msgid "Check that it is running, or its address in Settings → AI."
+msgstr "Prüfe, ob er läuft, oder seine Adresse unter Einstellungen → KI."
+
+#: aurora/assistant.py:512
+msgid "Download a model in Settings → AI, or connect to Ollama or LM Studio."
+msgstr "Lade ein Modell unter Einstellungen → KI herunter oder verbinde dich mit Ollama oder LM Studio."
+
+#: aurora/assistant.py:513
+msgid "This server offers no chat models."
+msgstr "Dieser Server bietet keine Chat-Modelle an."
+
+#: aurora/assistant.py:577
 msgid "Up to four attachments per message"
 msgstr "Bis zu vier Anhänge pro Nachricht"
 
-#: aurora/assistant.py:337
+#: aurora/assistant.py:585
 msgid "Can't attach {name}"
 msgstr "{name} kann nicht angehängt werden"
 
-#: aurora/assistant.py:339
+#: aurora/assistant.py:587
 msgid "Reading {name}…"
 msgstr "{name} wird gelesen…"
 
-#: aurora/assistant.py:369
+#: aurora/assistant.py:617
 msgid "Can't read text from {name}"
 msgstr "Text aus {name} kann nicht gelesen werden"
 
-#: aurora/assistant.py:374
+#: aurora/assistant.py:622
 msgid "Remove attachment"
 msgstr "Anhang entfernen"
 
-#: aurora/assistant.py:377
+#: aurora/assistant.py:625
 msgid "Summarize this file in a few bullet points."
 msgstr "Fasse diese Datei in ein paar Stichpunkten zusammen."
 
-#: aurora/assistant.py:379
+#: aurora/assistant.py:627
 msgid "Ask about {name}…"
 msgstr "Frage zu {name} …"
 
-#: aurora/assistant.py:420
+#: aurora/assistant.py:668
 msgid "Delete conversation"
 msgstr "Unterhaltung löschen"
 
-#: aurora/assistant.py:425
+#: aurora/assistant.py:673
 msgid "No saved conversations"
 msgstr "Keine gespeicherten Unterhaltungen"
 
-#: aurora/assistant.py:499
+#: aurora/assistant.py:752
 msgid "Copy some text first, then pick an action."
 msgstr "Kopiere zuerst einen Text und wähle dann eine Aktion."
 
-#: aurora/assistant.py:514
+#: aurora/assistant.py:772
 msgid "Attachments stay private: use a model on this computer or your network"
 msgstr "Anhänge bleiben privat: Nutze ein Modell auf diesem Computer oder in deinem Netzwerk"
 
-#: aurora/assistant.py:517
+#: aurora/assistant.py:775
 msgid "Start a new chat before using a cloud provider"
 msgstr "Vor der Nutzung eines Cloud-Anbieters einen neuen Chat beginnen"
 
-#: aurora/assistant.py:579 aurora/assistant.py:713
+#: aurora/assistant.py:837 aurora/assistant.py:987
 msgid "Something went wrong: {error}"
 msgstr "Etwas ist schiefgelaufen: {error}"
 
-#: aurora/assistant.py:588
+#: aurora/assistant.py:848
 msgid "Regenerate"
 msgstr "Erneut generieren"
 
-#: aurora/assistant.py:593
+#: aurora/assistant.py:853
 msgid "Read Aloud"
 msgstr "Vorlesen"
 
-#: aurora/assistant.py:632
+#: aurora/assistant.py:892
 msgid "Proofread"
 msgstr "Korrigieren"
 
-#: aurora/assistant.py:634
+#: aurora/assistant.py:894
 msgid "Friendlier"
 msgstr "Freundlicher"
 
-#: aurora/assistant.py:636
+#: aurora/assistant.py:896
 msgid "More Professional"
 msgstr "Professioneller"
 
-#: aurora/assistant.py:638
+#: aurora/assistant.py:898
 msgid "Shorter"
 msgstr "Kürzer"
 
-#: aurora/assistant.py:641
+#: aurora/assistant.py:901
 msgid "Key Points"
 msgstr "Kernpunkte"
 
-#: aurora/assistant.py:661 aurora/assistant.py:665
+#: aurora/assistant.py:935 aurora/assistant.py:939
 msgid "Writing Tools"
 msgstr "Schreibwerkzeuge"
 
-#: aurora/assistant.py:666 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:433
+#: aurora/assistant.py:940 aurora/settingsapp/ai.py:76
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:434
 msgid "Aurora AI"
 msgstr "Aurora KI"
 
-#: aurora/assistant.py:687
+#: aurora/assistant.py:961
 msgid "Replace Selection"
 msgstr "Auswahl ersetzen"
 
-#: aurora/assistant.py:699
+#: aurora/assistant.py:973
 msgid "Working…"
 msgstr "Wird bearbeitet …"
 
@@ -1047,21 +1087,13 @@ msgstr "Berechtigungen"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} Elemente"
 
-#: aurora/files/window.py:124 aurora/files/window.py:1057
-#: aurora/quicklook.py:141 aurora/shell/app.py:557
-#: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:322
-#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
-#: aurora/shell/sysnotify.py:181
-msgid "Open"
-msgstr "Öffnen"
-
 #: aurora/files/window.py:126 aurora/files/window.py:282
 #: aurora/files/window.py:308
 msgid "New Tab"
 msgstr "Neuer Tab"
 
 #: aurora/files/window.py:127 aurora/files/window.py:283
-#: aurora/shell/dock.py:253 aurora/shell/dock.py:256
+#: aurora/shell/dock.py:256 aurora/shell/dock.py:259
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:465
 msgid "New Window"
 msgstr "Neues Fenster"
@@ -1085,7 +1117,7 @@ msgid "Home"
 msgstr "Persönlicher Ordner"
 
 #: aurora/files/window.py:166 aurora/files/window.py:741
-#: aurora/settingsapp/system.py:97 aurora/shell/dock.py:301
+#: aurora/settingsapp/system.py:97 aurora/shell/dock.py:304
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -1136,7 +1168,7 @@ msgid "Folder is Empty"
 msgstr "Der Ordner ist leer"
 
 #: aurora/files/window.py:357 aurora/files/window.py:1076
-#: aurora/files/window.py:1392 aurora/shell/dock.py:323
+#: aurora/files/window.py:1392 aurora/shell/dock.py:326
 msgid "Empty Trash"
 msgstr "Papierkorb leeren"
 
@@ -1274,7 +1306,7 @@ msgstr "Prüfe die Änderungen, bevor du sie an Aurora AI sendest."
 msgid "Loading…"
 msgstr "Wird geladen…"
 
-#: aurora/files/window.py:1211 aurora/shell/app.py:560
+#: aurora/files/window.py:1211 aurora/shell/app.py:561
 msgid "Ask Aurora"
 msgstr "Aurora fragen"
 
@@ -4282,83 +4314,83 @@ msgstr "Wayfire konnte nicht starten. Aurora hat stattdessen den sicheren Deskto
 msgid "Open System Health"
 msgstr "Systemzustand öffnen"
 
-#: aurora/shell/app.py:343
+#: aurora/shell/app.py:344
 msgid "Writing tools are off"
 msgstr "Die Schreibwerkzeuge sind aus"
 
-#: aurora/shell/app.py:434
+#: aurora/shell/app.py:435
 msgid "Set it up in Settings → AI."
 msgstr "Richte sie in Einstellungen → KI ein."
 
-#: aurora/shell/app.py:440
+#: aurora/shell/app.py:441
 msgid "Dictation is off"
 msgstr "Das Diktat ist aus"
 
-#: aurora/shell/app.py:447
+#: aurora/shell/app.py:448
 msgid "Dictation isn't installed yet"
 msgstr "Das Diktat ist noch nicht installiert"
 
-#: aurora/shell/app.py:451
+#: aurora/shell/app.py:452
 msgid "Listening… press Super+H to stop"
 msgstr "Hört zu … drücke Super+H zum Beenden"
 
-#: aurora/shell/app.py:453
+#: aurora/shell/app.py:454
 msgid "Writing it down…"
 msgstr "Wird aufgeschrieben …"
 
-#: aurora/shell/app.py:467
+#: aurora/shell/app.py:468
 msgid "Nothing was heard"
 msgstr "Es wurde nichts gehört"
 
-#: aurora/shell/app.py:476
+#: aurora/shell/app.py:477
 msgid "Read aloud is off"
 msgstr "Das Vorlesen ist aus"
 
-#: aurora/shell/app.py:483
+#: aurora/shell/app.py:484
 msgid "Select some text first"
 msgstr "Markiere zuerst einen Text"
 
-#: aurora/shell/app.py:551
+#: aurora/shell/app.py:552
 msgid "Screenshot captured"
 msgstr "Bildschirmfoto aufgenommen"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:553
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "In {path} gespeichert und in die Zwischenablage kopiert."
 
-#: aurora/shell/app.py:557
+#: aurora/shell/app.py:558
 msgid "Annotate"
 msgstr "Kommentieren"
 
-#: aurora/shell/app.py:557
+#: aurora/shell/app.py:558
 msgid "Copy Text"
 msgstr "Text kopieren"
 
-#: aurora/shell/app.py:606 aurora/shell/app.py:613
+#: aurora/shell/app.py:607 aurora/shell/app.py:614
 msgid "Text Recognition"
 msgstr "Texterkennung"
 
-#: aurora/shell/app.py:606
+#: aurora/shell/app.py:607
 msgid "No text found"
 msgstr "Kein Text gefunden"
 
-#: aurora/shell/app.py:607
+#: aurora/shell/app.py:608
 msgid "Try a larger or sharper area."
 msgstr "Versuche einen größeren oder schärferen Bereich."
 
-#: aurora/shell/app.py:613
+#: aurora/shell/app.py:614
 msgid "Text copied"
 msgstr "Text kopiert"
 
-#: aurora/shell/app.py:652 aurora/shell/quicksettings.py:179
+#: aurora/shell/app.py:653 aurora/shell/quicksettings.py:179
 msgid "Screen Recording"
 msgstr "Bildschirmaufnahme"
 
-#: aurora/shell/app.py:652
+#: aurora/shell/app.py:653
 msgid "Screen recording saved"
 msgstr "Bildschirmaufnahme gespeichert"
 
-#: aurora/shell/app.py:653
+#: aurora/shell/app.py:654
 msgid "Saved to {path}."
 msgstr "In {path} gespeichert."
 
@@ -4448,7 +4480,7 @@ msgstr "Game Hub öffnen"
 msgid "Install Steam from Game Hub and your games appear here"
 msgstr "Installiere Steam über Game Hub, und deine Spiele erscheinen hier"
 
-#: aurora/shell/dock.py:146 aurora/shell/dock.py:187 aurora/shell/dock.py:243
+#: aurora/shell/dock.py:146 aurora/shell/dock.py:187 aurora/shell/dock.py:246
 #: aurora/shell/panel.py:406 aurora/shell/panel.py:443
 msgid "Window"
 msgstr "Fenster"
@@ -4457,23 +4489,23 @@ msgstr "Fenster"
 msgid "Minimized"
 msgstr "Minimiert"
 
-#: aurora/shell/dock.py:264 aurora/shell/launcher.py:72
+#: aurora/shell/dock.py:267 aurora/shell/launcher.py:72
 msgid "Remove from Dock"
 msgstr "Aus dem Dock entfernen"
 
-#: aurora/shell/dock.py:266 aurora/shell/launcher.py:75
+#: aurora/shell/dock.py:269 aurora/shell/launcher.py:75
 msgid "Keep in Dock"
 msgstr "Im Dock behalten"
 
-#: aurora/shell/dock.py:268
+#: aurora/shell/dock.py:271
 msgid "Quit"
 msgstr "Beenden"
 
-#: aurora/shell/dock.py:269 aurora/shell/panel.py:470
+#: aurora/shell/dock.py:272 aurora/shell/panel.py:470
 msgid "Quit {n} Windows"
 msgstr "{n} Fenster schließen"
 
-#: aurora/shell/dock.py:516
+#: aurora/shell/dock.py:519
 msgid "Launchpad"
 msgstr "Launchpad"
 

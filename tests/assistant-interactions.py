@@ -17,6 +17,13 @@ requests = []
 
 
 class FakeLLM(BaseHTTPRequestHandler):
+    def do_GET(self):   # /v1/models, for the model picker
+        body = json.dumps({"data": [{"id": "fake"}, {"id": "fake-embed"}]}).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_POST(self):
         body = self.rfile.read(int(self.headers["Content-Length"]))
         requests.append(json.loads(body))
@@ -75,6 +82,9 @@ win = AssistantWindow(app)
 win.set_default_size(420, 520)
 win.present()
 settle(lambda: win.get_height() > 100, what="the window")
+settle(lambda: win._models is not None, what="the model list")
+assert [m for m, _l in win._models[1]] == ["fake"], "embedding models can't chat"
+print("ok: the model picker lists the server's chat models")
 
 win.send("Tell me a long story")
 settle(lambda: not win.busy, what="the first reply")

@@ -154,3 +154,32 @@ def test_disk_warning_skips_the_live_system():
     assert fs_type("/", installed) == "btrfs"
     assert fs_type("/home/me", installed) == "ext4"
     assert fs_type("/homework", installed) == "btrfs"
+
+
+def test_corner_assistant_sits_low_but_clear_of_the_dock():
+    from aurora.assistant import pip_bottom_margin
+    # A dock at the bottom can grow as wide as the screen: always above it.
+    assert pip_bottom_margin() == 48 + 28 + 6 + 8
+    assert pip_bottom_margin(style="panel", icon=32) == 32 + 28 + 8
+    # A side or hidden dock leaves the corner free.
+    assert pip_bottom_margin(position="left") == 12
+    assert pip_bottom_margin(position="hidden") == 12
+
+
+def test_attachments_are_read_without_numpy(tmp_path, monkeypatch):
+    import builtins
+    import importlib
+    import sys
+    real_import = builtins.__import__
+
+    def no_numpy(name, *args, **kwargs):
+        if name == "numpy" or name.startswith("numpy."):
+            raise ModuleNotFoundError("No module named 'numpy'")
+        return real_import(name, *args, **kwargs)
+    monkeypatch.setattr(builtins, "__import__", no_numpy)
+    sys.modules.pop("aurora.ai.index", None)
+    index = importlib.import_module("aurora.ai.index")
+    note = tmp_path / "notes.txt"
+    note.write_text("ship on Friday")
+    assert index.extract(str(note)) == "ship on Friday"
+    sys.modules.pop("aurora.ai.index", None)
