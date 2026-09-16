@@ -154,23 +154,27 @@ def _layer_shell():
     return LS if LS.is_supported() else None
 
 
-def pip_bottom_margin(position="bottom", style="floating", icon=48, **_ignored):
+def pip_bottom_margin(dock_covers):
     """How far above the screen's bottom edge the corner Assistant sits: just
-    above a dock at the bottom (it can grow as wide as the screen with many
-    windows open, and pops up over it when auto-hidden), else near the edge."""
-    if position != "bottom":
-        return 12
-    bar = icon + 28                                   # the dock's bar (dock.BAR_PADDING)
-    return bar + (6 if style == "floating" else 0) + 8
+    above the dock while the dock covers the bottom (it can grow as wide as the
+    screen), right at the bottom when there's no dock there (on a side, turned
+    off, or auto-hidden and out of sight)."""
+    return dock_covers + 8 if dock_covers > 0 else 12
 
 
-def _dock_layout():
-    from aurora import settings as aurora_settings
-    s = aurora_settings.get()
-    if s is None:
-        return {}
-    return {"position": s.get_string("dock-position"), "style": s.get_string("dock-style"),
-            "icon": s.get_int("dock-icon-size")}
+def dock_state_path():
+    return os.path.join(os.environ.get("XDG_RUNTIME_DIR") or GLib.get_user_runtime_dir(),
+                        "aurora-dock")
+
+
+def dock_covers():
+    """Pixels of the screen's bottom the dock covers now, as the shell's dock
+    publishes them (dock.py); a bottom dock's usual size when unknown."""
+    try:
+        with open(dock_state_path()) as f:
+            return max(int(f.read().strip() or 0), 0)
+    except (OSError, ValueError):
+        return 48 + 28 + 6
 
 
 def compact_height():
@@ -215,6 +219,10 @@ class AssistantWindow(Adw.ApplicationWindow):
             # itself, and lets it go down beside a floating one.
             LS.set_exclusive_zone(self, -1)
             self.add_css_class("pip")
+            # Follow the dock: shown, auto-hidden, moved or turned off.
+            self._dock_monitor = Gio.File.new_for_path(dock_state_path()).monitor_file(
+                Gio.FileMonitorFlags.WATCH_MOVES, None)
+            self._dock_monitor.connect("changed", lambda *_a: self._resize())
         self.history = []
         self.busy = False
         self.conversation_id = uuid.uuid4().hex
@@ -389,7 +397,7 @@ class AssistantWindow(Adw.ApplicationWindow):
         self._on_maximized()
 
     def _place_pip(self):
-        self.LS.set_margin(self, self.LS.Edge.BOTTOM, pip_bottom_margin(**_dock_layout()))
+        self.LS.set_margin(self, self.LS.Edge.BOTTOM, pip_bottom_margin(dock_covers()))
 
     def _screen(self):
         display = Gdk.Display.get_default()
@@ -447,9 +455,6 @@ class AssistantWindow(Adw.ApplicationWindow):
                   "ai-openai-model", "ai-anthropic-model")
 
     def _on_setting(self, _settings, key):
-        if key.startswith("dock-") and self.LS is not None:
-            self._place_pip()
-            self._resize()
         if key in self.MODEL_KEYS:
             self._models = None
             self.refresh()

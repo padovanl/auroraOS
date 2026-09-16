@@ -7,6 +7,7 @@ just the resting bar.
 """
 
 import math
+import os
 
 import cairo
 from gi.repository import Gdk, Gio, GLib, Gtk
@@ -356,6 +357,7 @@ class Dock(LayerWindow):
         self.add_css_class("dock-floating" if self.floating else "dock-panel")
         self.add_css_class(f"dock-{self.position}")
         self.shell = shell
+        self._primary = monitor == shell.get_primary_monitor()
         self._items = {}
         self._held = 0
         self._hidden = False
@@ -436,6 +438,10 @@ class Dock(LayerWindow):
         shell.toplevels.connect("changed", lambda *a: self.rebuild())
         Gio.AppInfoMonitor.get().connect("changed", lambda *a: (apps.invalidate(), self.rebuild()))
         self.connect("map", lambda *a: GLib.idle_add(self._update_geometry))
+        self.connect("map", lambda *a: self.publish())
+        # Gone (turned off, or rebuilt with new settings): nothing covers the
+        # bottom until a new dock says otherwise.
+        self.connect("unmap", lambda *a: self.publish(covered=0))
         self.rebuild()
         if self.autohide:
             GLib.timeout_add(1500, self._auto_hide)
@@ -642,11 +648,31 @@ class Dock(LayerWindow):
         if self.autohide and not self._held and not self._dragging and self._pointer is None:
             self._hidden = True
             self.revealer.set_reveal_child(False)
+            self.publish()
         return GLib.SOURCE_REMOVE
 
     def _show(self):
         self._hidden = False
         self.revealer.set_reveal_child(True)
+        self.publish()
+
+    def publish(self, covered=None):
+        """Tell the corner Assistant (another process) how much of the screen's
+        bottom the dock covers right now: its bar, or 0 when it's hidden or on a
+        side. It watches this file and sits just above the dock, or at the
+        bottom when there's none."""
+        if not self._primary:
+            return
+        if covered is None:
+            showing = self.position == "bottom" and not self._hidden
+            covered = self.bar_thickness + (EDGE_MARGIN if self.floating else 0) if showing else 0
+        path = os.path.join(GLib.get_user_runtime_dir(), "aurora-dock")
+        try:
+            with open(path + ".tmp", "w") as f:
+                f.write(f"{covered}\n")
+            os.replace(path + ".tmp", path)
+        except OSError as err:
+            print(f"aurora: dock state not written: {err}")
 
     # --- geometry ---
 

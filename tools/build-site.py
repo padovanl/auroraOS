@@ -121,7 +121,7 @@ def convert(md):
     return "\n".join(out), toc
 
 
-NAV = [("index.html#features", "Features"), ("ai.html", "AI"),
+NAV = [("why.html", "Why Aurora"), ("index.html#features", "Features"), ("ai.html", "AI"),
        ("developers.html", "Developers &amp; Gaming"), ("install.html", "Install"),
        ("technical.html", "Under the hood")]
 
@@ -144,7 +144,7 @@ def header(active):
 FOOTER = """<footer class="footer">
   <div><a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="24" height="24"> Aurora OS</a>
     <p>Built on Debian. Made with care for people who build things.</p></div>
-  <div class="footer-links"><a href="ai.html">Aurora AI</a> <a href="install.html">Install guide</a>
+  <div class="footer-links"><a href="why.html">Why Aurora</a> <a href="ai.html">Aurora AI</a> <a href="install.html">Install guide</a>
     <a data-repo-link href="#">Source code</a>
     <a data-repo-link data-path="/blob/main/README.md" href="#">Full documentation</a></div>
 </footer>
@@ -178,6 +178,8 @@ def page(filename, title, description, body, body_class=""):
 
 
 PAGES = [  # (file, title, description, source in docs/_src)
+    ("why.html", "Why Aurora", "Why a programmer builds his own Linux distribution: a "
+     "question from childhood, answered just for fun.", "why.body.html"),
     ("ai.html", "Aurora AI", "A private AI assistant built into Aurora OS: local models, "
      "Spotlight, the terminal, writing tools, dictation and search by meaning.", "ai.body.html"),
     ("developers.html", "Developers and gaming", "Developer tools ready on day one, Dev Hub, "

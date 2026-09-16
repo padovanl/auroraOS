@@ -15,7 +15,7 @@ preinstalled, and the rock-solid Debian 13 base underneath.
 
 ## Contents
 
-1. [What Aurora OS is](#what-aurora-os-is)
+1. [What Aurora OS is](#what-aurora-os-is) · [why I build it](#why-i-build-it)
 2. [Why Aurora is different](#why-aurora-is-different)
 3. [Features](#features)
 4. [Get started (users)](#get-started-users) · [try it in QEMU](#try-it-in-a-virtual-machine-qemu) · [on Hyper-V, with your GPU for AI](HYPERV.md)
@@ -45,6 +45,20 @@ experience on top.
 It ships as a single ISO image that you write to a USB stick. From there you can **try** it
 live without touching your disk, or **install** it with a guided installer. It runs on
 laptops, desktops and virtual machines, with BIOS or UEFI firmware.
+
+### Why I build it
+
+Ever since I was a child I've been fascinated by programming. It's what I chose to study,
+and it's what I've built my whole working life around. Over all those years one question
+never went away: *what does it actually take to make an operating system?* Not an app,
+but the whole thing: a computer that starts up, installs itself and greets you with a
+desktop you'd enjoy using every day.
+
+Aurora is my attempt at an answer, built just for fun: to understand every layer, from the
+firmware handing over to the boot loader up to the pixels of the dock, and to make, along
+the way, the desktop I'd want for myself. It stands on Debian; everything above it is
+written for Aurora, and every bug we hit is written down with how we fixed it, because
+learning was the point. — *Luca Padovan*
 
 ## Why Aurora is different
 

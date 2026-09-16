@@ -156,14 +156,17 @@ def test_disk_warning_skips_the_live_system():
     assert fs_type("/homework", installed) == "btrfs"
 
 
-def test_corner_assistant_sits_low_but_clear_of_the_dock():
-    from aurora.assistant import pip_bottom_margin
-    # A dock at the bottom can grow as wide as the screen: always above it.
-    assert pip_bottom_margin() == 48 + 28 + 6 + 8
-    assert pip_bottom_margin(style="panel", icon=32) == 32 + 28 + 8
-    # A side or hidden dock leaves the corner free.
-    assert pip_bottom_margin(position="left") == 12
-    assert pip_bottom_margin(position="hidden") == 12
+def test_corner_assistant_sits_on_the_dock_or_at_the_bottom(tmp_path, monkeypatch):
+    from aurora import assistant
+    # Just above a dock that covers the bottom (it can be as wide as the screen)…
+    assert assistant.pip_bottom_margin(82) == 90
+    # …right at the bottom when there's none (side, off, auto-hidden).
+    assert assistant.pip_bottom_margin(0) == 12
+    monkeypatch.setenv("XDG_RUNTIME_DIR", str(tmp_path))
+    (tmp_path / "aurora-dock").write_text("76\n")
+    assert assistant.dock_covers() == 76
+    (tmp_path / "aurora-dock").write_text("0\n")
+    assert assistant.dock_covers() == 0
 
 
 def test_attachments_are_read_without_numpy(tmp_path, monkeypatch):
