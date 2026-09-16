@@ -33,7 +33,8 @@ done
 cal="$ROOTFS/etc/calamares/branding/aurora"
 mkdir -p "$cal"
 sed "s/@VERSION@/$AURORA_VERSION/g" "$SRC/branding/calamares/branding.desc" > "$cal/branding.desc"
-cp "$SRC/branding/calamares/show.qml" "$SRC/branding/calamares/stylesheet.qss" "$cal/"
+cp "$SRC/branding/calamares/show.qml" "$SRC/branding/calamares/keyboardq.qml" \
+   "$SRC/branding/calamares/stylesheet.qss" "$cal/"
 cp "$SRC"/branding/calamares/*.svg "$cal/"
 cp "$OUTB"/calamares/*.png "$cal/"
 cp -r "$SRC/branding/calamares/slides" "$cal/"

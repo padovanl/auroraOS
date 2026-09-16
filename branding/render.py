@@ -209,7 +209,8 @@ def grub(out):
 
 
 def installer_marks(out, size=22):
-    """The installer's checkbox tick, radio dot and "mixed" dash as PNGs: Qt
+    """The installer's checkbox tick, radio dot, "mixed" dash and combo box
+    arrow as PNGs: Qt
     style sheets only load SVG with an extra image plugin the image lacks."""
     os.makedirs(out, exist_ok=True)
 
@@ -240,7 +241,15 @@ def installer_marks(out, size=22):
         c.line_to(15.5, 11)
         c.stroke()
 
-    for name, draw in (("check", tick), ("radio", dot), ("dash", dash)):
+    def chevron(c):   # the combo box arrow, a little lighter than the text
+        c.set_source_rgba(0.85, 0.80, 0.95, 1)
+        c.set_line_width(2.2)
+        c.move_to(6.5, 9)
+        c.line_to(11, 13.5)
+        c.line_to(15.5, 9)
+        c.stroke()
+
+    for name, draw in (("check", tick), ("radio", dot), ("dash", dash), ("chevron", chevron)):
         mark(name, draw)
 
 

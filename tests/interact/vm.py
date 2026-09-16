@@ -27,7 +27,7 @@ def quote(s):
 
 
 class VM:
-    def __init__(self, iso, out, firmware="bios", vga="virtio-vga", grub_keys=()):
+    def __init__(self, iso, out, firmware="bios", vga="virtio-vga", grub_keys=(), disk=""):
         self.out = out
         os.makedirs(out, exist_ok=True)
         self.tmp = tempfile.mkdtemp(prefix="aurora-interact-")
@@ -48,6 +48,11 @@ class VM:
                "-device", "virtio-serial",
                "-chardev", f"socket,path={self.qga},server=on,wait=off,id=qga0",
                "-device", "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0"]
+        if disk:
+            if not os.path.exists(disk):
+                subprocess.run(["qemu-img", "create", "-q", "-f", "qcow2", disk, "40G"],
+                               check=True)
+            cmd += ["-drive", f"file={disk},if=virtio,format=qcow2"]
         if firmware == "uefi":
             ovmf = next(p for p in bt.OVMF_CANDIDATES if os.path.exists(p))
             cmd += ["-drive", f"if=pflash,format=raw,readonly=on,file={ovmf}"]
