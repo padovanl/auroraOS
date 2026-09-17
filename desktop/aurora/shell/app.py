@@ -111,7 +111,7 @@ class Shell(Adw.Application):
         self.brightness = _service(Brightness)
         self.battery = _service(Battery)
         self.network = Network()
-        self.power = Power(on_logout=self.quit)
+        self.power = Power(on_logout=self.quit, on_refused=self._power_refused)
         self.microphone = _service(Microphone)
         self.bluetooth = Bluetooth()
         self.power_profiles = _service(PowerProfiles)
@@ -400,6 +400,16 @@ class Shell(Adw.Application):
     def get_primary_monitor(self):
         model = Gdk.Display.get_default().get_monitors()
         return model.get_item(0) if model.get_n_items() else None
+
+    def _power_refused(self, method, reason):
+        titles = {"Reboot": _("Restart didn't happen"), "PowerOff": _("Shut down didn't happen"),
+                  "Suspend": _("Sleep didn't happen")}
+        anyway = {"Reboot": _("Restart Anyway"), "PowerOff": _("Shut Down Anyway"),
+                  "Suspend": _("Sleep Anyway")}
+        self.sysnotify.notify(titles.get(method, method), reason, "system-shutdown-symbolic",
+                              [("force", anyway.get(method, method)), ("later", _("Cancel"))],
+                              lambda key: key == "force" and self.power.force(method),
+                              urgency=2)
 
     def open_settings(self, page=""):
         argv = ["aurora-settings"]

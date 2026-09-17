@@ -352,9 +352,12 @@ class Network(GObject.Object):
 class Power:
     """Session and system power actions."""
 
-    def __init__(self, on_logout=None):
+    def __init__(self, on_logout=None, on_refused=None):
         self._logind = None
         self._on_logout = on_logout
+        # (method, reason): tell the user why nothing happened, and offer to
+        # go ahead anyway.
+        self._on_refused = on_refused
 
     def _manager(self):
         if self._logind is None:
@@ -369,7 +372,17 @@ class Power:
             self._manager().call_sync(method, GLib.Variant("(b)", (True,)),
                                       Gio.DBusCallFlags.NONE, -1, None)
         except GLib.Error as err:
+            # Usually an app holding off shutdown (updates, a copy…) or another
+            # session still open; logind says so, and nothing would happen.
             print(f"aurora: {method} failed: {err.message}")
+            if self._on_refused is not None:
+                self._on_refused(method, Gio.DBusError.strip_remote_error(err) or err.message)
+
+    def force(self, method):
+        """Restart or shut down despite what held it off (asks for the password
+        when the system wants it)."""
+        verb = {"Reboot": "reboot", "PowerOff": "poweroff", "Suspend": "suspend"}[method]
+        apps.spawn(["systemctl", verb, "--ignore-inhibitors"])
 
     SOUNDS = "/usr/share/sounds/aurora"
     GOODBYE_MS = 1800       # let the shutdown sound play before the session ends
