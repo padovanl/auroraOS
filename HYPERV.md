@@ -271,6 +271,40 @@ Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "A
 Start-VM -Name "Aurora"; vmconnect.exe localhost Aurora
 ```
 
+### If the installed system still doesn't start: a report
+
+[`tools/hyperv/Get-AuroraBootReport.ps1`](tools/hyperv/Get-AuroraBootReport.ps1) collects
+what shows why, without changing anything. In PowerShell **as administrator**, with the VM
+turned off:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Get-AuroraBootReport.ps1 -Name Aurora -Boot -Seconds 60
+```
+
+It writes `aurora-boot-report` on the Desktop:
+
+- `report.txt`: the VM, its firmware (Secure Boot and template, the boot order with the
+  file each entry starts), Hyper-V's log for the VM (the firmware writes there why it
+  skipped a disk), and, from the disk mounted read-only, its partitions, every file on
+  the EFI system partition with its SHA-256, and GRUB's configuration;
+- `screens\`: with `-Boot`, what the VM's screen showed every two seconds while starting.
+
+Zip the folder and attach it to an issue, or ask Claude Code on that computer to read it
+(see below).
+
+### With Claude Code on the Windows computer
+
+Claude Code can run the same PowerShell commands on the computer that hosts the VM, look at
+the report and the screens, and try a fix on the VM's disk with you. Install it
+(<https://claude.com/claude-code>), clone this repository, open PowerShell **as
+administrator** in it, run `claude`, and ask, for example:
+
+> Aurora OS is installed in the Hyper-V VM "Aurora" (Generation 2). After installation it
+> doesn't start from its disk: the firmware goes to PXE. Read HYPERV.md and
+> overlay/usr/local/lib/aurora/efi-install, run tools/hyperv/Get-AuroraBootReport.ps1
+> -Boot, look at the report and the screens, and find out why. Don't change the VM or its
+> disk without asking me first.
+
 ## Troubleshooting
 
 | Problem | Fix |
