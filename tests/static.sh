@@ -87,4 +87,13 @@ step "Package lists have no duplicates"
 dups=$(sed -e 's/#.*//' -e '/^\s*$/d' config/packages/*.list | sort | uniq -d)
 if [ -n "$dups" ]; then echo "FAILED: duplicated packages: $dups"; fail=1; else echo "ok"; fi
 
+step "PowerShell scripts are plain ASCII"
+# Windows PowerShell 5.1 reads a UTF-8 file without a BOM as ANSI: a dash or an
+# arrow turns into bytes that include a quote, and the script doesn't parse.
+if grep -nP '[^\x00-\x7F]' tools/hyperv/*.ps1; then
+    echo "FAILED: non-ASCII characters in a .ps1 file"; fail=1
+else
+    echo "ok"
+fi
+
 exit $fail
