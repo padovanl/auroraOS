@@ -34,12 +34,12 @@ param(
 $ErrorActionPreference = "Stop"
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Error "Run PowerShell as administrator (right-click → Run as administrator)."
+    Write-Error "Run PowerShell as administrator (right-click, Run as administrator)."
 }
 
 New-Item -ItemType Directory -Force -Path $Out | Out-Null
 $report = Join-Path $Out "report.txt"
-"Aurora OS boot report — $(Get-Date -Format s)" | Set-Content -Encoding UTF8 $report
+"Aurora OS boot report - $(Get-Date -Format s)" | Set-Content -Encoding UTF8 $report
 
 function Section($title) { "`r`n===== $title =====" | Add-Content -Encoding UTF8 $report }
 function Note($obj) { ($obj | Out-String -Width 220).TrimEnd() | Add-Content -Encoding UTF8 $report }
