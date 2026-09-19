@@ -14,8 +14,8 @@
       - with the VM turned off, its disk mounted read-only: the partitions,
         every file on the EFI system partition with its SHA-256, and GRUB's
         configuration files;
-      - with -Boot, it starts the VM and saves what the screen shows every two
-        seconds, so the whole start can be looked at afterwards.
+      - with -Boot, it starts the VM and saves what the screen shows about once
+        a second, so the whole start can be looked at afterwards.
 
     Everything goes to a folder (default: aurora-boot-report on the Desktop),
     with report.txt; zip it and send it, or give it to Claude.
@@ -160,7 +160,9 @@ if ($Boot) {
     $deadline = (Get-Date).AddSeconds($Seconds)
     $n = 0
     while ((Get-Date) -lt $deadline) {
-        Start-Sleep -Seconds 2
+        # Often: a boot loader's error stays on screen for a second or two
+        # before the firmware moves on to the next device.
+        Start-Sleep -Milliseconds 700
         $n++
         try {
             if (Save-Screen $Name (Join-Path $shots ("{0:D3}.png" -f $n))) { continue }
