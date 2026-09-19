@@ -62,6 +62,15 @@ foreach ($entry in $fw.BootOrder) {
     Note ("{0}. {1,-6} {2} | {3} | {4}" -f $i, $entry.BootType, $entry.Description, $entry.FirmwarePath, $device)
 }
 
+$types = @($fw.BootOrder | ForEach-Object { if ($_.Device) { $_.Device.GetType().Name } else { "$($_.BootType)" } })
+$net = [array]::IndexOf($types, "VMNetworkAdapter")
+$hdd = [array]::IndexOf($types, "HardDiskDrive")
+if ($net -ge 0 -and $hdd -gt $net) {
+    Note "PROBLEM: the network is before the disk. Without an ISO the VM waits at 'Start PXE over IPv4'"
+    Note "instead of starting the installed system. Fix:"
+    Note "  Set-VMFirmware -VMName $Name -BootOrder (Get-VMDvdDrive -VMName $Name), (Get-VMHardDiskDrive -VMName $Name), (Get-VMNetworkAdapter -VMName $Name)"
+}
+
 Section "Drives"
 Note (Get-VMHardDiskDrive -VMName $Name | Select-Object ControllerType, ControllerNumber, ControllerLocation, Path)
 Note (Get-VMDvdDrive -VMName $Name | Select-Object ControllerNumber, ControllerLocation, Path)

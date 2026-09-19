@@ -117,8 +117,12 @@ if ($dvd) {
 }
 $dvd = Get-VMDvdDrive -VMName $Name | Select-Object -First 1
 
-Step "Firmware: Secure Boot off (the live ISO isn't signed yet), start from the DVD"
-Set-VMFirmware -VMName $Name -EnableSecureBoot Off -FirstBootDevice $dvd
+Step "Firmware: Secure Boot off (the live ISO isn't signed yet); start from the DVD, then the disk"
+# The whole order, not only its first entry: Hyper-V puts the network before
+# the disk, and with the ISO removed after installing the VM would sit at
+# "Start PXE over IPv4" instead of starting the installed system.
+$order = @($dvd) + @(Get-VMHardDiskDrive -VMName $Name) + @(Get-VMNetworkAdapter -VMName $Name)
+Set-VMFirmware -VMName $Name -EnableSecureBoot Off -BootOrder $order
 
 Step "Screen ${Width}x${Height}, enhanced session off"
 try {
@@ -135,7 +139,7 @@ Write-Host ""
 Write-Host "Aurora OS VM '$Name' is ready." -ForegroundColor Green
 Write-Host "  Boot menu: 'Try Aurora OS' for the live desktop; double-click 'Install Aurora OS' to install."
 Write-Host "  After installing, remove the ISO:  Set-VMDvdDrive -VMName '$Name' -Path `$null"
-Write-Host "  Then put the disk first:  Set-VMFirmware -VMName '$Name' -FirstBootDevice (Get-VMHardDiskDrive -VMName '$Name' | Select-Object -First 1)"
+Write-Host "  The VM then starts from its disk (the boot order is DVD, disk, network)."
 Write-Host "  Keep Secure Boot off after installation: Hyper-V uses direct GRUB."
 Write-Host "  A newer ISO later: run this script again with its path (the installed disk is kept)."
 

@@ -1566,6 +1566,7 @@ coming back.
 | The Assistant refused attachments with Ollama or LM Studio on the network. | It only allowed attachments for the built-in local model. | Attachments go to any model on this computer or a private network address, never to a cloud endpoint; a headless test checks both. |
 | “Attach file” seemed to do nothing. | The file chooser opened behind the always-on-top Assistant. | labwc and Wayfire keep the portal's file chooser on top too. |
 | Wayfire exited at once on virtio-gpu without 3D. | Mesa refuses software rendering when a render node exists, and forcing it crashes Wayfire. | That setup starts labwc; `~/.config/aurora/compositor` can still choose Wayfire. |
+| On Hyper-V the installed system sat at “Start PXE over IPv4”. | Not the disk: the VM's boot order had the network before the disk (Hyper-V's default), and our script only moved the DVD first. A report script on the Windows host showed it. | The script and the guide set the whole order: DVD, disk, network. |
 | The installer's checkboxes were flat squares with no tick. | The image has no Qt SVG image plugin, so the SVG marks weren't drawn. | The marks are PNGs rendered at build time. |
 | The live system warned “Disk almost full”. | Its root is an overlay in RAM with about 2 GB free. | The warning skips file systems in memory (overlay, tmpfs); a unit test checks it. |
 | The weather under the calendar disappeared in the live system. | Its time zone is UTC, which has no city to take the location from. | It asks to choose a city in Weather instead of hiding. |

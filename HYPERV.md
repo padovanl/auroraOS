@@ -59,7 +59,10 @@ New-VM -Name $vm -Generation 2 -MemoryStartupBytes 8GB -NewVHDPath $vhd -NewVHDS
 Set-VM -Name $vm -ProcessorCount 4 -StaticMemory -CheckpointType Disabled `
        -AutomaticCheckpointsEnabled $false
 Add-VMDvdDrive -VMName $vm -Path $iso
-Set-VMFirmware -VMName $vm -FirstBootDevice (Get-VMDvdDrive -VMName $vm) -EnableSecureBoot Off
+# DVD, then the disk, then the network: Hyper-V's own order has the network before
+# the disk, and the installed system would wait at "Start PXE over IPv4".
+Set-VMFirmware -VMName $vm -EnableSecureBoot Off -BootOrder `
+    (Get-VMDvdDrive -VMName $vm), (Get-VMHardDiskDrive -VMName $vm), (Get-VMNetworkAdapter -VMName $vm)
 Set-VMVideo -VMName $vm -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single
 Set-VMHost -EnableEnhancedSessionMode $false
 ```
@@ -106,7 +109,11 @@ Session".
    disk:
    ```powershell
    Set-VMDvdDrive -VMName "Aurora" -Path $null
-   Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "Aurora" | Select-Object -First 1)
+   ```
+   The boot order set above (DVD, disk, network) does the rest. In a VM made another
+   way, put the disk before the network, or it waits at "Start PXE over IPv4":
+   ```powershell
+   Set-VMFirmware -VMName "Aurora" -BootOrder (Get-VMDvdDrive -VMName "Aurora"), (Get-VMHardDiskDrive -VMName "Aurora"), (Get-VMNetworkAdapter -VMName "Aurora")
    ```
 5. How the installed disk starts: the installer puts Debian's signed chain (shim and
    GRUB) both in `\EFI\debian` and in the disk's fallback path `\EFI\BOOT`
@@ -236,7 +243,7 @@ No need to create the VM again:
    file** → Browse → the new ISO. Or in PowerShell:
    ```powershell
    Set-VMDvdDrive -VMName "Aurora" -Path "C:\VMs\aurora-os-0.1-amd64.iso"
-   Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMDvdDrive -VMName "Aurora")
+   Set-VMFirmware -VMName "Aurora" -BootOrder (Get-VMDvdDrive -VMName "Aurora"), (Get-VMHardDiskDrive -VMName "Aurora"), (Get-VMNetworkAdapter -VMName "Aurora")
    ```
 3. Start it: the new version's boot menu appears.
 
@@ -267,7 +274,7 @@ shim-no-nvram`. Then, in PowerShell, remove the ISO and start from the disk:
 
 ```powershell
 Set-VMDvdDrive -VMName "Aurora" -Path $null
-Set-VMFirmware -VMName "Aurora" -FirstBootDevice (Get-VMHardDiskDrive -VMName "Aurora" | Select-Object -First 1)
+Set-VMFirmware -VMName "Aurora" -BootOrder (Get-VMDvdDrive -VMName "Aurora"), (Get-VMHardDiskDrive -VMName "Aurora"), (Get-VMNetworkAdapter -VMName "Aurora")
 Start-VM -Name "Aurora"; vmconnect.exe localhost Aurora
 ```
 
@@ -309,7 +316,8 @@ administrator** in it, run `claude`, and ask, for example:
 
 | Problem | Fix |
 |---|---|
-| "Start PXE over IPv4", "The image's hash and certificate are not allowed", or the VM starts from the network | Keep Secure Boot **off**: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`. To install, put the DVD first; after installation, remove the ISO. |
+| The installed system stays at "Start PXE over IPv4" | The network is before the disk in the VM's boot order (Hyper-V's default; `Get-VMFirmware -VMName Aurora` shows it). Put the disk before it: `Set-VMFirmware -VMName Aurora -BootOrder (Get-VMDvdDrive -VMName Aurora), (Get-VMHardDiskDrive -VMName Aurora), (Get-VMNetworkAdapter -VMName Aurora)`. |
+| "The image's hash and certificate are not allowed" | Keep Secure Boot **off**: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`. |
 | After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | Make "Hard Drive" the first boot device (step 4). Installations made with ISOs from before 29 Sep 2026 wrote a firmware boot entry that Hyper-V can't start: reinstall with a current ISO, or start the live ISO and run, in its terminal, the commands in [Repair an older installation](#repair-an-older-installation). |
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |
 | Small screen | `Set-VMVideo -VMName Aurora -HorizontalResolution 1920 -VerticalResolution 1080 -ResolutionType Single` with the VM off. |
