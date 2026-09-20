@@ -259,16 +259,20 @@ def check_installed(args, disk, out, results):
             code, output = vm.run(command, timeout=300)
             results.append((desc, code == 0, output.strip()[:200]))
         if args.firmware == "uefi":
-            mode = "shim-no-nvram" if args.hyperv_identity else "shim"
+            # Hyper-V with Secure Boot off (as here): GRUB itself at \EFI\BOOT, as
+            # shim hands back to the firmware there without starting anything.
+            mode = "direct" if args.hyperv_identity else "shim"
             code, output = vm.run(f"test \"$(cat /var/lib/aurora/efi-managed)\" = {mode}")
             results.append((f"EFI mode is {mode}", code == 0, output))
             # Both paths complete: shim + signed GRUB in \EFI\debian and \EFI\BOOT,
             # the config GRUB reads in \EFI\debian, no fallback tool in \EFI\BOOT.
-            both = ("cd /boot/efi/EFI && cmp -s BOOT/BOOTX64.EFI debian/shimx64.efi && "
-                    "cmp -s BOOT/grubx64.efi debian/grubx64.efi && "
+            first = ("/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi" if args.hyperv_identity
+                     else "debian/shimx64.efi")
+            both = (f"cd /boot/efi/EFI && cmp -s BOOT/BOOTX64.EFI {first} && "
+                    "test -s debian/shimx64.efi && cmp -s BOOT/grubx64.efi debian/grubx64.efi && "
                     "grep -q '^search' debian/grub.cfg && test ! -e BOOT/fbx64.efi")
             code, output = vm.run(both)
-            results.append(("both EFI paths hold the signed chain", code == 0, output))
+            results.append(("both EFI paths hold the right boot loaders", code == 0, output))
             # Exercise the real package hooks that may overwrite EFI binaries.
             code, output = vm.run("DEBIAN_FRONTEND=noninteractive apt-get install -y --reinstall "
                                   "grub-efi-amd64 grub-efi-amd64-signed shim-signed", timeout=300)

@@ -15,6 +15,14 @@
 # So on Hyper-V no entry is written (grub2/update_nvram false) and the ones
 # Calamares' bootloader module just created for this disk are removed.
 #
+# Hyper-V with Secure Boot off also gets GRUB itself at \EFI\BOOT\BOOTX64.EFI
+# ("direct"), not shim: there shim runs for about 45 seconds without a word and
+# hands back to the firmware ("The boot loader did not load an operating
+# system"), as a test on a real host showed; GRUB alone starts, like the live
+# ISO's. Debian's monolithic image is used: it has every module built in and
+# reads \EFI\debian\grub.cfg like the signed one. With Secure Boot on, the
+# signed chain stays.
+#
 # Called by the installer with --install and by apt after package changes
 # (/etc/apt/apt.conf.d/99aurora-efi) on systems the installer set up.
 set -euo pipefail
@@ -31,6 +39,15 @@ if [ "$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || true)" = 'Microsoft Corp
    [ "$(cat /sys/class/dmi/id/product_name 2>/dev/null || true)" = 'Virtual Machine' ]; then
     hyperv=1
 fi
+
+# The SecureBoot variable can be missing when it is off.
+secure_boot=0
+sb=/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c
+if [ -e "$sb" ] && [ "$(od -An -tu1 -j4 -N1 "$sb" 2>/dev/null | tr -d ' ')" = 1 ]; then
+    secure_boot=1
+fi
+direct=0
+[ "$hyperv" = 1 ] && [ "$secure_boot" = 0 ] && direct=1
 
 printf 'grub-efi-amd64 grub2/force_efi_extra_removable boolean true\n' | debconf-set-selections
 if [ "$hyperv" = 1 ]; then
@@ -70,13 +87,23 @@ esp_dir=/boot/efi/EFI
 test -s "$esp_dir/debian/shimx64.efi"
 test -s "$esp_dir/debian/grubx64.efi"
 grep -q '^search' "$esp_dir/debian/grub.cfg"
-cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$esp_dir/debian/shimx64.efi"
 cmp -s "$esp_dir/BOOT/grubx64.efi" "$esp_dir/debian/grubx64.efi"
 test ! -e "$esp_dir/BOOT/fbx64.efi"
+if [ "$direct" = 1 ]; then
+    # After the checks above: grub-install (and GRUB's own package scripts on
+    # updates, which run before this) put shim there again each time.
+    monolithic=/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi
+    test -s "$monolithic"
+    install -m 0644 "$monolithic" "$esp_dir/BOOT/BOOTX64.EFI"
+    cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$monolithic"
+else
+    cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$esp_dir/debian/shimx64.efi"
+fi
 grub-script-check /boot/grub/grub.cfg
 
 mode=shim
 [ "$hyperv" = 1 ] && mode=shim-no-nvram
+[ "$direct" = 1 ] && mode=direct
 echo "Aurora EFI installation: $mode"
 mkdir -p /var/lib/aurora
 printf '%s\n' "$mode" > "$marker"
