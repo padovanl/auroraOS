@@ -1,32 +1,32 @@
 <#
 .SYNOPSIS
-    Finds where an installed Aurora OS stops while starting in Hyper-V, by trying.
+    Finds which boot loader starts an installed Aurora OS in Hyper-V, by trying.
 
 .DESCRIPTION
     Run in PowerShell as administrator, with Aurora already installed on the
-    VM's disk. Unlike Get-AuroraBootReport.ps1 this one changes things, and puts
-    them back:
+    VM's disk. Unlike Get-AuroraBootReport.ps1 this one changes things:
 
       1. GRUB's small configuration on the EFI system partition gets numbered
          messages (the original is kept next to it and restored at the end),
          so the screen shows how far the boot loader gets;
-      2. the VM starts from its disk with its DVD drive as it is, and the
+      2. each .efi file in -Loaders is put in turn at \EFI\BOOT\BOOTX64.EFI
+         (the file the firmware starts), the VM starts from its disk, and the
          screen is saved about once a second;
-      3. the DVD drive is removed and the VM starts again;
-      4. GRUB's configuration and a normal boot order are restored. If the VM
-         only starts without the DVD drive, it is left without one (working);
-         otherwise the drive is put back.
+      3. GRUB's configuration and a normal boot order are restored. The first
+         loader that started the system stays on the disk (so the VM works);
+         if none did, the original BOOTX64.EFI is put back.
 
     Results go to aurora-boot-test on the Desktop: verdict.txt and the screens
     of each try.
 
 .EXAMPLE
-    powershell -ExecutionPolicy Bypass -File .\Test-AuroraBoot.ps1 -Name Aurora
+    powershell -ExecutionPolicy Bypass -File .\Test-AuroraBoot.ps1 -Name Aurora -Loaders .\aurora-loaders
 #>
 param(
     [string]$Name = "Aurora",
     [string]$Out = (Join-Path ([Environment]::GetFolderPath("Desktop")) "aurora-boot-test"),
-    [int]$Seconds = 75
+    [string]$Loaders = (Join-Path $PSScriptRoot "aurora-loaders"),
+    [int]$Seconds = 60
 )
 
 $ErrorActionPreference = "Stop"
@@ -45,9 +45,9 @@ $vm = Get-VM -Name $Name
 if ($vm.State -ne "Off") { Stop-VM -Name $Name -TurnOff -Force }
 $disk = Get-VMHardDiskDrive -VMName $Name | Select-Object -First 1
 $vhd = $disk.Path
-$dvds = @(Get-VMDvdDrive -VMName $Name | ForEach-Object {
-    @{ Number = $_.ControllerNumber; Location = $_.ControllerLocation; Path = $_.Path } })
-Say "VM $Name, disk $vhd, DVD drives: $($dvds.Count) (media: $(($dvds | ForEach-Object { if ($_.Path) { $_.Path } else { 'none' } }) -join ', '))"
+$candidates = @(Get-ChildItem -Path $Loaders -Filter *.efi | Sort-Object Name)
+if ($candidates.Count -eq 0) { Write-Error "No .efi files in $Loaders" }
+Say "VM $Name, disk $vhd, loaders to try: $(($candidates | ForEach-Object { $_.Name }) -join ', ')"
 
 function Save-Screen($file) {
     $service = Get-CimInstance -Namespace root\virtualization\v2 -ClassName Msvm_VirtualSystemManagementService
@@ -140,44 +140,43 @@ Edit-Esp {
 }
 Say "GRUB's configuration on the EFI partition now prints numbered messages."
 
-$withDvd = $false
-$withoutDvd = $false
+$winner = $null
 try {
-    # --- 2. as the VM is ---------------------------------------------------------------
-    $withDvd = Test-Boot "1-with-dvd-drive"
-
-    # --- 3. without the DVD drive ------------------------------------------------------
-    if (-not $withDvd -and $dvds.Count -gt 0) {
-        Get-VMDvdDrive -VMName $Name | Remove-VMDvdDrive
-        $withoutDvd = Test-Boot "2-without-dvd-drive"
+    # --- 2. each loader in turn --------------------------------------------------------
+    foreach ($candidate in $candidates) {
+        $file = $candidate.FullName
+        Edit-Esp {
+            param($esp)
+            $target = Join-Path $esp "EFI\BOOT\BOOTX64.EFI"
+            $keep = "$target.aurora-backup"
+            if (-not (Test-Path $keep)) { Copy-Item $target $keep }
+            Copy-Item $file $target -Force
+        }
+        $booted = Test-Boot $candidate.BaseName
+        if ($booted -and -not $winner) { $winner = $candidate }
     }
 } finally {
-    # --- 4. put things back -------------------------------------------------------------
+    # --- 3. put things back -------------------------------------------------------------
     if ((Get-VM -Name $Name).State -ne "Off") { Stop-VM -Name $Name -TurnOff -Force }
+    $final = if ($winner) { $winner.FullName } else { $null }
     Edit-Esp {
         param($esp)
         $cfg = Join-Path $esp "EFI\debian\grub.cfg"
-        $backup = "$cfg.aurora-backup"
-        if (Test-Path $backup) { Copy-Item $backup $cfg -Force; Remove-Item $backup }
-    }
-    if (-not $withoutDvd -and -not (Get-VMDvdDrive -VMName $Name)) {
-        foreach ($d in $dvds) {
-            if ($d.Path) { Add-VMDvdDrive -VMName $Name -ControllerNumber $d.Number -ControllerLocation $d.Location -Path $d.Path }
-            else { Add-VMDvdDrive -VMName $Name -ControllerNumber $d.Number -ControllerLocation $d.Location }
-        }
+        if (Test-Path "$cfg.aurora-backup") { Copy-Item "$cfg.aurora-backup" $cfg -Force; Remove-Item "$cfg.aurora-backup" }
+        $target = Join-Path $esp "EFI\BOOT\BOOTX64.EFI"
+        $keep = "$target.aurora-backup"
+        if ($final) { Copy-Item $final $target -Force }
+        elseif (Test-Path $keep) { Copy-Item $keep $target -Force }
+        if (Test-Path $keep) { Remove-Item $keep }
     }
     $order = @(Get-VMDvdDrive -VMName $Name) + @(Get-VMHardDiskDrive -VMName $Name) + @(Get-VMNetworkAdapter -VMName $Name)
     Set-VMFirmware -VMName $Name -BootOrder $order
 }
 
 Say ""
-if ($withDvd) {
-    Say "VERDICT: it starts from the disk with the DVD drive present. The boot order was the problem; it is now DVD, disk, network."
-} elseif ($withoutDvd) {
-    Say "VERDICT: it starts only without the DVD drive. The empty drive stalls the boot loader."
-    Say "The VM is left without a DVD drive, so it works now: Start-VM -Name $Name"
-    Say "(New-AuroraVM.ps1 adds the drive again when you give it a newer ISO.)"
+if ($winner) {
+    Say "VERDICT: Aurora starts with $($winner.Name). It is now the disk's BOOTX64.EFI: Start-VM -Name $Name"
 } else {
-    Say "VERDICT: it doesn't start either way. Look at the last AURORA message in the screens of each try."
+    Say "VERDICT: no loader started Aurora. Look at the last AURORA message in the screens of each try."
 }
 Say "Folder: $Out"
