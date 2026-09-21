@@ -46,6 +46,21 @@ if ($vm.State -ne "Off") { Stop-VM -Name $Name -TurnOff -Force }
 $disk = Get-VMHardDiskDrive -VMName $Name | Select-Object -First 1
 $vhd = $disk.Path
 $candidates = @(Get-ChildItem -Path $Loaders -Filter *.efi | Sort-Object Name)
+# Windows' own boot manager, as a program the firmware surely knows how to run:
+# on this disk it can only show an error screen, which is the point.
+$bootmgr = Join-Path $env:SystemRoot "Boot\EFI\bootmgfw.efi"
+if (Test-Path $bootmgr) {
+    $copy = Join-Path $Out "9-windows-bootmgr.efi"
+    Copy-Item $bootmgr $copy -Force
+    $candidates += Get-Item $copy
+}
+# Files a candidate needs next to it (the UEFI Shell's startup script, a GRUB
+# for it to start): copied to the EFI partition for the test, removed after.
+$extra = Join-Path $Loaders "esp-extra"
+$extraFiles = @()
+if (Test-Path $extra) {
+    $extraFiles = @(Get-ChildItem -Recurse -File $extra | ForEach-Object { $_.FullName.Substring($extra.Length + 1) })
+}
 if ($candidates.Count -eq 0) { Write-Error "No .efi files in $Loaders" }
 Say "VM $Name, disk $vhd, loaders to try: $(($candidates | ForEach-Object { $_.Name }) -join ', ')"
 
@@ -102,6 +117,17 @@ function Edit-Esp([scriptblock]$action) {
         $esp = Get-Partition -DiskNumber $number |
             Where-Object { $_.GptType -eq "{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}" } | Select-Object -First 1
         if (-not $esp) { throw "no EFI system partition on $vhd" }
+        $head = Join-Path $Out "esp-first-sectors.bin"
+        if (-not (Test-Path $head)) {
+            # How the partition was formatted, to look at afterwards.
+            $raw = [IO.File]::Open("\\.\PhysicalDrive$number", "Open", "Read", "ReadWrite")
+            try {
+                [void]$raw.Seek([int64]$esp.Offset, "Begin")
+                $buffer = New-Object byte[] 1048576
+                [void]$raw.Read($buffer, 0, $buffer.Length)
+                [IO.File]::WriteAllBytes($head, $buffer)
+            } catch { } finally { $raw.Close() }
+        }
         $mountPoint = Join-Path $env:TEMP "aurora-esp"
         New-Item -ItemType Directory -Force -Path $mountPoint | Out-Null
         Add-PartitionAccessPath -DiskNumber $number -PartitionNumber $esp.PartitionNumber -AccessPath $mountPoint
@@ -137,6 +163,13 @@ Edit-Esp {
         "echo 'AURORA 6: the boot menu returned'"
     )
     [IO.File]::WriteAllText($cfg, (($lines -join "`n") + "`n"), (New-Object Text.ASCIIEncoding))
+    foreach ($relative in $extraFiles) {
+        $target = Join-Path $esp $relative
+        New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+        Copy-Item (Join-Path $extra $relative) $target -Force
+    }
+    "EFI partition files:" | Add-Content -Encoding UTF8 $verdict
+    Get-ChildItem -Recurse -File $esp | ForEach-Object { "  " + $_.FullName.Substring($esp.Length) + " " + $_.Length } | Add-Content -Encoding UTF8 $verdict
 }
 Say "GRUB's configuration on the EFI partition now prints numbered messages."
 
@@ -168,6 +201,11 @@ try {
         if ($final) { Copy-Item $final $target -Force }
         elseif (Test-Path $keep) { Copy-Item $keep $target -Force }
         if (Test-Path $keep) { Remove-Item $keep }
+        if (-not $final) {   # a loader that works may need them: keep them with it
+            foreach ($relative in $extraFiles) {
+                Remove-Item (Join-Path $esp $relative) -ErrorAction SilentlyContinue
+            }
+        }
     }
     $order = @(Get-VMDvdDrive -VMName $Name) + @(Get-VMHardDiskDrive -VMName $Name) + @(Get-VMNetworkAdapter -VMName $Name)
     Set-VMFirmware -VMName $Name -BootOrder $order
