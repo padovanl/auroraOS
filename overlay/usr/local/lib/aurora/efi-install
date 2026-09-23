@@ -16,12 +16,12 @@
 # Calamares' bootloader module just created for this disk are removed.
 #
 # Hyper-V with Secure Boot off also gets GRUB itself at \EFI\BOOT\BOOTX64.EFI
-# ("direct"), not shim: there shim runs for about 45 seconds without a word and
-# hands back to the firmware ("The boot loader did not load an operating
-# system"), as a test on a real host showed; GRUB alone starts, like the live
-# ISO's. Debian's monolithic image is used: it has every module built in and
-# reads \EFI\debian\grub.cfg like the signed one. With Secure Boot on, the
-# signed chain stays.
+# ("direct"), not shim: Debian's monolithic image, with every module built in,
+# which reads \EFI\debian\grub.cfg like the signed one. That is the chain seen
+# starting on a real Hyper-V host; the shim chain has not been seen starting
+# there with Secure Boot off (the tests that seemed to blame it were run on a
+# VM whose firmware could not read the disk at all, see HYPERV.md). With
+# Secure Boot on, the signed chain stays.
 #
 # Called by the installer with --install and by apt after package changes
 # (/etc/apt/apt.conf.d/99aurora-efi) on systems the installer set up.

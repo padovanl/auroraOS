@@ -56,8 +56,9 @@ $vhd = "C:\VMs\Aurora.vhdx"
 
 New-VM -Name $vm -Generation 2 -MemoryStartupBytes 8GB -NewVHDPath $vhd -NewVHDSizeBytes 60GB `
        -SwitchName "Default Switch"
-Set-VM -Name $vm -ProcessorCount 4 -StaticMemory -CheckpointType Disabled `
-       -AutomaticCheckpointsEnabled $false
+# Checkpoints are left as Windows sets them (see Troubleshooting: with them turned
+# off, the firmware could not read the virtual disk on a tested host).
+Set-VM -Name $vm -ProcessorCount 4 -StaticMemory
 Add-VMDvdDrive -VMName $vm -Path $iso
 # DVD, then the disk, then the network: Hyper-V's own order has the network before
 # the disk, and the installed system would wait at "Start PXE over IPv4".
@@ -118,8 +119,7 @@ Session".
 5. How the installed disk starts: the installer puts Debian's signed chain (shim and
    GRUB) both in `\EFI\debian` and in the disk's fallback path `\EFI\BOOT`
    (Debian's `--force-extra-removable`). On Hyper-V with Secure Boot off, the fallback
-   path starts GRUB itself, not shim: shim there runs for about 45 seconds in silence and
-   hands back to the firmware ("The boot loader did not load an operating system"). On
+   path starts GRUB itself, not shim: that is the chain seen starting on a real host. On
    Hyper-V the installer also writes **no** boot entry into
    the VM's firmware and removes the one the installer's bootloader step creates:
    Hyper-V then starts the disk through its own "EFI SCSI Device" entry. Entries
@@ -212,6 +212,11 @@ Then copy the driver files the VM will need into a folder, for example `C:\VMs\g
   NVIDIA it starts with `nv_dispi.inf_amd64_…`; to find it, look up the path of
   `nvapi64.dll` in Device Manager → your GPU → Driver → Driver Details.
 
+GPU partitioning needs checkpoints off (`-CheckpointType Disabled` above). If the VM then
+no longer starts from its disk ("The boot loader did not load an operating system"), that
+host is one where the firmware only reads the disk through a checkpoint: see
+Troubleshooting, and leave this experimental section out.
+
 ### In Aurora (installed, with internet)
 
 1. Copy the files into the VM (a shared folder, a USB stick or `scp`):
@@ -256,8 +261,8 @@ Updates**, with no ISO needed.
 ### Repair an older installation
 
 If Aurora was installed with an ISO from before 1 Oct 2026 and the VM doesn't start
-from its disk (it goes to PXE, or the boot summary says "The boot loader did not load an
-operating system"), you don't need to reinstall. Start the VM from a current ISO
+from its disk even with checkpoints on (see Troubleshooting), you don't need to
+reinstall. Start the VM from a current ISO
 (run the script in part 1 again: it keeps the disk), choose **Try Aurora OS**, open
 the **Terminal** and paste:
 
@@ -320,8 +325,8 @@ administrator** in it, run `claude`, and ask, for example:
 
 | Problem | Fix |
 |---|---|
+| After installing, the disk never starts: "The boot loader did not load an operating system", then PXE; any boot loader does the same | On some hosts the VM's firmware can't read the `.vhdx` directly (in the UEFI Shell, `dblk blk0 0 1` says "Read file error - 'BlockIo'" and `map` shows the disk without partitions), only through a checkpoint's differencing disk. Windows turns automatic checkpoints on; an earlier version of our script turned them off. Turn them back on: `Set-VM -Name Aurora -CheckpointType Standard -AutomaticCheckpointsEnabled $true`, or run `New-AuroraVM.ps1` again. |
 | The installed system stays at "Start PXE over IPv4" | The network is before the disk in the VM's boot order (Hyper-V's default; `Get-VMFirmware -VMName Aurora` shows it). Put the disk before it: `Set-VMFirmware -VMName Aurora -BootOrder (Get-VMDvdDrive -VMName Aurora), (Get-VMHardDiskDrive -VMName Aurora), (Get-VMNetworkAdapter -VMName Aurora)`. |
-| The boot summary says "The boot loader did not load an operating system" for the disk | An installation from before 1 Oct 2026 starts shim, which doesn't work on Hyper-V with Secure Boot off: see "Repair an older installation". `tools/hyperv/Test-AuroraBoot.ps1` shows how far the boot loader gets. |
 | "The image's hash and certificate are not allowed" | Keep Secure Boot **off**: `Set-VMFirmware -VMName Aurora -EnableSecureBoot Off`. |
 | After installing, with the ISO removed, the VM shows "Start PXE over IPv4" | Make "Hard Drive" the first boot device (step 4). Installations made with ISOs from before 29 Sep 2026 wrote a firmware boot entry that Hyper-V can't start: reinstall with a current ISO, or start the live ISO and run, in its terminal, the commands in [Repair an older installation](#repair-an-older-installation). |
 | Black window after the boot menu | Turn **Enhanced Session** off (View menu). If it stays black, pick **Try Aurora OS (safe graphics)**. |

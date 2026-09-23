@@ -5,9 +5,9 @@
 
 .DESCRIPTION
     Generation 2 (UEFI), Secure Boot off (the live ISO's boot loader is not
-    signed yet; the installed system uses direct GRUB), static memory, no
-    checkpoints, the DVD first in the boot order, a 1920x1080 screen and
-    enhanced session off (it shows a black window with Aurora).
+    signed yet; the installed system uses direct GRUB), static memory,
+    checkpoints as Windows sets them, the DVD first in the boot order, a
+    1920x1080 screen and enhanced session off (it shows a black window with Aurora).
 
     If a VM with this name already exists it is kept, disk included: it is
     turned off, its settings are fixed and its DVD drive gets the ISO. Use
@@ -102,10 +102,16 @@ if (-not $vm) {
     }
 }
 
-Step "Processors, static memory, no checkpoints"
+Step "Processors, static memory, Windows' own checkpoint settings"
+# Checkpoints stay as Windows sets them (automatic ones on, on Windows 10/11):
+# this script used to turn them off, and on a host where that was tested the
+# VM's firmware then could not read the virtual disk at all ("Read file error
+# - BlockIo" in the UEFI Shell; the installed system never started, the VM
+# went on to PXE). With an automatic checkpoint the VM reads the disk through
+# a differencing .avhdx, and starts. Set back here for VMs made by the old script.
 Set-VM -Name $Name -ProcessorCount $Processors -StaticMemory -MemoryStartupBytes ($MemoryGB * 1GB) `
-       -CheckpointType Disabled -AutomaticStopAction ShutDown
-try { Set-VM -Name $Name -AutomaticCheckpointsEnabled $false } catch { }  # older Windows lack it
+       -CheckpointType Standard -AutomaticStopAction ShutDown
+try { Set-VM -Name $Name -AutomaticCheckpointsEnabled $true } catch { }  # older Windows lack it
 
 Step "DVD drive with the ISO: $iso"
 $dvd = Get-VMDvdDrive -VMName $Name | Select-Object -First 1

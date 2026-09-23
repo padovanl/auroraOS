@@ -71,6 +71,13 @@ if ($net -ge 0 -and $hdd -gt $net) {
     Note "  Set-VMFirmware -VMName $Name -BootOrder (Get-VMDvdDrive -VMName $Name), (Get-VMHardDiskDrive -VMName $Name), (Get-VMNetworkAdapter -VMName $Name)"
 }
 
+$now = Get-VM -Name $Name
+if ($now.CheckpointType -eq "Disabled" -or -not $now.AutomaticCheckpointsEnabled) {
+    Note "NOTE: checkpoints are $($now.CheckpointType), automatic ones $($now.AutomaticCheckpointsEnabled). On one host the firmware"
+    Note "could not read the virtual disk unless an automatic checkpoint was in use. If the disk doesn't start:"
+    Note "  Set-VM -Name $Name -CheckpointType Standard -AutomaticCheckpointsEnabled `$true"
+}
+
 Section "Drives"
 Note (Get-VMHardDiskDrive -VMName $Name | Select-Object ControllerType, ControllerNumber, ControllerLocation, Path)
 Note (Get-VMDvdDrive -VMName $Name | Select-Object ControllerNumber, ControllerLocation, Path)
