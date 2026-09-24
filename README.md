@@ -127,6 +127,7 @@ learning was the point. — *Luca Padovan*
 | **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
 | **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
+| **Desktop widgets** | Seventeen glanceable cards on the desktop, in four groups. Everyday: clock (analog or digital), calendar, weather, world clock, focus timer, notes, photo frame, now playing. System: gauges for processor, memory, disk and temperature that turn from your accent color to amber and red as they fill, network speed, battery. Developers: Git projects, local dev servers (click to open in the browser), containers. Gamers: Steam games, GPU, power profile. Drag them anywhere (a guide shows where they land and they line up with their neighbours), right-click for **Customize…**, and **Edit Widgets…** on the desktop's menu for the gallery. They follow the accent color, light or dark style, clock format and units, and keep their place and proportions when the resolution changes. |
 | **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
 | **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next. The login and lock screens follow it. |
 | **Personal and rotating wallpapers** | Add a picture in Settings → Appearance, or rotate the included gallery every 15 minutes, 1 hour, 6 hours or 24 hours. Rotation works offline; the lock screen follows the active picture. |
@@ -178,12 +179,16 @@ learning was the point. — *Luca Padovan*
   saved locally; you can stop or regenerate an answer. New replies scroll into view unless
   you are reading earlier messages: then a highlighted animated down-arrow lets you jump
   to the latest reply. Attach text, code, documents and photos with the paperclip or by
-  dragging them into chat (photos are read with offline OCR). Attachments are sent **only
-  to the local model**, never to a cloud provider; switching providers requires a new chat.
-  The Assistant floats
-  **like a picture-in-picture video**: a compact card in the bottom-right corner, above
-  your other windows and on every workspace, so it stays open while you work. Drag it by
-  its bar, expand it for long answers, close it with × when you're done. And
+  dragging them into chat (photos are read with offline OCR). Attachments only go to a
+  model **on your computer or your network** (Ollama, LM Studio), never to a cloud
+  provider; switching providers requires a new chat. Pick the model from the title; with
+  none installed yet, it says how to get one. The Assistant floats
+  **like a picture-in-picture video**: a card in the bottom-right corner, just above the
+  dock (right at the bottom when the dock is hidden or on a side), above your other
+  windows and on every workspace. It never takes the keyboard from the app you are using
+  unless you click it or open it with <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>.
+  Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
+  it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
 - **Files**: places and drives, grid and list views with drag-to-select, search, hidden files, cut/copy/paste
   with progress, cancel and retry, trash with restore, rename, new folder, "Open With", properties, open in
@@ -243,8 +248,11 @@ learning was the point. — *Luca Padovan*
   (Settings → Network → VPN and Advanced).
 
 ### Installer
-The installer is Calamares with Aurora's branding. It walks you through language,
-location and time zone (detected automatically), keyboard, disk, user and a summary. For
+The installer is Calamares with Aurora's look: the steps across the top as dots that fill
+in as you go, one filled "Next" button, roomy pages. It walks you through language,
+location and time zone (detected automatically), keyboard, disk, user and a summary. On
+the keyboard page, **Detect…** finds your layout with two or three questions about what
+is printed on your keys (which letters start the top row, which character is next to L). For
 the disk you can erase it, install alongside another OS, replace a partition, or partition
 by hand. It supports LUKS2 encryption and btrfs (the default, with automatic snapshots),
 ext4 or xfs. On the user page you set your
@@ -1022,6 +1030,19 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   deb822 apt sources with backports. `aurora-secureboot` installs the signed shim and
   GRUB on UEFI. An **offline package pool** on the ISO means installing never needs a
   network.
+- **Its look:** Calamares lets a distribution replace its side bar with QML and restyle
+  the rest with a Qt style sheet. Ours (`branding/calamares/`) puts the steps across the
+  top as dots that fill in (`calamares-sidebar.qml`, "sidebar: qml,top"), keeps the
+  classic buttons at the bottom (so Alt+N still moves on, which the install test uses),
+  and draws check marks as PNGs, because the image has no Qt SVG plugin. Two things it
+  can't reach are worked around: names under the partition bars are painted in black, so
+  they sit on a light strip; and Qt's own title bar, drawn inside the window, made dialogs
+  too short for their text, so Wayfire draws title bars for Qt apps.
+- **Keyboard page with "Detect…":** Calamares' `keyboardq` module with our QML
+  (`keyboardq.qml`). Detection asks which letters start the top row, then which character
+  is next to L (or on the 3 key…), and selects the layout in the module's own model. It
+  works by clicking only: Calamares shows QML pages in a widget that never gets the
+  keyboard, which is also why the page has no search or "type here" field.
 
 #### File systems: btrfs by default (ext4 and xfs available); LUKS2 encryption
 - **Alternatives:** ext4 by default (Ubuntu, Debian), XFS (RHEL), ZFS (Ubuntu offered it
@@ -1241,6 +1262,19 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   30 minutes, only when you open the calendar. Fahrenheit is used where it is the local
   convention. Settings → Privacy turns it off.
 
+#### Desktop widgets (`shell/widgets.py`, `shell/devwidgets.py`)
+- **Alternatives:** separate layer-shell windows per widget, a web view (as KDE's or
+  macOS's widgets are closer to), conky.
+- **Why:** each widget is a GTK widget on the wallpaper surface, under the windows, so
+  seventeen of them cost one surface. Positions are saved as fractions of the screen and
+  sizes follow its height, so a resolution change keeps the layout. Dragging is handled by
+  the desktop surface, not by the widget: a gesture on a moving widget shifts its own
+  coordinates at every step and makes it jump. A widget is a small slot that measures
+  itself (a `Gtk.Box` can't: its layout manager ignores `measure`), holding the visible
+  card. Anything that runs a program (git, podman, nvidia-smi, ss) runs in a thread. In
+  Wayfire, floating windows are scaled into the new work area after a resolution change
+  through its IPC (`shell/refit.py`); labwc moves them back on screen itself.
+
 #### Session sounds: synthesized, not sampled
 - **Alternatives:** freedesktop's sound theme, recorded samples, no sounds (Fedora,
   Debian).
@@ -1338,6 +1372,17 @@ set up a feature, and every place it appears has its own switch.
   so any model can help, not only vision models); notification summaries; `ask` and `why`
   in bash (a `PROMPT_COMMAND` hook remembers the last command and its exit status; `ask`
   runs nothing without a `y`).
+
+#### The Assistant as a layer surface
+- **Alternatives:** an ordinary window kept on top by compositor rules (what it was).
+- **Why:** a window takes the keyboard when it opens and can't place itself on Wayland.
+  As a gtk4-layer-shell surface (top layer, anchored bottom-right, keyboard "on demand")
+  it stays above windows on every workspace and only gets the keyboard when clicked. The
+  dock writes how much of the screen's bottom it covers to a file in `$XDG_RUNTIME_DIR`;
+  the Assistant watches it and sits just above the dock, or at the bottom when there is
+  none. Quick actions read the clipboard with `wl-paste`: GTK only sees the clipboard
+  while its window has the keyboard. The model picker lists downloaded models, or what an
+  OpenAI-compatible server (Ollama, LM Studio) answers at `/models`.
 
 ### Look and feel
 
