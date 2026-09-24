@@ -3,10 +3,12 @@ componentName: aurora
 
 welcomeStyleCalamares: false
 welcomeExpandingLogo: true
-windowExpanding: normal
-windowSize: 1024px,680px
+# A fixed size: long pages scroll, and the buttons stay on screen on small displays.
+windowExpanding: noexpand
+windowSize: 1060px,690px
 windowPlacement: center
-sidebar: widget
+# The steps across the top (calamares-sidebar.qml), no side bar.
+sidebar: qml,top
 navigation: widget
 
 strings:

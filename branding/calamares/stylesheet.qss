@@ -5,41 +5,102 @@ QWidget {
     font-size: 11pt;
 }
 
-#mainApp, #mainApp QWidget {
-    background-color: #1a1625;
-    color: #f2eefa;
+/* The window is dark; what is inside it is transparent unless a rule below
+   says otherwise. (Painting every child dark here outranks the rules for
+   buttons and fields, and flattens them.) */
+#mainApp { background-color: #1a1625; }
+#mainApp QWidget { color: #f2eefa; }
+#mainApp QStackedWidget, #mainApp QFrame, #mainApp QScrollArea { background-color: transparent; }
+
+/* Room around each page, like a sheet of paper inside the window. */
+#mainApp QStackedWidget { padding: 10px 26px 2px 26px; }
+
+/* The legend under the partition bars: Calamares draws its names in black,
+   whatever the palette, so it gets a light strip to be read on. */
+#mainApp PartitionLabelsView {
+    background-color: #ded7ee;
+    border-radius: 9px;
+    padding: 5px 10px;
 }
 
-#sidebarApp, #sidebarApp QWidget {
-    background-color: #14101e;
-}
-
+/* Buttons: pills. "Next" (and the default button of dialogs) is filled with
+   the accent gradient, like the one button that moves an installer forward;
+   "Back" and "Cancel" stay quiet. */
 QPushButton {
-    background-color: #2a2438;
-    border: 1px solid #3a3150;
-    border-radius: 8px;
-    padding: 6px 16px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    min-height: 22px;
+    padding: 7px 22px;
     color: #f2eefa;
+    font-weight: 600;
 }
-
-QPushButton:hover { background-color: #332a45; }
-
+QPushButton { outline: none; }
+QPushButton:hover { background-color: rgba(255, 255, 255, 0.11); border-color: rgba(255, 255, 255, 0.22); }
+QPushButton:pressed { background-color: rgba(255, 255, 255, 0.16); }
+QPushButton:disabled { color: #6f667d; background-color: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.06); }
 QPushButton:default, #view-button-next {
-    background-color: #a970ff;
-    border-color: #a970ff;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #a970ff, stop: 1 #ff6f91);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: #ffffff;
+    padding: 7px 30px;
 }
+QPushButton:default:hover, #view-button-next:hover {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #b884ff, stop: 1 #ff85a2);
+}
+#view-button-next:disabled {
+    background-color: rgba(169, 112, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.06);
+    color: #8d8399;
+}
+#view-button-cancel { background-color: transparent; border-color: transparent; color: #b3aac6; }
+#view-button-cancel:hover { background-color: rgba(255, 111, 145, 0.14); color: #ffffff; }
 
-QLineEdit, QComboBox, QSpinBox, QListView, QTreeView, QTextBrowser {
+/* Fields and lists: soft, roomy, with the accent on focus. */
+QLineEdit, QSpinBox, QListView, QTreeView, QTextBrowser, QPlainTextEdit {
     background-color: #221d30;
-    border: 1px solid #3a3150;
-    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
     color: #f2eefa;
     selection-background-color: #a970ff;
+    selection-color: #ffffff;
     padding: 4px;
 }
+QLineEdit { min-height: 24px; min-width: 250px; padding: 6px 12px; }
+QLineEdit:hover { border-color: rgba(255, 255, 255, 0.22); }
+QLineEdit:focus, QSpinBox:focus { border: 1px solid #a970ff; background-color: #272136; }
+QLineEdit:disabled { color: #8d8399; background-color: #1d1929; }
+QListView, QTreeView { outline: 0; padding: 6px; }
+QListView::item, QTreeView::item { min-height: 28px; padding: 2px 8px; border-radius: 7px; }
+QListView::item:hover, QTreeView::item:hover { background-color: rgba(255, 255, 255, 0.06); }
+QListView::item:selected, QTreeView::item:selected {
+    background-color: rgba(169, 112, 255, 0.38);
+    color: #ffffff;
+}
+QHeaderView::section {
+    background-color: transparent; color: #b3aac6; border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10); padding: 6px 8px; font-weight: 600;
+}
 
-QLineEdit:focus, QComboBox:focus { border-color: #a970ff; }
+/* Thin scroll bars without arrows. */
+QScrollBar:vertical { background: transparent; border: none; width: 10px; margin: 2px; }
+QScrollBar:horizontal { background: transparent; border: none; height: 10px; margin: 2px; }
+QScrollBar::handle { background-color: rgba(255, 255, 255, 0.20); border-radius: 3px; min-height: 28px; min-width: 28px; }
+QScrollBar::handle:hover { background-color: rgba(169, 112, 255, 0.65); }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; border: none; background: none; }
+QScrollBar::add-page, QScrollBar::sub-page { background: none; }
+QAbstractScrollArea { border: none; }
+QScrollArea, QScrollArea > QWidget > QWidget { background: transparent; }
+
+QToolTip {
+    background-color: #2a2438; color: #f2eefa;
+    border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; padding: 6px 9px;
+}
+QGroupBox {
+    border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 12px;
+    margin-top: 12px; padding: 12px 10px 8px 10px;
+}
+QGroupBox::title { subcontrol-origin: margin; left: 12px; padding: 0 6px; color: #b3aac6; }
 
 /* Combo boxes: a soft outline like the text fields, a chevron, and a normal
    drop-down list. (combobox-popup: 0 — the default style opens a window with
@@ -83,6 +144,8 @@ QComboBox QAbstractItemView::item:selected { background-color: rgba(169, 112, 25
    draws title bars for Qt apps, see wayfire.ini.) */
 QMessageBox { background-color: #1a1625; }
 QMessageBox QLabel { color: #f2eefa; }
+QMessageBox QPushButton { padding: 6px 18px; min-width: 96px; }
+QMessageBox QPushButton:default { padding: 6px 18px; }
 
 QRadioButton, QCheckBox, QLabel { color: #f2eefa; background: transparent; }
 
@@ -126,13 +189,17 @@ QCheckBox::indicator:checked:disabled, QRadioButton::indicator:checked:disabled 
 
 QProgressBar {
     border: none;
-    border-radius: 6px;
-    background-color: #2a2438;
+    border-radius: 8px;
+    min-height: 16px;
+    max-height: 16px;
+    background-color: rgba(255, 255, 255, 0.08);
     text-align: center;
     color: #ffffff;
+    font-size: 9pt;
+    font-weight: 600;
 }
 
 QProgressBar::chunk {
-    border-radius: 6px;
+    border-radius: 8px;
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #a970ff, stop:1 #ff6f91);
 }
