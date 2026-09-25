@@ -10,7 +10,7 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     id: header
-    height: 92
+    height: 80
     color: "#14101e"
 
     readonly property color accent: "#a970ff"

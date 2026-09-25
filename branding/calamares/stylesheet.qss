@@ -13,14 +13,15 @@ QWidget {
 #mainApp QStackedWidget, #mainApp QFrame, #mainApp QScrollArea { background-color: transparent; }
 
 /* Room around each page, like a sheet of paper inside the window. */
-#mainApp QStackedWidget { padding: 10px 26px 2px 26px; }
+#mainApp QStackedWidget { padding: 4px 26px 0 26px; }
 
-/* The legend under the partition bars: Calamares draws its names in black,
-   whatever the palette, so it gets a light strip to be read on. */
+/* The legend under each partition bar on a soft card. Calamares paints the legend's names in black whatever the
+   palette, so the card is light for them to be read. */
 #mainApp PartitionLabelsView {
-    background-color: #ded7ee;
-    border-radius: 9px;
-    padding: 5px 10px;
+    background-color: #ebe6f5;
+    border-radius: 10px;
+    padding: 3px 10px;
+    min-height: 46px;
 }
 
 /* Buttons: pills. "Next" (and the default button of dialogs) is filled with
@@ -142,7 +143,8 @@ QComboBox QAbstractItemView::item:selected { background-color: rgba(169, 112, 25
    the dark look too. (Their last line used to be cut off: with Qt's own
    title bar drawn inside the window, the dialog lost its height; Wayfire now
    draws title bars for Qt apps, see wayfire.ini.) */
-QMessageBox { background-color: #1a1625; }
+QMessageBox, QDialog { background-color: #1a1625; color: #f2eefa; }
+QDialog QLabel { color: #f2eefa; }
 QMessageBox QLabel { color: #f2eefa; }
 QMessageBox QPushButton { padding: 6px 18px; min-width: 96px; }
 QMessageBox QPushButton:default { padding: 6px 18px; }

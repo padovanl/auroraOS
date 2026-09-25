@@ -1,6 +1,6 @@
 /* Aurora OS installer slideshow (shown while files are copied).
    Texts follow the language chosen in the boot menu or the installer. */
-import QtQuick 2.0
+import QtQuick 2.15
 import calamares.slideshow 1.0
 
 Presentation {
@@ -126,9 +126,69 @@ Presentation {
     Rectangle {
         z: -1
         anchors.fill: parent
+        clip: true
         gradient: Gradient {
             GradientStop { position: 0.0; color: "#1b1428" }
             GradientStop { position: 1.0; color: "#0d0a14" }
+        }
+        // Slow aurora glows drifting behind the slides.
+        Repeater {
+            model: [ { c: "#a970ff", x: 0.10, d: 11000 }, { c: "#35d0ba", x: 0.55, d: 14000 },
+                     { c: "#ff6f91", x: 0.80, d: 17000 } ]
+            Rectangle {
+                width: parent.width * 0.55
+                height: parent.height * 0.5
+                radius: height / 2
+                color: modelData.c
+                opacity: 0.07
+                y: -height * 0.35
+                x: parent.width * modelData.x - width / 2
+                SequentialAnimation on x {
+                    loops: Animation.Infinite
+                    running: presentation.activatedInCalamares
+                    NumberAnimation { to: parent.width * modelData.x - width / 2 + 60; duration: modelData.d; easing.type: Easing.InOutSine }
+                    NumberAnimation { to: parent.width * modelData.x - width / 2 - 60; duration: modelData.d; easing.type: Easing.InOutSine }
+                }
+                SequentialAnimation on opacity {
+                    loops: Animation.Infinite
+                    running: presentation.activatedInCalamares
+                    NumberAnimation { to: 0.13; duration: modelData.d / 2; easing.type: Easing.InOutSine }
+                    NumberAnimation { to: 0.05; duration: modelData.d / 2; easing.type: Easing.InOutSine }
+                }
+            }
+        }
+    }
+
+    // A light that keeps sweeping along the bottom edge, right above the
+    // installer's progress bar: the work goes on even when a step is long.
+    Item {
+        z: 10
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 3
+        clip: true
+        Rectangle { anchors.fill: parent; color: "#a970ff"; opacity: 0.18 }
+        Rectangle {
+            id: sweep
+            width: parent.width * 0.32
+            height: parent.height
+            radius: height / 2
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: "transparent" }
+                GradientStop { position: 0.45; color: "#a970ff" }
+                GradientStop { position: 0.75; color: "#ff6f91" }
+                GradientStop { position: 1.0; color: "transparent" }
+            }
+            NumberAnimation on x {
+                from: -sweep.width
+                to: sweep.parent.width
+                duration: 2400
+                loops: Animation.Infinite
+                easing.type: Easing.InOutQuad
+                running: presentation.activatedInCalamares
+            }
         }
     }
 
@@ -178,6 +238,7 @@ Presentation {
             width: Math.max(0, Math.min(maxW, maxH * 16 / 9)) + 2
             height: width * 9 / 16
             radius: 6
+            clip: true
             color: "#3a2f52"
             Image {
                 anchors.fill: parent
@@ -186,6 +247,12 @@ Presentation {
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 asynchronous: true
+                // A slow zoom while the slide is shown.
+                NumberAnimation on scale {
+                    from: 1.0; to: 1.04; duration: 8000
+                    running: presentation.activatedInCalamares
+                    loops: Animation.Infinite
+                }
             }
         }
     }
