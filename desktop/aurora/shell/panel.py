@@ -31,14 +31,17 @@ class WeatherWidget(Gtk.Button):
         box.append(self.hours)
         self.set_child(box)
         self._busy = False
+        from aurora import weather
+        self._watch = weather.watch(self.refresh)
 
     def refresh(self):
         from aurora import weather
         s = settings.get()
-        loc, self._place = weather.place()
         if s is not None and not s.get_boolean("weather-widget"):
             self.set_visible(False)
             return
+        weather.locate_then(self.refresh)
+        loc, self._place = weather.place()
         if loc is None:
             # No city for this time zone (UTC, as in the live system): ask for
             # one instead of hiding. Weather's first city is used from then on.

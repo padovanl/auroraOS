@@ -238,3 +238,20 @@ def test_weather_units_follow_the_measurement_locale():
     assert not weather.uses_fahrenheit(weather.measurement_locale(env))
     assert weather.measurement_locale({"LANG": "en_US.UTF-8"}) == "en_US.UTF-8"
     assert weather.measurement_locale({"LC_ALL": "de_DE", "LC_MEASUREMENT": "en_US"}) == "de_DE"
+
+
+def test_weather_zone_city_names():
+    assert weather.zone_city("Europe/Rome") == "Rome"
+    assert weather.zone_city("America/New_York") == "New York"
+
+
+def test_weather_remembered_location(tmp_path, monkeypatch):
+    import json
+    import time
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path))
+    assert weather._located() is None
+    (tmp_path / "aurora").mkdir()
+    (tmp_path / "aurora" / "where.json").write_text(json.dumps(
+        {"found": time.time(), "lat": 44.5, "lon": 11.3, "name": "Bologna"}))
+    assert weather._located() == ((44.5, 11.3), "Bologna")
+    assert weather._located(max_age=-1) is None

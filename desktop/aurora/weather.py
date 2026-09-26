@@ -1,9 +1,11 @@
 """Current weather and today's forecast for the calendar popover.
 
 Data comes from Open-Meteo (open-meteo.com): free, no account or API key.
-The location is the time zone's reference city (see aurora.sun), so only an
-approximate position is ever sent. Results are cached for 30 minutes, and the
-widget can be turned off in Settings → Privacy.
+The place follows GNOME Weather: the city picked there first, else the
+automatic location it also uses (GeoClue, rounded to about 10 km), else the
+time zone's reference city (see aurora.sun). Only that approximate position is
+ever sent. Results are cached for 30 minutes, and the widget can be turned off
+in Settings → Privacy.
 """
 
 import json
@@ -132,11 +134,8 @@ def uses_fahrenheit(loc=None):
     return any(loc.startswith(p) for p in ("en_US", "en_LR", "my_MM"))
 
 
-def place():
-    """((latitude, longitude), city name or None) for the forecast: the first
-    city chosen in the Weather app, else the time zone's reference city."""
-    from aurora import sun
-    loc, name = sun.location(), None
+def _saved_city():
+    """(coords, name) of the first city chosen in the Weather app, or None."""
     try:
         import gi
         gi.require_version("GWeather", "4.0")
@@ -146,8 +145,138 @@ def place():
             chosen = GWeather.Location.get_world().deserialize(
                 places.get_child_value(0).get_variant())
             if chosen is not None and chosen.has_coords():
-                loc = chosen.get_coords()
-                name = chosen.get_city_name() or chosen.get_name()
+                return tuple(chosen.get_coords()), chosen.get_city_name() or chosen.get_name()
     except Exception:  # noqa: BLE001 - no GWeather or no chosen city
         pass
-    return loc, name
+    return None
+
+
+def where_path():
+    base = os.environ.get("XDG_CACHE_HOME") or os.path.expanduser("~/.cache")
+    return os.path.join(base, "aurora", "where.json")
+
+
+WHERE_MAX_AGE = 6 * 3600
+
+
+def _located(max_age=WHERE_MAX_AGE):
+    """The automatic location found by locate(), if recent: (coords, name) or None."""
+    try:
+        with open(where_path()) as f:
+            data = json.load(f)
+        if time.time() - data["found"] > max_age:
+            return None
+        return (data["lat"], data["lon"]), data.get("name")
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def nearest_city(lat, lon):
+    try:
+        import gi
+        gi.require_version("GWeather", "4.0")
+        from gi.repository import GWeather
+        city = GWeather.Location.get_world().find_nearest_city(lat, lon)
+        return city.get_city_name() or city.get_name() if city else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def locate(timeout=20):
+    """Ask GeoClue where we are, as GNOME Weather does, and remember it (rounded
+    to about 10 km) for place(). Blocking: call from a thread. True if found."""
+    try:
+        import gi
+        gi.require_version("Geoclue", "2.0")
+        from gi.repository import Gio, Geoclue
+        cancel = Gio.Cancellable()
+        import threading
+        timer = threading.Timer(timeout, cancel.cancel)
+        timer.start()
+        try:
+            simple = Geoclue.Simple.new_sync("aurora-shell", Geoclue.AccuracyLevel.CITY, cancel)
+        finally:
+            timer.cancel()
+        loc = simple.get_location()
+        lat, lon = round(loc.props.latitude, 1), round(loc.props.longitude, 1)
+    except Exception as e:  # noqa: BLE001 - no GeoClue, no network, denied
+        print(f"aurora: no automatic location: {e}")
+        return False
+    path = where_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump({"found": time.time(), "lat": lat, "lon": lon,
+                   "name": nearest_city(lat, lon)}, f)
+    return True
+
+
+def needs_locating():
+    return _saved_city() is None and _located() is None
+
+
+_waiting = []
+_last_try = [0.0]
+
+
+def locate_then(callback):
+    """Run locate() in a thread when the place isn't known yet (one search at a
+    time, at most every 10 minutes), then call callback() on the main loop."""
+    if not needs_locating():
+        return
+    _waiting.append(callback)
+    if len(_waiting) > 1 or time.time() - _last_try[0] < 600:
+        if len(_waiting) == 1:
+            _waiting.clear()
+        return
+    _last_try[0] = time.time()
+    import threading
+    from gi.repository import GLib
+
+    def done(found):
+        callbacks = list(_waiting)
+        _waiting.clear()
+        if found:
+            for cb in callbacks:
+                cb()
+        return False
+
+    threading.Thread(target=lambda: GLib.idle_add(done, locate()), daemon=True).start()
+
+
+def zone_city(tz=None):
+    """"Europe/Rome" → "Rome"."""
+    from aurora import sun
+    tz = tz or sun.local_timezone() or ""
+    return tz.rsplit("/", 1)[-1].replace("_", " ") or None
+
+
+def place():
+    """((latitude, longitude), city name or None) for the forecast, in GNOME
+    Weather's order: the city chosen there, else the automatic location, else
+    the time zone's reference city."""
+    from aurora import sun
+    found = _saved_city() or _located(max_age=30 * 24 * 3600)
+    if found:
+        return found
+    loc = sun.location()
+    return loc, (zone_city() if loc else None)
+
+
+def watch(callback):
+    """Call callback() when the chosen city or the unit changes. Keep the
+    result, and pass it to unwatch() when done."""
+    from gi.repository import Gio
+    kept = []
+    source = Gio.SettingsSchemaSource.get_default()
+    for schema, key in (("org.gnome.Weather", "locations"),
+                        ("org.gnome.GWeather4", "temperature-unit")):
+        if source is not None and source.lookup(schema, True) is not None:
+            s = Gio.Settings.new(schema)
+            kept.append((s, s.connect(f"changed::{key}", lambda *_a: callback())))
+    return kept
+
+
+def unwatch(kept):
+    for s, handler in kept:
+        s.disconnect(handler)
+    kept.clear()

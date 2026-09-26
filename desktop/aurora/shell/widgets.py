@@ -471,9 +471,14 @@ class WeatherWidget(DesktopWidget):
         self.place.set_label(_("Weather"))
         self.sky.set_label(_("Loading…"))
         self._busy = False
+        from aurora import weather
+        # The city picked in the Weather app shows at once, not at the next update.
+        self._watch = weather.watch(self.update)
+        self.connect("destroy", lambda *_: weather.unwatch(self._watch))
 
     def update(self):
         from aurora import weather
+        weather.locate_then(self.update)
         loc, name = weather.place()
         self.place.set_label(name or _("Weather"))
         if loc is None:
@@ -1192,11 +1197,31 @@ class WidgetLayer:
 
     # edit mode
     def set_editing(self, on):
+        if on != self.editing:
+            self._clear_windows() if on else self._restore_windows()
         self.editing = on
         self.gallery.set_visible(on)
         for widget in self.widgets:
             widget.remove_button.set_visible(on)
             (widget.card.add_css_class if on else widget.card.remove_css_class)("editing")
+
+    def _clear_windows(self):
+        """Minimize the open windows while widgets are edited, like Show Desktop;
+        _restore_windows() brings them back, the focused one on top."""
+        tracker = self.shell.toplevels
+        self._hidden_windows = [t for t in tracker.toplevels if not t.minimized]
+        self._hidden_windows.sort(key=lambda t: t.activated)
+        for t in self._hidden_windows:
+            t.minimize()
+        tracker.flush()
+
+    def _restore_windows(self):
+        tracker = self.shell.toplevels
+        for t in getattr(self, "_hidden_windows", []):
+            if t in tracker.toplevels and t.minimized:
+                t.activate()
+        self._hidden_windows = []
+        tracker.flush()
 
     def _build_gallery(self):
         titles = {"everyday": _("Everyday"), "system": _("System"),
