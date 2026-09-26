@@ -549,6 +549,8 @@ class Dock(LayerWindow):
         # now, or not at all (the leave event may never come).
         GLib.idle_add(self._refresh_magnification)
         GLib.idle_add(self._update_geometry)
+        # Once laid out at its new width.
+        GLib.timeout_add(250, lambda: self.publish() or False)
 
     def _refresh_magnification(self):
         if self._pointer is not None:
@@ -666,10 +668,22 @@ class Dock(LayerWindow):
         if covered is None:
             showing = self.position == "bottom" and not self._hidden
             covered = self.bar_thickness + (EDGE_MARGIN if self.floating else 0) if showing else 0
+        # Where the dock ends on the right: the Assistant goes lower when the
+        # dock is not under it. -1: unknown, or as wide as the screen.
+        right = -1
+        if self.floating and self.position == "bottom":
+            # The shelf: its resting size, not magnified icons.
+            ok, b = self.shelf.compute_bounds(self)
+            if ok and b.get_width() > 0:
+                right = int(b.get_x() + b.get_width())
+        state = f"{covered} {right}\n"
+        if state == getattr(self, "_published", None):
+            return
+        self._published = state
         path = os.path.join(GLib.get_user_runtime_dir(), "aurora-dock")
         try:
             with open(path + ".tmp", "w") as f:
-                f.write(f"{covered}\n")
+                f.write(state)
             os.replace(path + ".tmp", path)
         except OSError as err:
             print(f"aurora: dock state not written: {err}")
@@ -716,4 +730,5 @@ class Dock(LayerWindow):
                     rect = (max(0, rect[0] - grow), rect[1], rect[2] + grow, rect[3])
         region = cairo.Region(cairo.RectangleInt(*[int(v) for v in rect]))
         surface.set_input_region(region)
+        self.publish()
         return GLib.SOURCE_REMOVE

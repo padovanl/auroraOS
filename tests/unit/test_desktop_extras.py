@@ -167,6 +167,11 @@ def test_corner_assistant_sits_on_the_dock_or_at_the_bottom(tmp_path, monkeypatc
     assert assistant.dock_covers() == 76
     (tmp_path / "aurora-dock").write_text("0\n")
     assert assistant.dock_covers() == 0
+    # A dock that ends well left of the Assistant leaves the corner free.
+    assert assistant.pip_bottom_margin(82, 1300, 1920, 420) == 12
+    assert assistant.pip_bottom_margin(82, 1600, 1920, 420) == 90
+    (tmp_path / "aurora-dock").write_text("82 1300\n")
+    assert assistant.dock_state() == (82, 1300)
 
 
 def test_attachments_are_read_without_numpy(tmp_path, monkeypatch):

@@ -43,6 +43,8 @@ button.model-picker { padding: 0 8px; min-height: 24px; font-size: 0.82em; font-
 .codeblock textview { background: transparent; font-family: monospace; }
 .quick-actions button { border-radius: 999px; }
 .quick-actions > flowboxchild { padding: 0; }
+entry.hint { outline: 2px solid alpha(@accent_bg_color, 0.8); outline-offset: -2px;
+  transition: outline-color 300ms; }
 button.jump-latest { min-width: 42px; min-height: 42px; border-radius: 999px; margin: 4px; }
 button.jump-latest.unread { background: @accent_bg_color; color: @accent_fg_color;
   box-shadow: 0 0 0 3px alpha(@accent_bg_color, 0.25); }
@@ -154,12 +156,20 @@ def _layer_shell():
     return LS if LS.is_supported() else None
 
 
-def pip_bottom_margin(dock_covers):
+PIP_RIGHT = 16      # gap between the corner Assistant and the screen's right edge
+
+
+def pip_bottom_margin(dock_covers, dock_right=None, screen_width=None, pip_width=0):
     """How far above the screen's bottom edge the corner Assistant sits: just
-    above the dock while the dock covers the bottom (it can grow as wide as the
-    screen), right at the bottom when there's no dock there (on a side, turned
-    off, or auto-hidden and out of sight)."""
-    return dock_covers + 8 if dock_covers > 0 else 12
+    above the dock when the dock is under it (it can grow as wide as the
+    screen), right at the bottom when it isn't: the dock ends to its left, is
+    on a side, turned off, or auto-hidden and out of sight."""
+    if dock_covers <= 0:
+        return 12
+    if dock_right is not None and screen_width is not None and pip_width > 0:
+        if dock_right + 12 <= screen_width - PIP_RIGHT - pip_width:
+            return 12
+    return dock_covers + 8
 
 
 def dock_state_path():
@@ -167,14 +177,22 @@ def dock_state_path():
                         "aurora-dock")
 
 
-def dock_covers():
-    """Pixels of the screen's bottom the dock covers now, as the shell's dock
-    publishes them (dock.py); a bottom dock's usual size when unknown."""
+def dock_state():
+    """(pixels of the screen's bottom the dock covers, x of its right end or
+    None), as the shell's dock publishes them (dock.py); a bottom dock's usual
+    size when unknown."""
     try:
         with open(dock_state_path()) as f:
-            return max(int(f.read().strip() or 0), 0)
+            fields = f.read().split()
+        covers = max(int(fields[0]), 0) if fields else 0
+        right = int(fields[1]) if len(fields) > 1 and int(fields[1]) >= 0 else None
+        return covers, right
     except (OSError, ValueError):
-        return 48 + 28 + 6
+        return 48 + 28 + 6, None
+
+
+def dock_covers():
+    return dock_state()[0]
 
 
 def compact_height():
@@ -212,7 +230,7 @@ class AssistantWindow(Adw.ApplicationWindow):
             for edge in (LS.Edge.BOTTOM, LS.Edge.RIGHT):
                 LS.set_anchor(self, edge, True)
             self._place_pip()
-            LS.set_margin(self, LS.Edge.RIGHT, 16)
+            LS.set_margin(self, LS.Edge.RIGHT, PIP_RIGHT)
             LS.set_keyboard_mode(self, LS.KeyboardMode.ON_DEMAND)
             # Margins from the screen's edges, not from the room the dock and
             # the top bar leave: pip_bottom_margin() keeps it clear of the dock
@@ -302,8 +320,10 @@ class AssistantWindow(Adw.ApplicationWindow):
                             margin_bottom=16, margin_start=16, margin_end=16)
         self.empty = Adw.StatusPage(icon_name="aurora-assistant-symbolic",
                                     title=_("How can I help?"),
-                                    description=_("Ask anything, or pick an action for the "
-                                                  "text you copied."))
+                                    description=_("Ask anything. The buttons below work on "
+                                                  "the text you type or paste here, a file "
+                                                  "you attach, or the text you last "
+                                                  "copied."))
         self.list.append(self.empty)
         self.scroller = Gtk.ScrolledWindow(child=self.list, vexpand=True,
                                            hscrollbar_policy=Gtk.PolicyType.NEVER)
@@ -336,8 +356,9 @@ class AssistantWindow(Adw.ApplicationWindow):
             (_("Explain"), "Explain this simply:\n\n{}"),
         ):
             b = Gtk.Button(label=label, css_classes=["flat"],
-                           tooltip_text=_("Uses the text you copied"))
-            b.connect("clicked", lambda _b, p=prompt, l=label: self.on_clipboard(p, l))
+                           tooltip_text=_("Uses the text typed here, the attached file, "
+                                          "or the text you copied"))
+            b.connect("clicked", lambda _b, p=prompt, l=label: self.quick_action(p, l))
             quick.append(b)
         # FlowBox children take focus and hover highlight of their own; the
         # buttons already have both.
@@ -396,8 +417,11 @@ class AssistantWindow(Adw.ApplicationWindow):
         self._resize()
         self._on_maximized()
 
-    def _place_pip(self):
-        self.LS.set_margin(self, self.LS.Edge.BOTTOM, pip_bottom_margin(dock_covers()))
+    def _place_pip(self, pip_width=0):
+        covers, right = dock_state()
+        pip_width = pip_width or max(self.get_width(), self.get_default_size()[0])
+        self.LS.set_margin(self, self.LS.Edge.BOTTOM,
+                           pip_bottom_margin(covers, right, self._screen()[0], pip_width))
 
     def _screen(self):
         display = Gdk.Display.get_default()
@@ -409,14 +433,14 @@ class AssistantWindow(Adw.ApplicationWindow):
 
     def _resize(self):
         width, height = self._screen()
-        if self.LS is not None:
-            self._place_pip()
         if self.collapsed:
             size = (COMPACT[0] - 60, 1)
         elif self.big:
             size = (min(760, width - 64), height - DOCK_ROOM - BAR_ROOM - 16)
         else:
             size = (COMPACT[0], compact_height())
+        if self.LS is not None:
+            self._place_pip(size[0])
         self.set_default_size(*size)
         self.set_size_request(size[0], size[1] if size[1] > 1 else -1)
 
@@ -541,8 +565,15 @@ class AssistantWindow(Adw.ApplicationWindow):
 
     def _choose_files(self):
         dialog = Gtk.FileDialog(title=_("Attach files or photos"))
+        # The corner Assistant floats above windows: out of the dialog's way
+        # while it's open.
+        was_collapsed = self.collapsed
+        if self.LS is not None and not was_collapsed:
+            self.set_collapsed(True)
 
         def chosen(file_dialog, result):
+            if self.LS is not None and not was_collapsed:
+                self.set_collapsed(False)
             try:
                 files = file_dialog.open_multiple_finish(result)
             except GLib.Error:
@@ -551,7 +582,10 @@ class AssistantWindow(Adw.ApplicationWindow):
                 path = files.get_item(i).get_path()
                 if path:
                     self._queue_file(path)
-        dialog.open_multiple(self, None, chosen)
+        # No parent for a layer-shell surface: GTK would export it to the
+        # file chooser (xdg-foreign), which layer surfaces can't be, and the
+        # compositor drops the connection: the Assistant vanished.
+        dialog.open_multiple(None if self.LS is not None else self, None, chosen)
 
     def _drop_files(self, _target, value, _x, _y):
         paths = [f.get_path() for f in value.get_files() if f.get_path()]
@@ -729,24 +763,42 @@ class AssistantWindow(Adw.ApplicationWindow):
         self.latest.set_visible(False)
         GLib.idle_add(self._scroll_down)
 
-    def on_clipboard(self, prompt, label=""):
-        """Run a quick action on the text you copied (or, failing that, selected).
+    def quick_action(self, prompt, label=""):
+        """Run a quick action (Summarize, Translate…) on, in this order: the text
+        typed in the entry, the attached files, or the text you copied (or,
+        failing that, selected) anywhere.
 
         GTK only sees the clipboard while this window has the keyboard, which a
         corner assistant usually doesn't: wl-paste reads it anyway (through the
         compositor's data-control protocol)."""
+        def run(text):
+            text = text.strip()[:12000]
+            shown = text if len(text) <= 280 else text[:280] + "…"
+            self.send(prompt.replace("{lang}", _user_language_name()).replace("{}", text),
+                      display=f"{label}\n{shown}" if label else None)
+
+        typed = self.entry.get_text()
+        if typed.strip():
+            run(typed)
+            return
+        if self.attachments:
+            names = ", ".join(item["name"] for item in self.attachments)
+            self.send(prompt.replace("{lang}", _user_language_name())
+                      .replace("{}", f"(the attached file: {names})"), display=label or None)
+            return
+
         def work():
             text = _clipboard_text()
             GLib.idle_add(done, text)
 
         def done(text):
             if not text.strip():
-                self.entry.set_placeholder_text(_("Copy some text first, then pick an action."))
+                self.entry.set_placeholder_text(
+                    _("Type or paste text here, attach a file, or copy some text first"))
+                self.entry.add_css_class("hint")
+                GLib.timeout_add(1600, lambda: self.entry.remove_css_class("hint") or False)
                 return False
-            text = text.strip()[:12000]
-            shown = text if len(text) <= 280 else text[:280] + "…"
-            self.send(prompt.replace("{lang}", _user_language_name()).replace("{}", text),
-                      display=f"{label}\n{shown}" if label else None)
+            run(text)
             return False
         threading.Thread(target=work, daemon=True).start()
 
