@@ -46,7 +46,9 @@ window.greeter { background: #0d0a14; color: #f6f1ff; }
   color: #f6f1ff;
 }
 .greeter-card.error-state { border-color: #ff829e; }
-.greeter-brand { font-size: 11pt; font-weight: 800; letter-spacing: 3px; color: #ffc9db; }
+.greeter-brand { font-size: 17pt; font-weight: 300; letter-spacing: 9px; color: #f7f2ff;
+  text-shadow: 0 0 18px rgba(255, 111, 145, 0.55); margin-left: 9px; }
+.greeter-logo { -gtk-icon-shadow: 0 0 22px rgba(255, 111, 145, 0.55); }
 .greeter-clock { font-size: 64pt; font-weight: 300; color: #ffffff; }
 .greeter-date { font-size: 14pt; color: rgba(250,246,255,0.86); }
 .greeter-error {
@@ -101,7 +103,11 @@ class Greeter(Adw.ApplicationWindow):
 
         column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20,
                          halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
-        column.append(Gtk.Label(label="AURORA OS", css_classes=["greeter-brand"]))
+        # The logo and the spaced "aurora" wordmark, as on the installer's first page.
+        brand = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, halign=Gtk.Align.CENTER)
+        brand.append(Gtk.Image(icon_name="aurora-logo", pixel_size=56, css_classes=["greeter-logo"]))
+        brand.append(Gtk.Label(label="aurora", css_classes=["greeter-brand"]))
+        column.append(brand)
         self.clock = Gtk.Label(css_classes=["greeter-clock"])
         self.date = Gtk.Label(css_classes=["greeter-date"])
         clock_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
