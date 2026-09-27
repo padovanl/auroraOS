@@ -191,3 +191,30 @@ def test_attachments_are_read_without_numpy(tmp_path, monkeypatch):
     note.write_text("ship on Friday")
     assert index.extract(str(note)) == "ship on Friday"
     sys.modules.pop("aurora.ai.index", None)
+
+
+def test_snap_zones_tile_the_work_area_exactly():
+    from aurora.shell import snapzones as snap
+    area = {"x": 0, "y": 31, "width": 1277, "height": 687}
+    for layout in snap.LAYOUTS:
+        cells = [snap.zone_geometry(z, area) for z in layout]
+        assert sum(c["width"] * c["height"] for c in cells) == area["width"] * area["height"]
+        for c in cells:
+            assert c["x"] >= 0 and c["x"] + c["width"] <= area["width"]
+            assert c["y"] >= 31 and c["y"] + c["height"] <= 31 + 687
+    assert snap.other_half(snap.LEFT_HALF) == snap.LAYOUTS[0][1]
+    assert snap.other_half(snap.RIGHT_HALF) == snap.LAYOUTS[0][0]
+    assert snap.other_half(15) is None
+
+
+def test_snap_assist_offers_other_windows_most_recent_first():
+    from aurora.shell import snapzones as snap
+    views = [
+        {"id": 1, "role": "toplevel", "output-name": "A", "last-focus-timestamp": 5},
+        {"id": 2, "role": "toplevel", "output-name": "A", "last-focus-timestamp": 9},
+        {"id": 3, "role": "toplevel", "output-name": "B"},
+        {"id": 4, "role": "desktop-environment", "output-name": "A"},
+        {"id": 5, "role": "toplevel", "output-name": "A", "app-id": "org.aurora.Assistant"},
+    ]
+    assert [v["id"] for v in snap.candidates(views, "A", {1})] == [2]
+    assert [v["id"] for v in snap.candidates(views, "A")] == [2, 1]

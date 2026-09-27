@@ -26,6 +26,8 @@ def describe_shortcut(action, command, element):
         "aurora-shell assistant": _("Aurora Assistant"),
         "aurora-shell writing": _("Writing tools"),
         "aurora-shell overview": _("Show all windows"),
+        "aurora-shell snap-layouts": _("Snap layouts"),
+        "aurora-shell always-on-top": _("Keep window on top"),
         "aurora-shell screenshot": _("Screenshot of the screen"),
         "aurora-shell screenshot area": _("Screenshot of an area"),
         "aurora-shell screenshot text": _("Copy text from the screen"),

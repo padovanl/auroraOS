@@ -138,6 +138,8 @@ class Shell(Adw.Application):
         from aurora.shell.hotcorners import HotCorners
         from aurora.shell.overview import Overview
         self.overview = Overview(self)
+        from aurora.shell.snap import SnapOverlay
+        self.snap = SnapOverlay(self)
         self.hotcorners = PerMonitor(lambda m: HotCorners(self, m))
 
         s = settings.get()
@@ -344,6 +346,10 @@ class Shell(Adw.Application):
                 self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
+        elif cmd == "snap-layouts":
+            self.snap.show_layouts()
+        elif cmd == "always-on-top":
+            self.toggle_always_on_top()
         elif cmd == "clipboard":
             self.launcher.search_for(search_prefix_clipboard())
         elif cmd == "emoji":
@@ -439,6 +445,24 @@ class Shell(Adw.Application):
             Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(GLib.get_home_dir()), None)
 
     # --- Aurora AI: dictation and read-aloud ---
+
+    def toggle_always_on_top(self):
+        """Keep the focused window above the others, or stop (Super+T)."""
+        from aurora import wayfirelayout
+        try:
+            view = wayfirelayout.request("window-rules/get-focused-view").get("info") or {}
+            if view.get("role") != "toplevel":
+                return
+            # Wayfire doesn't report the state: remember which windows we pinned.
+            pinned = self.__dict__.setdefault("_pinned_views", set())
+            on = view["id"] not in pinned
+            (pinned.add if on else pinned.discard)(view["id"])
+            wayfirelayout.request("wm-actions/set-always-on-top",
+                                  {"view_id": view["id"], "state": on})
+        except (OSError, ValueError, ConnectionError, KeyError, AttributeError):
+            return
+        self.osd.show_message("view-pin-symbolic" if on else "view-restore-symbolic",
+                              _("Always on Top") if on else _("Always on Top Off"))
 
     def _ai_hint(self, text):
         self.notifications.notify(_("Aurora AI"), 0, "aurora-assistant-symbolic", text,
