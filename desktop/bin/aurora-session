@@ -9,6 +9,12 @@ export AURORA_COMPOSITOR="$compositor"
 
 # Language: system default, then the user's choice from Settings.
 [ -r /etc/default/locale ] && . /etc/default/locale
+# The installer sets the formats from the time zone's country: English with
+# Italian formats is common. Units, numbers and money follow the country, but
+# day and month names follow the language, or an English desktop reads Italian.
+if [ -n "${LANG:-}" ] && [ -n "${LC_TIME:-}" ] && [ "${LC_TIME%%_*}" != "${LANG%%_*}" ]; then
+    LC_TIME="$LANG"
+fi
 [ -r "$HOME/.config/aurora/locale.conf" ] && . "$HOME/.config/aurora/locale.conf"
 export LANG LANGUAGE LC_TIME LC_NUMERIC LC_MONETARY LC_MEASUREMENT LC_PAPER
 

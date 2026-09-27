@@ -3,6 +3,10 @@
 # Falls back to the text greeter if the graphical one cannot start.
 
 [ -r /etc/default/locale ] && . /etc/default/locale && export LANG
+# Day and month names in the system's language (see aurora-session).
+if [ -n "${LANG:-}" ] && [ -n "${LC_TIME:-}" ] && [ "${LC_TIME%%_*}" != "${LANG%%_*}" ]; then
+    export LC_TIME="$LANG"
+fi
 if [ -r /etc/default/keyboard ]; then
     . /etc/default/keyboard
     export XKB_DEFAULT_LAYOUT="$XKBLAYOUT" XKB_DEFAULT_VARIANT="$XKBVARIANT" \
