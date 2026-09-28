@@ -79,46 +79,113 @@ menubutton.panel-button > button:checked {
 
 .aurora-quicksettings > contents,
 .aurora-calendar > contents {
-  border-radius: 18px;
+  border-radius: 28px;
   padding: 0;
 }
+.aurora-quicksettings > contents { padding: 4px; }
 
-.qs-toggle-box { border-radius: 999px; }
+/* The Aurora menu (logo, top left). */
+popover.aurora-menu > contents { border-radius: 24px; padding: 10px; }
+.aurora-menu-head { padding: 6px 6px 10px; }
+.aurora-menu-name { font-weight: 800; font-size: 1.05em; }
+.aurora-menu-sub { font-size: 0.85em; opacity: 0.65; }
+.aurora-menu-group { padding: 4px; border-radius: 18px; background-color: alpha(currentColor, 0.05); }
+button.aurora-menu-row { padding: 8px 10px; border-radius: 14px; min-height: 0; }
+button.aurora-menu-row:hover { background-color: alpha(@accent_bg_color, 0.22); }
+button.aurora-menu-row image { opacity: 0.8; }
+.aurora-menu-keys { font-size: 0.8em; opacity: 0.5; font-weight: 600; }
+button.aurora-menu-round { min-width: 38px; min-height: 38px; background-color: alpha(currentColor, 0.08); }
+.aurora-menu-power { margin-top: 4px; }
+button.aurora-menu-power-item { padding: 8px 2px 6px; border-radius: 16px; }
+button.aurora-menu-power-item:hover { background-color: alpha(currentColor, 0.06); }
+.aurora-menu-round-icon {
+  min-width: 40px; min-height: 40px; border-radius: 999px;
+  background-color: alpha(currentColor, 0.09);
+}
+button.aurora-menu-power-item:hover .aurora-menu-round-icon { background-color: @accent_bg_color; color: @accent_fg_color; }
+.aurora-menu-power-label { font-size: 0.8em; opacity: 0.8; }
 
-.qs-toggle {
-  border-radius: 999px;
-  padding: 8px 14px;
-  min-height: 34px;
+/* Control Center, after Android's quick settings: a header with the time,
+   thick pill sliders, rounded tiles that fill with the accent color. */
+.qs-header { padding: 2px 6px 4px; }
+.qs-time { font-size: 2.1em; font-weight: 300; letter-spacing: -0.01em; }
+.qs-date { font-size: 0.92em; opacity: 0.7; font-weight: 600; }
+.qs-battery {
+  padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.9em;
+  background-color: alpha(currentColor, 0.08);
 }
 
-.qs-toggle.has-arrow { border-radius: 999px 0 0 999px; }
-
-.qs-toggle.active,
-.qs-expand.active {
-  background-image: linear-gradient(120deg, @aurora_violet, @aurora_rose);
-  color: white;
+.qs-slider scale.qs-pill-scale { padding: 0; margin: 0; }
+.qs-slider scale.qs-pill-scale trough {
+  min-height: 46px; border-radius: 999px;
+  background-color: alpha(currentColor, 0.09);
+}
+.qs-slider scale.qs-pill-scale highlight {
+  min-height: 46px; border-radius: 999px;
+  background-image: none; background-color: @accent_bg_color;
+}
+/* The handle: a short bar inside the end of the filled part. */
+.qs-slider scale.qs-pill-scale slider {
+  min-width: 4px; min-height: 20px; margin: 0 0 0 -16px; padding: 0;
+  border-radius: 999px; background-color: alpha(@accent_fg_color, 0.75);
+  box-shadow: none; border: none; outline: none;
+}
+.qs-slider button.qs-slider-icon {
+  min-width: 34px; min-height: 34px; padding: 0; color: @accent_fg_color;
+  background: transparent;
+}
+.qs-slider button.qs-slider-icon:hover { background-color: alpha(@accent_fg_color, 0.15); }
+.qs-slider button.qs-slider-more {
+  min-width: 46px; min-height: 46px; background-color: alpha(currentColor, 0.09);
 }
 
-.qs-expand { border-radius: 0 999px 999px 0; padding: 0 10px; min-width: 0; }
-.qs-toggle-title { font-weight: 600; }
-.qs-toggle-subtitle { font-size: 9pt; opacity: 0.8; }
-
-.qs-slider scale trough highlight {
-  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+.qs-tile {
+  border-radius: 24px;
+  background-color: alpha(currentColor, 0.08);
+  transition: background-color 180ms ease;
 }
+.qs-tile:hover { background-color: alpha(currentColor, 0.12); }
+.qs-tile.active { background-color: @accent_bg_color; color: @accent_fg_color; }
+.qs-tile.active:hover { background-color: mix(@accent_bg_color, white, 0.08); }
+.qs-tile button.qs-toggle {
+  background: none; box-shadow: none; border-radius: 24px;
+  padding: 10px 8px 10px 10px; min-height: 48px; color: inherit;
+}
+.qs-tile button.qs-expand {
+  background: none; box-shadow: none; color: inherit;
+  border-radius: 0 24px 24px 0; padding: 0 12px; min-width: 0; opacity: 0.8;
+}
+.qs-tile button.qs-expand:hover { background-color: alpha(currentColor, 0.1); }
+.qs-tile-badge {
+  padding: 10px; border-radius: 999px;
+  background-color: alpha(currentColor, 0.1);
+}
+.qs-tile.active .qs-tile-badge { background-color: alpha(@accent_fg_color, 0.2); }
+.qs-toggle-title { font-weight: 700; font-size: 0.95em; }
+.qs-toggle-subtitle { font-size: 0.82em; opacity: 0.75; }
 
 .qs-detail {
-  background-color: alpha(currentColor, 0.05);
-  border-radius: 16px;
-  padding: 10px;
+  background-color: alpha(currentColor, 0.06);
+  border-radius: 24px;
+  padding: 12px;
 }
-
-.qs-row { border-radius: 10px; padding: 6px 8px; }
+.qs-row { border-radius: 14px; padding: 8px 10px; }
 
 .qs-media {
-  background-color: alpha(currentColor, 0.06);
-  border-radius: 16px;
-  padding: 10px 12px;
+  border-radius: 24px;
+  padding: 12px 14px;
+  background-image: linear-gradient(120deg, alpha(@accent_bg_color, 0.35), alpha(@accent_bg_color, 0.12));
+}
+
+.qs-footer { padding: 2px 4px 0; }
+.qs-footer-label { font-size: 0.88em; opacity: 0.7; }
+button.qs-round {
+  min-width: 40px; min-height: 40px;
+  background-color: alpha(currentColor, 0.08);
+}
+button.qs-round:hover { background-color: alpha(currentColor, 0.14); }
+button.qs-power, .qs-power > button {
+  background-color: @accent_bg_color; color: @accent_fg_color;
 }
 
 .panel-recording { color: #ff4d6a; }

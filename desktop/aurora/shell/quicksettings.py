@@ -27,18 +27,22 @@ def _signal_icon(strength):
 
 
 class Toggle(Gtk.Box):
-    """A pill toggle with a subtitle, optionally with an arrow that opens details."""
+    """A tile as on Android: an icon in a round badge, a title and a subtitle,
+    filled with the accent color while on. Tiles with details have a chevron
+    at their end that opens them."""
 
     def __init__(self, icon, label, on_toggled, on_expand=None):
-        super().__init__(css_classes=["linked", "qs-toggle-box"], hexpand=True)
+        super().__init__(css_classes=["qs-tile"], hexpand=True)
         inner = Gtk.Box(spacing=10)
+        badge = Gtk.Box(css_classes=["qs-tile-badge"], valign=Gtk.Align.CENTER)
         self.image = Gtk.Image(icon_name=icon)
-        inner.append(self.image)
+        badge.append(self.image)
+        inner.append(badge)
         text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
         text.append(Gtk.Label(label=label, xalign=0, ellipsize=Pango.EllipsizeMode.END,
                               css_classes=["qs-toggle-title"]))
         self.subtitle = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
-                                  css_classes=["qs-toggle-subtitle"], visible=False)
+                                  css_classes=["qs-toggle-subtitle"])
         text.append(self.subtitle)
         inner.append(text)
         self.button = Gtk.ToggleButton(child=inner, hexpand=True, css_classes=["qs-toggle"])
@@ -46,8 +50,8 @@ class Toggle(Gtk.Box):
         self.append(self.button)
         self.arrow = None
         if on_expand:
-            self.button.add_css_class("has-arrow")
-            self.arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["qs-expand"])
+            self.arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["qs-expand"],
+                                    tooltip_text=_("More"))
             self.arrow.connect("clicked", lambda *_: on_expand())
             self.append(self.arrow)
 
@@ -55,29 +59,38 @@ class Toggle(Gtk.Box):
         self.button.handler_block(self._handler)
         self.button.set_active(active)
         self.button.handler_unblock(self._handler)
-        for w in (self.button, self.arrow):
-            if w is not None:
-                (w.add_css_class if active else w.remove_css_class)("active")
-        self.subtitle.set_visible(bool(subtitle))
-        self.subtitle.set_label(subtitle or "")
+        (self.add_css_class if active else self.remove_css_class)("active")
+        # Android always shows a second line: the state when there's nothing else.
+        self.subtitle.set_label(subtitle or (_("On") if active else _("Off")))
         if icon:
             self.image.set_from_icon_name(icon)
 
 
 class Slider(Gtk.Box):
+    """A thick pill slider, as on Android: the filled part carries the icon
+    (click it to mute), an optional chevron at the end opens the devices."""
+
     def __init__(self, icon, on_change, on_icon=None, on_expand=None):
-        super().__init__(spacing=6, css_classes=["qs-slider"])
-        self.icon = Gtk.Button(icon_name=icon, css_classes=["flat", "circular"])
-        if on_icon:
-            self.icon.connect("clicked", lambda *_: on_icon())
+        super().__init__(spacing=8, css_classes=["qs-slider"])
         self.scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 1, 0.01)
         self.scale.set_hexpand(True)
         self.scale.set_draw_value(False)
+        self.scale.add_css_class("qs-pill-scale")
         self._handler = self.scale.connect("value-changed", lambda s: on_change(s.get_value()))
-        self.append(self.icon)
-        self.append(self.scale)
+        self.icon = Gtk.Button(icon_name=icon, css_classes=["flat", "circular", "qs-slider-icon"],
+                               halign=Gtk.Align.START, valign=Gtk.Align.CENTER,
+                               margin_start=6)
+        if on_icon:
+            self.icon.connect("clicked", lambda *_: on_icon())
+        else:
+            self.icon.set_can_target(False)
+        pill = Gtk.Overlay(child=self.scale, hexpand=True)
+        pill.add_overlay(self.icon)
+        self.append(pill)
         if on_expand:
-            arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["flat", "circular"])
+            arrow = Gtk.Button(icon_name="go-next-symbolic",
+                               css_classes=["circular", "qs-slider-more"],
+                               valign=Gtk.Align.CENTER, tooltip_text=_("Devices"))
             arrow.connect("clicked", lambda *_: on_expand())
             self.append(arrow)
 
@@ -146,8 +159,21 @@ class QuickSettings(Gtk.Popover):
         self._detail = None
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                       margin_top=14, margin_bottom=14, margin_start=14, margin_end=14)
-        box.set_size_request(380, -1)
+        box.set_size_request(392, -1)
         self.set_child(box)
+
+        # --- header: the time and date, like the top of Android's shade ---
+        header = Gtk.Box(spacing=8, css_classes=["qs-header"])
+        clock = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
+        self.header_time = Gtk.Label(xalign=0, css_classes=["qs-time", "numeric"])
+        self.header_date = Gtk.Label(xalign=0, css_classes=["qs-date"])
+        clock.append(self.header_time)
+        clock.append(self.header_date)
+        header.append(clock)
+        self.battery_pill = Gtk.Label(css_classes=["qs-battery"], valign=Gtk.Align.CENTER,
+                                      visible=False)
+        header.append(self.battery_pill)
+        box.append(header)
 
         # --- sliders ---
         self.volume = Slider("audio-volume-high-symbolic", shell.audio.set_volume,
@@ -181,7 +207,7 @@ class QuickSettings(Gtk.Popover):
         self.t_awake = Toggle("view-reveal-symbolic", _("Keep Awake"),
                               shell.keep_awake.set_active)
         shell.keep_awake.connect("changed", lambda *_: self.refresh())
-        self.grid = Gtk.Grid(column_spacing=8, row_spacing=8, column_homogeneous=True)
+        self.grid = Gtk.Grid(column_spacing=10, row_spacing=10, column_homogeneous=True)
         box.append(self.grid)
 
         # --- detail area ---
@@ -229,9 +255,9 @@ class QuickSettings(Gtk.Popover):
         box.append(self.media_box)
 
         # --- footer ---
-        footer = Gtk.Box(spacing=6)
+        footer = Gtk.Box(spacing=8, css_classes=["qs-footer"])
         self.battery_label = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END,
-                                       css_classes=["dim-label"])
+                                       css_classes=["qs-footer-label"])
         footer.append(self.battery_label)
         for icon, tip, cb in (
             ("applets-screenshooter-symbolic", _("Screenshot"),
@@ -239,12 +265,13 @@ class QuickSettings(Gtk.Popover):
             ("emblem-system-symbolic", _("Settings"), lambda: shell.open_settings("")),
             ("system-lock-screen-symbolic", _("Lock"), shell.power.lock),
         ):
-            b = Gtk.Button(icon_name=icon, tooltip_text=tip, css_classes=["circular"])
+            b = Gtk.Button(icon_name=icon, tooltip_text=tip, css_classes=["circular", "qs-round"])
             b.connect("clicked", lambda _b, cb=cb: (self.popdown(), cb()))
             footer.append(b)
         power = Gtk.MenuButton(icon_name="system-shutdown-symbolic",
                                tooltip_text=_("Power Off / Log Out"),
-                               css_classes=["circular"], direction=Gtk.ArrowType.UP)
+                               css_classes=["circular", "qs-round", "qs-power"],
+                               direction=Gtk.ArrowType.UP)
         power.set_popover(self._power_menu())
         footer.append(power)
         box.append(footer)
@@ -391,6 +418,10 @@ class QuickSettings(Gtk.Popover):
         sh = self.shell
         s = settings.get()
         iface = settings.interface()
+        now = GLib.DateTime.new_now_local()
+        twelve = s is not None and s.get_string("clock-format") == "12h"
+        self.header_time.set_label(now.format("%l:%M %p" if twelve else "%H:%M").strip())
+        self.header_date.set_label(now.format("%A, %e %B").replace("  ", " "))
 
         self.volume.set_value(0 if sh.audio.muted else sh.audio.volume, sh.audio.icon_name)
         self.volume.set_visible(sh.audio.available)
@@ -453,3 +484,6 @@ class QuickSettings(Gtk.Popover):
 
         bat = sh.battery
         self.battery_label.set_label(bat.describe() if bat.present else "")
+        self.battery_pill.set_visible(bat.present)
+        if bat.present:
+            self.battery_pill.set_label(f"{'⚡ ' if bat.charging else ''}{bat.percentage:.0f}%")

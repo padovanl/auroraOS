@@ -1,9 +1,11 @@
 """Top bar: Aurora menu, focused app, status indicators, clock."""
 
+import os
+
 from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
-from aurora.i18n import _
+from aurora.i18n import N_, _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 from aurora.shell.quicksettings import QuickSettings
 from aurora.shell.toplevels import window_labels
@@ -284,28 +286,90 @@ class StatusArea(Gtk.MenuButton):
 
 
 class AuroraMenu(Gtk.MenuButton):
-    """The logo menu: system-wide actions, like the menu in the corner of a Mac."""
+    """The logo menu: who you are, system-wide actions with their shortcuts,
+    and the power choices as round buttons at the bottom."""
+
+    ITEMS = (
+        (("computer-symbolic", N_("About This Computer"), "settings", "about", ""),),
+        (("emblem-system-symbolic", N_("System Settings"), "settings", "", "Super+I"),
+         ("system-software-install-symbolic", N_("App Center"), "software", None, ""),
+         ("applications-engineering-symbolic", N_("Dev Hub"), "devhub", None, "")),
+        (("utilities-system-monitor-symbolic", N_("System Health"), "settings", "health", ""),
+         ("process-stop-symbolic", N_("Force Quit"), "force-quit", None, "")),
+    )
+    POWER = (("weather-clear-night-symbolic", N_("Sleep"), "suspend"),
+             ("system-reboot-symbolic", N_("Restart"), "reboot"),
+             ("system-shutdown-symbolic", N_("Shut Down"), "poweroff"),
+             ("system-log-out-symbolic", N_("Log Out"), "logout"))
 
     def __init__(self, shell):
         super().__init__(css_classes=["flat", "panel-button", "panel-logo"],
                          tooltip_text=_("Aurora Menu"))
+        self.shell = shell
         self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16))
-        menu = Gio.Menu()
-        for section in (
-            [(_("About This Computer"), "app.settings::about")],
-            [(_("System Settings…"), "app.settings::"),
-             (_("App Center…"), "app.software"),
-             (_("Dev Hub…"), "app.devhub")],
-            [(_("System Health…"), "app.settings::health"), (_("Force Quit…"), "app.force-quit")],
-            [(_("Sleep"), "app.suspend"), (_("Restart…"), "app.reboot"),
-             (_("Shut Down…"), "app.poweroff")],
-            [(_("Lock Screen"), "app.lock"), (_("Log Out"), "app.logout")],
-        ):
-            sec = Gio.Menu()
-            for label, action in section:
-                sec.append(label, action)
-            menu.append_section(None, sec)
-        self.set_menu_model(menu)
+        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-menu"])
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        box.set_size_request(300, -1)
+
+        head = Gtk.Box(spacing=12, css_classes=["aurora-menu-head"])
+        from gi.repository import Adw
+        name = GLib.get_real_name()
+        if not name or name == "Unknown":
+            name = GLib.get_user_name()
+        avatar = Adw.Avatar(size=44, text=name, show_initials=True)
+        face = os.path.expanduser("~/.face")
+        if os.path.exists(face):
+            try:
+                avatar.set_custom_image(Gdk.Texture.new_from_filename(face))
+            except GLib.Error:
+                pass
+        head.append(avatar)
+        who = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        who.append(Gtk.Label(label=name, xalign=0, css_classes=["aurora-menu-name"]))
+        from aurora import VERSION
+        who.append(Gtk.Label(label=f"{GLib.get_host_name()} · Aurora OS {VERSION}", xalign=0,
+                             css_classes=["aurora-menu-sub"]))
+        head.append(who)
+        lock = Gtk.Button(icon_name="system-lock-screen-symbolic", hexpand=True,
+                          halign=Gtk.Align.END, valign=Gtk.Align.CENTER,
+                          css_classes=["circular", "aurora-menu-round"],
+                          tooltip_text=_("Lock Screen") + "  (Super+L)")
+        lock.connect("clicked", lambda *_a: self._run(pop, "lock", None))
+        head.append(lock)
+        box.append(head)
+
+        for section in self.ITEMS:
+            group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["aurora-menu-group"])
+            for icon, label, action, param, keys in section:
+                row = Gtk.Button(css_classes=["flat", "aurora-menu-row"])
+                inner = Gtk.Box(spacing=12)
+                inner.append(Gtk.Image(icon_name=icon))
+                inner.append(Gtk.Label(label=_(label), xalign=0, hexpand=True))
+                if keys:
+                    inner.append(Gtk.Label(label=keys, css_classes=["aurora-menu-keys"]))
+                row.set_child(inner)
+                row.connect("clicked", lambda _b, a=action, p=param: self._run(pop, a, p))
+                group.append(row)
+            box.append(group)
+
+        power = Gtk.Box(homogeneous=True, spacing=4, css_classes=["aurora-menu-power"])
+        for icon, label, action in self.POWER:
+            b = Gtk.Button(css_classes=["flat", "aurora-menu-power-item"], focusable=False)
+            inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+            inner.append(Gtk.Image(icon_name=icon, css_classes=["aurora-menu-round-icon"],
+                                   halign=Gtk.Align.CENTER))
+            inner.append(Gtk.Label(label=_(label), css_classes=["aurora-menu-power-label"]))
+            b.set_child(inner)
+            b.connect("clicked", lambda _b, a=action: self._run(pop, a, None))
+            power.append(b)
+        box.append(power)
+        pop.set_child(box)
+        self.set_popover(pop)
+
+    def _run(self, pop, action, param):
+        pop.popdown()
+        self.shell.activate_action(action, GLib.Variant("s", param) if param is not None
+                                   else None)
 
 
 class Panel(LayerWindow):
