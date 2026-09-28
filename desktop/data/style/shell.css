@@ -514,6 +514,44 @@ button.widget-remove:hover { background-color: @aurora_rose; }
 .widget-gallery-icon.section-developers { background-image: linear-gradient(145deg, #60a5fa, #3b5bdb); box-shadow: 0 4px 12px rgba(96, 165, 250, 0.25); }
 .widget-gallery-icon.section-gamers { background-image: linear-gradient(145deg, #ff8a65, #e8467c); box-shadow: 0 4px 12px rgba(255, 111, 145, 0.28); }
 
+.widget-gallery-icon.section-productivity { background-image: linear-gradient(145deg, #fbbf24, #f97316); box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25); }
+.widget-gallery-item { min-width: 92px; padding: 10px 6px 8px; }
+.widget-gallery-tabs { padding: 2px; }
+.widget-gallery-tab {
+  padding: 5px 13px; border-radius: 999px; min-height: 0;
+  background: rgba(255, 255, 255, 0.06); color: rgba(244, 240, 251, 0.8);
+  font-weight: 600; font-size: 0.92em;
+}
+.widget-gallery-tab:hover { background: rgba(255, 255, 255, 0.11); }
+.widget-gallery-tab:checked { background: rgba(255, 255, 255, 0.18); color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); }
+.widget-gallery-dot { min-width: 8px; min-height: 8px; border-radius: 999px;
+  background-color: @accent_bg_color; }
+.section-productivity .widget-gallery-dot { background-color: #fbbf24; }
+.section-system .widget-gallery-dot { background-color: #4fd1c5; }
+.section-developers .widget-gallery-dot { background-color: #60a5fa; }
+.section-gamers .widget-gallery-dot { background-color: #ff6f91; }
+.widget-gallery scrollbar { background: transparent; }
+
+/* To Do, Countdown and friends */
+.desktop-widget entry.widget-entry {
+  min-height: 30px; border-radius: 10px; background-color: alpha(currentColor, 0.08);
+  color: inherit; box-shadow: none; font-size: 0.92em;
+}
+.desktop-widget .widget-task { padding: 1px 0; }
+.desktop-widget .widget-task label { font-size: 0.92em; }
+.desktop-widget .widget-task label.done { opacity: 0.45; text-decoration-line: line-through; }
+.desktop-widget .widget-task-delete { min-width: 20px; min-height: 20px; padding: 0; opacity: 0; }
+.desktop-widget .widget-task:hover .widget-task-delete { opacity: 0.7; }
+.desktop-widget checkbutton check { border-radius: 999px; min-width: 16px; min-height: 16px; }
+.desktop-widget .widget-countdown { font-size: 3em; font-weight: 800; letter-spacing: -0.02em; }
+.desktop-widget.countdown-accent { background-image: linear-gradient(150deg, alpha(@accent_bg_color, 0.55), alpha(@accent_bg_color, 0.18)); }
+.desktop-widget.countdown-sunset { background-image: linear-gradient(150deg, rgba(255, 138, 101, 0.75), rgba(232, 70, 124, 0.55)); color: #fff; }
+.desktop-widget.countdown-ocean { background-image: linear-gradient(150deg, rgba(96, 165, 250, 0.75), rgba(59, 91, 219, 0.55)); color: #fff; }
+.desktop-widget.countdown-forest { background-image: linear-gradient(150deg, rgba(74, 222, 128, 0.7), rgba(21, 128, 61, 0.55)); color: #fff; }
+.desktop-widget.countdown-sunset .widget-title, .desktop-widget.countdown-ocean .widget-title,
+.desktop-widget.countdown-forest .widget-title { color: inherit; opacity: 0.85; }
+
 /* New widget details */
 .desktop-widget .widget-row-title { font-weight: 600; font-size: 0.92em; }
 .desktop-widget .widget-row-time { font-size: 1.05em; font-weight: 700; }

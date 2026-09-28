@@ -3,7 +3,7 @@
 from gi.repository import Gdk, Gio, GLib, Gtk
 
 from aurora.i18n import _
-from aurora.shell.layer import Layer, LayerWindow
+from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
 FADE_MS = 2500      # crossfade when the dynamic wallpaper moves to the next phase
 
@@ -55,6 +55,9 @@ class Wallpaper(LayerWindow):
             from aurora.shell.widgets import WidgetLayer
             self.widgets = WidgetLayer(app, overlay, monitor)
             app.widget_layer = self.widgets
+            # Typing into Notes, To Do and the widget options: the desktop
+            # takes the keyboard when clicked, like any window.
+            self.set_keyboard(Keyboard.ON_DEMAND)
         self._menu = self._build_menu(overlay)
 
         click = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)

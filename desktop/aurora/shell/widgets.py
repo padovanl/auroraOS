@@ -42,6 +42,7 @@ SLOT_INSET = 9       # px around each card, where the × of edit mode sits
 def kinds():
     """kind -> (title, icon, class), in gallery order."""
     from aurora.shell import devwidgets as dev
+    from aurora.shell import morewidgets as more
     return {
         "clock": (_("Clock"), "preferences-system-time-symbolic", ClockWidget),
         "calendar": (_("Calendar"), "x-office-calendar-symbolic", CalendarWidget),
@@ -54,6 +55,13 @@ def kinds():
         "network": (_("Network"), "network-transmit-receive-symbolic", NetworkWidget),
         "focus": (_("Focus"), "alarm-symbolic", FocusWidget),
         "photo": (_("Photo"), "image-x-generic-symbolic", PhotoWidget),
+        "sun": (_("Sun & Moon"), "weather-clear-symbolic", more.SunWidget),
+        # Getting things done.
+        "todo": (_("To Do"), "checkbox-checked-symbolic", more.TodoWidget),
+        "countdown": (_("Countdown"), "x-office-calendar-symbolic", more.CountdownWidget),
+        "progress": (_("Progress"), "content-loading-symbolic", more.ProgressWidget),
+        "recent": (_("Recent Files"), "document-open-recent-symbolic", more.RecentWidget),
+        "clipboard": (_("Clipboard"), "edit-paste-symbolic", more.ClipboardWidget),
         # For developers and gamers.
         "projects": (_("Projects"), "folder-code-symbolic", dev.ProjectsWidget),
         "ports": (_("Local Servers"), "network-server-symbolic", dev.PortsWidget),
@@ -68,13 +76,15 @@ def kinds():
 
 # The gallery's sections, in order.
 SECTIONS = (
-    ("everyday", ("clock", "calendar", "weather", "world", "focus", "notes", "photo",
-                  "media")),
+    ("everyday", ("clock", "calendar", "weather", "world", "sun", "photo", "media")),
+    ("productivity", ("todo", "notes", "countdown", "focus", "progress", "recent",
+                      "clipboard")),
     ("system", ("system", "network", "battery")),
     ("developers", ("projects", "ports", "containers")),
     ("gamers", ("games", "gpu", "performance")),
 )
 KIND_NAMES = tuple(kind for _section, kinds_ in SECTIONS for kind in kinds_)
+STATEFUL = ("notes", "todo")     # kinds that keep their contents in a file of their own
 
 
 def load_list(text):
@@ -93,7 +103,7 @@ def load_list(text):
             continue
         item = {"kind": entry["kind"], "x": min(max(x, 0.0), 1.0),
                 "y": min(max(y, 0.0), 1.0)}
-        if entry["kind"] == "notes":
+        if entry["kind"] in STATEFUL:
             ident = str(entry.get("id") or "")
             item["id"] = ident if ident.isalnum() else uuid.uuid4().hex[:12]
         options = entry.get("options")
@@ -134,6 +144,28 @@ def align_to_neighbours(x, y, width, height, others, reach=GRID):
             if abs(candidate - y) < best_y[0]:
                 best_y = (abs(candidate - y), candidate)
     return best_x[1], best_y[1]
+
+
+def free_spot(width, height, others, area_width, area_height, top=0, edge=0,
+              bottom=0, gap=GRID):
+    """Where a new widget of width x height fits without covering another:
+    columns from the right edge inward (next to the widgets already there),
+    top to bottom in each. `others` are (x, y, width, height). None if the
+    screen is full."""
+    def blockers(x, y):
+        return [(ox, oy, ow, oh) for ox, oy, ow, oh in others
+                if not (x + width + gap <= ox or ox + ow + gap <= x or
+                        y + height + gap <= oy or oy + oh + gap <= y)]
+    x = area_width - edge - width
+    while x >= edge:
+        y = top
+        while y + height <= area_height - bottom:
+            hit = blockers(x, y)
+            if not hit:
+                return x, y
+            y = max(oy + oh + gap for _ox, oy, _ow, oh in hit)   # just below them
+        x -= GRID
+    return None
 
 
 def widget_sizes(area_height):
@@ -1053,6 +1085,7 @@ class WidgetLayer:
         """The resolution changed: same places (fractions of the screen), sizes
         in proportion to its height."""
         self.sizes = widget_sizes(self.area()[1])
+        self._gallery_width()
         for widget in self.widgets:
             widget.resize()
             self._place(widget)
@@ -1182,13 +1215,22 @@ class WidgetLayer:
     def add(self, kind):
         width, height = self.area()
         item = {"kind": kind, "x": 0.5, "y": 0.35}
-        if kind == "notes":
+        if kind in STATEFUL:
             item["id"] = uuid.uuid4().hex[:12]
         widget = self._add_widget(item)
         small, wide = self.sizes
-        w = wide if widget.wide else small
-        x, y = clamp_position(snap(width / 2 - w / 2), snap(height * 0.35), w, small, width,
-                              height, top=TOP_INSET, edge=EDGE_INSET)
+        w = (wide if widget.wide else small) + 2 * SLOT_INSET
+        h = small + 2 * SLOT_INSET
+        others = [(o.get_margin_start(), o.get_margin_top(),
+                   max(o.get_width(), (wide if o.wide else small) + 2 * SLOT_INSET),
+                   max(o.get_height(), h)) for o in self.widgets if o is not widget]
+        # Clear of the others, and above the gallery while it's open.
+        spot = free_spot(w, h, others, width, height, top=TOP_INSET, edge=EDGE_INSET,
+                         bottom=max(EDGE_INSET, self.gallery.get_height() + 110), gap=0)
+        if spot is None:
+            spot = clamp_position(snap(width / 2 - w / 2), snap(height * 0.35), w, h, width,
+                                  height, top=TOP_INSET, edge=EDGE_INSET)
+        x, y = (int(v) for v in spot)
         widget.set_margin_start(x)
         widget.set_margin_top(y)
         widget.update()
@@ -1224,9 +1266,13 @@ class WidgetLayer:
         tracker.flush()
 
     def _build_gallery(self):
-        titles = {"everyday": _("Everyday"), "system": _("System"),
-                  "developers": _("Developers"), "gamers": _("Gamers")}
-        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10,
+        """The gallery of edit mode: a compact bar at the bottom. One tab per
+        group and one row of widgets that scrolls sideways, so it never grows
+        over the desktop however many widgets there are."""
+        titles = {"everyday": _("Everyday"), "productivity": _("Productivity"),
+                  "system": _("System"), "developers": _("Developers"),
+                  "gamers": _("Gamers")}
+        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                        css_classes=["widget-gallery"], halign=Gtk.Align.CENTER,
                        valign=Gtk.Align.END, margin_bottom=104, margin_start=16,
                        margin_end=16, visible=False)
@@ -1235,43 +1281,75 @@ class WidgetLayer:
                        valign=Gtk.Align.CENTER)
         text.append(Gtk.Label(label=_("Widgets"), xalign=0,
                               css_classes=["widget-gallery-title"]))
-        text.append(Gtk.Label(label=_("Click to add · drag to move · × to remove"), xalign=0,
-                              css_classes=["widget-gallery-hint"]))
+        text.append(Gtk.Label(label=_("Click to add · drag to move · right-click to customize"),
+                              xalign=0, css_classes=["widget-gallery-hint"],
+                              ellipsize=Pango.EllipsizeMode.END))
         head.append(text)
         done = Gtk.Button(label=_("Done"), css_classes=["pill", "suggested-action"],
                           valign=Gtk.Align.CENTER)
         done.connect("clicked", lambda *_a: self.set_editing(False))
         head.append(done)
         card.append(head)
-        sections = Gtk.Box(spacing=18)
-        for index, (section, members) in enumerate(SECTIONS):
-            if index:
-                sections.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
-            column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-            column.append(Gtk.Label(label=titles[section], xalign=0,
-                                    css_classes=["widget-gallery-section"]))
-            flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
-                               min_children_per_line=1,
-                               max_children_per_line=4 if len(members) > 4 else 2,
-                               column_spacing=4, row_spacing=4)
+
+        stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
+                          transition_duration=160, hhomogeneous=True, vhomogeneous=True)
+        tabs = Gtk.Box(spacing=6, css_classes=["widget-gallery-tabs"])
+        tab_scroller = Gtk.ScrolledWindow(child=tabs, vscrollbar_policy=Gtk.PolicyType.NEVER,
+                                          hscrollbar_policy=Gtk.PolicyType.EXTERNAL)
+        first = None
+        for section, members in SECTIONS:
+            tab = Gtk.ToggleButton(css_classes=["widget-gallery-tab", f"section-{section}"],
+                                   group=first)
+            inner = Gtk.Box(spacing=6)
+            inner.append(Gtk.Box(css_classes=["widget-gallery-dot"], valign=Gtk.Align.CENTER))
+            inner.append(Gtk.Label(label=titles[section]))
+            tab.set_child(inner)
+            tab.connect("toggled", lambda t, name=section: t.get_active()
+                        and stack.set_visible_child_name(name))
+            tabs.append(tab)
+            if first is None:
+                first = tab
+            row = Gtk.Box(spacing=8, margin_bottom=4)
             for kind in members:
                 title, icon, _cls = kinds()[kind]
                 button = Gtk.Button(css_classes=["flat", "widget-gallery-item"],
-                                    tooltip_text=title)
-                inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-                badge = Gtk.Image(icon_name=icon, pixel_size=20,
+                                    tooltip_text=_("Add {name}").format(name=title))
+                inner = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7)
+                badge = Gtk.Image(icon_name=icon, pixel_size=22,
                                   css_classes=["widget-gallery-icon", f"section-{section}"],
                                   halign=Gtk.Align.CENTER)
                 inner.append(badge)
                 inner.append(Gtk.Label(label=title, css_classes=["caption"],
-                                       ellipsize=Pango.EllipsizeMode.END, max_width_chars=11))
+                                       ellipsize=Pango.EllipsizeMode.END, max_width_chars=12))
                 button.set_child(inner)
                 button.connect("clicked", lambda _b, k=kind: self.add(k))
-                flow.append(button)
-            column.append(flow)
-            sections.append(column)
-        card.append(sections)
+                row.append(button)
+            scroller = Gtk.ScrolledWindow(child=row, vscrollbar_policy=Gtk.PolicyType.NEVER,
+                                          hscrollbar_policy=Gtk.PolicyType.AUTOMATIC,
+                                          propagate_natural_height=True)
+            # The wheel scrolls the row sideways.
+            wheel = Gtk.EventControllerScroll(
+                flags=Gtk.EventControllerScrollFlags.VERTICAL)
+            wheel.connect("scroll", lambda _c, _dx, dy, sc=scroller: self._scroll_row(sc, dy))
+            scroller.add_controller(wheel)
+            stack.add_named(scroller, section)
+        first.set_active(True)
+        card.append(tab_scroller)
+        card.append(stack)
+        self._gallery_width(card)
         return card
+
+    @staticmethod
+    def _scroll_row(scroller, dy):
+        adj = scroller.get_hadjustment()
+        adj.set_value(adj.get_value() + dy * 60)
+        return True
+
+    def _gallery_width(self, card=None):
+        """As wide as its contents need, but never wider than the screen allows."""
+        card = card or self.gallery
+        width, _height = self.area()
+        card.set_size_request(min(760, max(320, width - 64)), -1)
 
     def show_menu(self, widget, x, y):
         if self._menu is not None:
@@ -1319,6 +1397,12 @@ class WidgetLayer:
                 control.set_selected(values.index(value) if value in values else 0)
                 control.connect("notify::selected", lambda dd, _p, k=key, vs=values:
                                 widget.set_option(k, vs[dd.get_selected()]))
+            elif kind == "text":
+                control = Gtk.Entry(text=str(value), width_chars=16,
+                                    placeholder_text=kinds()[widget.kind][0])
+                control.connect("changed", lambda e, k=key: widget.set_option(k, e.get_text()))
+            elif kind == "date":
+                control = self._date_button(widget, key, value)
             else:  # folder
                 control = Gtk.Button(label=os.path.basename(value) if value else _("Pictures"))
                 control.connect("clicked", lambda b, k=key: self._pick_folder(widget, k, b))
@@ -1328,6 +1412,27 @@ class WidgetLayer:
         pop.set_parent(widget)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         pop.popup()
+
+    def _date_button(self, widget, key, value):
+        """A button showing the date; it opens a calendar to pick another."""
+        import datetime
+        try:
+            day = datetime.date.fromisoformat(str(value))
+        except ValueError:
+            day = datetime.date.today() + datetime.timedelta(days=30)
+        button = Gtk.MenuButton(label=day.strftime("%x"))
+        calendar = Gtk.Calendar()
+        calendar.select_day(GLib.DateTime.new_local(day.year, day.month, day.day, 0, 0, 0))
+
+        def picked(cal):
+            d = cal.get_date()
+            iso = f"{d.get_year():04d}-{d.get_month():02d}-{d.get_day_of_month():02d}"
+            widget.set_option(key, iso)
+            button.set_label(datetime.date.fromisoformat(iso).strftime("%x"))
+            button.popdown()
+        calendar.connect("day-selected", picked)
+        button.set_popover(Gtk.Popover(child=calendar))
+        return button
 
     def _pick_folder(self, widget, key, button):
         dialog = Gtk.FileDialog(title=_("Choose a Folder"))

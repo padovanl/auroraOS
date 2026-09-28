@@ -218,3 +218,34 @@ def test_snap_assist_offers_other_windows_most_recent_first():
     ]
     assert [v["id"] for v in snap.candidates(views, "A", {1})] == [2]
     assert [v["id"] for v in snap.candidates(views, "A")] == [2, 1]
+
+
+def test_more_widget_helpers():
+    import datetime
+    pytest = __import__("pytest")
+    more = pytest.importorskip("aurora.shell.morewidgets")
+    assert more.days_until(datetime.date(2026, 12, 25), datetime.date(2026, 12, 20)) == 5
+    assert more.parse_date("nonsense", datetime.date(2026, 1, 1)) == datetime.date(2026, 1, 1)
+    frac, start, end = more.period_progress(datetime.datetime(2026, 7, 2, 12), "year")
+    assert start.year == 2026 and end.year == 2027 and 0.49 < frac < 0.51
+    frac, start, _end = more.period_progress(datetime.datetime(2026, 9, 30, 18), "day")
+    assert frac == 0.75
+    frac, start, _end = more.period_progress(datetime.datetime(2026, 10, 1), "week")
+    assert start.weekday() == 0
+    full = datetime.datetime(2026, 8, 28, 4, 58, tzinfo=datetime.timezone.utc)  # a full moon
+    assert more.moon(full)[2] == 4 and more.moon(full)[1] > 0.97
+    assert more.load_tasks('[{"text": "milk"}, {"text": " "}, 3]') == [
+        {"text": "milk", "done": False}]
+
+
+def test_new_widgets_find_a_free_spot():
+    from aurora.shell.widgets import free_spot
+    # An empty screen: the top-right corner.
+    assert free_spot(100, 100, [], 1000, 600, top=40, edge=10) == (890, 40)
+    # Below a widget already there, then the next column.
+    others = [(890, 40, 100, 100)]
+    assert free_spot(100, 100, others, 1000, 600, top=40, edge=10, gap=0) == (890, 140)
+    column = [(890, y, 100, 100) for y in range(40, 600, 100)]
+    x, y = free_spot(100, 100, column, 1000, 600, top=40, edge=10)
+    assert x + 100 <= 890 and y == 40
+    assert free_spot(100, 100, [(0, 0, 1000, 600)], 1000, 600) is None
