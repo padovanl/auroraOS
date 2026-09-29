@@ -270,3 +270,13 @@ def test_background_recent_row_and_memory(tmp_path):
     assert row == [pics[5], pics[2], pics[3], pics[0]]
     assert b.pretty_name("/x/my-nice_wall.jpg") == "my nice wall"
     assert b.find_wallpapers([str(tmp_path)]) == sorted(pics)
+
+
+def test_verification_codes_in_notifications():
+    from aurora.otp import verification_code as code
+    assert code("Bank", "Your verification code is 482913. Don't share it.") == "482913"
+    assert code("Il tuo codice", "Usa 123-456 per accedere") == "123456"
+    assert code("G-Mail", "<b>OTP</b>: 7781") == "7781"
+    assert code("Meeting", "Starts at 1530 in room 2") is None      # no code words
+    assert code("Your code", "Valid until 2026") is None             # a year, not a code
+    assert code("Order shipped", "Order 12345678 is on its way") is None

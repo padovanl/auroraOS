@@ -7,9 +7,10 @@ import time
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gio, GLib, Gtk, Pango  # noqa: E402
+from gi.repository import Gdk, Gio, GLib, Gtk, Pango  # noqa: E402
 
 from aurora import VERSION, apps, settings
+from aurora.otp import verification_code
 from aurora.i18n import _
 from aurora.shell.layer import Layer, LayerWindow
 
@@ -130,6 +131,14 @@ class Card(Gtk.Box):
         head.append(close)
         self.append(head)
 
+        code = verification_code(note.summary, note.body)
+        if code:
+            copy = Gtk.Button(css_classes=["notification-code", "pill"],
+                              halign=Gtk.Align.START)
+            copy.set_child(Gtk.Label(label=_("Copy {code}").format(code=code)))
+            copy.connect("clicked", lambda b, c=code: self._copy_code(b, c))
+            self.append(copy)
+
         buttons = [(k, lbl) for k, lbl in note.actions if k != "default"]
         if buttons and not in_history:
             row = Gtk.Box(spacing=6, homogeneous=True)
@@ -149,6 +158,12 @@ class Card(Gtk.Box):
         click.connect("released", open_card)
         self.add_controller(click)
 
+
+    @staticmethod
+    def _copy_code(button, code):
+        Gdk.Display.get_default().get_clipboard().set(code)
+        button.get_child().set_label(_("Copied ✓"))
+        button.add_css_class("copied")
 
 class Popups(LayerWindow):
     def __init__(self, shell):

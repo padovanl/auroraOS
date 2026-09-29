@@ -649,3 +649,10 @@ button.widget-remove:hover { background-color: @aurora_rose; }
 .desktop-widget.note-blue .widget-title, .desktop-widget.note-green .widget-title { color: inherit; opacity: 0.7; }
 popover.widget-customize contents { border-radius: 16px; min-width: 260px; }
 .widget-customize-title { font-weight: 800; }
+
+/* "Copy 482913": a one-time code found in a notification. */
+button.notification-code {
+  padding: 6px 14px; font-weight: 800; letter-spacing: 0.04em;
+  background-color: @accent_bg_color; color: @accent_fg_color;
+}
+button.notification-code.copied { background-color: alpha(@accent_bg_color, 0.45); }
