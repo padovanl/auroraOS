@@ -1,10 +1,8 @@
 """Appearance: style, accent color, background, icons, text size."""
 
 import os
-import shutil
-import uuid
 
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
+from gi.repository import Adw, Gdk, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import N_, _
@@ -52,21 +50,6 @@ def installed_themes(kind):
                 found[d] = _theme_name(path)
     return sorted(found.items(), key=lambda kv: kv[1].lower())
 
-WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
-IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
-
-
-def find_wallpapers():
-    found = []
-    for d in WALLPAPER_DIRS:
-        d = os.path.expanduser(d)
-        for root, _dirs, files in os.walk(d):
-            for f in sorted(files):
-                if f.lower().endswith(IMAGE_EXT):
-                    found.append(os.path.join(root, f))
-    return found
-
-
 class Appearance(Page):
     page_id = "appearance"
     title = _("Appearance")
@@ -75,6 +58,10 @@ class Appearance(Page):
     def build(self):
         iface = settings.interface()
         aurora = settings.get()
+
+        from aurora.settingsapp.backgrounds import BackgroundSection
+        # First, as the page Windows opens with.
+        self.background = BackgroundSection(self)
 
         style = self.group(_("Style"))
         dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
@@ -165,40 +152,6 @@ class Appearance(Page):
                                 if iface.get_string("font-hinting") in hint else 0,
                                 on_change=lambda i: iface.set_string("font-hinting", hint[i])))
 
-        bg = self.group(_("Background"))
-        add_btn = Gtk.Button(icon_name="list-add-symbolic", css_classes=["flat"],
-                             tooltip_text=_("Add Picture…"))
-        add_btn.connect("clicked", self._add_picture)
-        bg.set_header_suffix(add_btn)
-        self.background_preview = Gtk.Picture(content_fit=Gtk.ContentFit.COVER,
-                                              can_shrink=True, css_classes=["background-preview"])
-        self.background_preview.set_size_request(480, 235)
-        self.background_name = Gtk.Label(xalign=0, css_classes=["heading"])
-        preview_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
-                              margin_top=8, margin_bottom=18)
-        preview_box.append(self.background_preview)
-        preview_box.append(self.background_name)
-        bg.add(preview_box)
-        self.flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.SINGLE,
-                                max_children_per_line=3, min_children_per_line=2,
-                                row_spacing=14, column_spacing=14, homogeneous=True,
-                                css_classes=["background-gallery"])
-        self.flow.connect("child-activated", self._on_wallpaper)
-        bg.add(self.flow)
-        self._load_wallpapers()
-        if aurora:
-            bg.add(switch_row(_("Rotate wallpapers"),
-                              aurora.get_boolean("wallpaper-slideshow"),
-                              self._set_slideshow,
-                              subtitle=_("Cycle through the included wallpapers offline")))
-            intervals = [15, 60, 360, 1440]
-            value = aurora.get_int("wallpaper-slideshow-minutes")
-            bg.add(combo_row(_("Change every"),
-                             [_('15 minutes'), _('1 hour'), _('6 hours'), _('24 hours')],
-                             intervals.index(value) if value in intervals else 1,
-                             on_change=lambda i: aurora.set_int(
-                                 "wallpaper-slideshow-minutes", intervals[i])))
-
         if aurora:
             night = self.group(_("Night Light"), _("Warmer colors are easier on the eyes at night."))
             night.add(switch_row(_("Night Light"), aurora.get_boolean("night-light"),
@@ -282,97 +235,3 @@ class Appearance(Page):
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-    def _load_wallpapers(self):
-        self.flow.remove_all()
-        aurora = settings.get()
-        current = aurora.get_string("wallpaper") if aurora else ""
-        dynamic = aurora is not None and aurora.get_boolean("wallpaper-dynamic")
-        preview = "/usr/share/backgrounds/aurora/aurora-dynamic-dusk.png"
-        current_preview = preview if dynamic else current
-        if current_preview and os.path.isfile(current_preview):
-            self.background_preview.set_file(Gio.File.new_for_path(current_preview))
-        self.background_name.set_label(_("Dynamic") if dynamic else
-                                       os.path.splitext(os.path.basename(current))[0].replace("-", " "))
-        if os.path.exists(preview):
-            pic = Gtk.Picture(file=Gio.File.new_for_path(preview),
-                              content_fit=Gtk.ContentFit.COVER, can_shrink=True)
-            pic.set_size_request(184, 112)
-            badge = Gtk.Label(label=_("Dynamic"), css_classes=["osd", "caption-heading"],
-                              halign=Gtk.Align.START, valign=Gtk.Align.END,
-                              margin_start=6, margin_bottom=6)
-            over = Gtk.Overlay(child=pic)
-            over.add_overlay(badge)
-            child = Gtk.FlowBoxChild(child=Gtk.Frame(child=over, css_classes=["wallpaper-thumb"]))
-            child.path = None
-            child.set_tooltip_text(_("Changes with the time of day: dawn, day, dusk and night"))
-            self.flow.append(child)
-            if dynamic:
-                self.flow.select_child(child)
-        for path in find_wallpapers():
-            if os.path.basename(path).startswith("aurora-dynamic-"):
-                continue
-            pic = Gtk.Picture(file=Gio.File.new_for_path(path),
-                              content_fit=Gtk.ContentFit.COVER, can_shrink=True)
-            pic.set_size_request(184, 112)
-            title = Gtk.Label(label=os.path.splitext(os.path.basename(path))[0].replace("-", " "),
-                              ellipsize=Pango.EllipsizeMode.END, max_width_chars=22,
-                              css_classes=["background-card-title"])
-            frame_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-            frame_box.append(pic)
-            frame_box.append(title)
-            frame = Gtk.Frame(child=frame_box, css_classes=["wallpaper-thumb"])
-            child = Gtk.FlowBoxChild(child=frame)
-            child.path = path
-            child.set_tooltip_text(os.path.basename(path))
-            self.flow.append(child)
-            if path == current and not dynamic:
-                self.flow.select_child(child)
-
-    def _on_wallpaper(self, _flow, child):
-        aurora = settings.get()
-        if aurora:
-            aurora.set_boolean("wallpaper-slideshow", False)
-            aurora.set_boolean("wallpaper-dynamic", child.path is None)
-            if child.path:
-                aurora.set_string("wallpaper", child.path)
-            self._load_wallpapers()
-
-    def _set_slideshow(self, active):
-        aurora = settings.get()
-        aurora.set_boolean("wallpaper-slideshow", active)
-        if active:
-            aurora.set_boolean("wallpaper-dynamic", False)
-
-    def _add_picture(self, *_a):
-        dialog = Gtk.FileDialog(title=_("Choose a Background"))
-        filt = Gtk.FileFilter(name=_("Images"))
-        filt.add_mime_type("image/*")
-        store = Gio.ListStore.new(Gtk.FileFilter)
-        store.append(filt)
-        dialog.set_filters(store)
-
-        def done(dlg, res):
-            try:
-                f = dlg.open_finish(res)
-            except GLib.Error:
-                return
-            path = f.get_path()
-            if not path or not os.path.isfile(path):
-                return
-            dest_dir = os.path.expanduser("~/.local/share/backgrounds")
-            os.makedirs(dest_dir, exist_ok=True)
-            name, extension = os.path.splitext(os.path.basename(path))
-            dest = os.path.join(dest_dir, f"{name}-{uuid.uuid4().hex[:8]}{extension}")
-            try:
-                shutil.copyfile(path, dest)
-            except OSError as err:
-                print(f"aurora: cannot add wallpaper: {err}")
-                return
-            aurora = settings.get()
-            if aurora:
-                aurora.set_boolean("wallpaper-slideshow", False)
-                aurora.set_boolean("wallpaper-dynamic", False)
-                aurora.set_string("wallpaper", dest)
-            self._load_wallpapers()
-
-        dialog.open(self.get_root(), None, done)

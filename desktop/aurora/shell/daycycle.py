@@ -47,7 +47,8 @@ class DayCycle(GObject.Object):
         s = settings.get()
         if s:
             for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
-                        "wallpaper-slideshow-minutes"):
+                        "wallpaper-slideshow-minutes", "wallpaper-slideshow-folder",
+                        "wallpaper-slideshow-shuffle"):
                 s.connect(f"changed::{key}", lambda *a: self._wallpaper_changed())
             s.connect("changed::color-scheme-auto", lambda *a: self._sync_scheme())
             for key in ("night-light", "night-light-schedule", "night-light-from",
@@ -79,13 +80,22 @@ class DayCycle(GObject.Object):
 
     @staticmethod
     def _slides():
-        gallery = os.path.join(BACKGROUNDS)
-        try:
-            return [os.path.join(gallery, name) for name in sorted(os.listdir(gallery))
-                    if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
-                    and not name.startswith("aurora-dynamic-")]
-        except OSError:
-            return []
+        """The slideshow's pictures: the chosen folder (and its subfolders), else
+        the included gallery; shuffled in a stable order when asked."""
+        s = settings.get()
+        folder = (s.get_string("wallpaper-slideshow-folder") if s else "") or BACKGROUNDS
+        found = []
+        for root, _dirs, names in os.walk(folder):
+            found += [os.path.join(root, name) for name in names
+                      if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+                      and not name.startswith("aurora-dynamic-")]
+            if len(found) > 5000:
+                break
+        found.sort()
+        if s is not None and s.get_boolean("wallpaper-slideshow-shuffle"):
+            import random
+            random.Random(len(found)).shuffle(found)
+        return found
 
     def _wallpaper_changed(self):
         self._update_link()

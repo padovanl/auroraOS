@@ -26,3 +26,28 @@
   background-color: alpha(@window_fg_color, 0.045);
 }
 .background-card-title { font-size: 12px; font-weight: 600; margin: 0 5px 5px; }
+
+/* Background, like Windows' Personalize page. */
+.background-screen {
+  border-radius: 16px; padding: 8px;
+  background-color: alpha(@window_fg_color, 0.08);
+  box-shadow: 0 10px 30px alpha(#000000, 0.18);
+}
+.background-screen .background-preview { border-radius: 10px; box-shadow: none; }
+.preview-topbar { min-height: 9px; margin: 8px 8px 0; border-radius: 10px 10px 0 0;
+  background-color: alpha(#0d0a14, 0.55); }
+.preview-dock { min-height: 14px; min-width: 150px; margin-bottom: 14px; border-radius: 7px;
+  background-color: alpha(#221c30, 0.6); box-shadow: inset 0 0 0 1px alpha(#ffffff, 0.12); }
+.background-picker { padding: 6px 12px 12px; }
+button.background-recent { padding: 3px; border-radius: 12px; background: none; }
+button.background-recent picture { border-radius: 9px; }
+button.background-recent:hover { background-color: alpha(@accent_bg_color, 0.2); }
+button.background-recent.current { box-shadow: inset 0 0 0 2px @accent_bg_color; }
+button.background-swatch { min-width: 34px; min-height: 34px; padding: 0; border-radius: 999px;
+  box-shadow: inset 0 0 0 1px alpha(#ffffff, 0.15); }
+button.background-swatch:hover { box-shadow: inset 0 0 0 2px @accent_bg_color; }
+.wallpaper-grid { padding: 12px; background: none; }
+.wallpaper-grid > child { padding: 6px; border-radius: 14px; }
+.wallpaper-grid > child:hover { background-color: alpha(@accent_bg_color, 0.14); }
+.wallpaper-cell picture { border-radius: 10px; }
+.wallpaper-cell.current picture { box-shadow: 0 0 0 3px @accent_bg_color; }

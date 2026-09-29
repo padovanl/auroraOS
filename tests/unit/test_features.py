@@ -255,3 +255,18 @@ def test_weather_remembered_location(tmp_path, monkeypatch):
         {"found": time.time(), "lat": 44.5, "lon": 11.3, "name": "Bologna"}))
     assert weather._located() == ((44.5, 11.3), "Bologna")
     assert weather._located(max_age=-1) is None
+
+
+def test_background_recent_row_and_memory(tmp_path):
+    from aurora.settingsapp import backgrounds as b
+    pics = []
+    for name in "abcdefgh":
+        p = tmp_path / f"{name}.png"
+        p.write_bytes(b"x")
+        pics.append(str(p))
+    assert b.remember(pics[:3], pics[1]) == [pics[1], pics[0], pics[2]]
+    assert len(b.remember(pics, "new", keep=4)) == 4
+    row = b.recent_row(pics[2:4], pics[5], pics, count=4)
+    assert row == [pics[5], pics[2], pics[3], pics[0]]
+    assert b.pretty_name("/x/my-nice_wall.jpg") == "my nice wall"
+    assert b.find_wallpapers([str(tmp_path)]) == sorted(pics)
