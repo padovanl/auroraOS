@@ -48,8 +48,9 @@ class DayCycle(GObject.Object):
         if s:
             for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
                         "wallpaper-slideshow-minutes", "wallpaper-slideshow-folder",
-                        "wallpaper-slideshow-shuffle"):
+                        "wallpaper-slideshow-shuffle", "wallpaper-daily"):
                 s.connect(f"changed::{key}", lambda *a: self._wallpaper_changed())
+            s.connect("changed::wallpaper-daily", lambda *a: self._fetch_daily())
             s.connect("changed::color-scheme-auto", lambda *a: self._sync_scheme())
             for key in ("night-light", "night-light-schedule", "night-light-from",
                         "night-light-to", "night-light-temperature"):
@@ -58,6 +59,7 @@ class DayCycle(GObject.Object):
         self.sync_night_light()
         self._update_link()
         GLib.timeout_add_seconds(60, self._tick)
+        GLib.timeout_add_seconds(20, lambda: self._fetch_daily() or False)
 
     # --- wallpaper ---
 
@@ -68,6 +70,11 @@ class DayCycle(GObject.Object):
             pictures = self._slides()
             if pictures:
                 return pictures[self._slide_index % len(pictures)]
+        if s is not None and s.get_string("wallpaper-daily"):
+            from aurora import dailypicture
+            info = dailypicture.latest(s.get_string("wallpaper-daily"))
+            if info:
+                return info["path"]
         if s is None or s.get_boolean("wallpaper-dynamic"):
             path = dynamic_path(self.phase)
             if os.path.exists(path):
@@ -133,8 +140,43 @@ class DayCycle(GObject.Object):
                 self._slide_started = time.monotonic()
                 self._slide_index += 1
                 self._wallpaper_changed()
+        self._fetch_daily()
         self._sync_scheme()
         return GLib.SOURCE_CONTINUE
+
+    # --- picture of the day ---
+
+    def _fetch_daily(self):
+        """Get today's picture once a day, in the background, then show it."""
+        s = settings.get()
+        source = s.get_string("wallpaper-daily") if s else ""
+        if not source or getattr(self, "_daily_busy", False):
+            return
+        from aurora import dailypicture
+        if dailypicture.cached(source) is not None:
+            return
+        # Offline or refused: try again in an hour, not every minute.
+        if time.monotonic() - getattr(self, "_daily_tried", -3600) < 3600 \
+                and getattr(self, "_daily_source", None) == source:
+            return
+        self._daily_busy, self._daily_tried, self._daily_source = True, time.monotonic(), source
+        import threading
+
+        def work():
+            try:
+                dailypicture.fetch(source)
+                ok = True
+            except Exception as err:  # noqa: BLE001 - network, format, no picture today
+                print(f"aurora: picture of the day unavailable: {err}")
+                ok = False
+            GLib.idle_add(done, ok)
+
+        def done(ok):
+            self._daily_busy = False
+            if ok:
+                self._wallpaper_changed()
+            return False
+        threading.Thread(target=work, daemon=True).start()
 
     # --- automatic dark style ---
 

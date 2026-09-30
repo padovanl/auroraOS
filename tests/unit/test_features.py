@@ -280,3 +280,54 @@ def test_verification_codes_in_notifications():
     assert code("Meeting", "Starts at 1530 in room 2") is None      # no code words
     assert code("Your code", "Valid until 2026") is None             # a year, not a code
     assert code("Order shipped", "Order 12345678 is on its way") is None
+
+
+def test_picture_of_the_day_parsers():
+    from aurora import dailypicture as d
+    url, title, credit = d.parse_bing({"images": [{
+        "url": "/th?id=OHR.X_1920x1080.jpg", "urlbase": "/th?id=OHR.X",
+        "copyright": "Lake Bled, Slovenia (© Someone/Getty)", "title": "A calm lake"}]})
+    assert url == "https://www.bing.com/th?id=OHR.X_UHD.jpg" and title == "A calm lake"
+    assert "Getty" in credit
+    url, title, credit = d.parse_nasa({"media_type": "image", "url": "u", "hdurl": "h",
+                                       "title": "M31", "copyright": "\nJane\n"})
+    assert (url, title, credit) == ("h", "M31", "© Jane")
+    import pytest
+    with pytest.raises(ValueError):
+        d.parse_nasa({"media_type": "video", "url": "v"})
+    url, title, credit = d.parse_wikimedia({"image": {
+        "title": "File:A.jpg", "image": {"source": "https://up/A.jpg"},
+        "description": {"text": "<i>A</i> fox"}, "artist": {"text": "<a>Ann</a>"}}})
+    assert (url, title, credit) == ("https://up/A.jpg", "A fox", "© Ann")
+
+
+def test_picture_of_the_day_is_kept_a_week(tmp_path, monkeypatch):
+    import datetime
+    import json
+    from aurora import dailypicture as d
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    folder = tmp_path / "aurora" / "daily"
+    folder.mkdir(parents=True)
+    today = datetime.date(2026, 10, 1)
+    for age in (0, 3, 9):
+        day = today - datetime.timedelta(days=age)
+        pic = folder / f"bing-{day}.jpg"
+        pic.write_bytes(b"x")
+        (folder / f"bing-{day}.json").write_text(json.dumps({"path": str(pic), "title": str(age)}))
+    assert d.cached("bing", today)["title"] == "0"
+    assert d.latest("bing")["title"] == "0"
+    d.prune(today)
+    assert not (folder / f"bing-{today - datetime.timedelta(days=9)}.jpg").exists()
+    assert (folder / f"bing-{today - datetime.timedelta(days=3)}.jpg").exists()
+
+
+def test_picture_of_the_day_fallbacks():
+    from aurora import dailypicture as d
+    page = ('<meta property="og:image" content="https://assets/x/eagle.jpg/jcr:content/'
+            'renditions/web.jpeg">')
+    assert d.parse_apod_page(page)[0] == "https://assets/x/eagle.jpg"
+    big = "https://upload.wikimedia.org/wikipedia/commons/4/47/A.jpg?utm=1"
+    assert d.commons_sized(big, 8000) == \
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/A.jpg/3840px-A.jpg"
+    assert d.commons_sized(big, 2000) == "https://upload.wikimedia.org/wikipedia/commons/4/47/A.jpg"
+    assert d.market("it_IT.UTF-8") == "it-IT" and d.market("C") == "en-US"

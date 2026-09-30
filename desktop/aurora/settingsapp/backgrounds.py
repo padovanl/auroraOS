@@ -23,9 +23,10 @@ from aurora.settingsapp.util import combo_row, switch_row
 WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
 DYNAMIC_PREVIEW = "/usr/share/backgrounds/aurora/aurora-dynamic-dusk.png"
-MODES = ("dynamic", "picture", "slideshow", "color")
-MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Slideshow"),
-               N_("Solid color"))
+MODES = ("dynamic", "picture", "daily", "slideshow", "color")
+MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Picture of the day"),
+               N_("Slideshow"), N_("Solid color"))
+DAILY_SOURCES = ("bing", "nasa", "wikimedia")
 COLORS = ("#1e1b2e", "#2d1b4e", "#0f2a43", "#12372a", "#3b1f2b", "#4a2c0f",
           "#6d28d9", "#be185d", "#0e7490", "#15803d", "#b45309", "#475569")
 RECENT = 6
@@ -77,6 +78,8 @@ def mode_of(s):
         return "dynamic"
     if s.get_boolean("wallpaper-slideshow"):
         return "slideshow"
+    if s.get_string("wallpaper-daily"):
+        return "daily"
     if s.get_boolean("wallpaper-dynamic"):
         return "dynamic"
     if os.path.dirname(s.get_string("wallpaper")) == solid_dir():
@@ -165,7 +168,8 @@ class BackgroundSection:
                                    can_target=False))
         screen.add_overlay(Gtk.Box(css_classes=["preview-dock"], valign=Gtk.Align.END,
                                    halign=Gtk.Align.CENTER, can_target=False))
-        self.caption = Gtk.Label(css_classes=["dim-label"], margin_top=8)
+        self.caption = Gtk.Label(css_classes=["dim-label"], margin_top=8, wrap=True,
+                                 max_width_chars=60, justify=Gtk.Justification.CENTER)
         top = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin_top=6, margin_bottom=16)
         top.append(screen)
         top.append(self.caption)
@@ -191,6 +195,21 @@ class BackgroundSection:
         self.picture_expander = Adw.ExpanderRow(title=_("Recent images"), expanded=True)
         self.picture_expander.add_row(Adw.PreferencesRow(child=picture, activatable=False))
         rows.add(self.picture_expander)
+
+        # Picture of the day: where from.
+        self.daily_rows = []
+        if self.s is not None:
+            from aurora import dailypicture
+            current = self.s.get_string("wallpaper-daily") or "bing"
+            source = combo_row(_("Picture from"),
+                               [_(dailypicture.SOURCES[k]) for k in DAILY_SOURCES],
+                               DAILY_SOURCES.index(current) if current in DAILY_SOURCES else 0,
+                               subtitle=_("Aurora asks the service for today's picture once "
+                                          "a day; nothing else is sent"),
+                               on_change=lambda i: self.s.set_string("wallpaper-daily",
+                                                                     DAILY_SOURCES[i]))
+            self.daily_rows = [source]
+            rows.add(source)
 
         # Slideshow: a folder, how often, in order or not.
         self.slide_rows = []
@@ -236,8 +255,15 @@ class BackgroundSection:
 
         if self.s is not None:
             for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
-                        "wallpaper-slideshow-folder"):
+                        "wallpaper-slideshow-folder", "wallpaper-daily"):
                 self.s.connect(f"changed::{key}", lambda *_a: self.refresh())
+            # The shell downloads today's picture: show it when it arrives.
+            from aurora import dailypicture
+            os.makedirs(dailypicture.folder(), exist_ok=True)
+            self._daily_monitor = Gio.File.new_for_path(dailypicture.folder()).monitor_directory(
+                Gio.FileMonitorFlags.NONE, None)
+            self._daily_monitor.connect("changed", lambda *_a: mode_of(self.s) == "daily"
+                                        and self.refresh())
         self.refresh()
 
     # --- state ---------------------------------------------------------------------
@@ -246,6 +272,11 @@ class BackgroundSection:
         mode = mode_of(self.s)
         current = self.s.get_string("wallpaper") if self.s else ""
         shown = DYNAMIC_PREVIEW if mode == "dynamic" else current
+        daily = None
+        if mode == "daily":
+            from aurora import dailypicture
+            daily = dailypicture.latest(self.s.get_string("wallpaper-daily"))
+            shown = daily["path"] if daily else ""
         if mode == "slideshow":
             link = os.path.join(os.environ.get("XDG_CACHE_HOME")
                                 or os.path.expanduser("~/.cache"), "aurora", "wallpaper")
@@ -255,6 +286,8 @@ class BackgroundSection:
         self.caption.set_label({
             "dynamic": _("Dawn, day, dusk and night follow the sun where you are"),
             "picture": pretty_name(current),
+            "daily": (" · ".join(x for x in (daily.get("title"), daily.get("credit")) if x)
+                      if daily else _("Today's picture is on its way…")),
             "slideshow": _("A new picture every so often"),
             "color": _("A calm, solid color"),
         }[mode])
@@ -262,6 +295,8 @@ class BackgroundSection:
         self.color_expander.set_visible(mode == "color")
         for row in self.slide_rows:
             row.set_visible(mode == "slideshow")
+        for row in self.daily_rows:
+            row.set_visible(mode == "daily")
         if self.slide_rows:
             folder = self.s.get_string("wallpaper-slideshow-folder")
             self.folder_button.set_label(os.path.basename(folder) if folder
@@ -291,6 +326,7 @@ class BackgroundSection:
         mode = MODES[index]
         self.s.set_boolean("wallpaper-slideshow", mode == "slideshow")
         self.s.set_boolean("wallpaper-dynamic", mode == "dynamic")
+        self.s.set_string("wallpaper-daily", "bing" if mode == "daily" else "")
         if mode == "picture" and os.path.dirname(self.s.get_string("wallpaper")) == solid_dir():
             recent = [p for p in self.s.get_strv("wallpaper-recent") if os.path.isfile(p)]
             included = find_wallpapers(["/usr/share/backgrounds"])
@@ -306,6 +342,7 @@ class BackgroundSection:
             return
         self.s.set_boolean("wallpaper-slideshow", False)
         self.s.set_boolean("wallpaper-dynamic", False)
+        self.s.set_string("wallpaper-daily", "")
         self.s.set_string("wallpaper", path)
         self.s.set_strv("wallpaper-recent", remember(list(self.s.get_strv("wallpaper-recent")),
                                                      path))
@@ -315,6 +352,7 @@ class BackgroundSection:
             return
         self.s.set_boolean("wallpaper-slideshow", False)
         self.s.set_boolean("wallpaper-dynamic", False)
+        self.s.set_string("wallpaper-daily", "")
         self.s.set_string("wallpaper", solid_picture(color))
 
     def _browse(self):
