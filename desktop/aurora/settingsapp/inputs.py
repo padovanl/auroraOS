@@ -41,6 +41,7 @@ def describe_shortcut(action, command, element):
         "aurora-shell brightness down": _("Brightness down"),
         "ptyxis --new-window": _("New terminal window"),
         "aurora-files": _("Files"),
+        "aurora-taskmanager": _("Task Manager"),
         "aurora-settings": _("Settings"),
         "aurora-lock": _("Lock screen"),
     }

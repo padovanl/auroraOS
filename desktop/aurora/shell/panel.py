@@ -295,7 +295,7 @@ class AuroraMenu(Gtk.MenuButton):
          ("system-software-install-symbolic", N_("App Center"), "software", None, ""),
          ("applications-engineering-symbolic", N_("Dev Hub"), "devhub", None, "")),
         (("utilities-system-monitor-symbolic", N_("System Health"), "settings", "health", ""),
-         ("process-stop-symbolic", N_("Force Quit"), "force-quit", None, "")),
+         ("process-stop-symbolic", N_("Task Manager"), "force-quit", None, "Ctrl+Shift+Esc")),
     )
     POWER = (("weather-clear-night-symbolic", N_("Sleep"), "suspend"),
              ("system-reboot-symbolic", N_("Restart"), "reboot"),

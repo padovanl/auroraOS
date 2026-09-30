@@ -202,7 +202,7 @@ def check_memory():
     text = _("{free} of {total} free").format(free=GLib.format_size(info.get("MemAvailable", 0) * 1024),
                                               total=GLib.format_size(info.get("MemTotal", 0) * 1024))
     if avail < 0.08:
-        return "warn", text, (_("See What Uses Memory"), _open(["gnome-system-monitor", "-p"]))
+        return "warn", text, (_("See What Uses Memory"), _open(["aurora-taskmanager"]))
     return "ok", text, None
 
 
