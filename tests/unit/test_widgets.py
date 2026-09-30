@@ -96,7 +96,7 @@ def test_local_servers_from_ss():
 
 
 def test_gallery_lists_every_widget_once():
-    assert len(set(widgets.KIND_NAMES)) == len(widgets.KIND_NAMES) == 17
+    assert len(set(widgets.KIND_NAMES)) == len(widgets.KIND_NAMES) == 23
     assert set(widgets.KIND_NAMES) == set(widgets.kinds())
 
 
