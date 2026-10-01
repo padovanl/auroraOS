@@ -441,6 +441,18 @@ class Panel(LayerWindow):
             bar.set_center_widget(clock)
         else:
             right.append(clock)
+        # Windows' "Show desktop" sliver at the far end of the bar.
+        peek = Gtk.Button(css_classes=["flat", "panel-show-desktop"],
+                          tooltip_text=_("Show Desktop"),
+                          visible=s is None or s.get_boolean("show-desktop-button"))
+        sliver = Gtk.Box()
+        sliver.set_size_request(8, 20)
+        peek.set_child(sliver)
+        peek.connect("clicked", lambda *_a: shell.toggle_desktop())
+        right.append(peek)
+        if s is not None:
+            s.connect("changed::show-desktop-button",
+                      lambda st, k: peek.set_visible(st.get_boolean(k)))
         bar.set_end_widget(right)
 
         self.set_child(bar)

@@ -230,6 +230,21 @@ class Battery(GObject.Object):
         return text
 
 
+HOTSPOT_NAME = "Aurora Hotspot"     # NetworkManager connection id
+
+
+def hotspot_password(length=10):
+    """Easy to read and type on a phone: no 0/O, 1/l/I."""
+    import secrets
+    alphabet = "abcdefghjkmnpqrstuvwxyz23456789"
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
+def hotspot_command(ifname, ssid, password):
+    return ["nmcli", "device", "wifi", "hotspot", "ifname", ifname, "con-name", HOTSPOT_NAME,
+            "ssid", ssid, "password", password]
+
+
 class Network(GObject.Object):
     """NetworkManager status and Wi-Fi control."""
 
@@ -277,6 +292,41 @@ class Network(GObject.Object):
         self.client.dbus_set_property(
             self.NM.DBUS_PATH, self.NM.DBUS_INTERFACE, "WirelessEnabled",
             GLib.Variant("b", enabled), -1, None, None)
+
+    # --- mobile hotspot ---
+
+    def hotspot_active(self):
+        if self.client is None:
+            return False
+        return any(c.get_id() == HOTSPOT_NAME for c in self.client.get_active_connections())
+
+    def hotspot_credentials(self):
+        """(network name, password), creating a password the first time."""
+        from aurora import settings
+        s = settings.get()
+        password = s.get_string("hotspot-password") if s else ""
+        if len(password) < 8:
+            password = hotspot_password()
+            if s is not None:
+                s.set_string("hotspot-password", password)
+        ssid = (s.get_string("hotspot-name") if s else "") or f"{GLib.get_host_name()} Aurora"
+        return ssid, password
+
+    def set_hotspot(self, on, done=None):
+        """Share this computer's connection over Wi-Fi (in a thread: nmcli blocks)."""
+        import threading
+        dev = self.wifi_device()
+
+        def work():
+            if on and dev is not None:
+                ssid, password = self.hotspot_credentials()
+                ok = subprocess.run(hotspot_command(dev.get_iface(), ssid, password),
+                                    capture_output=True, timeout=40).returncode == 0
+            else:
+                ok = subprocess.run(["nmcli", "connection", "down", HOTSPOT_NAME],
+                                    capture_output=True, timeout=20).returncode == 0
+            GLib.idle_add(lambda: (self.emit("changed"), done and done(ok), False)[2])
+        threading.Thread(target=work, daemon=True).start()
 
     def wired_connection(self):
         """Name of the active wired connection, or None."""

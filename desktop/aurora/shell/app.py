@@ -132,6 +132,8 @@ class Shell(Adw.Application):
         # Storage Sense: old Trash items, temporary files and Downloads, as
         # Settings → Storage asks; soon after login, then every four hours.
         GLib.timeout_add_seconds(120, self._storage_sense)
+        from aurora.shell.lockkeys import LockKeys
+        self.lock_keys = LockKeys(self)
         from aurora.shell.screentrack import ScreenTimeTracker
         self.screen_time = ScreenTimeTracker(self)
         self.launcher = Launcher(self)
@@ -352,7 +354,7 @@ class Shell(Adw.Application):
         elif cmd == "overview":
             self.overview.toggle()
         elif cmd == "show-desktop":
-            self.overview.show_desktop()
+            self.toggle_desktop()
         elif cmd == "snap-layouts":
             self.snap.show_layouts()
         elif cmd == "always-on-top":
@@ -478,6 +480,21 @@ class Shell(Adw.Application):
         GLib.timeout_add_seconds(4 * 3600, lambda: self._storage_sense() and False)
         return False
 
+    def toggle_desktop(self):
+        """Show the desktop, or bring back the windows it hid (a second click),
+        like the corner of Windows' taskbar."""
+        hidden = [t for t in getattr(self, "_desktop_hidden", [])
+                  if t in self.toplevels.toplevels and t.minimized]
+        if hidden:
+            for t in sorted(hidden, key=lambda t: getattr(t, "focus_serial", 0)):
+                t.activate()
+            self._desktop_hidden = []
+        else:
+            self._desktop_hidden = [t for t in self.toplevels.toplevels if not t.minimized]
+            for t in self._desktop_hidden:
+                t.minimize()
+        self.toplevels.flush()
+
     def toggle_always_on_top(self):
         """Keep the focused window above the others, or stop (Super+T)."""
         from aurora import wayfirelayout
@@ -494,7 +511,7 @@ class Shell(Adw.Application):
         except (OSError, ValueError, ConnectionError, KeyError, AttributeError):
             return
         self.osd.show_message("view-pin-symbolic" if on else "view-restore-symbolic",
-                              _("Always on Top") if on else _("Always on Top Off"))
+                              _("Always on Top") if on else _("Always on Top Off"), 1500)
 
     def _ai_hint(self, text):
         self.notifications.notify(_("Aurora AI"), 0, "aurora-assistant-symbolic", text,

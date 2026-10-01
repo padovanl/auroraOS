@@ -457,6 +457,77 @@ def search_actions(query):
     return out
 
 
+# --- World time ("time in Tokyo") -------------------------------------------
+
+TIME_PATTERNS = (
+    re.compile(r"^(?:time|clock|hour|ora|orario|hora|heure|uhrzeit|zeit)\s+(?:in|a|at|en|à|in der|di)\s+(.+)$", re.I),
+    re.compile(r"^(?:che ore sono a|what time is it in|quelle heure est-il à|qué hora es en|wie spät ist es in)\s+(.+?)\??$", re.I),
+    re.compile(r"^(.+?)\s+(?:time|ora|hora|heure|zeit)$", re.I),
+)
+
+
+_ZONES = []
+
+
+def _zones():
+    """Every zone name, read once from /usr/share/zoneinfo's index (fast)."""
+    if not _ZONES:
+        try:
+            with open("/usr/share/zoneinfo/tzdata.zi") as f:
+                names = [line.split()[1] for line in f if line.startswith(("Z ", "L "))]
+            names += [line.split()[2] for line in open("/usr/share/zoneinfo/tzdata.zi")
+                      if line.startswith("L ")]
+        except (OSError, IndexError):
+            import zoneinfo
+            names = list(zoneinfo.available_timezones())
+        _ZONES.extend(sorted(set(names)))
+    return _ZONES
+
+
+def find_zone(city, zones=None):
+    """The time zone of a city ("tokyo", "new york", "rome") or None."""
+    key = city.strip().lower().replace(" ", "_")
+    if len(key) < 3:
+        return None
+    zones = _zones() if zones is None else zones
+    exact = [z for z in zones if z.rsplit("/", 1)[-1].lower() == key]
+    if exact:
+        return exact[0]
+    starts = [z for z in zones if "/" in z and z.rsplit("/", 1)[-1].lower().startswith(key)]
+    return starts[0] if starts else None
+
+
+def world_time(query, now=None):
+    """(city, "15:42", "Thursday · +7 h") for "time in Tokyo", or None."""
+    import datetime
+    import zoneinfo
+    for pattern in TIME_PATTERNS:
+        m = pattern.match(query.strip())
+        if not m:
+            continue
+        zone = find_zone(m.group(1))
+        if zone is None:
+            continue
+        local = (now or datetime.datetime.now().astimezone())
+        there = local.astimezone(zoneinfo.ZoneInfo(zone))
+        diff = (there.utcoffset() - local.utcoffset()).total_seconds() / 3600
+        rel = _("same time as here") if diff == 0 else (
+            ("+" if diff > 0 else "−") + f"{abs(diff):g} h")
+        city = zone.rsplit("/", 1)[-1].replace("_", " ")
+        return city, there.strftime("%H:%M"), f"{there.strftime('%A')} · {rel}"
+    return None
+
+
+def search_time(query):
+    found = world_time(query)
+    if not found:
+        return []
+    city, clock, detail = found
+    return [Result(_("{time} in {city}").format(time=clock, city=city), detail,
+                   "preferences-system-time-symbolic",
+                   lambda: Gdk.Display.get_default().get_clipboard().set(f"{clock} {city}"), 250)]
+
+
 # --- Paths and web addresses -----------------------------------------------
 
 URL = re.compile(r"^(https?://\S+|(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}(/\S*)?)$", re.I)
@@ -567,7 +638,7 @@ def search(query, open_settings, refresh=None):
                  ("projects", lambda: search_projects(query)),
                  ("files", lambda: search_recent(query)),
                  ("ai", lambda: search_ai(query))]
-    results = located + [r for name, provider in providers if name not in off
+    results = located + search_time(stripped) + [r for name, provider in providers if name not in off
                          for r in provider()] + search_actions(query)
     results.sort(key=lambda r: -r.score)
     return results[:30] + ([] if "web" in off else fallback_results(query))

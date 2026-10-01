@@ -181,6 +181,12 @@ class Keyboard(Page):
                               self.cfg.get("keyboard", "numlock", default="on") == "on",
                               lambda v: self._save(("keyboard", "numlock"),
                                                    "on" if v else "off")))
+        aurora_s = settings.get()
+        if aurora_s is not None:
+            typing.add(switch_row(_("Show Caps Lock and Num Lock on screen"),
+                                  aurora_s.get_boolean("lock-keys-osd"),
+                                  lambda v: aurora_s.set_boolean("lock-keys-osd", v),
+                                  subtitle=_("A moment's notice when you press them")))
 
         # Compose key: type accents and symbols as sequences (Compose, ', e → é).
         from aurora.settingsapp.language import set_xkb_option, xkb_option

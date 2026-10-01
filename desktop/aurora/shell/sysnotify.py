@@ -101,6 +101,29 @@ def battery_saver_action(percentage, charging, threshold, saver_on, we_turned_it
     return None
 
 
+BT_LOW = 15        # percent: warn about a Bluetooth device's battery
+BT_RESET = 25      # warn again only after it has been charged above this
+
+
+def bluetooth_warnings(devices, warned):
+    """(devices to warn about now, the new warned set) from [{path, name,
+    connected, battery}]."""
+    now, still = [], set()
+    for dev in devices:
+        level = dev.get("battery")
+        if level is None or not dev.get("connected"):
+            if dev["path"] in warned:
+                still.add(dev["path"])
+            continue
+        if level <= BT_LOW:
+            still.add(dev["path"])
+            if dev["path"] not in warned:
+                now.append(dev)
+        elif level < BT_RESET and dev["path"] in warned:
+            still.add(dev["path"])
+    return now, still
+
+
 def count_updates():
     """Packages with a newer version in the (already refreshed) apt lists."""
     try:
@@ -124,6 +147,8 @@ class SystemNotifications:
         self._disk_warned = set()
         GLib.timeout_add_seconds(60, self._check_disks)
         shell.battery.connect("changed", lambda *a: self._check_battery())
+        self._bt_warned = set()
+        shell.bluetooth.connect("changed", lambda *a: self._check_bluetooth())
         self.volumes = Gio.VolumeMonitor.get()
         self.volumes.connect("volume-added", self._on_volume_added)
         self.volumes.connect("mount-added", self._on_mount_added)
@@ -255,6 +280,17 @@ class SystemNotifications:
         return GLib.SOURCE_REMOVE
 
     # --- battery ---
+
+    def _check_bluetooth(self):
+        try:
+            devices = self.shell.bluetooth.devices()
+        except Exception:  # noqa: BLE001 - BlueZ going away mid-call
+            return
+        warn, self._bt_warned = bluetooth_warnings(devices, self._bt_warned)
+        for dev in warn:
+            self.notify(_("{name} is low on battery").format(name=dev["name"]),
+                        _("{p}% left. Charge it soon.").format(p=dev["battery"]),
+                        "battery-caution")
 
     def _battery_saver(self, bat):
         s = settings.get()

@@ -7,7 +7,7 @@ screen recording (with detail lists where it makes sense); media controls;
 battery, screenshot, settings, lock and the power menu.
 """
 
-from gi.repository import Adw, GLib, Gtk, Pango
+from gi.repository import Adw, Gdk, GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import _
@@ -207,6 +207,8 @@ class QuickSettings(Gtk.Popover):
         self.t_awake = Toggle("view-reveal-symbolic", _("Keep Awake"),
                               shell.keep_awake.set_active)
         shell.keep_awake.connect("changed", lambda *_: self.refresh())
+        self.t_hotspot = Toggle("network-wireless-hotspot-symbolic", _("Mobile Hotspot"),
+                                self._set_hotspot, lambda: self._show_detail("hotspot"))
         self.t_osk = Toggle("input-keyboard-symbolic", _("Screen Keyboard"),
                             self._set_screen_keyboard)
         self.grid = Gtk.Grid(column_spacing=10, row_spacing=10, column_homogeneous=True)
@@ -218,7 +220,8 @@ class QuickSettings(Gtk.Popover):
         self.details = {}
         for key, title in (("wifi", _("Wi-Fi Networks")), ("bluetooth", _("Bluetooth Devices")),
                            ("power", _("Power Mode")), ("output", _("Sound Output")),
-                           ("input", _("Sound Input")), ("record", _("Screen Recording"))):
+                           ("input", _("Sound Input")), ("record", _("Screen Recording")),
+                           ("hotspot", _("Mobile Hotspot"))):
             d = DetailList(title)
             self.details[key] = d
             self.detail_stack.add_named(d, key)
@@ -315,6 +318,22 @@ class QuickSettings(Gtk.Popover):
             subprocess.run(["pkill", "-x", "wvkbd-mobintl"])
         GLib.timeout_add(400, lambda: self.refresh() or False)
 
+    def _set_hotspot(self, on):
+        self.t_hotspot.set_state(on, _("Starting…") if on else None)
+
+        def done(ok):
+            if not ok:
+                self.shell.notifications.notify(
+                    _("Mobile Hotspot"), 0, "network-wireless-hotspot-symbolic",
+                    _("Couldn't start the hotspot"),
+                    _("This Wi-Fi card may not support it, or Wi-Fi is off."), [],
+                    {"transient": True}, -1)
+            self.refresh()
+            if ok and on:
+                self._show_detail("hotspot") if self._detail != "hotspot" else \
+                    self._fill_detail("hotspot")
+        self.shell.network.set_hotspot(on, done)
+
     def _airplane_on(self):
         net, bt = self.shell.network, self.shell.bluetooth
         wifi_off = net.wifi_device() is None or not net.wifi_enabled
@@ -388,6 +407,25 @@ class QuickSettings(Gtk.Popover):
                 d.add_row(PROFILE_ICONS[profile], PROFILE_LABELS[profile],
                           lambda p=profile: (sh.power_profiles.set(p), self._fill_detail("power")),
                           checked=profile == sh.power_profiles.current)
+        elif key == "hotspot":
+            ssid, password = sh.network.hotspot_credentials()
+            d.add_row("network-wireless-symbolic", _("Network: {name}").format(name=ssid))
+            d.add_row("dialog-password-symbolic", _("Password: {pw}").format(pw=password),
+                      lambda: Gdk.Display.get_default().get_clipboard().set(password))
+            if sh.network.hotspot_active():
+                try:
+                    from aurora.settingsapp.network import qr_svg, wifi_qr_payload
+                    texture = Gdk.Texture.new_from_bytes(GLib.Bytes.new(
+                        qr_svg(wifi_qr_payload(ssid, password))))
+                    pic = Gtk.Picture(paintable=texture, can_shrink=True,
+                                      css_classes=["qs-qr"], halign=Gtk.Align.CENTER)
+                    pic.set_size_request(150, 150)
+                    d.rows.append(pic)
+                    d.add_empty(_("Point a phone's camera at the code to join"))
+                except Exception as err:  # noqa: BLE001 - no qrcode module: names are enough
+                    print(f"aurora: hotspot QR unavailable: {err}")
+            else:
+                d.add_empty(_("Turn the tile on to share this computer's connection"))
         elif key == "record":
             s = settings.get()
             sound = s is not None and s.get_boolean("record-sound")
@@ -511,6 +549,10 @@ class QuickSettings(Gtk.Popover):
         if net.wifi_device() is not None or sh.bluetooth.available:
             self.t_air.set_state(self._airplane_on())
             toggles.append(self.t_air)
+        if net.wifi_device() is not None:
+            active = net.hotspot_active()
+            self.t_hotspot.set_state(active, net.hotspot_credentials()[0] if active else None)
+            toggles.append(self.t_hotspot)
         import shutil
         if shutil.which("wvkbd-mobintl"):
             self.t_osk.set_state(self._screen_keyboard_running())

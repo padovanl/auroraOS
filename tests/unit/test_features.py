@@ -503,3 +503,62 @@ def test_spotlight_actions_paths_and_addresses(tmp_path):
     assert search.search_location("github.com/padovanl")[0].subtitle == "Web address"
     assert search.search_location("hello world") == []
     assert search.search_location("10 km in mi") == []
+
+
+def test_lock_key_leds(tmp_path):
+    pytest = __import__("pytest")
+    try:
+        from aurora.shell import lockkeys
+    except (ImportError, ValueError):
+        pytest.skip("needs GTK")
+    for name, value in (("input3::capslock", "1"), ("input3::numlock", "0"),
+                        ("input9::numlock", "0")):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "brightness").write_text(value + "\n")
+    pattern = str(tmp_path) + "/input*::{}/brightness"
+    assert lockkeys.led_states(pattern) == {"capslock": True, "numlock": False}
+    assert lockkeys.message("capslock", True)[1] == "Caps Lock On"
+
+
+def test_bluetooth_low_battery_warnings():
+    pytest = __import__("pytest")
+    sn = pytest.importorskip("aurora.shell.sysnotify")
+    dev = {"path": "/h", "name": "Headphones", "connected": True, "battery": 12}
+    now, warned = sn.bluetooth_warnings([dev], set())
+    assert [d["name"] for d in now] == ["Headphones"] and warned == {"/h"}
+    now, warned = sn.bluetooth_warnings([dict(dev, battery=10)], warned)
+    assert now == []                                   # once per discharge
+    now, warned = sn.bluetooth_warnings([dict(dev, battery=20)], warned)
+    assert now == [] and warned == {"/h"}              # not charged enough yet
+    now, warned = sn.bluetooth_warnings([dict(dev, battery=80)], warned)
+    assert warned == set()
+    now, _w = sn.bluetooth_warnings([dict(dev, battery=14)], warned)
+    assert len(now) == 1
+
+
+def test_spotlight_world_time():
+    import datetime
+    pytest = __import__("pytest")
+    try:
+        from aurora.shell import search
+    except (ImportError, ValueError):
+        pytest.skip("needs the desktop's GTK stack")
+    assert search.find_zone("tokyo") == "Asia/Tokyo"
+    assert search.find_zone("new york") == "America/New_York"
+    assert search.find_zone("xy") is None
+    rome = datetime.datetime(2026, 10, 1, 12, 0, tzinfo=datetime.timezone(datetime.timedelta(hours=2)))
+    city, clock, detail = search.world_time("time in Tokyo", rome)
+    assert (city, clock) == ("Tokyo", "19:00") and "+7 h" in detail
+    assert search.world_time("che ore sono a New York?", rome)[1] == "06:00"
+    assert search.world_time("London time", rome)[1] == "11:00"
+    assert search.world_time("time machine") is None
+
+
+def test_hotspot_command_and_password():
+    pytest = __import__("pytest")
+    services = pytest.importorskip("aurora.shell.services")
+    pw = services.hotspot_password()
+    assert len(pw) == 10 and not set(pw) & set("0O1lI")
+    cmd = services.hotspot_command("wlan0", "Desk Aurora", pw)
+    assert cmd[:4] == ["nmcli", "device", "wifi", "hotspot"]
+    assert cmd[cmd.index("ssid") + 1] == "Desk Aurora" and cmd[-1] == pw

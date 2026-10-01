@@ -34,6 +34,7 @@ Settings → Desktop &amp; Dock (layout, positions, sizes).</p>
   <dt>✦ Assistant</dt><dd>Opens the Aurora Assistant (when Aurora AI is on).</dd>
   <dt>Search</dt><dd>Opens Spotlight.</dd>
   <dt>Status icons</dt><dd>Network, volume, Bluetooth, battery (with percentage if chosen), a red dot while recording the screen, and “…”. Click any of them for the <a href="control-center.html">Control Center</a>. Scroll over them to change the volume (with the on-screen indicator); middle-click to mute.</dd>
+  <dt>Show Desktop</dt><dd>The thin line at the far right end of the bar, as on Windows: one click hides every window, a second click brings back the ones it hid. Turn it off in Settings → Desktop &amp; Dock → Top Bar.</dd>
   <dt>Clock</dt><dd>Date and time (24- or 12-hour in Settings → Date &amp; Time; seconds and the clock's position in Settings → Desktop &amp; Dock → Top Bar). Click it for the <a href="notifications.html">calendar, weather and notifications</a>.</dd>
 </dl>
 <p>Menus opened with the keyboard close with <kbd>Esc</kbd>. The bar can be at the top or the
@@ -79,6 +80,7 @@ list under the tiles.</p>
   <dt>Do Not Disturb</dt><dd>Silences notification popups (critical ones still show); they stay in the list.</dd>
   <dt>Keep Awake</dt><dd>No screen blanking, locking or automatic suspend until you turn it off.</dd>
   <dt>Airplane Mode</dt><dd>Turns Wi-Fi and Bluetooth off together.</dd>
+  <dt>Mobile Hotspot</dt><dd>Shares this computer's internet connection over Wi-Fi, like a phone's hotspot (on computers with Wi-Fi). The arrow shows the network's name (the computer's name followed by “Aurora”) and its password, made up the first time and kept (click it to copy), and, while on, a QR code: point a phone's camera at it to join. Change the name or password with <code>gsettings set org.aurora.desktop hotspot-name</code> / <code>hotspot-password</code>.</dd>
   <dt>Screen Keyboard</dt><dd>Shows or hides the on-screen keyboard (for touch screens and tablets).</dd>
   <dt>Screen Recording</dt><dd>Starts recording the screen (after the panel closes) or stops it; the arrow chooses the whole screen or an area, and whether the computer's sound is recorded. Recordings go to <span class="path">~/Videos/Screencasts</span>.</dd>
 </dl>
@@ -116,6 +118,14 @@ open the app that sent it; buttons on it run its actions. The popover keeps the 
 <p>When a notification contains a one-time code (“Your verification code is 482913”), it gets a
 <strong>Copy 482913</strong> button.</p>
 <p>Per-app choices (mute an app's notifications) are in Settings → Notifications.</p>
+
+<h2>Warnings Aurora sends by itself</h2>
+<ul>
+  <li>Updates ready, and a restart needed to finish them;</li>
+  <li>the battery low (10%) and critically low (5%), and Battery Saver turning on;</li>
+  <li><strong>a Bluetooth device low on battery</strong>: headphones, a mouse or a keyboard at 15% or less (once, until it has been charged again);</li>
+  <li>a disk nearly full, a drive plugged in.</li>
+</ul>
 
 <h2>Automatic Do Not Disturb</h2>
 <p>Like Windows' Focus Assist, Do Not Disturb can turn on by itself (Settings →
@@ -171,6 +181,7 @@ choose, <kbd>Enter</kbd> opens, <kbd>Esc</kbd> closes.</p>
 <tr><td><code>? question</code></td><td>An answer from Aurora AI (when on)</td></tr>
 <tr><td><code>&gt; command</code></td><td>Runs the command in a terminal</td></tr>
 <tr><td><code>restart</code>, <code>shut down</code>, <code>sleep</code>, <code>lock</code>, <code>log out</code>, <code>empty trash</code>, <code>task manager</code>, <code>show desktop</code></td><td>The system action, ready to run with <kbd>Enter</kbd> (three letters are enough: <code>res</code>)</td></tr>
+<tr><td><code>time in Tokyo</code>, <code>London time</code>, <code>ora a New York</code></td><td>The time there now, the day and the difference from here; <kbd>Enter</kbd> copies it</td></tr>
 <tr><td>a path: <code>/etc</code>, <code>~/Doc</code></td><td>The folder, and what in it starts with what you typed; folders open in Files, files in their app</td></tr>
 <tr><td>a web address: <code>github.com</code>, <code>https://…</code></td><td>Opens it in the browser</td></tr>
 <tr><td>anything</td><td>At the end: search the web</td></tr>

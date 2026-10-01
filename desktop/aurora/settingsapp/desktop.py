@@ -153,6 +153,7 @@ class Desktop(Page):
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
+        self._switch(bar, _("Show Desktop button"), "show-desktop-button")
 
         widgets = self.group(_("Desktop Widgets"),
                              _("Clock, calendar, weather, system, Git projects, containers, "
@@ -213,6 +214,7 @@ class Desktop(Page):
         if not self._syncing and key not in ("clock-show-seconds", "desktop-icons",
                                                     "desktop-icons-position",
                                                     "panel-system-monitor",
+                                                    "show-desktop-button",
                                                     "desktop-widgets"):
             self.s.set_string("layout", "custom")
             self._sync_presets()

@@ -662,3 +662,8 @@ window.pinned-shot { background: transparent; border-radius: 10px;
   box-shadow: 0 0 0 2px alpha(@accent_bg_color, 0.85), 0 12px 32px rgba(0, 0, 0, 0.45); }
 window.pinned-shot .pinned-close { opacity: 0; transition: opacity 150ms; }
 window.pinned-shot:hover .pinned-close { opacity: 1; }
+
+/* Show Desktop: a thin sliver at the end of the top bar, as on Windows. */
+button.panel-show-desktop { min-width: 8px; min-height: 20px; padding: 0 2px; margin-left: 4px;
+  border-radius: 3px; border-left: 1px solid alpha(@shell_fg, 0.25); }
+button.panel-show-desktop:hover { background-color: alpha(@shell_fg, 0.18); }
