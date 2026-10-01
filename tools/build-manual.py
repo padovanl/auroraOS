@@ -209,7 +209,7 @@ SHELL_COMMANDS = {
     "emoji": ("", "The emoji picker in Spotlight."),
     "volume": ("up|down|mute", "Change the volume, with the on-screen indicator."),
     "brightness": ("up|down", "Change the screen brightness."),
-    "screenshot": ("[area|text]", "Screenshot of the screen, of an area, or copy the text in an area."),
+    "screenshot": ("[area|text|pin]", "Screenshot of the screen or of an area, copy the text in an area, or pin an area to the screen."),
     "record": ("", "Start or stop screen recording."),
     "colorpick": ("", "Pick a color from the screen; its hex code is copied."),
     "shortcuts": ("", "Show every keyboard shortcut."),

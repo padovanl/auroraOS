@@ -90,6 +90,10 @@ class Toplevel(GObject.Object):
     def _on_done(self, _h):
         first = not self.ready
         self.ready = True
+        # The shell's own windows (pinned screenshots) stay out of the window
+        # lists, the dock and the overview.
+        if self.app_id == "org.aurora.Shell":
+            return
         if first:
             self._tracker.added(self)
         self.emit("changed")

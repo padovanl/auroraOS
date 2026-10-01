@@ -423,3 +423,32 @@ def test_screen_time(tmp_path, monkeypatch):
     st.save(old, {"a": 1})
     st.prune(today)
     assert st.load(old) == {} and st.load(today)
+
+
+def test_image_resizer_and_file_holders(tmp_path):
+    import os
+    from aurora.files import imagetools as it
+    assert it.fit(4000, 3000, 1920) == (1920, 1440)
+    assert it.fit(800, 600, 1920) == (800, 600)
+    assert it.fit(1000, 4000, 1080) == (270, 1080)
+    p = str(tmp_path / "photo.jpg")
+    assert it.output_path(p, "Small") == str(tmp_path / "photo (Small).jpg")
+    assert it.output_path(p, "Small", "png") == str(tmp_path / "photo (Small).png")
+    assert it.output_path(p, "Small", in_place=True) == p
+    from gi.repository import GdkPixbuf
+    pix = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 3000, 2000)
+    pix.fill(0x336699ff)
+    pix.savev(p, "jpeg", [], [])
+    out = it.resize(p, 854, "Small")
+    small = GdkPixbuf.Pixbuf.new_from_file(out)
+    assert (small.get_width(), small.get_height()) == (854, 569)
+    # This test's own open file shows up as held by… nobody else; a child holding it does.
+    import subprocess
+    holder = subprocess.Popen(["sleep", "5"], cwd=str(tmp_path))
+    try:
+        found = it.holders([str(tmp_path)])
+        assert any(pid == holder.pid for pid, _n, _w in found)
+    finally:
+        holder.kill()
+    assert it.holders([str(tmp_path / "nothing-here")]) == []
+    assert os.path.exists(p)

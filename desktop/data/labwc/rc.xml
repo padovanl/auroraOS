@@ -26,6 +26,11 @@
     <windowRule identifier="xdg-desktop-portal-gtk">
       <action name="ToggleAlwaysOnTop" />
     </windowRule>
+    <!-- Pinned screenshots (Super+Shift+P) float above the other windows. -->
+    <windowRule title="Aurora Pinned Screenshot" skipWindowSwitcher="yes">
+      <action name="ToggleAlwaysOnTop" />
+      <action name="ToggleOmnipresent" />
+    </windowRule>
   </windowRules>
 
   <placement>
@@ -171,6 +176,7 @@
     <keybind key="W-S-c"><action name="Execute" command="aurora-shell colorpick" /></keybind>
     <keybind key="W-slash"><action name="Execute" command="aurora-shell shortcuts" /></keybind>
     <keybind key="W-S-t"><action name="Execute" command="aurora-shell screenshot text" /></keybind>
+    <keybind key="W-S-p"><action name="Execute" command="aurora-shell screenshot pin" /></keybind>
 
     <!-- Media keys -->
     <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="aurora-shell volume up" /></keybind>

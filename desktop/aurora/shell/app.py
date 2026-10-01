@@ -375,6 +375,8 @@ class Shell(Adw.Application):
         elif cmd == "screenshot":
             if arg == "text":
                 self.screenshot_text()
+            elif arg == "pin":
+                self.pin_screenshot()
             else:
                 self.screenshot(area=(arg == "area"))
         elif cmd == "record":
@@ -603,6 +605,8 @@ class Shell(Adw.Application):
                 self.copy_text_from(path)
             elif key == "ask":
                 self.ask_about_screenshot(path)
+            elif key == "pin":
+                self.pin_screenshot(path)
             else:
                 Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(path), None)
 
@@ -613,11 +617,25 @@ class Shell(Adw.Application):
             path, actions=self._screenshot_actions(), on_action=on_action)
 
     def _screenshot_actions(self):
-        actions = [("default", _("Open")), ("edit", _("Annotate")), ("text", _("Copy Text"))]
+        actions = [("default", _("Open")), ("pin", _("Pin to Screen")), ("edit", _("Annotate")),
+                   ("text", _("Copy Text"))]
         from aurora import ai
         if ai.feature("screenshots"):
             actions.append(("ask", _("Ask Aurora")))
         return actions
+
+    def pin_screenshot(self, path=None):
+        """Keep a screenshot floating above the windows (an area is taken first
+        when no file is given)."""
+        if path is None:
+            path = self._grab(True, folder=GLib.get_user_runtime_dir())
+            if path is None:
+                return
+        from aurora.shell.pinshot import pin
+        try:
+            pin(self, path)
+        except GLib.Error as err:
+            print(f"aurora: cannot pin {path}: {err.message}")
 
     def ask_about_screenshot(self, path):
         """Read the text in the screenshot (OCR) and ask the assistant about it."""

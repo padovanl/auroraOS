@@ -13,7 +13,7 @@ from aurora import activities, apps
 from aurora.files.icons import icon_for
 from aurora.files.history import History
 from aurora.files.operations import Job, unique_destination
-from aurora.i18n import _
+from aurora.i18n import _, ngettext
 
 ATTRS = ",".join([
     "standard::name", "standard::display-name", "standard::icon", "standard::type",
@@ -640,6 +640,8 @@ class FilesWindow(Adw.ApplicationWindow):
         add("rename", self.rename, ["F2"])
         add("batch-rename", self.batch_rename)
         add("compress", self.compress)
+        add("resize-images", self.resize_images)
+        add("file-users", self.file_users)
         add("extract-here", self.extract_here)
         add("connect-server", self.connect_to_server)
         add("checksums", self.checksums)
@@ -1087,7 +1089,12 @@ class FilesWindow(Adw.ApplicationWindow):
                 paths = [f.get_path() for f in self.selected_files()]
                 if paths and all(p and is_archive(p) for p in paths):
                     sections.append([(_("Extract Here"), "extract-here")])
-                sections.append([(_("Compress…"), "compress")])
+                tools = [(_("Compress…"), "compress")]
+                from aurora.files.imagetools import is_image
+                if paths and all(p and is_image(p) for p in paths):
+                    tools.append((_("Resize Images…"), "resize-images"))
+                tools.append((_("What's Using This?"), "file-users"))
+                sections.append(tools)
                 sections.append([(_("Cut"), "cut"), (_("Copy"), "copy"),
                                  (_("Duplicate"), "duplicate"), (_("Rename…"), "rename")])
                 if len(self.selected_files()) > 1:
@@ -1122,7 +1129,12 @@ class FilesWindow(Adw.ApplicationWindow):
                 button.connect("clicked", lambda _b, a=action: (
                     self.context_menu.popdown(), a.activate(None)))
                 box.append(button)
-        self.context_menu.set_child(box)
+        # A long menu (a picture has many actions) scrolls instead of growing past
+        # the screen, which the compositor would refuse to show.
+        limit = max(240, int((self.get_height() or 600) * 0.85))
+        self.context_menu.set_child(Gtk.ScrolledWindow(
+            child=box, propagate_natural_height=True, propagate_natural_width=True,
+            max_content_height=limit, hscrollbar_policy=Gtk.PolicyType.NEVER))
         self.context_menu.set_position(Gtk.PositionType.TOP if y > view.get_height() / 2
                                        else Gtk.PositionType.BOTTOM)
         # (x, y), or (ok, x, y) with older PyGObject.
@@ -1484,6 +1496,96 @@ class FilesWindow(Adw.ApplicationWindow):
         if paths:
             self.toast(_("Extracting…"))
             self._run_tool(archives.extract_command(paths), _("Extracted"))
+
+    def resize_images(self):
+        """Smaller copies of pictures (or the pictures themselves), like
+        PowerToys' Image Resizer."""
+        from aurora.files import imagetools as it
+        paths = [f.get_path() for f in self.selected_files()
+                 if f.get_path() and it.is_image(f.get_path())]
+        if not paths:
+            return
+        dialog = Adw.AlertDialog(heading=_("Resize Images"),
+                                 body=ngettext("{n} picture", "{n} pictures",
+                                               len(paths)).format(n=len(paths)))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        sizes = Gtk.DropDown.new_from_strings([_(label) for _k, _px, label in it.SIZES])
+        sizes.set_selected(1)
+        formats = Gtk.DropDown.new_from_strings([_("Keep the format"), "JPEG", "PNG"])
+        in_place = Gtk.CheckButton(label=_("Resize the originals instead of making copies"))
+        for w in (sizes, formats, in_place):
+            box.append(w)
+        dialog.set_extra_child(box)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("ok", _("Resize"))
+        dialog.set_default_response("ok")
+        dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+
+        def response(_d, resp):
+            if resp != "ok":
+                return
+            key, longest, label = it.SIZES[sizes.get_selected()]
+            fmt = (None, "jpeg", "png")[formats.get_selected()]
+            short = label.split(" (")[0]
+            original = in_place.get_active()
+            import threading
+
+            def work():
+                done, failed = 0, 0
+                for path in paths:
+                    try:
+                        it.resize(path, longest, _(short), fmt, original)
+                        done += 1
+                    except (GLib.Error, OSError):
+                        failed += 1
+                GLib.idle_add(lambda: (self.toast(
+                    ngettext("{n} picture resized", "{n} pictures resized", done).format(n=done)
+                    + (" · " + _("{n} failed").format(n=failed) if failed else "")),
+                    self.reload(), False)[2])
+            threading.Thread(target=work, daemon=True).start()
+        dialog.connect("response", response)
+        dialog.present(self)
+
+    def file_users(self):
+        """Which programs have this file (or anything in this folder) open, and
+        end them: like PowerToys' File Locksmith, for when a file "is in use"."""
+        from aurora.files.imagetools import holders
+        from aurora import procinfo
+        paths = [f.get_path() for f in self.selected_files() if f.get_path()]
+        if not paths:
+            return
+        found = holders(paths)
+        dialog = Adw.AlertDialog(heading=_("What's Using This?"))
+        if not found:
+            dialog.set_body(_("No program of yours has it open."))
+            dialog.add_response("ok", _("OK"))
+            dialog.present(self)
+            return
+        dialog.set_body(_("These programs have it open. Close them in the program, or end "
+                          "them here (unsaved work in them is lost)."))
+        rows = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
+        for pid, name, what in found:
+            row = Adw.ActionRow(title=GLib.markup_escape_text(name),
+                                subtitle=GLib.markup_escape_text(
+                                    f"PID {pid} · " + ", ".join(os.path.basename(w) for w in what[:3])))
+            end = Gtk.Button(label=_("End Task"), valign=Gtk.Align.CENTER,
+                             css_classes=["flat"])
+
+            def kill(button, pid=pid):
+                procinfo.end([pid])
+                button.set_label(_("Ended"))
+                button.set_sensitive(False)
+            end.connect("clicked", kill)
+            row.add_suffix(end)
+            rows.append(row)
+        dialog.set_extra_child(Gtk.ScrolledWindow(child=rows, propagate_natural_height=True,
+                                                  max_content_height=320))
+        dialog.add_response("close", _("Close"))
+        dialog.add_response("all", _("End All"))
+        dialog.set_response_appearance("all", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.connect("response", lambda _d, r: r == "all" and procinfo.end(
+            [pid for pid, _n, _w in found]))
+        dialog.present(self)
 
     # ------------------------------------------------------ network
 
