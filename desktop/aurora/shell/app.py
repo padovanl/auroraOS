@@ -423,7 +423,10 @@ class Shell(Adw.Application):
             self.keep_awake.set_active(not self.keep_awake.active)
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
-                panel.open_quick_settings()
+                if arg == "hide":
+                    panel.close_menus()
+                else:
+                    panel.open_quick_settings()
         elif cmd == "logout":
             self.power.logout()
         elif cmd == "focus":

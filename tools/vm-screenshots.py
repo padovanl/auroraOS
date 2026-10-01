@@ -39,8 +39,9 @@ def launch(desktop_id):
 
 # Close every app between scenes, so no window is left behind the next one
 # (the [x] keeps pkill from matching its own command line).
-CLEAN = ("pkill -f '[a]urora-files|[a]urora-settings|[a]urora-devhub|[a]urora-gamehub|"
-         "[p]tyxis|[g]nome-text-editor|[a]urora-quicklook'; sleep 1")
+CLEAN = ("aurora-shell quick-settings hide; "
+         "pkill -f '[a]urora-files|[a]urora-settings|[a]urora-devhub|[a]urora-gamehub|"
+         "[p]tyxis|[g]nome-text-editor|[a]urora-quicklook|[a]urora-assistant'; sleep 1")
 
 # (screenshot name or None, shell command run in the session, seconds to wait)
 STEPS = [
@@ -59,7 +60,6 @@ STEPS = [
     ("launchpad", None, 0),
     (None, "aurora-shell launcher grid; aurora-shell quick-settings", 3),
     ("control-center", None, 0),
-    (None, "aurora-shell quick-settings", 1),
     (None, CLEAN, 1),
     (None, launch("org.aurora.Settings.desktop"), 4),
     (None, "setsid -f aurora-settings --page desktop >/dev/null 2>&1", 5),
@@ -96,6 +96,23 @@ STEPS = [
     (None, CLEAN, 1),
     (None, launch("org.aurora.Files.desktop"), 6),
     ("files", None, 0),
+    # Aurora AI's screens: the Assistant, asking from Spotlight, Writing Tools on a
+    # selection (the AI is off by default; the screens don't need a model).
+    (None, CLEAN + "; gsettings set org.aurora.desktop ai-enabled true; "
+           "gsettings set org.aurora.desktop ai-writing-tools true", 1),
+    (None, "aurora-shell search '? how do I free disk space'", 3),
+    ("spotlight-ask", None, 0),
+    (None, "aurora-shell launcher spotlight", 1),
+    (None, launch("org.aurora.Files.desktop"), 5),
+    (None, "aurora-shell assistant", 6),
+    ("assistant", None, 0),
+    (None, CLEAN, 1),
+    (None, launch("org.gnome.TextEditor.desktop"), 4),
+    (None, "wl-copy --primary 'Their going to the meeting tomorrow, we should prepare "
+           "the slides.'; aurora-shell writing", 5),
+    ("writing-tools", None, 0),
+    (None, CLEAN, 1),
+    (None, launch("org.aurora.Files.desktop"), 6),
     # The Assistant floats over the window you are working in, like picture-in-picture.
     (None, "setsid -f aurora-assistant >/dev/null 2>&1", 6),
     ("assistant-pip", None, 0),

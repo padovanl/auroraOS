@@ -577,5 +577,11 @@ class Panel(LayerWindow):
         # Toggle, like the other shell commands: a second press closes it.
         self._toggle_menu(self.status)
 
+    def close_menus(self):
+        """Close the Control Center and the notification center if open."""
+        for button in (self.status, self.clock):
+            if button.get_active():
+                button.popdown()
+
     def open_notifications(self):
         self._toggle_menu(self.clock)

@@ -215,7 +215,7 @@ SHELL_COMMANDS = {
     "shortcuts": ("", "Show every keyboard shortcut."),
     "edit-widgets": ("", "Edit the desktop widgets."),
     "keep-awake": ("", "Turn Keep Awake on or off."),
-    "quick-settings": ("", "Open the Control Center."),
+    "quick-settings": ("[hide]", "Open or close the Control Center; hide closes it and the notification center."),
     "logout": ("", "Log out."),
     "focus": ("", "Start or stop a focus session."),
     "osk": ("[show|hide|toggle]", "Show or hide the on-screen keyboard."),
