@@ -15,6 +15,19 @@
       <default>'starfall'</default>
       <summary>Which series of pictures the dynamic background follows the sun with</summary>
     </key>
+    <key name="lock-background" type="s">
+      <choices><choice value="desktop"/><choice value="blurred"/><choice value="picture"/></choices>
+      <default>'desktop'</default>
+      <summary>Lock screen background: the desktop's picture, the same blurred, or lock-picture</summary>
+    </key>
+    <key name="lock-picture" type="s">
+      <default>''</default>
+      <summary>The lock screen's own picture (lock-background "picture")</summary>
+    </key>
+    <key name="lock-show-account" type="b">
+      <default>true</default>
+      <summary>Show the account's name and picture on the lock screen</summary>
+    </key>
     <key name="wallpaper-slideshow" type="b">
       <default>false</default>
       <summary>Rotate background pictures</summary>

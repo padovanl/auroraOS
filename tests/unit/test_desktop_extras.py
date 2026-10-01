@@ -289,3 +289,18 @@ def test_dynamic_series_fall_back_to_the_default():
     assert wallpapers.chosen_series(Settings("gone")) == wallpapers.DEFAULT_SERIES
     assert wallpapers.chosen_series(None) == wallpapers.DEFAULT_SERIES
     assert wallpapers.path("veil", "night").endswith("/aurora-veil-night.png")
+
+
+def test_lock_screen_picture(tmp_path, monkeypatch):
+    from PIL import Image
+    from aurora import lockscreen
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "cache"))
+    desktop, own = tmp_path / "desk.png", tmp_path / "own.png"
+    Image.new("RGB", (64, 36), (200, 100, 50)).save(desktop)
+    Image.new("RGB", (64, 36), (0, 0, 0)).save(own)
+    assert lockscreen.picture(str(desktop), "desktop", "") == str(desktop)
+    assert lockscreen.picture(str(desktop), "picture", str(own)) == str(own)
+    assert lockscreen.picture(str(desktop), "picture", "/gone.png") == str(desktop)
+    blurred = lockscreen.picture(str(desktop), "blurred", "")
+    assert blurred.startswith(str(tmp_path / "cache")) and Image.open(blurred).size == (64, 36)
+    assert lockscreen.picture(str(desktop), "blurred", "") == blurred     # made once

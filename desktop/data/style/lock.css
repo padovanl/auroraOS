@@ -8,13 +8,16 @@ window {
   color: #ffffff;
 }
 
+/* Everything must fit the shortest screens (1280×720 at 150 %: 480 px):
+   a lock surface taller than the screen is a protocol error, and the
+   compositor then shows the "locker died" screen. */
 #window-box {
-  padding: 90px 0 0;
+  padding: 36px 0 12px;
 }
 
 #clock-label {
   font-family: Inter;
-  font-size: 88pt;
+  font-size: 72pt;
   font-weight: 600;
   color: #ffffff;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
@@ -29,13 +32,13 @@ window {
 }
 
 #body-grid {
-  margin-bottom: 120px;
+  margin-bottom: 16px;
 }
 
 #avatar {
   border-radius: 999px;
-  min-width: 112px;
-  min-height: 112px;
+  min-width: 96px;
+  min-height: 96px;
   background-color: #7c4dff;
   background-image: linear-gradient(135deg, #a970ff, #ff6f91);
   background-size: cover;
@@ -46,7 +49,7 @@ window {
 
 #avatar-initial {
   font-family: Inter;
-  font-size: 40pt;
+  font-size: 34pt;
   font-weight: 600;
   color: #ffffff;
 }

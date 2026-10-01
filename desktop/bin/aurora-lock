@@ -7,6 +7,10 @@ wallpaper=$(readlink -f "${XDG_CACHE_HOME:-$HOME/.cache}/aurora/wallpaper" 2>/de
 [ -f "$wallpaper" ] || wallpaper=$(gsettings get org.aurora.desktop wallpaper 2>/dev/null | tr -d "'")
 [ -f "$wallpaper" ] || wallpaper=/usr/share/backgrounds/aurora/aurora-dynamic-dawn.png
 
+# Settings → Appearance → Lock Screen: the same picture, blurred, or its own.
+picked=$(python3 /usr/lib/aurora/aurora/lockscreen.py "$wallpaper" 2>/dev/null)
+[ -f "$picked" ] && wallpaper=$picked
+
 clock="%H:%M"
 [ "$(gsettings get org.aurora.desktop clock-format 2>/dev/null)" = "'12h'" ] && clock="%l:%M %p"
 
@@ -20,10 +24,20 @@ name=$(getent passwd "$user" | cut -d: -f5 | cut -d, -f1)
 initial=$(printf '%s' "$name" | cut -c1 | tr '[:lower:]' '[:upper:]')
 # XML-escaped, then escaped again for sed's replacement text.
 escape() { printf '%s' "$1" | sed -e 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | sed -e 's/[&|\\]/\\&/g'; }
+avatar=96 body=center
+if [ "$(gsettings get org.aurora.desktop lock-show-account 2>/dev/null)" = "false" ]; then
+    name="" initial="" avatar=0 body=start
+fi
 sed -e "s|@NAME@|$(escape "$name")|" -e "s|@INITIAL@|$(escape "$initial")|" \
+    -e "s|@AVATAR@|$avatar|g" -e "s|@BODY_VALIGN@|$body|" \
     "$style_dir/lock.ui" > "$run/lock.ui"
 cp "$style_dir/lock.css" "$run/lock.css"
-for face in "/var/lib/AccountsService/icons/$user" "$HOME/.face"; do
+if [ "$avatar" = 0 ]; then
+    # No picture or name: the password field comes up, under the date.
+    printf '#avatar { min-width: 0; min-height: 0; border: none; background: none; box-shadow: none; }\n#body-grid { margin: 72px 0 0; }\n' \
+        >> "$run/lock.css"
+fi
+[ "$avatar" = 0 ] || for face in "/var/lib/AccountsService/icons/$user" "$HOME/.face"; do
     if [ -r "$face" ] && [ -s "$face" ]; then
         printf '#avatar { background-image: url("file://%s"); }\n#avatar-initial { color: transparent; }\n' \
             "$face" >> "$run/lock.css"

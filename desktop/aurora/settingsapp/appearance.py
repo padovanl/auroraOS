@@ -2,7 +2,7 @@
 
 import os
 
-from gi.repository import Adw, Gdk, Gtk, Pango
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import N_, _
@@ -62,6 +62,8 @@ class Appearance(Page):
         from aurora.settingsapp.backgrounds import BackgroundSection
         # First, as the page Windows opens with.
         self.background = BackgroundSection(self)
+        if aurora is not None:
+            self._lock_screen(aurora)
 
         style = self.group(_("Style"))
         dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
@@ -189,6 +191,57 @@ class Appearance(Page):
                 "night-light-temperature", int(sc.get_value())))
             row.add_suffix(scale)
             night.add(row)
+
+    def _lock_screen(self, aurora):
+        """Settings → Appearance → Lock Screen, as on Windows: its picture and
+        whether it shows who is signed in."""
+        from aurora.lockscreen import MODES
+        group = self.group(_("Lock Screen"))
+        current = aurora.get_string("lock-background")
+        self._lock_pick = Adw.ActionRow(title=_("Picture"))
+        self._lock_button = Gtk.Button(valign=Gtk.Align.CENTER)
+        self._lock_button.connect("clicked", lambda *_a: self._choose_lock_picture(aurora))
+        self._lock_pick.add_suffix(self._lock_button)
+
+        def changed(i):
+            aurora.set_string("lock-background", MODES[i])
+            if MODES[i] == "picture" and not aurora.get_string("lock-picture"):
+                self._choose_lock_picture(aurora)
+            self._sync_lock(aurora)
+        group.add(combo_row(_("Background"), [_("Same as the desktop"),
+                                              _("The desktop's, blurred"), _("A picture")],
+                            MODES.index(current) if current in MODES else 0,
+                            on_change=changed))
+        group.add(self._lock_pick)
+        group.add(switch_row(_("Show my name and picture"),
+                             aurora.get_boolean("lock-show-account"),
+                             lambda v: aurora.set_boolean("lock-show-account", v),
+                             subtitle=_("Off: only the time, the date and the password field")))
+        self._sync_lock(aurora)
+
+    def _sync_lock(self, aurora):
+        own = aurora.get_string("lock-picture")
+        self._lock_pick.set_visible(aurora.get_string("lock-background") == "picture")
+        self._lock_button.set_label(os.path.basename(own) if own else _("Choose…"))
+
+    def _choose_lock_picture(self, aurora):
+        dialog = Gtk.FileDialog(title=_("Lock Screen Picture"))
+        images = Gtk.FileFilter(name=_("Images"))
+        images.add_mime_type("image/*")
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+        filters.append(images)
+        dialog.set_filters(filters)
+
+        def done(dlg, result):
+            try:
+                chosen = dlg.open_finish(result)
+            except GLib.Error:
+                return
+            if chosen is not None and chosen.get_path():
+                aurora.set_string("lock-picture", chosen.get_path())
+                aurora.set_string("lock-background", "picture")
+                self._sync_lock(aurora)
+        dialog.open(self.get_root(), None, done)
 
     def _set_scheme(self, index):
         aurora, iface = settings.get(), settings.interface()

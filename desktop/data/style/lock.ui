@@ -2,7 +2,8 @@
 <!-- Aurora's lock screen, laid out like Windows': the time and date high on the
      wallpaper; under them the account's picture and name, and the password
      field with its arrow. Keep gtklock's expected IDs and signal handlers.
-     aurora-lock fills in @NAME@ and @INITIAL@ for the account. -->
+     aurora-lock fills in @NAME@, @INITIAL@, @AVATAR@ (its size, 0 to hide it) and
+     @BODY_VALIGN@ (center, or start without the account). -->
 <interface>
   <object class="GtkBox" id="window-box">
     <property name="name">window-box</property>
@@ -42,18 +43,18 @@
         <property name="transition-duration">260</property>
         <property name="reveal-child">1</property>
         <property name="vexpand">1</property>
-        <property name="valign">center</property>
+        <property name="valign">@BODY_VALIGN@</property>
         <child>
           <object class="GtkGrid" id="body-grid">
             <property name="name">body-grid</property>
             <property name="halign">center</property>
-            <property name="row-spacing">14</property>
+            <property name="row-spacing">10</property>
             <child>
               <object class="GtkBox" id="avatar">
                 <property name="name">avatar</property>
                 <property name="halign">center</property>
-                <property name="width-request">112</property>
-                <property name="height-request">112</property>
+                <property name="width-request">@AVATAR@</property>
+                <property name="height-request">@AVATAR@</property>
                 <child>
                   <object class="GtkLabel" id="avatar-initial">
                     <property name="name">avatar-initial</property>
