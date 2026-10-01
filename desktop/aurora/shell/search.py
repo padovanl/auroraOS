@@ -4,11 +4,12 @@ import ast
 import math
 import operator
 import os
+import re
 import urllib.parse
 from dataclasses import dataclass, field
 from typing import Callable
 
-from gi.repository import Gdk, Gio
+from gi.repository import Gdk, Gio, GLib
 
 from aurora import apps, settings
 from aurora.i18n import N_, _
@@ -415,7 +416,81 @@ SETTINGS_PAGES = [
      N_("artificial intelligence assistant chat model dictation voice speech read aloud")),
     ("about", N_("About"), "help-about-symbolic",
      N_("system information version hardware memory disk")),
+    ("storage", N_("Storage"), "drive-harddisk-symbolic",
+     N_("disk space free clean up cleanup storage sense trash cache downloads")),
+    ("screentime", N_("Screen Time"), "preferences-system-time-symbolic",
+     N_("screen time usage wellbeing limits apps hours")),
+    ("updates", N_("Software Updates"), "software-update-available-symbolic",
+     N_("updates upgrade restart active hours snapshots drivers")),
 ]
+
+# --- System actions ("restart", "lock"…) ---------------------------------
+
+SYSTEM_ACTIONS = (
+    (N_("Lock Screen"), "system-lock-screen-symbolic", "lock lock screen", ["aurora-lock"]),
+    (N_("Sleep"), "weather-clear-night-symbolic", "sleep suspend",
+     ["systemctl", "suspend"]),
+    (N_("Restart"), "system-reboot-symbolic", "restart reboot", ["systemctl", "reboot"]),
+    (N_("Shut Down"), "system-shutdown-symbolic", "shut down shutdown power off poweroff",
+     ["systemctl", "poweroff"]),
+    (N_("Log Out"), "system-log-out-symbolic", "log out logout sign out",
+     ["aurora-shell", "logout"]),
+    (N_("Empty Trash"), "user-trash-full-symbolic", "empty trash empty bin",
+     ["gio", "trash", "--empty"]),
+    (N_("Task Manager"), "utilities-system-monitor-symbolic",
+     "task manager processes kill end task", ["aurora-taskmanager"]),
+    (N_("Show Desktop"), "user-desktop-symbolic", "show desktop", ["aurora-shell", "show-desktop"]),
+)
+
+
+def search_actions(query):
+    """System actions whose name starts with what you typed (3 letters or more)."""
+    q = query.lower().strip()
+    if len(q) < 3:
+        return []
+    out = []
+    for title, icon, words, cmd in SYSTEM_ACTIONS:
+        names = [_(title).lower()] + [w.strip() for w in words.split(" ")] + [words]
+        if any(n.startswith(q) for n in names) or _(title).lower().startswith(q):
+            out.append(Result(_(title), _("System action"), icon,
+                              lambda c=cmd: apps.spawn(c), 70))
+    return out
+
+
+# --- Paths and web addresses -----------------------------------------------
+
+URL = re.compile(r"^(https?://\S+|(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}(/\S*)?)$", re.I)
+
+
+def search_location(query):
+    """A folder or file path (/etc, ~/Doc…) opens in Files; a web address in
+    the browser."""
+    q = query.strip()
+    out = []
+    if q.startswith(("/", "~")):
+        path = os.path.expanduser(q)
+        folder, partial = (path, "") if os.path.isdir(path) else os.path.split(path)
+        if os.path.isdir(path):
+            out.append(Result(os.path.basename(path.rstrip("/")) or path, path, "folder-symbolic",
+                              lambda p=path: apps.spawn(["aurora-files", p]), 200, path=path))
+        try:
+            names = sorted(n for n in os.listdir(folder) if n.lower().startswith(partial.lower())
+                           and (partial.startswith(".") or not n.startswith(".")))
+        except OSError:
+            names = []
+        for name in names[:6]:
+            full = os.path.join(folder, name)
+            is_dir = os.path.isdir(full)
+            out.append(Result(name, full, "folder-symbolic" if is_dir else "text-x-generic",
+                              (lambda p=full: apps.spawn(["aurora-files", p])) if is_dir else
+                              (lambda p=full: Gio.AppInfo.launch_default_for_uri(
+                                  GLib.filename_to_uri(p), None)), 190, path=full))
+        return out
+    if " " not in q and URL.match(q):
+        url = q if "://" in q else "https://" + q
+        out.append(Result(_("Open {url}").format(url=q), _("Web address"), "web-browser-symbolic",
+                          lambda: Gio.AppInfo.launch_default_for_uri(url, None), 60))
+    return out
 
 
 def search_settings(query, open_settings):
@@ -481,6 +556,9 @@ def search(query, open_settings, refresh=None):
         return search_emoji(stripped)
     if stripped.startswith("?"):
         return search_ai(stripped)
+    located = search_location(stripped)
+    if stripped.startswith(("/", "~")):
+        return located
     off = set(settings.get().get_strv("search-disabled")) if settings.get() else set()
     providers = [("calculator", lambda: search_calculator(query)),
                  ("convert", lambda: search_convert(query, refresh)),
@@ -489,6 +567,7 @@ def search(query, open_settings, refresh=None):
                  ("projects", lambda: search_projects(query)),
                  ("files", lambda: search_recent(query)),
                  ("ai", lambda: search_ai(query))]
-    results = [r for name, provider in providers if name not in off for r in provider()]
+    results = located + [r for name, provider in providers if name not in off
+                         for r in provider()] + search_actions(query)
     results.sort(key=lambda r: -r.score)
     return results[:30] + ([] if "web" in off else fallback_results(query))

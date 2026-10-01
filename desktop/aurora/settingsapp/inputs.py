@@ -32,6 +32,8 @@ def describe_shortcut(action, command, element):
         "aurora-shell screenshot area": _("Screenshot of an area"),
         "aurora-shell screenshot text": _("Copy text from the screen"),
         "aurora-shell screenshot pin": _("Pin an area of the screen"),
+        "aurora-shell record": _("Start or stop screen recording"),
+        "aurora-shell record area": _("Record an area of the screen"),
         "aurora-shell colorpick": _("Pick a color from the screen"),
         "aurora-shell shortcuts": _("Show keyboard shortcuts"),
         "aurora-shell keep-awake": _("Keep Awake"),

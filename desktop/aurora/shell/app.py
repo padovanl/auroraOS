@@ -351,6 +351,8 @@ class Shell(Adw.Application):
                 self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
+        elif cmd == "show-desktop":
+            self.overview.show_desktop()
         elif cmd == "snap-layouts":
             self.snap.show_layouts()
         elif cmd == "always-on-top":
@@ -380,7 +382,11 @@ class Shell(Adw.Application):
             else:
                 self.screenshot(area=(arg == "area"))
         elif cmd == "record":
-            self.recorder.toggle()
+            # aurora-shell record [area] [sound]
+            from aurora import settings as st
+            s = st.get()
+            sound = "sound" in rest or (s is not None and s.get_boolean("record-sound"))
+            self.recorder.toggle(area="area" in rest, sound=sound)
         elif cmd == "colorpick":
             from aurora.shell.colorpicker import pick
             pick(self)

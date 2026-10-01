@@ -452,3 +452,54 @@ def test_image_resizer_and_file_holders(tmp_path):
         holder.kill()
     assert it.holders([str(tmp_path / "nothing-here")]) == []
     assert os.path.exists(p)
+
+
+def test_battery_saver_turns_on_and_off():
+    pytest = __import__("pytest")
+    sn = pytest.importorskip("aurora.shell.sysnotify")
+    act = sn.battery_saver_action
+    assert act(19, False, 20, False, False) == "on"
+    assert act(25, False, 20, False, False) is None
+    assert act(19, False, 20, True, True) is None          # already on
+    assert act(40, True, 20, True, True) == "off"          # plugged in: we turned it on
+    assert act(40, True, 20, True, False) is None          # the user chose it: leave it
+    assert act(5, False, 0, False, False) is None          # never
+
+
+def test_automatic_do_not_disturb():
+    pytest = __import__("pytest")
+    from aurora import focusassist as n
+    assert pytest
+
+    class S:
+        def __init__(self, **v):
+            self.v = {"dnd-schedule": False, "dnd-from": 22, "dnd-to": 7,
+                      "dnd-fullscreen": True, "dnd-sharing": True, **v}
+        get_boolean = get_int = lambda self, k: self.v[k]
+    assert n.auto_dnd(S(), 23, False, False) is None
+    assert n.auto_dnd(S(**{"dnd-schedule": True}), 23, False, False) == "schedule"
+    assert n.auto_dnd(S(**{"dnd-schedule": True}), 6, False, False) == "schedule"
+    assert n.auto_dnd(S(**{"dnd-schedule": True}), 12, False, False) is None
+    assert n.auto_dnd(S(), 12, True, False) == "fullscreen"
+    assert n.auto_dnd(S(**{"dnd-fullscreen": False}), 12, True, False) is None
+    assert n.auto_dnd(S(), 12, False, True) == "sharing"
+
+
+def test_spotlight_actions_paths_and_addresses(tmp_path):
+    pytest = __import__("pytest")
+    try:
+        from aurora.shell import search
+    except (ImportError, ValueError):
+        pytest.skip("needs the desktop's GTK stack")
+    titles = [r.title for r in search.search_actions("resta")]
+    assert "Restart" in titles
+    assert search.search_actions("re") == []
+    (tmp_path / "Documents").mkdir()
+    (tmp_path / "Downloads").mkdir()
+    (tmp_path / "notes.txt").write_text("x")
+    found = [r.title for r in search.search_location(str(tmp_path) + "/Do")]
+    assert found == ["Documents", "Downloads"]
+    assert search.search_location(str(tmp_path))[0].path == str(tmp_path)
+    assert search.search_location("github.com/padovanl")[0].subtitle == "Web address"
+    assert search.search_location("hello world") == []
+    assert search.search_location("10 km in mi") == []

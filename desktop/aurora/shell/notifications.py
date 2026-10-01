@@ -11,6 +11,7 @@ from gi.repository import Gdk, Gio, GLib, Gtk, Pango  # noqa: E402
 
 from aurora import VERSION, apps, settings
 from aurora.otp import verification_code
+from aurora.focusassist import auto_dnd
 from aurora.i18n import _
 from aurora.shell.layer import Layer, LayerWindow
 
@@ -249,6 +250,12 @@ class NotificationServer:
             self._refresh_history()
 
         dnd = s is not None and s.get_boolean("do-not-disturb")
+        if not dnd:
+            sh = self.shell
+            fullscreen = any(t.fullscreen and t.activated for t in sh.toplevels.toplevels)
+            sharing = sh.recorder.recording or getattr(sh, "_vnc", None) is not None
+            dnd = auto_dnd(s, GLib.DateTime.new_now_local().get_hour(), fullscreen,
+                           sharing) is not None
         if dnd and note.urgency != URGENCY_CRITICAL:
             return nid
 

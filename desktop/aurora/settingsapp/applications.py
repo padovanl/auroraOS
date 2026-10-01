@@ -135,6 +135,23 @@ class Notifications(Page):
                              lambda v: s.set_boolean("do-not-disturb", v),
                              subtitle=_("Only urgent notifications will pop up. "
                                         "Everything still appears in the notification center.")))
+        if s:
+            auto = self.group(_("Automatic Do Not Disturb"),
+                              _("Turns on by itself, like Focus Assist. Notifications still "
+                                "wait for you in the notification center."))
+            auto.add(switch_row(_("On a schedule"), s.get_boolean("dnd-schedule"),
+                                lambda v: s.set_boolean("dnd-schedule", v)))
+            hours = [f"{h:02d}:00" for h in range(24)]
+            auto.add(combo_row(_("From"), hours, s.get_int("dnd-from"),
+                               on_change=lambda i: s.set_int("dnd-from", i)))
+            auto.add(combo_row(_("To"), hours, s.get_int("dnd-to"),
+                               on_change=lambda i: s.set_int("dnd-to", i)))
+            auto.add(switch_row(_("While an app is fullscreen"), s.get_boolean("dnd-fullscreen"),
+                                lambda v: s.set_boolean("dnd-fullscreen", v),
+                                subtitle=_("Games, videos and presentations")))
+            auto.add(switch_row(_("While sharing or recording the screen"),
+                                s.get_boolean("dnd-sharing"),
+                                lambda v: s.set_boolean("dnd-sharing", v)))
         info = self.group(_("Where to find them"))
         info.add(Adw.ActionRow(title=_("Click the clock in the top bar"),
                                subtitle=_("to see past notifications and the calendar.")))

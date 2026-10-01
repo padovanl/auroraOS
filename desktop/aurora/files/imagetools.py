@@ -8,8 +8,13 @@ folder, open (you can only see your own processes)."""
 
 import os
 
-SIZES = (("small", 854, "Small (854 px)"), ("medium", 1366, "Medium (1366 px)"),
-         ("large", 1920, "Large (1920 px)"), ("phone", 1080, "Phone (1080 px)"))
+from aurora.i18n import N_  # noqa: E402
+
+# (key, longest side, menu label, word added to the copy's name)
+SIZES = (("small", 854, N_("Small (854 px)"), N_("Small")),
+         ("medium", 1366, N_("Medium (1366 px)"), N_("Medium")),
+         ("large", 1920, N_("Large (1920 px)"), N_("Large")),
+         ("phone", 1080, N_("Phone (1080 px)"), N_("Phone")))
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif", ".tif", ".tiff")
 
 

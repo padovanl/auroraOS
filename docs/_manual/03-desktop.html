@@ -33,7 +33,7 @@ Settings → Desktop &amp; Dock (layout, positions, sizes).</p>
   <dt>Tray</dt><dd>Icons of apps that run in the background (Discord, Slack, Steam, Nextcloud, KDE Connect…). Click for their menu.</dd>
   <dt>✦ Assistant</dt><dd>Opens the Aurora Assistant (when Aurora AI is on).</dd>
   <dt>Search</dt><dd>Opens Spotlight.</dd>
-  <dt>Status icons</dt><dd>Network, volume, Bluetooth, battery (with percentage if chosen), a red dot while recording the screen, and “…”. Click any of them for the <a href="control-center.html">Control Center</a>.</dd>
+  <dt>Status icons</dt><dd>Network, volume, Bluetooth, battery (with percentage if chosen), a red dot while recording the screen, and “…”. Click any of them for the <a href="control-center.html">Control Center</a>. Scroll over them to change the volume (with the on-screen indicator); middle-click to mute.</dd>
   <dt>Clock</dt><dd>Date and time (24- or 12-hour in Settings → Date &amp; Time; seconds and the clock's position in Settings → Desktop &amp; Dock → Top Bar). Click it for the <a href="notifications.html">calendar, weather and notifications</a>.</dd>
 </dl>
 <p>Menus opened with the keyboard close with <kbd>Esc</kbd>. The bar can be at the top or the
@@ -72,7 +72,7 @@ list under the tiles.</p>
 <dl>
   <dt>Wi-Fi</dt><dd>On or off; the arrow lists networks (click one to connect, a password field appears for protected ones) and links to Network Settings.</dd>
   <dt>Wired</dt><dd>Shown when a cable is connected; opens Network Settings.</dd>
-  <dt>Bluetooth</dt><dd>On or off; the arrow lists paired devices (click to connect or disconnect).</dd>
+  <dt>Bluetooth</dt><dd>On or off; the arrow lists paired devices (click to connect or disconnect), with the battery charge of connected headphones, mice and keyboards that report it. The tile shows the first connected device and its charge.</dd>
   <dt>Power Mode</dt><dd>Performance, Balanced or Power Saver.</dd>
   <dt>Night Light</dt><dd>Warmer colors (schedule in Settings → Appearance).</dd>
   <dt>Dark Style</dt><dd>Switches light and dark; choosing by hand stops the automatic sunset/sunrise switch.</dd>
@@ -80,7 +80,7 @@ list under the tiles.</p>
   <dt>Keep Awake</dt><dd>No screen blanking, locking or automatic suspend until you turn it off.</dd>
   <dt>Airplane Mode</dt><dd>Turns Wi-Fi and Bluetooth off together.</dd>
   <dt>Screen Keyboard</dt><dd>Shows or hides the on-screen keyboard (for touch screens and tablets).</dd>
-  <dt>Screen Recording</dt><dd>Starts recording the screen (after the panel closes) or stops it. Recordings go to <span class="path">~/Videos/Screencasts</span>.</dd>
+  <dt>Screen Recording</dt><dd>Starts recording the screen (after the panel closes) or stops it; the arrow chooses the whole screen or an area, and whether the computer's sound is recorded. Recordings go to <span class="path">~/Videos/Screencasts</span>.</dd>
 </dl>
 
 <h2>Media</h2>
@@ -116,6 +116,16 @@ open the app that sent it; buttons on it run its actions. The popover keeps the 
 <p>When a notification contains a one-time code (“Your verification code is 482913”), it gets a
 <strong>Copy 482913</strong> button.</p>
 <p>Per-app choices (mute an app's notifications) are in Settings → Notifications.</p>
+
+<h2>Automatic Do Not Disturb</h2>
+<p>Like Windows' Focus Assist, Do Not Disturb can turn on by itself (Settings →
+Notifications → Automatic Do Not Disturb):</p>
+<ul>
+  <li><strong>On a schedule</strong>, from and to an hour you choose (22:00–07:00 by default; off until you turn it on);</li>
+  <li><strong>While an app is fullscreen</strong>: games, videos and presentations (on by default);</li>
+  <li><strong>While sharing or recording the screen</strong> (on by default).</li>
+</ul>
+<p>Critical notifications always show; the others wait in the list.</p>
 
 <!-- page: dock | Dock | Favorites and open apps, windows, Launchpad, minimized windows and the Trash -->
 <h2>What's in it</h2>
@@ -160,6 +170,9 @@ choose, <kbd>Enter</kbd> opens, <kbd>Esc</kbd> closes.</p>
 <tr><td><code>clip:</code> and words</td><td>Clipboard history (<kbd>Super</kbd>+<kbd>V</kbd> opens it directly)</td></tr>
 <tr><td><code>? question</code></td><td>An answer from Aurora AI (when on)</td></tr>
 <tr><td><code>&gt; command</code></td><td>Runs the command in a terminal</td></tr>
+<tr><td><code>restart</code>, <code>shut down</code>, <code>sleep</code>, <code>lock</code>, <code>log out</code>, <code>empty trash</code>, <code>task manager</code>, <code>show desktop</code></td><td>The system action, ready to run with <kbd>Enter</kbd> (three letters are enough: <code>res</code>)</td></tr>
+<tr><td>a path: <code>/etc</code>, <code>~/Doc</code></td><td>The folder, and what in it starts with what you typed; folders open in Files, files in their app</td></tr>
+<tr><td>a web address: <code>github.com</code>, <code>https://…</code></td><td>Opens it in the browser</td></tr>
 <tr><td>anything</td><td>At the end: search the web</td></tr>
 </tbody></table></div>
 <p>With Aurora AI's <em>search by meaning</em> on, documents are also found by what they're

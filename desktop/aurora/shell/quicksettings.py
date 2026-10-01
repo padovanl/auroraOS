@@ -203,7 +203,7 @@ class QuickSettings(Gtk.Popover):
                             lambda v: s and s.set_boolean("do-not-disturb", v))
         self.t_air = Toggle("airplane-mode-symbolic", _("Airplane Mode"), self._set_airplane)
         self.t_rec = Toggle("media-record-symbolic", _("Screen Recording"),
-                            lambda v: self._record())
+                            lambda v: self._record(), lambda: self._show_detail("record"))
         self.t_awake = Toggle("view-reveal-symbolic", _("Keep Awake"),
                               shell.keep_awake.set_active)
         shell.keep_awake.connect("changed", lambda *_: self.refresh())
@@ -218,7 +218,7 @@ class QuickSettings(Gtk.Popover):
         self.details = {}
         for key, title in (("wifi", _("Wi-Fi Networks")), ("bluetooth", _("Bluetooth Devices")),
                            ("power", _("Power Mode")), ("output", _("Sound Output")),
-                           ("input", _("Sound Input"))):
+                           ("input", _("Sound Input")), ("record", _("Screen Recording"))):
             d = DetailList(title)
             self.details[key] = d
             self.detail_stack.add_named(d, key)
@@ -293,10 +293,12 @@ class QuickSettings(Gtk.Popover):
         self.popdown()
         self.shell.open_settings(page)
 
-    def _record(self):
+    def _record(self, area=False):
         self.popdown()
+        s = settings.get()
+        sound = s is not None and s.get_boolean("record-sound")
         # Give the popover time to close so it isn't in the recording.
-        GLib.timeout_add(400, lambda: self.shell.recorder.toggle() and False)
+        GLib.timeout_add(400, lambda: self.shell.recorder.toggle(area, sound) and False)
 
     @staticmethod
     def _screen_keyboard_running():
@@ -376,13 +378,27 @@ class QuickSettings(Gtk.Popover):
                 d.add_empty(_("No paired devices") if sh.bluetooth.powered
                             else _("Bluetooth is off"))
             for dev in devices:
-                d.add_row(dev["icon"], dev["name"], lambda dev=dev: sh.bluetooth.toggle_device(dev),
+                label = dev["name"]
+                if dev["connected"] and dev.get("battery") is not None:
+                    label += f"  ·  🔋 {dev['battery']}%"
+                d.add_row(dev["icon"], label, lambda dev=dev: sh.bluetooth.toggle_device(dev),
                           checked=dev["connected"])
         elif key == "power":
             for profile in sh.power_profiles.choices():
                 d.add_row(PROFILE_ICONS[profile], PROFILE_LABELS[profile],
                           lambda p=profile: (sh.power_profiles.set(p), self._fill_detail("power")),
                           checked=profile == sh.power_profiles.current)
+        elif key == "record":
+            s = settings.get()
+            sound = s is not None and s.get_boolean("record-sound")
+            d.add_row("view-fullscreen-symbolic", _("Record the whole screen"),
+                      lambda: self._record(False))
+            d.add_row("edit-select-all-symbolic", _("Record an area…"),
+                      lambda: self._record(True))
+            d.add_row("audio-speakers-symbolic", _("Record the computer's sound"),
+                      lambda: s and (s.set_boolean("record-sound", not sound),
+                                     self._fill_detail("record")),
+                      checked=sound)
         elif key in ("output", "input"):
             sinks, sources, dsink, dsource = audio_nodes()
             if key == "output":
@@ -475,8 +491,12 @@ class QuickSettings(Gtk.Popover):
             self.t_wired.set_state(True, wired)
             toggles.append(self.t_wired)
         if sh.bluetooth.available:
-            connected = [d["name"] for d in sh.bluetooth.devices() if d["connected"]]
-            self.t_bt.set_state(sh.bluetooth.powered, connected[0] if connected else None)
+            connected = [d for d in sh.bluetooth.devices() if d["connected"]]
+            sub = None
+            if connected:
+                sub = connected[0]["name"] + (f" · {connected[0]['battery']}%"
+                                              if connected[0].get("battery") is not None else "")
+            self.t_bt.set_state(sh.bluetooth.powered, sub)
             toggles.append(self.t_bt)
         if sh.power_profiles.available:
             cur = sh.power_profiles.current

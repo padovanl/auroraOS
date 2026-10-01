@@ -567,14 +567,18 @@ class Bluetooth(GObject.Object):
                       None, Gio.DBusCallFlags.NONE, -1, None, None)
 
     def devices(self):
-        """Paired devices: [{path, name, icon, connected}]"""
+        """Paired devices: [{path, name, icon, connected, battery}]; battery is
+        the charge in percent that headphones, mice and keyboards report, or None."""
         out = []
+        batteries = {path: self._prop(b, "Percentage")
+                     for path, b in self._objects("org.bluez.Battery1")}
         for path, dev in self._objects("org.bluez.Device1"):
             if not self._prop(dev, "Paired"):
                 continue
             out.append({"path": path, "name": self._prop(dev, "Alias") or path.rsplit("/", 1)[-1],
                         "icon": (self._prop(dev, "Icon") or "bluetooth") + "-symbolic",
-                        "connected": bool(self._prop(dev, "Connected"))})
+                        "connected": bool(self._prop(dev, "Connected")),
+                        "battery": batteries.get(path)})
         return sorted(out, key=lambda d: (not d["connected"], d["name"].lower()))
 
     def toggle_device(self, device):
@@ -629,16 +633,33 @@ class Recorder(GObject.Object):
     def recording(self):
         return self.proc is not None and self.proc.poll() is None
 
-    def start(self):
+    def start(self, area=False, sound=False):
+        """Record the whole screen, or an area chosen with the mouse; with
+        sound, what the computer plays is recorded too."""
         if self.recording or not self.available:
             return
+        geometry = None
+        if area:
+            try:
+                geometry = subprocess.run(["slurp"], capture_output=True, text=True,
+                                          timeout=120).stdout.strip()
+            except (OSError, subprocess.TimeoutExpired):
+                geometry = ""
+            if not geometry:
+                return      # Esc: nothing chosen
         videos = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS) \
             or os.path.expanduser("~/Videos")
         folder = os.path.join(videos, "Screencasts")
         os.makedirs(folder, exist_ok=True)
         stamp = GLib.DateTime.new_now_local().format("%Y-%m-%d_%H-%M-%S")
         self.path = os.path.join(folder, f"Screencast_{stamp}.mp4")
-        self.proc = subprocess.Popen(["wf-recorder", "-f", self.path],
+        cmd = ["wf-recorder", "-f", self.path]
+        if geometry:
+            cmd += ["-g", geometry]
+        if sound:
+            monitor = _run(["pactl", "get-default-sink"]).strip()
+            cmd += [f"--audio={monitor}.monitor"] if monitor else ["--audio"]
+        self.proc = subprocess.Popen(cmd,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.emit("changed")
 
@@ -654,8 +675,8 @@ class Recorder(GObject.Object):
         self.emit("changed")
         self.emit("saved", self.path)
 
-    def toggle(self):
-        self.stop() if self.recording else self.start()
+    def toggle(self, area=False, sound=False):
+        self.stop() if self.recording else self.start(area, sound)
 
 
 class Media(GObject.Object):

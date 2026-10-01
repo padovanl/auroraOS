@@ -642,6 +642,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("compress", self.compress)
         add("resize-images", self.resize_images)
         add("file-users", self.file_users)
+        add("copy-path", self.copy_paths, ["<Ctrl><Shift>c"])
         add("extract-here", self.extract_here)
         add("connect-server", self.connect_to_server)
         add("checksums", self.checksums)
@@ -1096,6 +1097,7 @@ class FilesWindow(Adw.ApplicationWindow):
                 tools.append((_("What's Using This?"), "file-users"))
                 sections.append(tools)
                 sections.append([(_("Cut"), "cut"), (_("Copy"), "copy"),
+                                 (_("Copy Path"), "copy-path"),
                                  (_("Duplicate"), "duplicate"), (_("Rename…"), "rename")])
                 if len(self.selected_files()) > 1:
                     sections.append([(_("Rename Multiple…"), "batch-rename"),
@@ -1497,6 +1499,13 @@ class FilesWindow(Adw.ApplicationWindow):
             self.toast(_("Extracting…"))
             self._run_tool(archives.extract_command(paths), _("Extracted"))
 
+    def copy_paths(self):
+        """The selected files' full paths, one per line (Windows' Copy as path)."""
+        paths = [f.get_path() or f.get_uri() for f in self.selected_files()]
+        if paths:
+            self.get_clipboard().set("\n".join(paths))
+            self.toast(ngettext("{n} path copied", "{n} paths copied", len(paths)).format(n=len(paths)))
+
     def resize_images(self):
         """Smaller copies of pictures (or the pictures themselves), like
         PowerToys' Image Resizer."""
@@ -1509,7 +1518,7 @@ class FilesWindow(Adw.ApplicationWindow):
                                  body=ngettext("{n} picture", "{n} pictures",
                                                len(paths)).format(n=len(paths)))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        sizes = Gtk.DropDown.new_from_strings([_(label) for _k, _px, label in it.SIZES])
+        sizes = Gtk.DropDown.new_from_strings([_(label) for _k, _px, label, _w in it.SIZES])
         sizes.set_selected(1)
         formats = Gtk.DropDown.new_from_strings([_("Keep the format"), "JPEG", "PNG"])
         in_place = Gtk.CheckButton(label=_("Resize the originals instead of making copies"))
@@ -1524,9 +1533,8 @@ class FilesWindow(Adw.ApplicationWindow):
         def response(_d, resp):
             if resp != "ok":
                 return
-            key, longest, label = it.SIZES[sizes.get_selected()]
+            _key, longest, _label, short = it.SIZES[sizes.get_selected()]
             fmt = (None, "jpeg", "png")[formats.get_selected()]
-            short = label.split(" (")[0]
             original = in_place.get_active()
             import threading
 

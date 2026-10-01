@@ -89,6 +89,18 @@ def next_quiet_time(now, start, end):
     return now
 
 
+def battery_saver_action(percentage, charging, threshold, saver_on, we_turned_it_on):
+    """"on", "off" or None: Battery Saver turns on below the threshold on
+    battery, and off again when charging (only if it was Aurora that turned it on)."""
+    if threshold <= 0:
+        return None
+    if not charging and percentage <= threshold and not saver_on:
+        return "on"
+    if charging and saver_on and we_turned_it_on:
+        return "off"
+    return None
+
+
 def count_updates():
     """Packages with a newer version in the (already refreshed) apt lists."""
     try:
@@ -244,8 +256,32 @@ class SystemNotifications:
 
     # --- battery ---
 
+    def _battery_saver(self, bat):
+        s = settings.get()
+        profiles = self.shell.power_profiles
+        if s is None or not profiles.available:
+            return
+        threshold = s.get_int("battery-saver-threshold")
+        mine = getattr(self, "_saver_by_us", None)
+        action = battery_saver_action(bat.percentage, bat.charging, threshold,
+                                      profiles.current == "power-saver", mine is not None)
+        if action == "on":
+            self._saver_by_us = profiles.current
+            profiles.set("power-saver")
+            self.notify(_("Battery Saver is on"),
+                        _("Below {n}%: the screen dims sooner and apps use less power. It "
+                          "turns off when you plug in.").format(n=threshold),
+                        "battery-caution", [("off", _("Turn Off"))],
+                        lambda key: key == "off" and (profiles.set(mine or "balanced"),
+                                                      setattr(self, "_saver_by_us", None)))
+        elif action == "off":
+            profiles.set(mine or "balanced")
+            self._saver_by_us = None
+
     def _check_battery(self):
         bat = self.shell.battery
+        if bat.present:
+            self._battery_saver(bat)
         if not bat.present or bat.charging:
             self._battery_warned.clear()
             return

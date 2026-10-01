@@ -129,6 +129,15 @@ class Power(Page):
                                  aurora.get_boolean("show-battery-percentage"),
                                  lambda v: aurora.set_boolean("show-battery-percentage", v),
                                  subtitle=_("Next to the battery icon in the top bar")))
+                levels = (0, 10, 20, 30, 50)
+                cur = aurora.get_int("battery-saver-threshold")
+                b.add(combo_row(_("Turn on Battery Saver"),
+                                [_("Never"), _("At 10%"), _("At 20%"), _("At 30%"), _("At 50%")],
+                                levels.index(cur) if cur in levels else 2,
+                                subtitle=_("Power Saver mode on battery below this charge, "
+                                           "off again when you plug in"),
+                                on_change=lambda i: aurora.set_int("battery-saver-threshold",
+                                                                   levels[i])))
             health = self._health()
             if health:
                 b.add(Adw.ActionRow(title=_("Battery health"), subtitle=health))

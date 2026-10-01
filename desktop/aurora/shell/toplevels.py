@@ -73,6 +73,10 @@ class Toplevel(GObject.Object):
         return STATE_MINIMIZED in self.states
 
     @property
+    def fullscreen(self):
+        return STATE_FULLSCREEN in self.states
+
+    @property
     def maximized(self):
         return STATE_MAXIMIZED in self.states
 

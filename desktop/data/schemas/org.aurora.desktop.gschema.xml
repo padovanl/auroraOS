@@ -54,6 +54,37 @@
       <default>'{}'</default>
       <summary>Daily limits in minutes per app id, as JSON</summary>
     </key>
+    <key name="record-sound" type="b">
+      <default>false</default>
+      <summary>Screen recordings include the sound the computer plays</summary>
+    </key>
+    <key name="dnd-schedule" type="b">
+      <default>false</default>
+      <summary>Do Not Disturb on a schedule</summary>
+    </key>
+    <key name="dnd-from" type="i">
+      <range min="0" max="23"/>
+      <default>22</default>
+      <summary>Scheduled Do Not Disturb starts at this hour</summary>
+    </key>
+    <key name="dnd-to" type="i">
+      <range min="0" max="23"/>
+      <default>7</default>
+      <summary>Scheduled Do Not Disturb ends at this hour</summary>
+    </key>
+    <key name="dnd-fullscreen" type="b">
+      <default>true</default>
+      <summary>Do Not Disturb while an app is fullscreen (games, videos, presentations)</summary>
+    </key>
+    <key name="dnd-sharing" type="b">
+      <default>true</default>
+      <summary>Do Not Disturb while the screen is shared or recorded</summary>
+    </key>
+    <key name="battery-saver-threshold" type="i">
+      <range min="0" max="50"/>
+      <default>20</default>
+      <summary>Turn on Battery Saver below this charge (percent; 0: never)</summary>
+    </key>
     <key name="downloads-cleanup-days" type="i">
       <range min="0" max="365"/>
       <default>0</default>

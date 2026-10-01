@@ -126,7 +126,7 @@ learning was the point. — *Luca Padovan*
 |---|---|
 | **Menu bar** | Aurora menu (who you are and the computer's name; About, Settings, App Center, Dev Hub, System Health, Force Quit with their shortcuts; Lock; Sleep, Restart, Shut Down and Log Out as round buttons), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, an optional **system monitor** (processor and memory at a glance; its popover adds temperature, download and upload speed, free disk space; Settings → Desktop & Dock → Top Bar), status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
 | **Dock** | Pinned and running apps with one dot per open window (up to three), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, floating or full-width. |
-| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`) and the web. |
+| **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`), system actions (`restart`, `lock`, `empty trash`, `task manager`…), paths (`~/Doc…`, `/etc`), web addresses (`github.com`) and the web. |
 | **Launchpad** | Full-screen grid of every app. |
 | **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
 | **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
@@ -137,11 +137,11 @@ learning was the point. — *Luca Padovan*
 | **Backgrounds** | Settings → Appearance works like Windows' Personalize page: a preview of the desktop, then **Dynamic** (follows the sun), **Picture** (the ones used lately, Browse Photos…, and All Wallpapers…, a searchable gallery that stays quick with thousands of pictures), **Picture of the day** (Bing, NASA's APOD or Wikimedia Commons, with title and credit), **Slideshow** (any folder, every 15 minutes to 24 hours, shuffled if you like) or a **Solid color**. The lock screen follows the active picture. |
 | **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
 | **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. |
-| **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> is a **color picker**: click any pixel and its hex code is copied. |
+| **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Pin to Screen** (the screenshot floats above every window; drag it, scroll to resize, double-click to unpin; also <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> for an area), **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. Screen recording covers the whole screen or an area, with or without the computer's sound (<kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd>, <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> for an area). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> is a **color picker**: click any pixel and its hex code is copied. |
 | **Weather** | Current weather and the next hours next to the calendar and in the weather widget (can be turned off), for the city chosen in GNOME Weather, else its automatic location, else the time zone's city; a new city shows at once. |
 | **Sounds** | An Aurora sound when you log in and when you shut down, restart or log out (on by default, Settings → Sound). |
-| **Control Center** | Laid out like Android's quick settings: the time and date on top, thick pill sliders and round-cornered tiles that fill with the accent color. Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, **Keep Awake** (no screen blanking, locking or automatic suspend until turned off), Airplane Mode, Screen Keyboard, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
-| **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. A one-time code in a notification ("Your code is 482913") gets a **Copy 482913** button. |
+| **Control Center** | Laid out like Android's quick settings: the time and date on top, thick pill sliders and round-cornered tiles that fill with the accent color. Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices, with the battery of headphones, mice and keyboards), Power Mode, Night Light, Dark Style, Do Not Disturb, **Keep Awake** (no screen blanking, locking or automatic suspend until turned off), Airplane Mode, Screen Keyboard, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. Scroll over the top bar's status icons to change the volume, middle-click to mute. |
+| **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. **Automatic Do Not Disturb**, like Windows' Focus Assist: on a schedule, while an app is fullscreen, while sharing or recording the screen. A one-time code in a notification ("Your code is 482913") gets a **Copy 482913** button. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
 | **Windows** | Wayfire manages the default **Aurora** session, with snapping to halves and quarters, workspaces and a window switcher. **Snap Layouts** (<kbd>Super</kbd>+<kbd>Z</kbd>) as in Windows 11: six layouts (halves, two thirds, thirds, half and quarters, quarters, a wide middle), a preview where the window will go, then **Snap Assist** offers the other windows for the empty spaces; snapping to a half with <kbd>Super</kbd>+<kbd>←</kbd>/<kbd>→</kbd> offers the other half the same way. **Always on Top** with <kbd>Super</kbd>+<kbd>T</kbd>. On Hyper-V's display, which has no 3D, Wayfire draws with software rendering and llvmpipe runs without worker threads, so every frame is complete when Hyper-V's driver copies it to the screen. `labwc` in `~/.config/aurora/compositor` switches to labwc. **Aurora Compatibility** always uses labwc, and labwc also takes over if Wayfire cannot start, leaving a startup report in System Health. GTK apps keep Aurora's styled title bars. |
@@ -159,7 +159,8 @@ learning was the point. — *Luca Padovan*
     **Volume Mixer** with each app's own volume (also in the Control Center).
   - **Power**: screen blank, automatic suspend on battery and when plugged in, what the
     power button and the lid do, power mode, battery percentage, battery health, 80%
-    charge limit.
+    charge limit, and **Battery Saver**, which turns on by itself below 20% (or a level you
+    choose) and off when you plug in.
   - **Appearance**: style, accent, wallpaper gallery with large preview, icons, pointer, fonts, Night Light,
     animations and window animations. **Desktop & Dock** (layouts, top bar, dock, window
     buttons, desktop icons, what Spotlight shows), **Multitasking**, **Desktop Profiles**
@@ -205,6 +206,8 @@ learning was the point. — *Luca Padovan*
   and user services with start, stop and restart.
 - **Files**: places and drives, **Network** (Windows and NAS shared folders) and **Connect to
   Server…** (smb, sftp, ftp, WebDAV), **Compress…** (zip, 7z, tar.xz) and **Extract Here**,
+  **Resize Images…** (like PowerToys' Image Resizer), **What's Using This?** (which programs
+  hold a file that's “in use”, and end them), **Copy Path**,
   grid and list views with drag-to-select, search, hidden files, cut/copy/paste
   with progress, cancel and retry, trash with restore, rename, new folder, "Open With", properties, open in
   terminal, batch rename, SHA-256 checksums, two-folder comparison, Git change badges,
@@ -430,6 +433,8 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>Z</kbd> | Snap Layouts |
 | <kbd>Super</kbd>+<kbd>T</kbd> | Keep the window on top |
 | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> | Task Manager |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> | Pin an area of the screen |
+| <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> | Start or stop screen recording (add <kbd>Shift</kbd> for an area) |
 | <kbd>Super</kbd>+<kbd>V</kbd> | Clipboard history |
 | <kbd>Super</kbd>+<kbd>.</kbd> | Emoji |
 | <kbd>Super</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> | Terminal |

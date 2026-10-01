@@ -32,24 +32,43 @@
 <tr><td><kbd>Shift</kbd>+<kbd>Print Screen</kbd> or <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Screenshot of an area: drag a rectangle</td></tr>
 <tr><td><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd></td><td>Copy the text in an area (OCR)</td></tr>
 <tr><td><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td><td>Color picker: click any pixel, its hex code is copied</td></tr>
+<tr><td><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></td><td>Pin an area of the screen: draw a rectangle, it stays floating on top</td></tr>
+<tr><td><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd></td><td>Start or stop recording the screen</td></tr>
+<tr><td><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td><td>Record an area: draw a rectangle</td></tr>
 </tbody></table></div>
 <p>Screenshots are saved to <span class="path">~/Pictures/Screenshots</span> and copied to the
 clipboard. The notification offers:</p>
 <ul>
+  <li><strong>Pin to Screen</strong>: the screenshot floats above every window (see below);</li>
   <li><strong>Annotate</strong>: arrows, text, highlighter, blur and crop (swappy);</li>
   <li><strong>Copy Text</strong>: recognizes the text in it;</li>
   <li><strong>Ask Aurora</strong>: explains what's on screen (with Aurora AI on).</li>
 </ul>
 <p>Text recognition works offline with Tesseract, in English plus your language (18 scripts).</p>
 
+<h2 id="pinned-screenshots"><a class="anchor" href="#pinned-screenshots" aria-hidden="true">#</a>Pinned screenshots</h2>
+<p>A pinned screenshot stays above every window and on every workspace, like a sticky note
+of the screen: keep a reference, a code sample or a chart in view while you work in another
+app. Pin with <strong>Pin to Screen</strong> on a screenshot's notification or with
+<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> (draw the area).</p>
+<ul>
+  <li>Drag it anywhere; the mouse wheel makes it bigger or smaller.</li>
+  <li><kbd>Ctrl</kbd>+<kbd>C</kbd> copies the picture; right-click for <em>Copy</em>, <em>Save As…</em>, <em>Open</em> and <em>Unpin</em>.</li>
+  <li>Double-click, <kbd>Esc</kbd> or × unpins it.</li>
+</ul>
+
 <h2 id="recording-the-screen"><a class="anchor" href="#recording-the-screen" aria-hidden="true">#</a>Recording the screen</h2>
 <p>Control Center → <strong>Screen Recording</strong> starts; a red dot appears in the top bar;
-the same tile stops. Recordings are MP4 files in <span class="path">~/Videos/Screencasts</span>.
+the same tile stops. The tile's arrow offers <em>Record the whole screen</em>, <em>Record an
+area…</em> (draw a rectangle) and <em>Record the computer's sound</em> (on or off, remembered).
+<kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> starts and stops from the keyboard,
+<kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> records an area. Recordings are
+MP4 files in <span class="path">~/Videos/Screencasts</span>.
 For more control (sound, webcam, streaming) install OBS Studio from App Center.</p>
       <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/05-apps.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="terminal.html"><span>Previous</span>Terminal and command line</a><a class="next" href="clipboard-emoji.html"><span>Next</span>Clipboard history and emoji</a></nav>
     </article>
-    
+    <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#pinned-screenshots">Pinned screenshots</a></li><li class="h2"><a href="#recording-the-screen">Recording the screen</a></li></ul></nav>
   </main>
 </div>
 <script src="manual.js"></script>

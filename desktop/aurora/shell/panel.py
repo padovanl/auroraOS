@@ -240,7 +240,7 @@ class StatusArea(Gtk.MenuButton):
 
     def __init__(self, shell):
         super().__init__(css_classes=["flat", "panel-button", "panel-status"],
-                         tooltip_text=_("Control Center"))
+                         tooltip_text=_("Control Center · scroll for volume"))
         self.shell = shell
         box = Gtk.Box(spacing=10)
         self.net_icon = Gtk.Image()
@@ -256,6 +256,16 @@ class StatusArea(Gtk.MenuButton):
             box.append(w)
         self.set_child(box)
         self.set_popover(QuickSettings(shell))
+        # As on Windows: the wheel over the status icons changes the volume,
+        # a middle-click mutes.
+        wheel = Gtk.EventControllerScroll(flags=Gtk.EventControllerScrollFlags.VERTICAL
+                                          | Gtk.EventControllerScrollFlags.DISCRETE)
+        wheel.connect("scroll", lambda _c, _dx, dy: (shell.handle(
+            ["volume", "down" if dy > 0 else "up"]), True)[1])
+        self.add_controller(wheel)
+        middle = Gtk.GestureClick(button=Gdk.BUTTON_MIDDLE)
+        middle.connect("pressed", lambda *_a: shell.handle(["volume", "mute"]))
+        self.add_controller(middle)
 
         shell.network.connect("changed", lambda *a: self._update())
         shell.audio.connect("changed", lambda *a: self._update())
