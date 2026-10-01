@@ -1,0 +1,79 @@
+<!-- section: Developing Aurora -->
+
+<!-- page: building | Building Aurora | Requirements, make targets, build stages and developing the desktop without an ISO -->
+<h2>Requirements</h2>
+<p>A Linux computer with Docker (or Podman), about 25 GB of free disk space and a network
+connection. Building takes 20–60 minutes the first time.</p>
+
+<h2>Build</h2>
+<pre><code>git clone https://github.com/padovanl/auroraOS
+cd auroraOS
+make iso          # out/aurora-os-0.1-amd64.iso and its .sha256</code></pre>
+
+<h2>Make targets</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Target</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>make iso</code></td><td>Builds the ISO in a container, stage by stage.</td></tr>
+<tr><td><code>make run</code>, <code>make run-uefi</code></td><td>Boots the ISO in QEMU (BIOS or UEFI).</td></tr>
+<tr><td><code>make debs</code>, <code>make repo</code></td><td>Builds Aurora's packages and the signed apt repository.</td></tr>
+<tr><td><code>make site</code></td><td>Rebuilds the website from the README and <span class="path">docs/_src</span>.</td></tr>
+<tr><td><code>make manual</code></td><td>Rebuilds this documentation from <span class="path">docs/_manual</span>.</td></tr>
+<tr><td><code>make -C desktop pot</code></td><td>Regenerates the translation template.</td></tr>
+<tr><td><code>make test</code> and friends</td><td>See <a href="testing.html">Testing</a>.</td></tr>
+</tbody></table></div>
+
+<h2>Stages</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Stage</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>10-bootstrap</code></td><td>debootstrap creates a minimal Debian trixie.</td></tr>
+<tr><td><code>20-packages</code></td><td>Installs the package lists in <span class="path">config/packages/</span>, translations and locales.</td></tr>
+<tr><td><code>25-extras</code></td><td>Third-party packages verified by checksum.</td></tr>
+<tr><td><code>30-system</code></td><td>Copies <span class="path">overlay/</span>, writes Aurora's identity.</td></tr>
+<tr><td><code>35-defaults</code></td><td>Firewall, automatic updates, Flathub, Docker, shell setup.</td></tr>
+<tr><td><code>40-desktop</code></td><td>Builds and installs <code>aurora-desktop</code> and <code>aurora-artwork</code>.</td></tr>
+<tr><td><code>50-branding</code></td><td>Boot splash, GRUB theme, installer branding.</td></tr>
+<tr><td><code>70-pool</code></td><td>Offline packages for the installer.</td></tr>
+<tr><td><code>80-finalize</code></td><td>initramfs, cleanup.</td></tr>
+<tr><td><code>90-iso</code></td><td>SquashFS, the GRUB menu, a hybrid BIOS+UEFI ISO.</td></tr>
+</tbody></table></div>
+
+<h2>Changing the desktop without rebuilding</h2>
+<p>The desktop is Python: run it from a checkout with
+<code>AURORA_LIBDIR=$PWD/desktop desktop/bin/aurora-files</code>, or start a headless development
+session with the tools in <span class="path">desktop/dev/</span>. In a running VM,
+<code>tests/interact/serve.py</code> and <code>do.py</code> push the checkout's code and drive the
+desktop.</p>
+
+<!-- page: testing | Testing | The test suites and what each checks -->
+<div class="table-wrap"><table>
+<thead><tr><th>Command</th><th>What it checks</th></tr></thead>
+<tbody>
+<tr><td><code>make test-static</code></td><td>Syntax, shellcheck, desktop files, schemas, XML, installer configuration, translations, the website and this documentation being up to date.</td></tr>
+<tr><td><code>make test-unit</code></td><td>pytest unit tests in <span class="path">tests/unit/</span>.</td></tr>
+<tr><td><code>make test-smoke</code></td><td>Starts the shell headless and opens every app and Settings page.</td></tr>
+<tr><td><code>make test-image</code></td><td>Inspects a built ISO: apps, themes, services, boot records.</td></tr>
+<tr><td><code>make test-boot</code></td><td>Boots the ISO with BIOS and UEFI and checks the session.</td></tr>
+<tr><td><code>make test-interact</code></td><td>Uses the live desktop like a person: clicks, keys, windows.</td></tr>
+<tr><td><code>make test-install</code></td><td>Installs Aurora in a VM and checks the installed system.</td></tr>
+</tbody></table></div>
+
+<!-- page: translating | Translating Aurora | Adding or fixing translations of Aurora's own apps -->
+<ol class="steps">
+  <li>Strings are marked with gettext (<code>_("…")</code>) in the domain <code>aurora</code>. Regenerate the template: <code>make -C desktop pot</code>.</li>
+  <li>Translations are kept as JSON in <span class="path">desktop/po/sources/LANG.json</span>: English text → translation; plurals as a list with one form per plural category.</li>
+  <li>Build the <code>.po</code> file: <code>tools/po-from-json.py LANG</code>. It rejects a translation whose <code>{placeholders}</code> differ from the English, so a typo can't break the app.</li>
+  <li>To add a language to the system, add a line to <span class="path">config/locales.list</span>.</li>
+</ol>
+
+<!-- page: contributing | Contributing | Reporting problems and sending changes -->
+<ul>
+  <li><strong>Report a problem</strong>: open an issue on <a href="https://github.com/padovanl/auroraOS/issues">GitHub</a>. Attach a report from Settings → System Health → Guided Diagnostics (review it first).</li>
+  <li><strong>Send a change</strong>: fork, branch, run <code>make test</code>, open a pull request. Keep code, comments and documentation in English.</li>
+  <li><strong>Documentation</strong>: edit <span class="path">docs/_manual/</span> and run <code>make manual</code>. Reference pages are generated from the code: fix the code (or its descriptions in <span class="path">tools/build-manual.py</span>), not the generated HTML.</li>
+</ul>
+<p>Aurora's code, configuration and artwork are licensed under the GNU General Public License
+3.0 or later. The architecture, every technical choice and the alternatives considered are
+described in the <a href="https://github.com/padovanl/auroraOS#readme">README</a> and on the
+website's technical pages.</p>

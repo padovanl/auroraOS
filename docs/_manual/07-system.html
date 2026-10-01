@@ -1,0 +1,283 @@
+<!-- section: System -->
+
+<!-- page: updates | Updates and restarts | Security updates, app updates, restarts and active hours, newer kernels, Aurora's own packages -->
+<h2>What updates itself</h2>
+<ul>
+  <li><strong>Security updates</strong> are installed automatically in the background (unattended-upgrades), like on Ubuntu. Turn it off in Settings → Software Updates.</li>
+  <li><strong>Other updates</strong> are checked a few minutes after login and every six hours; a notification says how many are ready, with <strong>Update</strong> (opens App Center → Updates).</li>
+  <li><strong>Flatpak apps</strong> and <strong>firmware</strong> (fwupd) are updated in App Center too.</li>
+  <li><strong>Aurora's desktop</strong> (<code>aurora-desktop</code>, <code>aurora-artwork</code>) comes from Aurora's signed repository like any other package.</li>
+</ul>
+<p>Before every update and package installation a system snapshot is taken (on btrfs, see
+<a href="snapshots.html">Snapshots</a>).</p>
+
+<h2>Restarts</h2>
+<p>Some updates (a new kernel, core libraries) need a restart. Aurora notices and shows
+<strong>Restart to finish updating</strong> with three choices:</p>
+<dl>
+  <dt>Restart Now</dt><dd>Restarts right away.</dd>
+  <dt>Tonight</dt><dd>Plans the restart for the end of your active hours.</dd>
+  <dt>Later</dt><dd>Reminds you later.</dd>
+</dl>
+<p>Settings → Software Updates → Restarts:</p>
+<ul>
+  <li><strong>Active hours</strong> (start and end, 8:00–23:00 by default): Aurora never restarts by itself during them.</li>
+  <li><strong>Restart automatically outside active hours</strong> (off by default): when an update needs it, Aurora plans the restart outside your active hours by itself.</li>
+</ul>
+<p>Five minutes before a planned restart a notification warns you, with <strong>Restart Now</strong>
+and <strong>In an Hour</strong> to postpone.</p>
+
+<h2>From a terminal</h2>
+<pre><code>sudo apt update && sudo apt full-upgrade     # everything from Debian and Aurora
+flatpak update                               # Flatpak apps
+sudo fwupdmgr update                         # firmware</code></pre>
+
+<h2>Newer kernels</h2>
+<p>Aurora uses Debian's Linux 6.12 LTS kernel, which gets fixes automatically. For brand-new
+hardware, a newer kernel comes from <code>trixie-backports</code>, enabled by the installer:</p>
+<pre><code>sudo apt install -t trixie-backports linux-image-amd64</code></pre>
+
+<h2>Versions</h2>
+<p>Within Debian trixie, major versions don't jump (Python, Node.js…): that is what keeps the
+system stable. Newer toolchains come from Dev Hub, Flatpak or containers.</p>
+
+<!-- page: snapshots | Snapshots and recovery | Automatic system snapshots on btrfs, rolling back from the boot menu, Timeshift -->
+<p>On a btrfs installation (the installer's default) Aurora keeps snapshots of the system:</p>
+<ul>
+  <li><strong>Fresh install</strong>, taken at the first boot;</li>
+  <li>one <strong>before every update</strong> or package installation (the last 10);</li>
+  <li><strong>daily</strong> (the last 5) and <strong>weekly</strong> (the last 3).</li>
+</ul>
+<p>Snapshots are instant and only take the space of what changes afterwards. They cover the
+system, not your files in Home: rolling back never loses your documents.</p>
+
+<h2>If an update breaks something</h2>
+<ol class="steps">
+  <li>Restart. In the boot menu choose <strong>Aurora OS snapshots</strong> (hold <kbd>Shift</kbd> or press <kbd>Esc</kbd> while starting if the menu is hidden), then the snapshot from before the update.</li>
+  <li>Aurora starts as it was then (read-only for the system). Check that everything works.</li>
+  <li>Open <strong>Timeshift</strong> (Settings → Software Updates → Open Timeshift), select the same snapshot and click <strong>Restore</strong>. Restart once more: the rollback is permanent.</li>
+</ol>
+
+<h2>Managing snapshots</h2>
+<ul>
+  <li>Settings → Software Updates → <strong>Take a Snapshot Now</strong>, or turn the automatic ones off (<em>Snapshot before every update</em>).</li>
+  <li>Timeshift lists, deletes and restores them, and sets how many are kept.</li>
+</ul>
+<div class="note"><p>On ext4 or xfs there are no automatic snapshots or boot-menu rollback;
+Timeshift can still make copies with rsync.</p></div>
+
+<!-- page: backups | Backups | Backing up your files with Backups (Déjà Dup) -->
+<p>Snapshots protect the system; <strong>Backups</strong> (Déjà Dup) protects your files.</p>
+<ol class="steps">
+  <li>Open Backups from Launchpad.</li>
+  <li>Choose the folders to save (Home by default) and to leave out (Trash, Downloads…).</li>
+  <li>Choose where: an external drive, a network folder or a cloud account (Google Drive, Microsoft OneDrive through Online Accounts).</li>
+  <li>Turn on automatic backups (daily or weekly). Backups are incremental and can be encrypted with a password.</li>
+</ol>
+<p>To restore, open Backups → <em>Restore</em> and pick the date.</p>
+
+<!-- page: storage | Storage and Storage Sense | What takes the disk space, one-click cleanup and automatic cleanup -->
+<p>Settings → Storage, like Windows' Storage page.</p>
+<h2>Disk</h2>
+<p>Free and total space of the disk that holds your home folder, as one bar colored by kind of
+file.</p>
+<h2>What takes the space</h2>
+<p>Apps (Debian packages and Flatpak), Documents, Pictures, Music, Videos, Downloads, Desktop,
+temporary files and cache, the Trash, other files in your folder, and the system. Click a
+folder's row to open it in Files, <em>Apps</em> to open Settings → Apps.</p>
+<h2>Clean up now</h2>
+<dl>
+  <dt>Empty the Trash</dt><dd>Deletes everything in the Trash.</dd>
+  <dt>Clear temporary files and cache</dt><dd>Empties <span class="path">~/.cache</span>; apps remake what they need.</dd>
+  <dt>Downloads older than 30 days</dt><dd><em>Review…</em> lists them and moves them to the Trash, so you can still get them back.</dd>
+</dl>
+<h2>Storage Sense</h2>
+<p>Cleans up by itself, two minutes after login and then every four hours:</p>
+<ul>
+  <li><strong>Empty old items from the Trash</strong>;</li>
+  <li><strong>Delete old temporary files</strong> (yours in <span class="path">/tmp</span>);</li>
+  <li><strong>Old means older than</strong>: 1 week, 2 weeks, 30 days or 60 days;</li>
+  <li><strong>Move unused Downloads to the Trash</strong>: never, or after 2 weeks, 30 or 60 days.</li>
+</ul>
+<h2>More</h2>
+<p><em>Disks and partitions</em> opens GNOME Disks (format, check health, mount). <em>See every
+folder's size</em> opens Disk Usage Analyzer.</p>
+
+<!-- page: screen-time | Screen Time | How long you use each app, the week as bars, and daily limits -->
+<p>Settings → Screen Time.</p>
+<ul>
+  <li><strong>Today</strong>: the total, the daily average of the week, and the last seven days as bars (today in your accent color).</li>
+  <li><strong>Apps today</strong>: each app's time, most used first.</li>
+  <li><strong>Daily limit</strong> next to each app: 15 or 30 minutes, 1, 2 or 3 hours. When an app reaches it, a notification says so (once a day). The app keeps working: it's a reminder, not a lock.</li>
+</ul>
+<p>Time is counted for the app whose window is in front, every 30 seconds, only while the screen
+is unlocked. It is kept in <span class="path">~/.local/share/aurora/screentime/</span>, one file per
+day, never leaves the computer, and days older than five weeks are forgotten. <em>Count screen
+time</em> turns it off; <em>Clear Screen Time History</em> deletes it.</p>
+
+<!-- page: security | Security and privacy | Firewall, updates, encryption, fingerprint, permissions, administrator prompts and what goes online -->
+<h2>Built in</h2>
+<ul>
+  <li><strong>Firewall on by default</strong> (ufw): incoming connections are blocked, outgoing allowed. Settings → Privacy &amp; Security → Firewall. Ports for sharing open only while that sharing is on.</li>
+  <li><strong>Automatic security updates</strong>.</li>
+  <li><strong>AppArmor</strong> confines services and several apps.</li>
+  <li><strong>Full-disk encryption</strong> (LUKS2), chosen in the installer.</li>
+  <li><strong>Secure Boot</strong> on installed UEFI systems.</li>
+  <li><strong>No telemetry</strong>, no crash uploads, no ads, no account required.</li>
+</ul>
+
+<h2>Administrator</h2>
+<p>The first user is an administrator (in the <code>sudo</code> group). Settings never runs as
+root: when an action needs it, a password prompt appears (polkit). With a fingerprint set up,
+the finger works for <code>sudo</code> and these prompts, but never for the login and lock
+screens (the password also unlocks your keyring).</p>
+
+<h2>App permissions</h2>
+<p>Settings → App Permissions lists what Flatpak apps were allowed through portals (camera,
+microphone, location, screenshots, background running…) and lets you revoke it.</p>
+
+<h2>Privacy &amp; Security page</h2>
+<p>Screen lock, file history (<em>Remember recent files</em>, <em>Clear History…</em>),
+clipboard history, online services (weather) and the firewall.</p>
+
+<h2>What goes online by itself</h2>
+<p>Every network request the desktop makes on its own, all optional:</p>
+<ul>
+  <li><strong>Weather</strong>: Open-Meteo, with the chosen or approximate position, when the weather is shown.</li>
+  <li><strong>Location</strong>: GeoClue, only when no city is chosen in Weather.</li>
+  <li><strong>Exchange rates</strong>: the European Central Bank's public file, only when you type a currency conversion.</li>
+  <li><strong>Picture of the day</strong>: Bing, NASA or Wikimedia, once a day, only if you chose that background.</li>
+  <li><strong>Updates</strong>: Debian's, Aurora's and Flathub's servers.</li>
+  <li><strong>Aurora AI</strong>: nothing while it runs on your computer; downloads when you set up a feature; your questions go to a cloud provider only if you choose one.</li>
+</ul>
+<p>Sun position, OCR, clipboard history, emoji, unit conversion and screen time run offline.</p>
+
+<!-- page: networking | Networking | Wi-Fi, wired, VPNs, hotspot, sharing Wi-Fi with a QR code, proxies and network tools -->
+<h2>Wi-Fi and wired</h2>
+<p>Control Center → Wi-Fi lists networks; click one to connect (a password field appears for
+protected networks). Settings → Network shows connected networks, saved ones, IP details,
+and <strong>Advanced</strong> (NetworkManager's connection editor) for static addresses, DNS and
+802.1X.</p>
+<h2>Share your Wi-Fi</h2>
+<p>Settings → Network → the QR icon next to the connected network. Point a phone's camera at it
+to join.</p>
+<h2>Hotspot</h2>
+<p>Settings → Network → <strong>Advanced</strong> opens NetworkManager's connection editor:
+add a Wi-Fi connection in <em>Hotspot</em> mode to share the computer's connection over Wi-Fi.
+From a terminal: <code>nmcli device wifi hotspot ssid NAME password PASSWORD</code>.</p>
+<h2>VPN</h2>
+<p>WireGuard, OpenVPN and OpenConnect (Cisco AnyConnect, GlobalProtect…): Settings → Network →
+VPN. Import a configuration file or enter the details; connect from the same page.</p>
+<h2>Airplane mode</h2>
+<p>Control Center → Airplane Mode turns Wi-Fi and Bluetooth off together.</p>
+<h2>Network tools</h2>
+<p><code>ip a</code>, <code>ifconfig</code>, <code>ping</code>, <code>dig</code>, <code>traceroute</code>,
+<code>mtr</code>, <code>nc</code> (netcat), <code>whois</code>, <code>nmcli</code> (NetworkManager from
+the command line) and <code>portop</code> are installed.</p>
+
+<!-- page: sharing | Sharing and your phone | Nearby sharing, screen sharing, SSH, KDE Connect and network folders -->
+<p>Settings → Sharing. Each kind of sharing opens its firewall port only while it is on.</p>
+<h2>Files with nearby devices</h2>
+<p>Right-click a file in Files → <em>Send to Nearby Device…</em> (LocalSend): works with Android,
+iPhone, Windows, macOS and Linux, over your network, with no account. Turn on <em>Let nearby
+devices find this computer</em> to receive files.</p>
+<h2>Your screen</h2>
+<p><em>Share this screen</em> starts a VNC server (wayvnc, encrypted, with a password). Connect
+from another computer with Remmina, TigerVNC or RealVNC to the address and with the password
+shown.</p>
+<h2>Remote login</h2>
+<p><em>Remote Login (SSH)</em> lets you log in to this computer from another one with
+<code>ssh user@address</code>. Off by default.</p>
+<h2>Your phone</h2>
+<ol class="steps">
+  <li>Install <strong>KDE Connect</strong> on your Android phone (Play Store or F-Droid) or iPhone (App Store).</li>
+  <li>In Aurora: Settings → Sharing → <em>Allow phones to connect</em>.</li>
+  <li>Pair from the phone.</li>
+</ol>
+<p>The phone's notifications show up on the desktop; send files both ways, share the
+clipboard, control music and use the phone as a touchpad.</p>
+<h2>Network folders</h2>
+<p>To open folders shared by other computers, see <a href="files.html">Files → Network folders</a>.</p>
+
+<!-- page: devices | Displays, Bluetooth and printers | Monitors, resolution and scale, Bluetooth devices, printers and scanners -->
+<h2>Displays</h2>
+<p>Settings → Displays: arrangement of several monitors, which is primary, resolution, refresh
+rate, scale (for high-resolution screens) and rotation. The layout is saved in
+<span class="path">~/.config/aurora/displays.sh</span> and applied at login. Windows and widgets
+keep their proportions when the resolution changes.</p>
+<h2>Bluetooth</h2>
+<p>Settings → Bluetooth: turn it on, make the computer visible, pair new devices (keyboards,
+mice, headphones, phones) and connect or forget paired ones. The Control Center's Bluetooth
+tile connects paired devices quickly. Blueman offers advanced options.</p>
+<h2>Printers and scanners</h2>
+<p>Most network and USB printers work without drivers (driverless IPP): Settings → Printers →
+<em>Add</em>. Print queues and jobs are there too. Scan with Document Scanner.</p>
+<h2>Keyboard and mouse</h2>
+<p>Settings → Keyboard (layouts, repeat, Compose key, shortcuts) and Mouse &amp; Touchpad
+(speed, natural scrolling, tap to click, gestures, left-handed). See
+<a href="languages.html">Languages and keyboards</a>.</p>
+
+<!-- page: sound | Sound and Volume Mixer | Output and input devices, balance, over-amplification, each app's volume, system sounds -->
+<p>Settings → Sound.</p>
+<ul>
+  <li><strong>Output</strong>: the device (speakers, headphones, HDMI, Bluetooth), volume and left/right balance.</li>
+  <li><strong>Input</strong>: the microphone and its level.</li>
+  <li><strong>Volume Mixer</strong>: every app playing sound right now, with its own volume slider and mute button, updated every two seconds. The same list is under the devices in the Control Center (arrow next to the volume).</li>
+  <li><strong>Over-amplification</strong>: lets the volume go above 100%.</li>
+  <li><strong>System Sounds</strong>: the startup and shutdown sounds, on or off, with a preview.</li>
+</ul>
+<p>Media keys change the volume with an on-screen indicator. Sound runs on PipeWire; per-app
+volumes are set with <code>wpctl</code>, which also works from a terminal
+(<code>wpctl status</code>).</p>
+
+<!-- page: power | Power and battery | Screen blank, suspend, power button and lid, power modes, battery health and charge limit -->
+<p>Settings → Power.</p>
+<ul>
+  <li><strong>Screen blank</strong> and <strong>Automatic screen lock</strong> (see <a href="lock-and-idle.html">Locking and idle</a>).</li>
+  <li><strong>Automatic Suspend</strong>: after how long on battery and when plugged in.</li>
+  <li><strong>Power button</strong> and <strong>Closing the lid</strong> (on laptops): what they do.</li>
+  <li><strong>Power Mode</strong>: Performance, Balanced, Power Saver (also in the Control Center).</li>
+  <li><strong>Battery</strong>: <em>Show battery percentage</em> in the top bar, <em>Battery health</em>, and <strong>Limit charging to 80%</strong> to make the battery last longer, on laptops whose firmware supports it (ThinkPad, ASUS, Dell, Framework, Huawei, LG, Samsung, System76…).</li>
+</ul>
+<p>Desktop Profiles (Settings → Desktop Profiles) switch several of these together: <em>Battery</em>
+uses Power Saver, hides the dock and turns animations off.</p>
+
+<!-- page: accessibility | Accessibility | Seeing, hearing, typing and pointing: zoom, screen reader, high contrast, screen keyboard and more -->
+<p>Settings → Accessibility.</p>
+<h2>Seeing</h2>
+<ul>
+  <li><strong>High contrast</strong>, <strong>text size</strong> (Default, Large, Larger), <strong>pointer size</strong>, <strong>reduce animation</strong>, <strong>always show scrollbars</strong>.</li>
+  <li><strong>Screen reader</strong> (Orca): reads what's on screen.</li>
+  <li><strong>Zoom</strong>: the whole screen or a lens. In Aurora Compatibility: <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>8</kbd> on/off, <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>=</kbd> / <kbd>−</kbd> zoom in and out; in the Aurora session, hold <kbd>Super</kbd> and scroll.</li>
+</ul>
+<h2>Hearing</h2>
+<p><strong>Alert sounds</strong> on or off; the visual notification popups always show.</p>
+<h2>Typing</h2>
+<ul>
+  <li><strong>Screen keyboard</strong>: always at login, or on demand from the Control Center tile.</li>
+  <li><strong>Blinking cursor</strong>; repeat delay and speed are in Settings → Keyboard.</li>
+  <li><strong>Dictation</strong> with Aurora AI (<kbd>Super</kbd>+<kbd>H</kbd>).</li>
+</ul>
+<h2>Pointing and clicking</h2>
+<p><strong>Double-click delay</strong>; mouse speed and left-handed mode in Settings → Mouse &amp; Touchpad.</p>
+
+<!-- page: languages | Languages and keyboards | Changing the language, formats, keyboard layouts and switching between them -->
+<h2>Language</h2>
+<p>Settings → Language &amp; Region: the interface language, and the formats (dates, numbers,
+units, money). Log out and in again to apply. Day and month names follow the interface
+language; numbers, units and money follow the region of the formats.</p>
+<p>Your choice is kept in <span class="path">~/.config/aurora/locale.conf</span>; the system's
+default (from the installer) in <span class="path">/etc/default/locale</span>.</p>
+<p>Aurora's own apps are fully translated into English, Italian, Spanish, French, German,
+Portuguese, Russian, Chinese (Simplified), Japanese, Arabic and Hindi. The system, Firefox and
+LibreOffice come in the 20 languages of the boot menu:</p>
+<!-- gen:locales -->
+<h2>Keyboard layouts</h2>
+<p>Settings → Keyboard (or Language &amp; Region): add layouts; switch between them with
+<kbd>Alt</kbd>+<kbd>Shift</kbd>. The <strong>Compose key</strong> types special characters
+(<kbd>Compose</kbd> <kbd>e</kbd> <kbd>'</kbd> gives é). Your layouts are kept in
+<span class="path">~/.config/aurora/keyboard.conf</span>.</p>
+<h2>Date and time</h2>
+<p>Settings → Date &amp; Time: <em>Automatic date &amp; time</em> (from the internet), the
+time zone and the 24-hour clock. Seconds in the top bar clock are in Settings → Desktop &amp;
+Dock → Top Bar.</p>

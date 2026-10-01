@@ -123,7 +123,7 @@ def convert(md):
 
 NAV = [("why.html", "Why Aurora"), ("index.html#features", "Features"), ("ai.html", "AI"),
        ("developers.html", "Developers &amp; Gaming"), ("install.html", "Install"),
-       ("technical.html", "Under the hood")]
+       ("technical.html", "Under the hood"), ("manual/index.html", "Documentation")]
 
 
 def header(active):
@@ -146,7 +146,7 @@ FOOTER = """<footer class="footer">
     <p>Built on Debian. Made with care for people who build things.</p></div>
   <div class="footer-links"><a href="why.html">Why Aurora</a> <a href="ai.html">Aurora AI</a> <a href="install.html">Install guide</a>
     <a data-repo-link href="#">Source code</a>
-    <a data-repo-link data-path="/blob/main/README.md" href="#">Full documentation</a></div>
+    <a href="manual/index.html">Documentation</a></div>
 </footer>
 <div class="lightbox" hidden><img alt=""></div>
 <script src="assets/site.js"></script>

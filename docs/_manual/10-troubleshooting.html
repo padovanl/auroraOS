@@ -1,0 +1,90 @@
+<!-- section: Troubleshooting -->
+
+<!-- page: troubleshooting | Troubleshooting | Black screens, a desktop that doesn't start, missing sound or Wi-Fi, logs, System Health and resetting settings -->
+<h2>System Health first</h2>
+<p>Settings → System Health checks disks (SMART), free space, updates, firmware, failed
+services, the battery, graphics drivers and the session's own startup, and shows a fix for each
+problem. <strong>Guided Diagnostics</strong> prepares a local report for installation, startup and
+login, or app problems: raw logs are left out unless you choose to include them, you can edit
+the preview, and nothing is uploaded.</p>
+
+<h2>The screen stays black after the boot menu</h2>
+<ol class="steps">
+  <li>Start <strong>Try Aurora OS (safe graphics)</strong>.</li>
+  <li>Still black: edit the entry with <kbd>E</kbd> and add <code>nomodeset</code> to the line that starts with <code>linux</code>.</li>
+  <li>On an installed NVIDIA system: Settings → Software Updates → Additional Drivers.</li>
+</ol>
+
+<h2>The desktop doesn't appear after login</h2>
+<ul>
+  <li>At the login screen choose <strong>Aurora Compatibility</strong>.</li>
+  <li>If the Aurora session fell back to labwc, the reason is in <span class="path">~/.local/state/aurora/compositor-failure.log</span> and in System Health.</li>
+  <li>If the top bar or dock disappear, the shell restarts by itself within a second (up to five times a minute). Its log is <span class="path">$XDG_RUNTIME_DIR/aurora-shell.log</span>.</li>
+  <li>To log in without the desktop: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F2</kbd> gives a text console.</li>
+</ul>
+
+<h2>An app doesn't respond</h2>
+<p>Open Task Manager (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>), select it, <strong>End
+Task</strong>; if it stays, <strong>Kill</strong>. From a terminal: <code>pkill NAME</code> or
+<code>kill -9 PID</code>.</p>
+
+<h2>No sound</h2>
+<ul>
+  <li>Control Center → the arrow next to the volume: choose the right output device.</li>
+  <li>Settings → Sound → Volume Mixer: is the app muted or very low?</li>
+  <li><code>systemctl --user restart pipewire wireplumber</code> restarts the sound system.</li>
+</ul>
+
+<h2>No Wi-Fi</h2>
+<ul>
+  <li>Airplane Mode off? Wi-Fi tile on?</li>
+  <li><code>nmcli radio</code> shows whether Wi-Fi is blocked; <code>rfkill list</code> shows a hardware switch.</li>
+  <li>Some Broadcom and Realtek cards need a newer kernel: <code>sudo apt install -t trixie-backports linux-image-amd64</code>.</li>
+</ul>
+
+<h2>An update broke something</h2>
+<p>Start the snapshot from before the update from the boot menu: see
+<a href="snapshots.html">Snapshots and recovery</a>.</p>
+
+<h2>Reset settings</h2>
+<pre><code>gsettings reset-recursively org.aurora.desktop    # Aurora's desktop settings
+rm ~/.config/labwc/rc.xml                         # keyboard shortcuts and window settings
+aurora-wayfire-config                             # regenerate the Aurora session's config</code></pre>
+<p>Log out and in again afterwards. Your files are not touched.</p>
+
+<h2>Logs</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>What</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>The whole system and your session</td><td><code>journalctl -b</code>, <code>journalctl --user -b</code>, or the Logs app</td></tr>
+<tr><td>Aurora Shell</td><td><span class="path">$XDG_RUNTIME_DIR/aurora-shell.log</span></td></tr>
+<tr><td>Why the Aurora session fell back</td><td><span class="path">~/.local/state/aurora/compositor-failure.log</span></td></tr>
+<tr><td>The installer</td><td><span class="path">~/.cache/calamares/session.log</span> in the live session: copy it somewhere (a USB stick) before restarting, since the live session forgets everything</td></tr>
+<tr><td>Snapshots</td><td>Timeshift's log in Timeshift</td></tr>
+</tbody></table></div>
+
+<!-- page: faq | Frequently asked questions | Short answers to common questions -->
+<dl>
+  <dt>Is Aurora OS free?</dt>
+  <dd>Yes: free to use, share and change, under the GPL 3.0 or later. It has no ads, no telemetry and needs no account.</dd>
+  <dt>Can I install Windows programs?</dt>
+  <dd>Many: Game Hub sets up Bottles and Wine for Windows apps, and Steam's Proton for games. Look for a Linux version or a web version first (App Center, Flathub).</dd>
+  <dt>Can I use Android apps?</dt>
+  <dd>Game Hub installs Waydroid, which runs Android apps in a window.</dd>
+  <dt>Does it have a Microsoft Office equivalent?</dt>
+  <dd>LibreOffice (Writer, Calc, Impress) opens and saves Office files. Microsoft 365 works in the browser.</dd>
+  <dt>Where are my files?</dt>
+  <dd>In your home folder, <span class="path">/home/YOUR-NAME</span>: Desktop, Documents, Downloads, Music, Pictures, Videos.</dd>
+  <dt>How do I install something that's not in App Center?</dt>
+  <dd>A <code>.deb</code> file: double-click it, or <code>sudo apt install ./file.deb</code>. An AppImage: make it executable in Properties and open it. Dev Hub covers most developer tools.</dd>
+  <dt>How do I become administrator in a terminal?</dt>
+  <dd>Put <code>sudo</code> before the command; it asks your password (or your finger).</dd>
+  <dt>Can I keep Windows?</dt>
+  <dd>Yes: <em>Install alongside</em> in the installer; the boot menu then lets you choose at every start.</dd>
+  <dt>Why does the time differ from Windows after switching?</dt>
+  <dd>Windows keeps the hardware clock in local time, Linux in UTC. Run <code>timedatectl set-local-rtc 1</code> in Aurora, or set Windows to UTC.</dd>
+  <dt>How do I change the language later?</dt>
+  <dd>Settings → Language &amp; Region, then log out and in.</dd>
+  <dt>Is my data sent anywhere?</dt>
+  <dd>Only what's listed in <a href="security.html">Security and privacy → What goes online by itself</a>.</dd>
+</dl>

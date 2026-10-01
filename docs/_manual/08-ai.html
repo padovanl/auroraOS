@@ -1,0 +1,101 @@
+<!-- section: Aurora AI -->
+
+<!-- page: ai-overview | Turning on Aurora AI | Where answers come from: a model on your computer, on your network, or a cloud provider -->
+<p>Aurora AI is <strong>off until you turn it on</strong> in Settings → AI. Nothing is
+downloaded and nothing is sent anywhere before that.</p>
+
+<h2>1. Choose where answers come from</h2>
+<dl>
+  <dt>This computer (private)</dt>
+  <dd>Download a model; it runs locally, even offline, and nothing leaves the computer. The model loads when you ask and unloads after 10 idle minutes. Suggested models:
+    <div class="table-wrap"><table>
+    <thead><tr><th>Model</th><th>For</th></tr></thead>
+    <tbody>
+    <tr><td>Qwen3 1.7B</td><td>Any computer</td></tr>
+    <tr><td>Qwen3 4B, Gemma 3 4B</td><td>8 GB of memory</td></tr>
+    <tr><td>Qwen3 8B</td><td>16 GB of memory</td></tr>
+    </tbody></table></div>
+    It runs with llama.cpp's server, downloaded on demand and verified by checksum. A graphics card speeds it up when the driver supports Vulkan.</dd>
+  <dt>Your network</dt>
+  <dd>Ollama or LM Studio on this or another computer: choose <em>OpenAI-compatible API</em> and enter its address, for example <code>http://192.168.1.20:11434/v1</code> for Ollama or <code>http://192.168.1.20:1234/v1</code> for LM Studio (<em>Ollama on this computer</em> fills it in for the local one). Attachments are allowed with these, since nothing leaves your network.</dd>
+  <dt>A cloud provider</dt>
+  <dd>Anthropic Claude, or an OpenAI-compatible service (OpenAI, Google Gemini, Mistral, OpenRouter, Groq). Paste your API key; it is kept in your keyring.</dd>
+</dl>
+<div class="warning"><p><strong>API keys are billed per use by the provider</strong>, separately
+from a Claude Pro/Max or ChatGPT Plus subscription, which other apps can't use. To use a
+subscription, install <strong>Claude Code</strong> or <strong>Codex</strong> from Dev Hub → AI
+Assistants: they sign in with your plan.</p></div>
+
+<h2>2. Choose where it helps</h2>
+<p>Each place has its own switch in Settings → AI. See <a href="ai-features.html">Where Aurora AI helps</a>.</p>
+
+<h2>3. Languages</h2>
+<p>It answers in the language you write in and follows “reply in Italian” whatever the system
+language. You can also fix one language for answers and one for dictation (or let it detect),
+and download a reading voice for any of 19 languages.</p>
+
+<h2>Privacy</h2>
+<ul>
+  <li>With a model on your computer, nothing is sent anywhere.</li>
+  <li>Files and photos you attach are only sent to a model on your computer or your network, never to a cloud provider.</li>
+  <li>A chat that used private attachments can't continue with a cloud provider: start a new chat.</li>
+  <li>Chats are saved on this computer.</li>
+</ul>
+
+<!-- page: assistant | Aurora Assistant | The floating chat: opening it, attachments, quick actions, models, collapsing -->
+<p>Open the Assistant from the dock, the ✦ in the top bar, or with
+<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>.</p>
+
+<h2>Where it sits</h2>
+<p>The Assistant floats like a picture-in-picture video: a card in the bottom-right corner,
+above your other windows and on every workspace. It sits just above the dock when the dock is
+under it, and right at the bottom of the screen when the dock is elsewhere, hidden or ends to
+its left. It never takes the keyboard from the app you're using unless you click it or open it
+with the shortcut.</p>
+<ul>
+  <li><strong>↓</strong> collapses it to a small bar, like a chat on a web page; a dot shows when a reply arrives.</li>
+  <li><strong>⤢</strong> makes it bigger for long answers.</li>
+  <li><strong>×</strong> closes it.</li>
+</ul>
+
+<h2>Chatting</h2>
+<ul>
+  <li>Type and press <kbd>Enter</kbd>. Answers stream in; <strong>Stop</strong> ends one, and you can regenerate it.</li>
+  <li>Code blocks have a copy button; answers can be read aloud.</li>
+  <li>New replies scroll into view unless you're reading earlier messages: then a highlighted arrow takes you to the latest.</li>
+  <li><strong>+</strong> starts a new chat, the clock icon opens earlier chats.</li>
+  <li>The model is chosen from the title (for example <em>On this computer</em>).</li>
+</ul>
+
+<h2>Attachments</h2>
+<p>The paperclip opens a file chooser (the Assistant collapses while it's open); you can also
+drag files into the chat. Text, code, documents (PDF, office files) and photos are supported;
+photos are read with offline text recognition. Up to four attachments per message. Attachments
+only go to a model on your computer or your network.</p>
+
+<h2>Quick actions</h2>
+<p><strong>Summarize</strong>, <strong>Improve Writing</strong>, <strong>Translate</strong> and
+<strong>Explain</strong> work on, in this order:</p>
+<ol>
+  <li>the text you typed or pasted in the Assistant's box;</li>
+  <li>otherwise, the attached files;</li>
+  <li>otherwise, the text you last copied (or selected) in any app.</li>
+</ol>
+<p>Translate translates into your language.</p>
+
+<!-- page: ai-features | Where Aurora AI helps | Spotlight, terminal, Writing Tools, Files, screenshots, notifications, dictation, read aloud, search by meaning -->
+<div class="table-wrap"><table>
+<thead><tr><th>Where</th><th>How</th></tr></thead>
+<tbody>
+<tr><td>Spotlight</td><td>Type <code>? your question</code>.</td></tr>
+<tr><td>Terminal</td><td><code>ask "find files bigger than 1 GB in my home"</code> suggests a command and runs it if you answer <kbd>y</kbd>. <code>make 2&gt;&amp;1 | why</code> explains an error and the fix.</td></tr>
+<tr><td>Writing Tools</td><td>Select text in any app and press <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>: <em>Proofread</em>, <em>Friendlier</em>, <em>More Professional</em>, <em>Shorter</em>, <em>Summarize</em>, <em>Key Points</em>, <em>Translate</em>. Then <em>Copy</em> the result or <em>Replace Selection</em>.</td></tr>
+<tr><td>Files</td><td>Right-click a file → <em>Summarize with Aurora</em> or <em>Ask Aurora About This File…</em>; in a Git repository, <em>Summarize Git Changes…</em> (you review it first).</td></tr>
+<tr><td>Screenshots</td><td><em>Ask Aurora</em> on the screenshot notification explains what's on screen.</td></tr>
+<tr><td>Notifications</td><td>With three or more notifications in the list, a <em>Summarize</em> button sums them up.</td></tr>
+<tr><td>Dictation</td><td><kbd>Super</kbd>+<kbd>H</kbd> starts, again stops; the text is typed where the cursor is. Speech is recognized on your computer (faster-whisper).</td></tr>
+<tr><td>Read aloud</td><td>Select text and press <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. Voices run on your computer (Piper).</td></tr>
+<tr><td>Search by meaning</td><td>Spotlight finds documents by what they're about. The index (EmbeddingGemma, SQLite) stays on your computer.</td></tr>
+</tbody></table></div>
+<p>Each one has its own switch in Settings → AI, and downloads what it needs (a model, a voice,
+the speech model) only when you turn it on.</p>

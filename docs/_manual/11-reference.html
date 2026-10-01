@@ -1,0 +1,154 @@
+<!-- section: Reference -->
+
+<!-- page: keyboard-shortcuts | Keyboard shortcuts | Every system-wide shortcut, generated from Aurora's keyboard configuration, plus the ones inside Aurora's apps -->
+<p>These are the system-wide shortcuts of a new account, generated from Aurora's default
+configuration (<span class="path">/usr/share/aurora/labwc/rc.xml</span>). Your own copy is
+<span class="path">~/.config/labwc/rc.xml</span>; change them, or add your own, in Settings →
+Keyboard → Shortcuts. <kbd>Super</kbd>+<kbd>/</kbd> shows the ones in effect on screen. They work
+in both sessions unless marked.</p>
+<!-- gen:shortcuts -->
+
+<h2>Also in the Aurora session</h2>
+<div class="table-wrap"><table class="keys">
+<thead><tr><th>Keys</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><kbd>Super</kbd>+<kbd>Tab</kbd></td><td>Next window</td></tr>
+<tr><td><kbd>Super</kbd> + left mouse button</td><td>Move the window under the pointer</td></tr>
+<tr><td><kbd>Super</kbd> + right mouse button</td><td>Resize the window under the pointer</td></tr>
+<tr><td><kbd>Super</kbd> + mouse wheel</td><td>Zoom the screen</td></tr>
+</tbody></table></div>
+
+<h2>In Spotlight and the overview</h2>
+<div class="table-wrap"><table class="keys">
+<thead><tr><th>Keys</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Choose a result or card</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Open it</td></tr>
+<tr><td><kbd>Esc</kbd></td><td>Close</td></tr>
+</tbody></table></div>
+
+<h2>In Task Manager</h2>
+<div class="table-wrap"><table class="keys">
+<thead><tr><th>Keys</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><kbd>Delete</kbd></td><td>End the selected task</td></tr>
+<tr><td><kbd>Shift</kbd>+<kbd>Delete</kbd></td><td>Kill it</td></tr>
+</tbody></table></div>
+
+<h2>In Files</h2>
+<p>See <a href="files.html#keyboard-shortcuts-in-files">Files → Keyboard shortcuts</a>.</p>
+
+<!-- page: shell-commands | Shell commands | aurora-shell's commands, for scripts and your own shortcuts -->
+<p>With Aurora Shell running, <code>aurora-shell COMMAND</code> asks it to do something, which is
+handy in scripts and for your own shortcuts (Settings → Keyboard → Shortcuts → Add, with the
+command). Without a command, <code>aurora-shell</code> starts the shell (the session does this).</p>
+<!-- gen:shell-commands -->
+<p>Example: a shortcut that snaps the window to the right third runs
+<code>aurora-shell snap right-third</code>.</p>
+
+<!-- page: command-line-tools | Command-line tools | Aurora's own programs and helpers -->
+<!-- gen:cli -->
+<h2>Administrator helper</h2>
+<p><span class="path">/usr/libexec/aurora-admin</span> is the one audited program that performs
+privileged actions for Settings (firewall rules, the login manager's automatic login, the
+battery limit…), through polkit, which asks for the administrator password.</p>
+
+<!-- page: configuration-files | Configuration files | Where Aurora keeps its settings, which files you can edit, and what each does -->
+<h2>Your settings</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>File</th><th>What it holds</th></tr></thead>
+<tbody>
+<tr><td><span class="path">dconf</span> (<code>org.aurora.desktop</code>)</td><td>Almost every Aurora setting. See <a href="gsettings.html">GSettings keys</a>.</td></tr>
+<tr><td><span class="path">~/.config/labwc/rc.xml</span></td><td>Keyboard shortcuts, input devices, workspaces, window behavior (both sessions read it). Safe to edit; Settings keeps your changes.</td></tr>
+<tr><td><span class="path">~/.config/aurora/wayfire.ini</span></td><td>The Aurora session's compositor configuration, generated from your settings: don't edit, it's rewritten.</td></tr>
+<tr><td><span class="path">~/.config/aurora/compositor</span></td><td><code>wayfire</code> or <code>labwc</code>: the compositor of the Aurora session.</td></tr>
+<tr><td><span class="path">~/.config/aurora/locale.conf</span></td><td>Your language and formats.</td></tr>
+<tr><td><span class="path">~/.config/aurora/keyboard.conf</span></td><td>Your keyboard layouts.</td></tr>
+<tr><td><span class="path">~/.config/aurora/displays.sh</span></td><td>The display layout, applied at login.</td></tr>
+<tr><td><span class="path">~/.config/aurora/desktop-profiles.json</span></td><td>Your saved desktop profiles.</td></tr>
+<tr><td><span class="path">~/.config/aurora/welcome-done</span></td><td>Present once the Welcome app has run.</td></tr>
+<tr><td><span class="path">~/.config/autostart/</span></td><td>Apps that start at login (and overrides that turn system ones off).</td></tr>
+<tr><td><span class="path">~/.config/gtk-4.0/gtk.css</span>, <span class="path">~/.config/gtk-3.0/gtk.css</span></td><td>Aurora's style imports; add your own CSS below Aurora's header line.</td></tr>
+<tr><td><span class="path">~/.config/starship.toml</span></td><td>The prompt (start from <span class="path">/etc/aurora/starship.toml</span>).</td></tr>
+<tr><td><span class="path">~/.bashrc</span></td><td>Anything on top of <span class="path">/etc/aurora/bashrc</span>.</td></tr>
+</tbody></table></div>
+
+<h2>Your data</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Folder</th><th>What it holds</th></tr></thead>
+<tbody>
+<tr><td><span class="path">~/.local/share/aurora/widgets/</span></td><td>Notes and to-do lists of the desktop widgets</td></tr>
+<tr><td><span class="path">~/.local/share/aurora/screentime/</span></td><td>Screen time, one file per day</td></tr>
+<tr><td><span class="path">~/.local/share/aurora/daily/</span></td><td>Pictures of the day (the last week)</td></tr>
+<tr><td><span class="path">~/.local/share/aurora/solid/</span></td><td>Solid-color backgrounds</td></tr>
+<tr><td><span class="path">~/.local/share/backgrounds/</span></td><td>Pictures you added as backgrounds</td></tr>
+<tr><td><span class="path">~/.cache/aurora/</span></td><td>Weather, the current wallpaper link, thumbnails (safe to delete)</td></tr>
+<tr><td><span class="path">~/.local/state/aurora/</span></td><td>Session state and the compositor fallback log</td></tr>
+<tr><td><span class="path">~/Pictures/Screenshots</span>, <span class="path">~/Videos/Screencasts</span></td><td>Screenshots and screen recordings</td></tr>
+</tbody></table></div>
+
+<h2>System</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>File or folder</th><th>What it is</th></tr></thead>
+<tbody>
+<tr><td><span class="path">/usr/lib/aurora/aurora/</span></td><td>Aurora's desktop (Python)</td></tr>
+<tr><td><span class="path">/usr/share/aurora/</span></td><td>Default configuration, styles, the startup script</td></tr>
+<tr><td><span class="path">/usr/share/wayland-sessions/aurora*.desktop</span></td><td>The two sessions</td></tr>
+<tr><td><span class="path">/etc/greetd/config.toml</span></td><td>The login manager</td></tr>
+<tr><td><span class="path">/etc/default/locale</span>, <span class="path">/etc/default/keyboard</span></td><td>The system's language and keyboard</td></tr>
+<tr><td><span class="path">/etc/aurora/</span></td><td>Aurora's shell defaults (bashrc, starship) and the live session's configuration</td></tr>
+<tr><td><span class="path">/usr/share/backgrounds/aurora/</span></td><td>The included wallpapers, including the dynamic set</td></tr>
+</tbody></table></div>
+
+<!-- page: gsettings | GSettings keys | Every Aurora setting key, its type, default and meaning, generated from the schema -->
+<!-- gen:gsettings -->
+<p>Aurora also uses the standard GNOME keys, for example
+<code>org.gnome.desktop.interface color-scheme</code> and <code>accent-color</code>,
+<code>org.gnome.desktop.privacy remove-old-trash-files</code> and <code>old-files-age</code>.</p>
+
+<!-- page: environment | Environment variables | What an Aurora session sets, and variables that change Aurora's behavior -->
+<h2>Set in every session</h2>
+<!-- gen:env -->
+<h2>Set by Aurora at runtime</h2>
+<dl>
+  <dt><code>AURORA_COMPOSITOR</code></dt><dd><code>wayfire</code> or <code>labwc</code>: the compositor actually running.</dd>
+  <dt><code>WAYFIRE_SOCKET</code></dt><dd>Wayfire's IPC socket (Aurora session), used by Snap Layouts and Task Manager.</dd>
+  <dt><code>WLR_RENDERER</code>, <code>LIBGL_ALWAYS_SOFTWARE</code>, <code>WLR_RENDERER_ALLOW_SOFTWARE</code></dt><dd>Set by <code>aurora-render-env</code> for machines without 3D.</dd>
+</dl>
+<h2>You can set</h2>
+<dl>
+  <dt><code>AURORA_SAFE_GRAPHICS=1</code></dt><dd>Use the Compatibility session with software drawing (what the safe graphics boot entry does).</dd>
+  <dt><code>AURORA_LIBDIR</code></dt><dd>Where Aurora's Python code is (default <span class="path">/usr/lib/aurora</span>): run a development checkout with <code>AURORA_LIBDIR=~/src/auroraOS/desktop aurora-files</code>.</dd>
+</dl>
+
+<!-- page: services | System services | Aurora's own services and timers -->
+<div class="table-wrap"><table>
+<thead><tr><th>Unit</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>greetd.service</code></td><td>The login manager.</td></tr>
+<tr><td><code>aurora-first-snapshot.service</code></td><td>Takes the “Fresh install” snapshot at the first boot (btrfs).</td></tr>
+<tr><td><code>aurora-battery-limit.service</code></td><td>Applies the 80% charge limit at boot and after resume.</td></tr>
+<tr><td><code>aurora-repo-check.timer</code></td><td>Daily: switches the Aurora apt repository on once it answers.</td></tr>
+<tr><td><code>aurora-live-setup.service</code></td><td>Live session only: creates the live user and applies the boot menu's language and keyboard.</td></tr>
+<tr><td><code>aurora-ai-index.timer</code> (user)</td><td>Keeps the search-by-meaning index up to date (when that feature is on).</td></tr>
+<tr><td><code>ufw.service</code></td><td>The firewall.</td></tr>
+<tr><td><code>unattended-upgrades.service</code></td><td>Automatic security updates.</td></tr>
+<tr><td><code>grub-btrfsd.service</code></td><td>Adds snapshots to the boot menu (btrfs).</td></tr>
+</tbody></table></div>
+<p>Inspect them with <code>systemctl status UNIT</code> (add <code>--user</code> for user units) or
+in Task Manager → Services.</p>
+
+<!-- page: glossary | Glossary | Words used in this documentation -->
+<dl>
+  <dt>Compositor</dt><dd>The program that draws windows on the screen and passes them input: Wayfire or labwc in Aurora.</dd>
+  <dt>Wayland</dt><dd>The modern way Linux apps show windows. Older X11 apps run through Xwayland.</dd>
+  <dt>Shell</dt><dd>Aurora Shell: the top bar, dock, desktop, Spotlight, notifications and widgets. (Also: the command interpreter in a terminal, bash.)</dd>
+  <dt>Layer surface</dt><dd>A part of the desktop that isn't a window (bar, dock, wallpaper), drawn above or below windows.</dd>
+  <dt>Greeter</dt><dd>The login screen.</dd>
+  <dt>Session</dt><dd>Everything that runs from login to logout.</dd>
+  <dt>Snapshot</dt><dd>An instant copy of the system on btrfs, to go back to after a bad update.</dd>
+  <dt>Flatpak</dt><dd>A format for sandboxed apps that work on any distribution; Flathub is its main store.</dd>
+  <dt>Portal</dt><dd>The way sandboxed apps ask for files, the camera or the screen.</dd>
+  <dt>polkit</dt><dd>The system that asks for the administrator password for privileged actions.</dd>
+  <dt>Live session</dt><dd>Aurora running from the USB stick without installing.</dd>
+</dl>

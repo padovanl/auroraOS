@@ -1,0 +1,204 @@
+<!-- section: Getting started -->
+
+<!-- page: introduction | Introduction | What Aurora OS is, what this documentation covers and how it is organized -->
+<p>Aurora OS is a desktop Linux distribution built on <strong>Debian 13 “trixie”</strong>.
+It runs its own desktop, written for Aurora in Python with GTK 4 and libadwaita, on the
+<strong>Wayfire</strong> Wayland compositor (with <strong>labwc</strong> as a compatibility
+session). It ships as a live ISO that you can try without installing and install with a
+graphical installer.</p>
+
+<h2>What this documentation covers</h2>
+<p>Everything a user or administrator can see or change in Aurora OS:</p>
+<ul>
+  <li><a href="requirements.html">Getting started</a>: requirements, the live USB, the boot menu, installation and the first boot.</li>
+  <li><a href="login-screen.html">Sessions and login</a>: the login screen, the two desktop sessions, what happens when a session starts, locking, idle and power.</li>
+  <li><a href="desktop-overview.html">The desktop</a>: the top bar, the Aurora menu, the Control Center, notifications, the dock, Spotlight, Launchpad, the overview, workspaces, hot corners, gestures, desktop icons and widgets.</li>
+  <li><a href="windows.html">Windows</a>: moving and resizing, snapping, Snap Layouts, Always on Top, animations.</li>
+  <li><a href="files.html">Apps</a>: the apps written for Aurora (Files, Task Manager, Settings, Dev Hub, Game Hub, the Assistant) and the ones included.</li>
+  <li><a href="settings-reference.html">Settings reference</a>: every page of Settings and every option on it.</li>
+  <li><a href="updates.html">System</a>: updates and restarts, snapshots, backups, storage, screen time, security, networking, sharing, devices, accessibility and languages.</li>
+  <li><a href="ai-overview.html">Aurora AI</a>: the assistant, writing tools, dictation, read aloud and where answers come from.</li>
+  <li><a href="virtual-machines.html">Virtual machines</a> and <a href="troubleshooting.html">Troubleshooting</a>.</li>
+  <li><a href="keyboard-shortcuts.html">Reference</a>: keyboard shortcuts, shell commands, command-line tools, configuration files, GSettings keys, environment variables and file locations.</li>
+</ul>
+<p>The reference pages (shortcuts, settings keys, Settings options, widgets, catalogs) are
+generated from Aurora's source code each time this documentation is built, so they match
+the release you are reading about.</p>
+
+<h2>Conventions</h2>
+<dl>
+  <dt><kbd>Super</kbd></dt>
+  <dd>The key with the Windows logo (or ⌘ on Apple keyboards). Tapping it alone opens Spotlight.</dd>
+  <dt>Settings → Page → Option</dt>
+  <dd>A path in the Settings app. Open Settings with <kbd>Super</kbd>+<kbd>I</kbd>, from the Aurora menu or from the Control Center.</dd>
+  <dt><code>monospace</code></dt>
+  <dd>Commands to type in a terminal (<kbd>Super</kbd>+<kbd>Enter</kbd> opens one), file names and settings keys.</dd>
+  <dt><span class="badge">Compatibility session</span></dt>
+  <dd>Something that only exists in the Aurora Compatibility (labwc) session.</dd>
+</dl>
+
+<h2>Versions</h2>
+<p>This documentation describes <strong>Aurora OS 0.1</strong>. Aurora follows Debian trixie
+for the base system and the Linux 6.12 LTS kernel; Aurora's own desktop is updated through
+the <code>aurora-desktop</code> and <code>aurora-artwork</code> packages. See
+<a href="updates.html">Updates and restarts</a>.</p>
+
+<!-- page: requirements | System requirements | The hardware Aurora OS needs, and what works best -->
+<h2>Minimum and recommended</h2>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Minimum</th><th>Recommended</th></tr></thead>
+<tbody>
+<tr><td>Processor</td><td>64-bit x86 (amd64), 2 cores</td><td>4 cores or more</td></tr>
+<tr><td>Memory</td><td>2 GB (the installer checks this)</td><td>4 GB; 8 GB or more for Aurora AI models on the computer</td></tr>
+<tr><td>Disk</td><td>20 GB (the installer checks this)</td><td>64 GB or more, SSD</td></tr>
+<tr><td>Graphics</td><td>Any; without 3D acceleration Aurora draws on the processor</td><td>Intel, AMD or NVIDIA with a working Mesa or NVIDIA driver</td></tr>
+<tr><td>Firmware</td><td>BIOS or UEFI</td><td>UEFI</td></tr>
+<tr><td>USB stick</td><td>4 GB</td><td>8 GB, USB 3</td></tr>
+</tbody></table></div>
+
+<h2>Hardware support</h2>
+<ul>
+  <li>Firmware for Intel, AMD, Realtek, Atheros, Broadcom and MediaTek Wi-Fi and Bluetooth, GPUs and audio (Sound Open Firmware).</li>
+  <li>Mesa with Vulkan and VA-API video decoding, the Intel media driver; NVIDIA cards are detected and Settings → Software Updates → Additional Drivers installs the recommended proprietary driver.</li>
+  <li>Laptops: power profiles, thermald, screen rotation, firmware updates (fwupd), backlight, battery health and an 80% charge limit where the firmware supports it.</li>
+  <li>Fingerprint readers (fprintd), printers (CUPS, driverless IPP) and scanners.</li>
+  <li>Virtual machines: QEMU/KVM (guest agent, SPICE), VirtualBox, VMware and Hyper-V guest tools are included. See <a href="virtual-machines.html">Virtual machines</a>.</li>
+</ul>
+
+<div class="note"><p><strong>Secure Boot.</strong> The live USB's boot loader is not signed yet:
+turn Secure Boot off in the firmware settings to start it. An installed system on UEFI can use
+Secure Boot again (it boots through Debian's signed shim).</p></div>
+
+<!-- page: get-aurora | Get Aurora OS | Download or build the ISO, check it, and write it to a USB stick -->
+<h2>The ISO</h2>
+<p>Aurora OS is one file, <code>aurora-os-0.1-amd64.iso</code>, that boots on BIOS and UEFI
+computers. Download it from the <a href="../index.html#download">website</a> or build it
+yourself (<a href="building.html">Building Aurora</a>). Check the download against its
+checksum file before writing it:</p>
+<pre><code>sha256sum -c aurora-os-0.1-amd64.iso.sha256</code></pre>
+<p>The output must say <code>OK</code>. If it doesn't, download the ISO again.</p>
+
+<h2>Write it to a USB stick</h2>
+<p>Use a stick of 4 GB or more. <strong>Everything on it is erased.</strong></p>
+<h3>On any system</h3>
+<ul>
+  <li><strong>balenaEtcher</strong> or <strong>Fedora Media Writer</strong>: choose the ISO, choose the stick, write.</li>
+  <li><strong>Ventoy</strong>: copy the ISO onto a Ventoy stick like any file; Ventoy shows it in its menu.</li>
+  <li><strong>Rufus</strong> on Windows: choose <em>DD image mode</em> when it asks.</li>
+</ul>
+<h3>On Linux, from a terminal</h3>
+<p>Find the stick's device name with <code>lsblk</code> (for example <code>/dev/sdb</code>),
+then write the image. Check the name twice: writing to the wrong disk destroys its data.</p>
+<pre><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
+
+<h2>Try it without a USB stick</h2>
+<p>Boot the ISO in a virtual machine: QEMU, GNOME Boxes, virt-manager, VirtualBox, VMware or
+Hyper-V. See <a href="virtual-machines.html">Virtual machines</a>.</p>
+
+<!-- page: boot-menu | The boot menu | Every entry of the USB stick's boot menu, and the firmware's boot keys -->
+<h2>Starting from the USB stick</h2>
+<ol class="steps">
+  <li>Plug in the stick and restart the computer.</li>
+  <li>Open the firmware's boot menu. The key depends on the maker: usually <kbd>F12</kbd>, <kbd>F10</kbd>, <kbd>F9</kbd>, <kbd>F11</kbd>, <kbd>Esc</kbd> or <kbd>Del</kbd>, pressed right after switching on.</li>
+  <li>Choose the USB stick (on UEFI computers, the entry that starts with “UEFI”).</li>
+</ol>
+
+<h2>Entries</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Entry</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><strong>Try Aurora OS</strong></td><td>Starts the live desktop in English. Nothing is written to the computer's disks.</td></tr>
+<tr><td><strong>Install Aurora OS</strong></td><td>Starts the live system and opens the installer straight away.</td></tr>
+<tr><td><strong>Try Aurora OS (safe graphics)</strong></td><td>For graphics cards that give a black screen: starts the Aurora Compatibility session with the plainest drawing path (adds <code>aurora.safegraphics nouveau.noaccel=1</code>).</td></tr>
+<tr><td><strong>Language · Lingua · Sprache · Idioma</strong></td><td>A submenu with 20 languages. Each starts the live system in that language with the matching keyboard layout (<code>aurora.lang=</code> and <code>aurora.kbd=</code>).</td></tr>
+<tr><td><strong>Boot from hard disk</strong></td><td>Skips the stick and starts what is installed on the computer.</td></tr>
+<tr><td><strong>UEFI firmware settings</strong></td><td>On UEFI computers: reboots into the firmware setup (to change the boot order or Secure Boot).</td></tr>
+</tbody></table></div>
+
+<h2>Boot parameters</h2>
+<p>Press <kbd>E</kbd> on an entry to edit its kernel line for one boot (press <kbd>Ctrl</kbd>+<kbd>X</kbd> or <kbd>F10</kbd> to start). Useful additions:</p>
+<dl>
+  <dt><code>aurora.lang=it_IT.UTF-8</code></dt><dd>The live session's language.</dd>
+  <dt><code>aurora.kbd=it</code></dt><dd>The keyboard layout; several separated by commas (<code>us,ru</code>), switched with <kbd>Alt</kbd>+<kbd>Shift</kbd>.</dd>
+  <dt><code>aurora.safegraphics</code></dt><dd>Use the Compatibility session with software drawing.</dd>
+  <dt><code>nomodeset</code></dt><dd>Disables the kernel's graphics drivers: a last resort for a black screen.</dd>
+  <dt><code>aurora.install</code></dt><dd>Open the installer after the desktop starts (what “Install Aurora OS” adds).</dd>
+</dl>
+
+<!-- page: live-session | The live session | Using Aurora from the USB stick before installing it -->
+<p>The live session is a complete Aurora desktop that runs from the USB stick and from
+memory. It works like Ubuntu's “Try Ubuntu”: use it as long as you like; <strong>nothing is
+written to the computer's disks</strong>, and everything you change is lost when you shut
+down.</p>
+
+<h2>What is different from an installed system</h2>
+<ul>
+  <li>You are logged in automatically as the user <code>aurora</code>, which has no password. <code>sudo</code> works without one.</li>
+  <li>The screen doesn't lock when idle, and the computer doesn't suspend by itself (that would interrupt an installation).</li>
+  <li>The desktop shows <strong>Install Aurora OS</strong>, and so does the dock.</li>
+  <li>Snapshots, fingerprint and automatic updates are not active.</li>
+  <li>A warning about low disk space is not shown (the live system's “disk” is memory).</li>
+</ul>
+
+<h2>Starting the installer</h2>
+<p>Double-click <strong>Install Aurora OS</strong> on the desktop, or use its icon in the dock.
+If the installer is already open it comes forward; after you close it, the icon opens it again.
+See <a href="install.html">Installing Aurora OS</a>.</p>
+
+<!-- page: install | Installing Aurora OS | The installer step by step: language, location, keyboard, disk, user, summary -->
+<p>The installer is <strong>Calamares</strong> with Aurora's look: the steps run across the top
+as dots that fill in as you go, and there is one <strong>Next</strong> button. Everything it
+needs is on the USB stick, so it <strong>works offline</strong>.</p>
+
+<div class="warning"><p>Back up your files before installing, above all if you are going to
+change partitions or install next to another system.</p></div>
+
+<h2>Steps</h2>
+<ol class="steps">
+  <li><strong>Welcome.</strong> Choose the installer's language. It checks the requirements: 20 GB of disk, 2 GB of memory, and the power cable on a laptop.</li>
+  <li><strong>Location.</strong> Click your region on the map, or let it be detected. This sets the time zone and the formats for dates, numbers and units. Day and month names always follow the system language; units, numbers and money follow the region.</li>
+  <li><strong>Keyboard.</strong> Pick the layout and its variant, and type in the test field. Not sure which one you have? Click <strong>Detect…</strong>: it asks two or three questions about what is printed on your keys (which letters start the top row, which character is next to L) and selects the layout.</li>
+  <li><strong>Disk.</strong> Choose where Aurora goes:
+    <ul>
+      <li><em>Erase disk</em>: a clean install on the whole disk. Tick <strong>Encrypt system</strong> for full-disk encryption (LUKS2) and choose a passphrase: you'll type it at every start.</li>
+      <li><em>Install alongside</em>: keeps Windows or another Linux; drag the divider to share the disk.</li>
+      <li><em>Replace a partition</em>: installs onto one existing partition.</li>
+      <li><em>Manual partitioning</em>: full control. Aurora needs a root partition (<code>/</code>) and, on UEFI, an EFI system partition (FAT32, 300 MB or more, mounted on <code>/boot/efi</code>).</li>
+    </ul>
+    The file system is <strong>btrfs</strong> by default, which gives automatic system snapshots and rollback from the boot menu (see <a href="snapshots.html">Snapshots and recovery</a>). ext4 and xfs are available without snapshots. The partition legend shows each partition's name and size.</li>
+  <li><strong>Users.</strong> Your full name, user name, password (twice) and the computer's name. Choose <strong>Log in automatically</strong> to skip the login screen, or leave it off to see it at every start.</li>
+  <li><strong>Summary.</strong> Review every choice. <strong>Install</strong> starts writing to the disk; until then nothing has changed.</li>
+  <li><strong>Installing.</strong> A slideshow runs while files are copied, with a progress bar.</li>
+  <li><strong>Finish.</strong> Tick <em>Restart now</em> and click <strong>Done</strong>. Remove the USB stick when the computer restarts.</li>
+</ol>
+
+<h2>What the installer sets up</h2>
+<ul>
+  <li>The boot loader: GRUB, through Debian's signed shim on UEFI (Secure Boot works), or GRUB on the disk on BIOS.</li>
+  <li>On btrfs: subvolumes <code>@</code> (system) and <code>@home</code> (your files) with compression, Timeshift, a “Fresh install” snapshot at first boot and the snapshots boot menu.</li>
+  <li>Compressed swap in memory (zram).</li>
+  <li>The firewall (on), automatic security updates (on), and the <code>trixie-backports</code> source for newer kernels when you want them.</li>
+</ul>
+<p>If the installation fails, the installer offers to save its log. Settings → System Health →
+Guided Diagnostics can prepare an installation report on the next try (see
+<a href="troubleshooting.html">Troubleshooting</a>).</p>
+
+<!-- page: first-boot | First boot | The Welcome app, and the first things worth doing -->
+<p>After the restart you see the login screen (or the desktop, with automatic login), then the
+<strong>Welcome</strong> app. It runs once per user and shows:</p>
+<ul>
+  <li>light or dark style;</li>
+  <li>the most useful keyboard shortcuts;</li>
+  <li>where to find apps and settings.</li>
+</ul>
+<p>Open it again any time from Launchpad (<em>Welcome</em>).</p>
+
+<h2>Worth doing first</h2>
+<ol class="steps">
+  <li><strong>Connect to the internet</strong> from the Control Center (<kbd>Super</kbd>+<kbd>S</kbd>) → Wi-Fi.</li>
+  <li><strong>Install updates</strong>: the system checks a few minutes after login and tells you. Or open App Center → Updates.</li>
+  <li><strong>Set up your fingerprint</strong> (Settings → Users), if you have a reader.</li>
+  <li><strong>Add online accounts</strong> (Settings → Users → Online Accounts) for mail, calendar and contacts.</li>
+  <li><strong>Pick your look</strong>: Settings → Appearance (style, accent color, background) and Settings → Desktop &amp; Dock.</li>
+  <li><strong>Get your tools</strong>: Dev Hub for developer tools, Game Hub for games, App Center for everything else.</li>
+</ol>

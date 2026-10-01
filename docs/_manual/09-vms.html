@@ -1,0 +1,94 @@
+<!-- section: Virtual machines -->
+
+<!-- page: virtual-machines | Virtual machines | Running Aurora in QEMU, GNOME Boxes, virt-manager, VirtualBox and VMware -->
+<p>Aurora runs well in a virtual machine. Give it <strong>4 GB of memory</strong> (8 GB for AI
+models), <strong>2 or more processors</strong> and a <strong>40 GB disk</strong>. Guest tools for
+QEMU/KVM (agent, SPICE), VirtualBox, VMware and Hyper-V are included.</p>
+
+<h2>Graphics in a VM</h2>
+<p>With 3D acceleration (virtio-gpu with virgl, VirtualBox or VMware with 3D on) the Aurora
+session uses it. Without it, Wayfire draws on the processor, or Aurora uses the Compatibility
+session where Wayfire can't run (see <a href="sessions.html">Desktop sessions</a>).</p>
+
+<h2>GNOME Boxes and virt-manager</h2>
+<p>Open the ISO, choose <em>Debian 13</em> as the operating system, 4 GB of memory and 2 or more
+processors. virt-manager: enable UEFI (OVMF) if you want it.</p>
+
+<h2>QEMU from a terminal</h2>
+<pre><code>sudo apt install qemu-system-x86 qemu-utils ovmf     # Debian/Ubuntu
+qemu-img create -f qcow2 aurora.qcow2 40G
+qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
+  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -drive file=aurora.qcow2,if=virtio \
+  -device virtio-vga-gl -display gtk,gl=on \
+  -device intel-hda -device hda-duplex \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet</code></pre>
+<ul>
+  <li><code>-device virtio-vga-gl -display gtk,gl=on</code> gives the VM 3D acceleration. Without it (for example over SSH) use <code>-vga std -display gtk</code>.</li>
+  <li>Add <code>-drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd</code> to boot with UEFI; keep the same firmware for later boots.</li>
+  <li>After installing, start again without <code>-cdrom</code> and <code>-boot d</code>.</li>
+</ul>
+<p>From Aurora's source tree, <code>build/run-qemu.sh</code> does this with options
+(<code>--uefi</code>, <code>--disk FILE</code>, <code>--software</code>, <code>--spice PORT</code>,
+<code>--vnc N</code>).</p>
+
+<h2>On a server, watched from another computer</h2>
+<pre><code># on the server
+build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-0.1-amd64.iso
+# on your computer
+ssh -L 5930:127.0.0.1:5930 user@server
+remote-viewer spice://127.0.0.1:5930</code></pre>
+
+<h2>Windows with WSL 2</h2>
+<p>WSL 2 supports nested virtualization, so the QEMU commands work in Ubuntu on WSL: check that
+<code>/dev/kvm</code> exists, install QEMU, add yourself to the <code>kvm</code> group
+(<code>sudo usermod -aG kvm $USER</code>, then <code>wsl --shutdown</code>), and start with
+<code>--software</code>.</p>
+
+<h2>VirtualBox and VMware</h2>
+<p>Create a <em>Debian 64-bit</em> VM, enable EFI for UEFI, give it 128 MB of video memory and
+turn 3D acceleration on if available. The guest tools are already in Aurora.</p>
+
+<!-- page: hyper-v | Hyper-V | Creating the VM with the script, installing, checkpoints, the boot order and using the GPU for AI -->
+<p>Hyper-V is in Windows 10 and 11 Pro, Enterprise and Education. Hyper-V never gives a Linux
+VM your graphics card for its screen: the desktop is drawn by Hyper-V's virtual display, in
+software. Your GPU can still run Aurora AI models, from Windows.</p>
+
+<h2>Turn on Hyper-V (once)</h2>
+<pre><code>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All</code></pre>
+<p>In PowerShell as administrator, then restart Windows.</p>
+
+<h2>Create the VM with the script</h2>
+<p><code>tools/hyperv/New-AuroraVM.ps1</code> from Aurora's repository creates everything from the
+ISO's path. In PowerShell as administrator:</p>
+<pre><code>powershell -ExecutionPolicy Bypass -File .\New-AuroraVM.ps1 -IsoPath "$env:USERPROFILE\Desktop\aurora-os-0.1-amd64.iso"</code></pre>
+<p>It creates “Aurora” (Generation 2, 8 GB, 4 processors, 60 GB disk in <span class="path">C:\VMs</span>),
+turns Secure Boot off, sets the boot order (DVD, disk, network), keeps Windows' standard and
+automatic checkpoints, sets the resolution and enhanced session, starts the VM and opens its
+window. Run it again with a newer ISO: it keeps the VM and its disk and only swaps the ISO.
+Options: <code>-Name</code>, <code>-MemoryGB</code>, <code>-Processors</code>, <code>-DiskGB</code>,
+<code>-Folder</code>, <code>-Switch</code>, <code>-Width</code>, <code>-Height</code>,
+<code>-NoStart</code>, <code>-Recreate</code>.</p>
+
+<h2>Install</h2>
+<p>Install as on a PC (<a href="install.html">Installing Aurora OS</a>). After the restart the VM
+starts from its disk; remove the ISO from the DVD drive in the VM's settings when you no longer
+need it.</p>
+
+<h2>If the installed system doesn't start</h2>
+<dl>
+  <dt>It shows “Start PXE over IPv4”</dt>
+  <dd>The network is before the disk in the boot order:
+  <pre><code>Set-VMFirmware -VMName Aurora -BootOrder (Get-VMDvdDrive -VMName Aurora), (Get-VMHardDiskDrive -VMName Aurora), (Get-VMNetworkAdapter -VMName Aurora)</code></pre></dd>
+  <dt>The firmware can't read the disk</dt>
+  <dd>On some hosts the VM's firmware reads the virtual disk only through a checkpoint. Keep checkpoints on:
+  <pre><code>Set-VM -Name Aurora -CheckpointType Standard -AutomaticCheckpointsEnabled $true</code></pre></dd>
+  <dt>A report for help</dt>
+  <dd><code>tools/hyperv/Get-AuroraBootReport.ps1 -Name Aurora</code> collects the VM's settings, Hyper-V's log and the boot files (read-only) into a folder on the Desktop.</dd>
+</dl>
+
+<h2>Use your GPU for Aurora AI</h2>
+<p>Run Ollama or LM Studio on Windows (they use your GPU), allow connections from the network,
+and in Aurora choose Settings → AI → Provider → <em>OpenAI-compatible API</em> with Windows'
+address (for Ollama, <code>http://WINDOWS-IP:11434/v1</code>). The full guide,
+including experimental GPU partitioning, is <code>HYPERV.md</code> in Aurora's repository.</p>

@@ -1,0 +1,169 @@
+<!-- section: Sessions and login -->
+
+<!-- page: login-screen | The login screen | The greeter: logging in, choosing a session, restarting and shutting down -->
+<p>The login screen is <strong>Aurora Greeter</strong>, a GTK 4 app that runs on
+<strong>greetd</strong>, the login manager. It shows the Aurora logo and wordmark, the time and
+date over the current wallpaper, and the users of the computer.</p>
+
+<h2>Logging in</h2>
+<ol class="steps">
+  <li>Click your name, or choose <strong>Other…</strong> and type a user name.</li>
+  <li>Type your password and press <kbd>Enter</kbd> or <strong>Log In</strong>.</li>
+</ol>
+<p>A wrong password shows <em>Wrong password. Please try again.</em> The login password also
+unlocks your keyring, where apps keep saved passwords (Wi-Fi, browsers, Git).</p>
+
+<h2>Choosing a session</h2>
+<p>When more than one session is installed, a menu at the bottom of the login screen lists them. Aurora installs two:</p>
+<!-- gen:sessions -->
+<p>The choice is remembered. See <a href="sessions.html">Desktop sessions</a> for the
+differences.</p>
+
+<h2>Restart and shut down</h2>
+<p><strong>Restart</strong> and <strong>Power Off</strong> are in the corner of the login screen.</p>
+
+<h2>Automatic login</h2>
+<p>Chosen in the installer, or later in Settings → Users → <em>Log in automatically</em>. greetd then
+starts your session without asking for the password at boot. The keyring stays locked until an
+app needs it, and it asks for your password once.</p>
+
+<h2>Under the hood</h2>
+<ul>
+  <li>greetd runs on virtual terminal 7 (<code>/etc/greetd/config.toml</code>).</li>
+  <li>Its default session is <code>/usr/libexec/aurora-greeter-launch</code>, run as the system user <code>_greetd</code>: it reads the system language and keyboard (<code>/etc/default/locale</code>, <code>/etc/default/keyboard</code>) and starts the greeter in a locked-down labwc. If the graphical greeter cannot start, greetd's text greeter <code>agreety</code> takes over.</li>
+  <li>After a successful login greetd runs the chosen session's command: <code>aurora-session wayfire</code> or <code>aurora-session labwc</code> (see <a href="session-startup.html">What happens when you log in</a>).</li>
+</ul>
+
+<!-- page: sessions | Desktop sessions | Aurora (Wayfire) and Aurora Compatibility (labwc): what each is and when to use it -->
+<p>Aurora's desktop (top bar, dock, desktop, Spotlight, notifications) is the same in both
+sessions. What changes is the <strong>compositor</strong>, the program that draws windows on
+the screen and handles input.</p>
+
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Aurora</th><th>Aurora Compatibility</th></tr></thead>
+<tbody>
+<tr><td>Compositor</td><td>Wayfire</td><td>labwc</td></tr>
+<tr><td>Window animations</td><td>Open, close, minimize and restore</td><td>None (apps keep their own)</td></tr>
+<tr><td>Snap Layouts and Snap Assist</td><td>Yes</td><td>No (snapping with the keyboard works)</td></tr>
+<tr><td>Zoom (magnifier) shortcuts</td><td>Super + mouse wheel</td><td><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>8</kbd>, <kbd>=</kbd>, <kbd>−</kbd></td></tr>
+<tr><td>Window menu (<kbd>Alt</kbd>+<kbd>Space</kbd>)</td><td>No</td><td>Yes</td></tr>
+<tr><td>Needs</td><td>OpenGL ES (a GPU, or software rendering)</td><td>Nothing special: draws on the processor if needed</td></tr>
+<tr><td>Use it</td><td>Normally</td><td>On old or unusual graphics, or if the Aurora session doesn't start</td></tr>
+</tbody></table></div>
+
+<h2>Choosing the compositor</h2>
+<ul>
+  <li>At the login screen, pick the session.</li>
+  <li>Or write <code>wayfire</code> or <code>labwc</code> in <code>~/.config/aurora/compositor</code>: the <em>Aurora</em> session then uses that compositor.</li>
+  <li><em>Try Aurora OS (safe graphics)</em> in the boot menu always uses labwc.</li>
+</ul>
+
+<h2>Automatic fallback</h2>
+<p>If Wayfire exits with an error within 15 seconds of starting, the session starts labwc
+instead, and you get a working desktop. The reason is saved in
+<code>~/.local/state/aurora/compositor-failure.log</code> and shown in Settings → System Health.
+On graphics without 3D that expose a render node (VirtualBox or VMware without 3D, virtio-gpu
+without virgl), Aurora uses labwc from the start, because Mesa cannot draw there for Wayfire.</p>
+
+<h2>Configuration</h2>
+<p>Both compositors take their settings from Aurora's Settings app. labwc's configuration is
+<code>~/.config/labwc/rc.xml</code> (keyboard shortcuts, input devices, window behavior);
+Wayfire's, <code>~/.config/aurora/wayfire.ini</code>, is generated from the same preferences by
+<code>aurora-wayfire-config</code> each time they change. Edit <code>rc.xml</code> (or use
+Settings) rather than <code>wayfire.ini</code>.</p>
+
+<!-- page: session-startup | What happens when you log in | The session manager: environment, language, keyboard, compositor, shell and autostart, step by step -->
+<p>A session is started by <code>/usr/bin/aurora-session</code>, Aurora's session manager. It is
+a short shell script; this is what it does, in order.</p>
+
+<h2>1. Environment</h2>
+<ol class="steps">
+  <li><strong>Language.</strong> Reads <code>/etc/default/locale</code>, then your own choice from Settings in <code>~/.config/aurora/locale.conf</code>. If the formats come from another language than the interface (for example English text with Italian formats), day and month names follow the interface language while numbers, units and currency keep the region's.</li>
+  <li><strong>Keyboard.</strong> Reads <code>/etc/default/keyboard</code>, then <code>~/.config/aurora/keyboard.conf</code>, and exports the layout for the compositor (<code>XKB_DEFAULT_LAYOUT</code> and friends).</li>
+  <li><strong>Paths and toolkits.</strong> Sets the login <code>PATH</code> (including <code>~/.local/bin</code>) and the variables that make apps use Wayland:</li>
+</ol>
+<!-- gen:env -->
+<p>Apps started through D-Bus or systemd get the same values: the session hands them to
+<code>dbus-update-activation-environment</code> when it starts.</p>
+
+<h2>2. Graphics</h2>
+<p><code>/usr/libexec/aurora-render-env</code> chooses renderers that work on this machine:
+the GPU when there is one, software rendering in virtual machines without 3D (and the extra
+settings Hyper-V's display needs).</p>
+
+<h2>3. The compositor</h2>
+<ol class="steps">
+  <li>Picks Wayfire or labwc (session choice, <code>~/.config/aurora/compositor</code>, safe graphics, the graphics check above).</li>
+  <li>On first login copies the default labwc configuration to <code>~/.config/labwc/</code>, and writes the GTK stylesheet imports for the window style (<code>aurora-look</code>).</li>
+  <li>For Wayfire, renders <code>~/.config/aurora/wayfire.ini</code> and starts it, watching for an early failure (see <a href="sessions.html">fallback</a>).</li>
+</ol>
+
+<h2>4. Startup programs</h2>
+<p>The compositor runs Aurora's startup script (<code>/usr/share/aurora/labwc/autostart</code>),
+which:</p>
+<ol class="steps">
+  <li>passes the environment to D-Bus and systemd;</li>
+  <li>creates the standard folders (Desktop, Documents, Downloads…) if missing;</li>
+  <li>applies the display layout saved in Settings (<code>~/.config/aurora/displays.sh</code>);</li>
+  <li>starts <strong>Aurora Shell</strong> under a watchdog: if the shell ever exits, it starts again, at most five times a minute, until you log out (its log is <code>$XDG_RUNTIME_DIR/aurora-shell.log</code>);</li>
+  <li>starts the administrator password prompt (the polkit agent);</li>
+  <li>runs <code>aurora-autostart</code>, which starts the apps in XDG autostart (yours in <code>~/.config/autostart</code> and the system's in <code>/etc/xdg/autostart</code>), honoring <code>OnlyShowIn</code>, <code>NotShowIn</code>, <code>Hidden</code> and <code>TryExec</code>; manage them in Task Manager → Startup Apps or Settings → Apps;</li>
+  <li>starts <code>aurora-idle</code> (screen off, lock and suspend on inactivity);</li>
+  <li>opens the installer when you chose “Install Aurora OS”, or the Welcome app the first time you log in.</li>
+</ol>
+
+<h2>5. The shell</h2>
+<p>Aurora Shell draws every part of the desktop as Wayland layer surfaces: wallpaper and
+desktop icons, widgets, top bar, dock, notifications, on-screen indicators, Spotlight,
+overview and hot corners. It also runs the notification server, the system tray host,
+clipboard history, Night Light, the dynamic wallpaper, the weather, Storage Sense and screen
+time. Running <code>aurora-shell</code> again with a command talks to the running shell (see
+<a href="shell-commands.html">Shell commands</a>).</p>
+
+<h2>Logging out</h2>
+<p>Logging out writes a marker so the watchdog doesn't restart the shell, ends the compositor,
+and greetd shows the login screen again.</p>
+
+<!-- page: lock-and-idle | Locking, screen off and suspend | When the screen locks, turns off and the computer sleeps, and how to change it -->
+<h2>Locking the screen</h2>
+<p>Press <kbd>Super</kbd>+<kbd>L</kbd>, use the lock button in the Aurora menu or the Control
+Center, or let it lock when idle. The lock screen (<strong>gtklock</strong> in Aurora's style)
+shows a big clock and the date over your current wallpaper; start typing to see the password
+field. Your apps keep running.</p>
+
+<h2>On inactivity</h2>
+<p><code>aurora-idle</code> watches for inactivity with <strong>swayidle</strong> and follows
+Settings → Power and Privacy &amp; Security:</p>
+<ul>
+  <li>after the <em>Screen blank</em> delay (Settings → Power): the screen locks, if <em>Automatic screen lock</em> is on;</li>
+  <li>15 seconds later: the screen turns off; moving the mouse or pressing a key turns it on;</li>
+  <li>after the <em>Automatic Suspend</em> delay (separately on battery and when plugged in): the computer suspends;</li>
+  <li>before suspending, the screen locks.</li>
+</ul>
+<p>The live session never locks or suspends by itself.</p>
+
+<h2>Keep Awake</h2>
+<p>The <strong>Keep Awake</strong> tile in the Control Center stops screen blanking, locking and
+automatic suspend until you turn it off: for presentations, long downloads or reading.</p>
+
+<h2>Apps that hold off sleep</h2>
+<p>Video players and calls can ask the system not to sleep. When you choose Restart or Shut
+Down while an app is holding it off, Aurora says which app and offers <strong>Restart Anyway</strong>
+or <strong>Shut Down Anyway</strong>.</p>
+
+<!-- page: power-off | Shutting down, restarting, logging out | The power choices, sounds, and what happens to open apps -->
+<p>The power choices are at the bottom of the <strong>Aurora menu</strong> (the logo at the top
+left) as round buttons, and in the Control Center behind the power button:</p>
+<dl>
+  <dt>Sleep</dt><dd>Suspends to memory. Open the lid or press a key to wake up; the screen is locked.</dd>
+  <dt>Restart</dt><dd>Closes every app and restarts the computer.</dd>
+  <dt>Shut Down</dt><dd>Closes every app and turns the computer off.</dd>
+  <dt>Log Out</dt><dd>Closes your apps and returns to the login screen.</dd>
+</dl>
+<p>Restart and Shut Down happen right away, after a short goodbye sound; save your work
+first. If an app is holding them off, Aurora tells you which and offers to go ahead anyway
+(see <a href="lock-and-idle.html">Apps that hold off sleep</a>). Aurora plays a sound when you
+log in and when you shut down, restart or log out; turn it off in Settings → Sound →
+<em>Startup and shutdown sounds</em>.</p>
+<p>The power button and the laptop lid do what Settings → Power says (suspend, shut down,
+nothing, or ask).</p>

@@ -9,6 +9,10 @@
 A calm macOS-inspired desktop written from scratch, the tools developers use every day
 preinstalled, and the rock-solid Debian 13 base underneath.
 
+**[Documentation](https://padovanl.github.io/auroraOS/manual/)** ·
+[Website](https://padovanl.github.io/auroraOS/) ·
+[Install guide](https://padovanl.github.io/auroraOS/install.html)
+
 </div>
 
 ---
@@ -136,7 +140,7 @@ learning was the point. — *Luca Padovan*
 | **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> is a **color picker**: click any pixel and its hex code is copied. |
 | **Weather** | Current weather and the next hours next to the calendar and in the weather widget (can be turned off), for the city chosen in GNOME Weather, else its automatic location, else the time zone's city; a new city shows at once. |
 | **Sounds** | An Aurora sound when you log in and when you shut down, restart or log out (on by default, Settings → Sound). |
-| **Control Center** | Laid out like Android's quick settings: the time and date on top, thick pill sliders and round-cornered tiles that fill with the accent color. Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, **Keep Awake** (no screen blanking, locking or automatic suspend until turned off), Airplane Mode, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
+| **Control Center** | Laid out like Android's quick settings: the time and date on top, thick pill sliders and round-cornered tiles that fill with the accent color. Output volume and device, microphone and input device, brightness; Wi-Fi (network list, passwords), Wired, Bluetooth (devices), Power Mode, Night Light, Dark Style, Do Not Disturb, **Keep Awake** (no screen blanking, locking or automatic suspend until turned off), Airplane Mode, Screen Keyboard, Screen Recording; media controls for whatever is playing; battery time, screenshot, settings, lock and power. |
 | **Notifications** | Freedesktop-compatible server, popups with actions, history in the calendar popover with Do Not Disturb and Clear. A one-time code in a notification ("Your code is 482913") gets a **Copy 482913** button. |
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
@@ -151,7 +155,8 @@ learning was the point. — *Luca Padovan*
 - **Settings**: everything Ubuntu's Settings has, and more:
   - **Network** (share Wi-Fi with a QR code, VPNs), **Bluetooth**, **Displays** (resolution
     and refresh rate, scale, rotation).
-  - **Sound**: devices, volume, left/right balance, over-amplification, session sounds.
+  - **Sound**: devices, volume, left/right balance, over-amplification, session sounds, and a
+    **Volume Mixer** with each app's own volume (also in the Control Center).
   - **Power**: screen blank, automatic suspend on battery and when plugged in, what the
     power button and the lid do, power mode, battery percentage, battery health, 80%
     charge limit.
@@ -173,7 +178,11 @@ learning was the point. — *Luca Padovan*
   - **Users** (profile card and picture, fingerprint, **online accounts** for Google, Microsoft, Nextcloud…),
     Language & Region, Date & Time, Software Updates (system snapshots), **System
   Health** with guided, user-reviewed diagnostic reports for installation, startup and apps,
-    About.
+    **Storage** (what takes the space, one-click cleanup and **Storage Sense**, which empties
+    old Trash items, temporary files and unused Downloads by itself), **Screen Time** (each
+    app's time, the week as bars, daily limits with a reminder), restarts after updates like
+    Windows (**Restart Now**, **Tonight**, active hours, optional automatic restart with a
+    warning), About.
 - **Aurora Assistant**: chat with the AI, with quick actions on copied text (summarize,
   improve, translate, explain), code blocks you can copy, answers read aloud. Chats are
   saved locally; you can stop or regenerate an answer. New replies scroll into view unless
@@ -190,7 +199,13 @@ learning was the point. — *Luca Padovan*
   Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
   it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
-- **Files**: places and drives, grid and list views with drag-to-select, search, hidden files, cut/copy/paste
+- **Task Manager** (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>): apps (what has a window,
+  with its processes folded underneath), background and system processes with CPU, memory
+  and disk, End Task and Kill; performance graphs; startup apps with a switch each; system
+  and user services with start, stop and restart.
+- **Files**: places and drives, **Network** (Windows and NAS shared folders) and **Connect to
+  Server…** (smb, sftp, ftp, WebDAV), **Compress…** (zip, 7z, tar.xz) and **Extract Here**,
+  grid and list views with drag-to-select, search, hidden files, cut/copy/paste
   with progress, cancel and retry, trash with restore, rename, new folder, "Open With", properties, open in
   terminal, batch rename, SHA-256 checksums, two-folder comparison, Git change badges,
   **Quick Look** (<kbd>Space</kbd>), "Send to Nearby Device" and, with AI,
@@ -414,6 +429,7 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>W</kbd> | Overview: all open windows |
 | <kbd>Super</kbd>+<kbd>Z</kbd> | Snap Layouts |
 | <kbd>Super</kbd>+<kbd>T</kbd> | Keep the window on top |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> | Task Manager |
 | <kbd>Super</kbd>+<kbd>V</kbd> | Clipboard history |
 | <kbd>Super</kbd>+<kbd>.</kbd> | Emoji |
 | <kbd>Super</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> | Terminal |
@@ -1747,6 +1763,12 @@ screenshots, features, download and the install guide.
   headless development session with `make screenshots`.
 - After editing the README's "Under the hood" section, run `make site` (the static tests
   fail if you forget).
+- **The official documentation** is `docs/manual/`, generated by `tools/build-manual.py`
+  (`make manual`) from the pages in `docs/_manual/` (one file per section) and from the
+  code itself: keyboard shortcuts from `rc.xml`, every GSettings key from the schema, every
+  option of every Settings page, widgets, shell commands, command-line tools, the Dev Hub
+  and Game Hub catalogs and the default apps. It has search, an "On this page" index and
+  light and dark themes. The static tests fail when it is out of date.
 
 ## Repository layout
 

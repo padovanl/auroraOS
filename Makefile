@@ -12,7 +12,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 	$(BUILDER)
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
-	test test-static test-unit test-smoke test-image test-boot test-interact test-install dev-image screenshots site vm-screenshots debs repo
+	test test-static test-unit test-smoke test-image test-boot test-interact test-install dev-image screenshots site manual vm-screenshots debs repo
 
 all: iso
 
@@ -79,6 +79,10 @@ repo:
 # Regenerate the website's technical page from README.md.
 site:
 	python3 tools/build-site.py
+
+# Rebuild the official documentation (docs/manual) from docs/_manual and the code.
+manual:
+	python3 tools/build-manual.py
 
 # Regenerate docs/screenshots from a scripted headless session.
 screenshots: dev-image

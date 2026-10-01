@@ -1,0 +1,222 @@
+<!-- section: Apps -->
+
+<!-- page: files | Files | Aurora's file manager: places, views, tabs, copying, archives, network folders, Quick Look and more -->
+<p>Open Files from the dock, with <kbd>Super</kbd>+<kbd>E</kbd>, or by double-clicking a folder.
+From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
+
+<h2>The window</h2>
+<dl>
+  <dt>Sidebar</dt><dd>Home, Desktop, Documents, Downloads, Music, Pictures, Videos, Trash, plugged-in drives (click to mount, ⏏ to eject), Computer (<code>/</code>), <strong>Network</strong> and <strong>Connect to Server…</strong>. Right-click a place for New Tab, New Window, Open in Terminal, Copy Path and Properties.</dd>
+  <dt>Path bar</dt><dd>Click a part of the path to go there; <kbd>Ctrl</kbd>+<kbd>L</kbd> to type a location (also <code>smb://</code>, <code>sftp://</code>, <code>trash:///</code>).</dd>
+  <dt>Tabs</dt><dd><kbd>Ctrl</kbd>+<kbd>T</kbd> opens one, <kbd>Ctrl</kbd>+<kbd>W</kbd> closes it, <kbd>Ctrl</kbd>+<kbd>Tab</kbd> switches.</dd>
+  <dt>Views</dt><dd>Grid or list (<kbd>Ctrl</kbd>+<kbd>1</kbd>); hidden files with <kbd>Ctrl</kbd>+<kbd>H</kbd>; search in the folder with <kbd>Ctrl</kbd>+<kbd>F</kbd>. Drag on empty space to select several.</dd>
+  <dt>Git</dt><dd>Inside a Git repository, changed files show a badge.</dd>
+</dl>
+
+<h2>The file menu (right-click)</h2>
+<dl>
+  <dt>Open, Open With…</dt><dd>With the default app, or choose another one.</dd>
+  <dt>Quick Look</dt><dd>A preview without opening (<kbd>Space</kbd>). See <a href="quick-look.html">Quick Look</a>.</dd>
+  <dt>Send to Nearby Device…</dt><dd>Sends with LocalSend to a phone or computer on the same network.</dd>
+  <dt>Summarize with Aurora, Ask Aurora About This File…</dt><dd>With Aurora AI on (Settings → AI → Files).</dd>
+  <dt>Extract Here</dt><dd>For archives (zip, 7z, rar, tar.gz, tar.xz, tar.zst…): unpacks next to them.</dd>
+  <dt>Compress…</dt><dd>Packs the selection into one archive: choose the name and the format — <strong>ZIP</strong> (opens everywhere, Windows included), <strong>7-Zip</strong> (smaller) or <strong>tar.xz</strong> (smallest, keeps Linux permissions).</dd>
+  <dt>Cut, Copy, Duplicate, Rename…</dt><dd>Pasting shows progress, can be cancelled, and offers to retry if something fails.</dd>
+  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. No file is ever overwritten.</dd>
+  <dt>Compare Folders</dt><dd>For two folders: what is only in one, and what differs.</dd>
+  <dt>SHA-256 Checksums</dt><dd>Computes them in the background, to check a download.</dd>
+  <dt>Move to Trash, Properties</dt><dd>Properties shows size, type, dates, location and permissions.</dd>
+</dl>
+<p>On empty space: New Folder…, New File… (from templates in <span class="path">~/Templates</span>),
+Paste, Select All, Open in Terminal, Properties.</p>
+<p><strong>Undo and Redo</strong> (<kbd>Ctrl</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>)
+work for moves, renames, copies and moving to the Trash.</p>
+
+<h2>Trash</h2>
+<p>Items moved to the Trash can be restored to where they were (<em>Restore</em>) or deleted
+for good (<em>Delete Permanently</em>, or <kbd>Shift</kbd>+<kbd>Delete</kbd> without the Trash).
+<em>Empty Trash</em> deletes everything in it. Storage Sense can empty old items by itself
+(<a href="storage.html">Storage</a>).</p>
+
+<h2>Network folders</h2>
+<p><strong>Network</strong> in the sidebar lists computers and NAS boxes that share folders on
+your network (Windows computers announce themselves with WS-Discovery). <strong>Connect to
+Server…</strong> opens any address:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Address</th><th>For</th></tr></thead>
+<tbody>
+<tr><td><code>smb://192.168.1.10/Shared</code> or <code>\\nas\Shared</code></td><td>A Windows or NAS shared folder (SMB)</td></tr>
+<tr><td><code>sftp://user@server/path</code></td><td>Any computer with SSH</td></tr>
+<tr><td><code>ftp://server</code></td><td>FTP</td></tr>
+<tr><td><code>davs://server/remote.php/dav/files/user</code></td><td>WebDAV (Nextcloud, ownCloud)</td></tr>
+</tbody></table></div>
+<p>When a password is needed, Files asks, and can remember it in your keyring. Connected
+servers appear in the sidebar with ⏏ to disconnect.</p>
+
+<h2>Keyboard shortcuts in Files</h2>
+<!-- gen:files-shortcuts -->
+
+<!-- page: task-manager | Task Manager | Processes grouped by app, performance graphs, startup apps and services -->
+<p>Open it with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>, from the Aurora menu, from
+Launchpad, or with <code>aurora-taskmanager</code>.</p>
+
+<h2>Processes</h2>
+<p>Three groups, each with CPU (a share of the whole computer, as on Windows), memory and disk
+activity:</p>
+<dl>
+  <dt>Apps</dt><dd>Everything that has a window. An app's processes (for example a browser's many content processes) are folded under it with their count; double-click or right-click → <em>Expand</em> to see them.</dd>
+  <dt>Background processes</dt><dd>Your other processes: the shell, the compositor, sound, sync clients…</dd>
+  <dt>System processes</dt><dd>Other users' and the system's, when <em>Show system processes</em> is ticked.</dd>
+</dl>
+<p>Click a column's title to sort by it. Busy values are highlighted.</p>
+<dl>
+  <dt>End Task (<kbd>Delete</kbd>)</dt><dd>Asks the app to quit, like closing it.</dd>
+  <dt>Kill (<kbd>Shift</kbd>+<kbd>Delete</kbd>)</dt><dd>Stops it at once, without saving.</dd>
+  <dt>Open File Location</dt><dd>Shows the program's file in Files.</dd>
+</dl>
+<p>System processes can only be stopped by the administrator; use <code>sudo kill PID</code> in a
+terminal.</p>
+
+<h2>Performance</h2>
+<p>The last minute as graphs in your accent color:</p>
+<ul>
+  <li><strong>Processor</strong>: use, cores, average speed, up time.</li>
+  <li><strong>Memory</strong>: in use and total, available, cached, swap in use.</li>
+  <li><strong>Disk</strong>: read and write speed of the whole disks, free space and capacity.</li>
+  <li><strong>Network</strong>: total speed, receive and send.</li>
+</ul>
+
+<h2>Startup Apps</h2>
+<p>The apps that start when you log in (XDG autostart), with a switch each. Turning one off
+writes an override in <span class="path">~/.config/autostart</span>; the system's own file is never
+changed.</p>
+
+<h2>Services</h2>
+<p>The system's and your own services (systemd units), with their state, filtered by the search
+box. <strong>Start</strong>, <strong>Stop</strong> and <strong>Restart</strong>: your own services
+directly, system services after the administrator password.</p>
+
+<!-- page: settings-app | The Settings app | Finding your way around Settings; every page is in the Settings reference -->
+<p>Open Settings with <kbd>Super</kbd>+<kbd>I</kbd>, from the Aurora menu, from the Control
+Center, or by typing a setting's name in Spotlight. The sidebar groups pages like Ubuntu's
+Settings: connectivity, look and feel, devices and input, security, AI, and the system.</p>
+<p>Open a page directly from a terminal or a script:</p>
+<!-- gen:settings-list -->
+<p>Every option of every page is listed in the <a href="settings-reference.html">Settings reference</a>.</p>
+
+<!-- page: app-center | App Center | Installing and updating apps from Debian and Flathub -->
+<p>App Center (GNOME Software) installs, updates and removes apps from two sources:</p>
+<ul>
+  <li><strong>Debian</strong>: the whole Debian trixie archive, tens of thousands of packages, maintained by Debian's security team.</li>
+  <li><strong>Flathub</strong>: sandboxed apps, always at their latest version, many commercial apps (Spotify, Zoom, Discord, Slack…).</li>
+</ul>
+<p>When an app exists in both, choose the source on its page. <strong>Updates</strong> lists
+system, app and firmware updates. Nothing is installed without you asking.</p>
+<h2>From a terminal</h2>
+<pre><code>sudo apt install PACKAGE            # a Debian package
+flatpak install flathub APP.ID      # a Flatpak app
+pkgtui                              # search and install both in one terminal UI</code></pre>
+<p>Apps' Flatpak permissions (camera, files, location…) can be reviewed in Settings → App
+Permissions.</p>
+
+<!-- page: dev-hub | Dev Hub | One-click installers for editors, languages, cloud tools, databases, containers and more, and project workspaces -->
+<p>Dev Hub installs developer tools from their official sources, so they are always current.
+Each install runs in a visible terminal, showing every command; anything that needs the
+administrator asks for the password there. Installed tools show a check mark.</p>
+<h2>Project Workspaces</h2>
+<p>For each repository or folder, a workspace opens your editor, a terminal and Files together;
+in the Aurora session it can also remember where those windows were and put them back.
+Spotlight finds projects by name and opens their workspace from the right-click menu.</p>
+<h2>Catalog</h2>
+<!-- gen:devhub -->
+
+<!-- page: game-hub | Game Hub | Game stores, Windows games and apps, performance tools and Android apps -->
+<p>Game Hub sets up gaming in one click each. Steam, Heroic, Bottles and ProtonUp-Qt come from
+Flathub (sandboxed, with their own graphics runtime); GameMode, MangoHud and Lutris are Debian
+packages; Waydroid comes from its official repository.</p>
+<!-- gen:gamehub -->
+<div class="tip"><p>In Steam, turn on Settings → Compatibility → <em>Enable Steam Play for all
+other titles</em> to run Windows games with Proton.</p></div>
+
+<!-- page: terminal | Terminal and command line | Ptyxis, the shell, the prompt, aliases, containers and developer tools -->
+<p>Open a terminal with <kbd>Super</kbd>+<kbd>Enter</kbd> or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd>.
+The terminal is <strong>Ptyxis</strong>: tabs, profiles, and a menu to open shells inside
+distrobox, toolbox and podman containers. The font is JetBrains Mono.</p>
+
+<h2>The shell</h2>
+<ul>
+  <li><strong>bash</strong> by default, with Aurora's defaults in <span class="path">/etc/aurora/bashrc</span>; add your own in <span class="path">~/.bashrc</span>. Dev Hub → Shells &amp; Terminals installs zsh, fish and others and switches the default.</li>
+  <li>The prompt is <strong>starship</strong>: Git branch and status, language versions, command duration. Customize it in <span class="path">~/.config/starship.toml</span> (start from <span class="path">/etc/aurora/starship.toml</span>).</li>
+  <li><kbd>Ctrl</kbd>+<kbd>R</kbd> searches the history with fzf.</li>
+  <li>Aliases: <code>ll</code>, <code>la</code>, <code>g</code> (git), <code>lg</code> (lazygit), <code>dc</code> (docker compose), and <code>bat</code>, <code>fd</code>.</li>
+</ul>
+
+<h2>Preinstalled tools</h2>
+<p>git, git-lfs, lazygit, delta, build-essential, gdb, cmake, shellcheck, Python (pip, venv,
+pipx), Node.js and npm, Docker (with compose and buildx), Podman, distrobox, neovim, tmux, ripgrep,
+fd, fzf, bat, btop, jq, httpie, direnv, tldr, starship, zsh, network tools (ifconfig, dig,
+traceroute, mtr, netcat, whois), <code>portop</code> and <code>pkgtui</code>.</p>
+<ul>
+  <li><code>docker</code> works for your user right away; the daemon starts on first use.</li>
+  <li><code>distrobox create -i fedora</code> gives you a Fedora (or Arch, Ubuntu…) container integrated with the desktop.</li>
+  <li><code>portop</code> shows which process listens on which port and stops it with one key.</li>
+</ul>
+<p>With Aurora AI on, <code>ask</code> and <code>why</code> help in the terminal (see
+<a href="ai-features.html">Where Aurora AI helps</a>).</p>
+
+<!-- page: screenshots | Screenshots, recording and screen tools | Screenshots, annotation, text recognition, color picker and screen recording -->
+<div class="table-wrap"><table class="keys">
+<thead><tr><th>Keys</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><kbd>Print Screen</kbd></td><td>Screenshot of the whole screen</td></tr>
+<tr><td><kbd>Shift</kbd>+<kbd>Print Screen</kbd> or <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td>Screenshot of an area: drag a rectangle</td></tr>
+<tr><td><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd></td><td>Copy the text in an area (OCR)</td></tr>
+<tr><td><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td><td>Color picker: click any pixel, its hex code is copied</td></tr>
+</tbody></table></div>
+<p>Screenshots are saved to <span class="path">~/Pictures/Screenshots</span> and copied to the
+clipboard. The notification offers:</p>
+<ul>
+  <li><strong>Annotate</strong>: arrows, text, highlighter, blur and crop (swappy);</li>
+  <li><strong>Copy Text</strong>: recognizes the text in it;</li>
+  <li><strong>Ask Aurora</strong>: explains what's on screen (with Aurora AI on).</li>
+</ul>
+<p>Text recognition works offline with Tesseract, in English plus your language (18 scripts).</p>
+
+<h2>Recording the screen</h2>
+<p>Control Center → <strong>Screen Recording</strong> starts; a red dot appears in the top bar;
+the same tile stops. Recordings are MP4 files in <span class="path">~/Videos/Screencasts</span>.
+For more control (sound, webcam, streaming) install OBS Studio from App Center.</p>
+
+<!-- page: clipboard-emoji | Clipboard history and emoji | Everything you copied, pinned items, images, and the emoji picker -->
+<h2>Clipboard history</h2>
+<p><kbd>Super</kbd>+<kbd>V</kbd> shows what you copied lately, newest first, in Spotlight. Type
+to filter; <kbd>Enter</kbd> copies an entry again (then paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>).
+Copied images are kept too. Pinned entries stay until you unpin them; the others are forgotten
+after a while.</p>
+<p>Settings → Privacy &amp; Security → Clipboard History turns it off (<em>Remember copied
+text</em>), clears it, and <em>Manage Clipboard History…</em> pins and deletes entries. The
+history stays on this computer. The <em>Clipboard</em> widget shows the latest entries on the
+desktop.</p>
+
+<h2>Emoji</h2>
+<p><kbd>Super</kbd>+<kbd>.</kbd> opens the emoji picker; type a word (<code>heart</code>,
+<code>rocket</code>, <code>smile</code>) and <kbd>Enter</kbd> copies it. In Spotlight, start with
+<code>:</code>.</p>
+
+<!-- page: quick-look | Quick Look | Previewing files with the space bar -->
+<p>Select a file in Files and press <kbd>Space</kbd>. Quick Look previews:</p>
+<ul>
+  <li>pictures (with zoom), videos and audio (playable);</li>
+  <li>PDF pages;</li>
+  <li>source code and text, with syntax highlighting;</li>
+  <li>folders (their contents and size).</li>
+</ul>
+<p><kbd>←</kbd> and <kbd>→</kbd> move to the previous and next file; <kbd>Space</kbd> or
+<kbd>Esc</kbd> closes; <em>Open</em> opens the file in its app. From a terminal:
+<code>aurora-quicklook FILE</code>.</p>
+
+<!-- page: included-apps | Included apps | Every app installed by default -->
+<p>Aurora includes the everyday apps Ubuntu ships (GTK 4 versions where they exist), plus its
+own. Each is checked by Aurora's tests to be installed, visible and able to start.</p>
+<!-- gen:apps -->
+<p>Default apps for web, mail, music, video, pictures and so on are chosen in Settings → Apps.</p>
