@@ -400,3 +400,26 @@ def test_restart_after_updates():
     assert sn.next_quiet_time(now, 8, 23) == datetime.datetime(2026, 10, 1, 23, 0)
     late = datetime.datetime(2026, 10, 1, 23, 40)
     assert sn.next_quiet_time(late, 8, 23) == late
+
+
+def test_screen_time(tmp_path, monkeypatch):
+    import datetime
+    from aurora import screentime as st
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+    today = datetime.date(2026, 10, 1)
+    usage = st.add(today, "firefox-esr", 600)
+    usage = st.add(today, "firefox-esr", 30, usage)
+    usage = st.add(today, "org.gnome.TextEditor", 120, usage)
+    st.save(today, usage)
+    assert st.load(today) == {"firefox-esr": 630, "org.gnome.TextEditor": 120}
+    assert st.top(usage)[0] == ("firefox-esr", 630)
+    days = st.week(today)
+    assert len(days) == 7 and days[-1] == (today, 750) and days[0][1] == 0
+    assert st.duration(30) == "< 1 min" and st.duration(3900) == "1 h 05 min"
+    limits = st.limits('{"firefox-esr": 10, "x": 0, "bad": "?"}')
+    assert limits == {"firefox-esr": 10}
+    assert st.over_limit(usage, limits) == ["firefox-esr"]
+    old = today - datetime.timedelta(days=40)
+    st.save(old, {"a": 1})
+    st.prune(today)
+    assert st.load(old) == {} and st.load(today)

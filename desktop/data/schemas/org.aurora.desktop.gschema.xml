@@ -46,6 +46,14 @@
       <default>0</default>
       <summary>When a restart to finish updating is scheduled (Unix time; 0: none)</summary>
     </key>
+    <key name="screen-time" type="b">
+      <default>true</default>
+      <summary>Count how long each app is used (kept on this computer)</summary>
+    </key>
+    <key name="screen-time-limits" type="s">
+      <default>'{}'</default>
+      <summary>Daily limits in minutes per app id, as JSON</summary>
+    </key>
     <key name="downloads-cleanup-days" type="i">
       <range min="0" max="365"/>
       <default>0</default>

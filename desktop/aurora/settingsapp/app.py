@@ -25,13 +25,15 @@ from aurora.settingsapp.network import Network  # noqa: E402
 from aurora.settingsapp.power import Power  # noqa: E402
 from aurora.settingsapp.sound import Sound  # noqa: E402
 from aurora.settingsapp.storage import Storage  # noqa: E402
+from aurora.settingsapp.screentime import ScreenTime  # noqa: E402
 from aurora.settingsapp.timedate import DateTime  # noqa: E402
 
 # Sidebar sections, like Ubuntu's Settings: connectivity, look & feel,
 # devices and input, security, system.
 SECTIONS = [
     [Network, Bluetooth, Displays, Sound, Power],
-    [Appearance, Desktop, DesktopProfiles, Multitasking, Notifications, Applications],
+    [Appearance, Desktop, DesktopProfiles, Multitasking, Notifications, Applications,
+     ScreenTime],
     [Mouse, Keyboard, Printers, Accessibility],
     [Privacy, Permissions, Sharing],
     [AI],

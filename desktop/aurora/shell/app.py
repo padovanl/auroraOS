@@ -132,6 +132,8 @@ class Shell(Adw.Application):
         # Storage Sense: old Trash items, temporary files and Downloads, as
         # Settings → Storage asks; soon after login, then every four hours.
         GLib.timeout_add_seconds(120, self._storage_sense)
+        from aurora.shell.screentrack import ScreenTimeTracker
+        self.screen_time = ScreenTimeTracker(self)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
