@@ -19,7 +19,7 @@ from aurora import data_path  # noqa: E402
 from aurora.greeter.greetd import Greetd, GreetdError  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 
-WALLPAPER = "/usr/share/backgrounds/aurora/aurora-dawn.png"
+WALLPAPER = "/usr/share/backgrounds/aurora/aurora-dynamic-dawn.png"
 
 
 def greeter_wallpaper():

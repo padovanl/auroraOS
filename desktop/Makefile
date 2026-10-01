@@ -11,7 +11,8 @@ DATADIR  := $(SHAREDIR)/aurora
 WAYLAND_XML ?= /usr/share/wayland/wayland.xml
 
 BRANDING := ../branding
-WALLPAPER_SIZE ?= 2560 1440
+# The dynamic wallpaper series the login screen and new accounts start with.
+DEFAULT_SERIES := starfall
 
 .PHONY: all install protocols translations wallpapers sounds pot check
 
@@ -46,6 +47,10 @@ install: protocols translations wallpapers sounds
 	install -m 644 data/icons/symbolic/apps/* $(SHAREDIR)/icons/hicolor/symbolic/apps/
 	install -d $(SHAREDIR)/backgrounds/aurora
 	install -m 644 build/wallpapers/*.png $(SHAREDIR)/backgrounds/aurora/
+	for phase in dawn day dusk night; do \
+		ln -sf aurora-$(DEFAULT_SERIES)-$$phase.png \
+			$(SHAREDIR)/backgrounds/aurora/aurora-dynamic-$$phase.png; \
+	done
 	install -d $(SHAREDIR)/sounds/aurora
 	install -m 644 build/sounds/*.wav $(SHAREDIR)/sounds/aurora/
 	cp -r build/locale/. $(SHAREDIR)/locale/
@@ -66,12 +71,18 @@ translations:
 	done
 	mkdir -p build/locale
 
-# Rendered once and cached; re-rendered whenever the generator changes.
+# Three series of four pictures (dawn, day, dusk, night) in
+# branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png.
 wallpapers: build/wallpapers/.stamp
 
-build/wallpapers/.stamp: $(BRANDING)/wallpapers/generate.py
-	rm -rf build/wallpapers
-	$(PYTHON) $(BRANDING)/wallpapers/generate.py build/wallpapers $(WALLPAPER_SIZE)
+build/wallpapers/.stamp: $(wildcard $(BRANDING)/wallpapers/*/*.png)
+	rm -rf build/wallpapers && mkdir -p build/wallpapers
+	for dir in $(BRANDING)/wallpapers/*/; do \
+		series=$$(basename $$dir); \
+		for picture in $$dir*.png; do \
+			cp $$picture build/wallpapers/aurora-$$series-$$(basename $$picture); \
+		done; \
+	done
 	touch $@
 
 sounds: build/sounds/.stamp

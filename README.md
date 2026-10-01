@@ -133,7 +133,7 @@ learning was the point. — *Luca Padovan*
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
 | **Desktop widgets** | Twenty-three glanceable cards on the desktop, in five groups. Everyday: clock (analog or digital), calendar, weather, world clock, sun & moon (sunrise, sunset, daylight and the moon's phase), photo frame, now playing. Productivity: to-do list, notes, countdown to a date (with its own colors), focus timer, progress of the day, week, month or year, recent files, clipboard. System: gauges for processor, memory, disk and temperature that turn from your accent color to amber and red as they fill, network speed, battery. Developers: Git projects, local dev servers (click to open in the browser), containers. Gamers: Steam games, GPU, power profile. Drag them anywhere (a guide shows where they land and they line up with their neighbours), right-click for **Customize…**, and **Edit Widgets…** on the desktop's menu: open windows step aside until you're done, and a compact gallery with one tab per group adds widgets in the first free spot. They follow the accent color, light or dark style, clock format and units, and keep their place and proportions when the resolution changes. |
 | **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
-| **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next. The login and lock screens follow it. |
+| **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next, in three series to choose from: Starfall, Veil and Horizon. The login and lock screens follow it. |
 | **Backgrounds** | Settings → Appearance works like Windows' Personalize page: a preview of the desktop, then **Dynamic** (follows the sun), **Picture** (the ones used lately, Browse Photos…, and All Wallpapers…, a searchable gallery that stays quick with thousands of pictures), **Picture of the day** (Bing, NASA's APOD or Wikimedia Commons, with title and credit), **Slideshow** (any folder, every 15 minutes to 24 hours, shuffled if you like) or a **Solid color**. The lock screen follows the active picture. |
 | **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
 | **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. Where the graphics driver can't change the screen's colors (virtual machines), it says so instead of doing nothing. |
@@ -728,7 +728,7 @@ registers `.desktop` files.
 ### 7. Stage 50: branding
 
 `branding/` holds the logo generator (`logo.py` draws it as SVG, then renders PNG/WebP at
-every size), wallpapers, sounds, the GRUB theme (background, fonts as `.pf2`,
+every size), the wallpaper series, sounds, the GRUB theme (background, fonts as `.pf2`,
 `theme.txt`), the Plymouth boot splash and the installer slideshow. Generating assets from
 code means one change updates every size and every place.
 
@@ -859,7 +859,7 @@ about **15,000 lines of Python** (`desktop/aurora/`):
 | Build scripts (Bash, ~2,000 lines) | Debian packages, debootstrap, live-boot |
 | Desktop shell and apps (Python, ~15,000 lines) | Wayfire, labwc fallback, GTK 4, libadwaita, gtk4-layer-shell |
 | Calamares modules and configuration | Calamares, GRUB, shim |
-| Branding generators (logo, icons, wallpapers, sounds) | Plymouth, greetd |
+| Branding generators (logo, icons, sounds) and the wallpaper series | Plymouth, greetd |
 | Stylesheets (CSS), labwc config (XML) | PipeWire, NetworkManager, systemd |
 | Tests (Python, ~2,400 lines), website generator | QEMU, OVMF (for testing) |
 
@@ -1259,8 +1259,8 @@ their official source on request) or, rarely, pinned with a checksum at build ti
 #### Dynamic wallpaper and automatic dark style (`shell/daycycle.py`)
 - **Alternatives:** GNOME's XML slideshows (fixed clock times), HEIC dynamic wallpapers
   (macOS).
-- **Why:** four renders of the same landscape (same random seed, different palettes and
-  lighting) come from the wallpaper generator. Once a minute the shell checks the sun's
+- **Why:** three series of four pictures of the same landscape (dawn, day, dusk, night) live
+  in `branding/wallpapers/SERIES/`; Settings → Appearance picks the series. Once a minute the shell checks the sun's
   elevation: night below −6°, dawn and dusk up to 8°, day above. On a change, the new
   picture fades in over 2.5 seconds. Following the sun rather than the clock means
   winter evenings get dark when it's actually dark. The shell keeps
@@ -1439,10 +1439,10 @@ set up a feature, and every place it appears has its own switch.
 - **Fonts:** Inter for the interface (highly legible on screens), JetBrains Mono for code,
   Noto for every script (CJK, Arabic, Devanagari, emoji) so 20 languages render
   correctly.
-- **Artwork is code:** the logo, boot animation, wallpapers and GRUB theme are generated
-  by `branding/` with cairo, numpy and Pillow. There are no opaque binaries, any
-  resolution is possible, and everything is reproducible. Wallpapers are computed per
-  pixel with tone mapping and dithering, so they show no banding.
+- **Artwork is code, except the wallpapers:** the logo, boot animation and GRUB theme are
+  generated by `branding/` with cairo and Pillow, so any resolution is possible and
+  everything is reproducible. The wallpapers are three painted series of pictures
+  (Starfall, Veil, Horizon), kept as PNG files in `branding/wallpapers/`.
 
 ### Session services
 
@@ -1544,7 +1544,7 @@ set up a feature, and every place it appears has its own switch.
 ### Aurora's own packages and repository
 - **Choice:** `build/package-desktop.sh` builds two `.deb`s with `dpkg-deb`:
   `aurora-desktop` (everything that changes often, about 160 KB) and `aurora-artwork`
-  (wallpapers and sounds, about 13 MB, rarely changes). `tools/publish-apt.sh` makes a
+  (wallpapers and sounds, about 20 MB, rarely changes). `tools/publish-apt.sh` makes a
   signed apt repository (`apt-ftparchive`, `InRelease` and `Release.gpg` with an Ed25519
   key) for GitHub Pages.
 - **Alternatives:** a Launchpad PPA or OBS (tied to other distributions' infrastructure),
@@ -1805,10 +1805,10 @@ screenshots, features, download and the install guide.
 | `desktop/data/` | labwc config, stylesheets, window themes (generated), schemas, `.desktop` files, icons. |
 | `desktop/protocols/` | Wayland protocol XML (bindings generated at build time). |
 | `desktop/dev/` | Headless development and test environment. |
-| `branding/` | Logo and boot animation, wallpapers (including the dynamic set), session sounds, Plymouth, GRUB and installer themes: all generated by code. |
+| `branding/` | Logo and boot animation, the three wallpaper series, session sounds, Plymouth, GRUB and installer themes: generated by code, except the wallpaper pictures. |
 | `tests/` | Static, unit, smoke, image, boot and install tests. |
 | `docs/` | The website (GitHub Pages) and the images used by this README. |
-| `tools/` | Developer helpers: site preview and generator, VM screenshots, the AI catalog generator, the apt repository publisher, the translation builder. |
+| `tools/` | Developer helpers: site preview and generator, the site's wallpaper images (`site-wallpapers.py`), VM screenshots, the AI catalog generator, the apt repository publisher, the translation builder. |
 
 ## Known limitations and roadmap
 

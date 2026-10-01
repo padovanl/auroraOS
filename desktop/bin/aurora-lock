@@ -5,7 +5,7 @@ pgrep -x gtklock >/dev/null && exit 0
 # The shell keeps this link on the picture on screen (dynamic wallpaper included).
 wallpaper=$(readlink -f "${XDG_CACHE_HOME:-$HOME/.cache}/aurora/wallpaper" 2>/dev/null)
 [ -f "$wallpaper" ] || wallpaper=$(gsettings get org.aurora.desktop wallpaper 2>/dev/null | tr -d "'")
-[ -f "$wallpaper" ] || wallpaper=/usr/share/backgrounds/aurora/aurora-dawn.png
+[ -f "$wallpaper" ] || wallpaper=/usr/share/backgrounds/aurora/aurora-dynamic-dawn.png
 
 clock="%H:%M"
 [ "$(gsettings get org.aurora.desktop clock-format 2>/dev/null)" = "'12h'" ] && clock="%l:%M %p"

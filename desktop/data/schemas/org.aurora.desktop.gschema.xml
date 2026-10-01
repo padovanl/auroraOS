@@ -2,13 +2,18 @@
 <schemalist gettext-domain="aurora">
   <schema id="org.aurora.desktop" path="/org/aurora/desktop/">
     <key name="wallpaper" type="s">
-      <default>'/usr/share/backgrounds/aurora/aurora-dawn.png'</default>
+      <default>'/usr/share/backgrounds/aurora/aurora-starfall-dawn.png'</default>
       <summary>Background image path</summary>
     </key>
     <key name="wallpaper-dynamic" type="b">
       <default>true</default>
       <summary>Dynamic background</summary>
-      <description>Use the Aurora landscape that follows the sun: dawn, day, dusk and night.</description>
+      <description>Use the Aurora landscape that follows the sun: dawn, day, dusk and night, from the series in wallpaper-dynamic-series.</description>
+    </key>
+    <key name="wallpaper-dynamic-series" type="s">
+      <choices><choice value="starfall"/><choice value="veil"/><choice value="horizon"/></choices>
+      <default>'starfall'</default>
+      <summary>Which series of pictures the dynamic background follows the sun with</summary>
     </key>
     <key name="wallpaper-slideshow" type="b">
       <default>false</default>

@@ -16,13 +16,12 @@ import uuid
 
 from gi.repository import Adw, Gdk, GdkPixbuf, Gio, GLib, Gtk, Pango
 
-from aurora import settings
+from aurora import settings, sun, wallpapers
 from aurora.i18n import N_, _
 from aurora.settingsapp.util import combo_row, switch_row
 
 WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
-DYNAMIC_PREVIEW = "/usr/share/backgrounds/aurora/aurora-dynamic-dusk.png"
 MODES = ("dynamic", "picture", "daily", "slideshow", "color")
 MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Picture of the day"),
                N_("Slideshow"), N_("Solid color"))
@@ -52,8 +51,17 @@ def find_wallpapers(dirs=None):
     return found
 
 
+PHASE_NAMES = {"dawn": N_("Dawn"), "day": N_("Day"), "dusk": N_("Dusk"), "night": N_("Night")}
+
+
 def pretty_name(path):
-    return os.path.splitext(os.path.basename(path))[0].replace("-", " ").replace("_", " ")
+    name = os.path.splitext(os.path.basename(path))[0]
+    parts = name.split("-")
+    series = dict(wallpapers.SERIES)
+    if len(parts) == 3 and parts[0] == "aurora" and parts[1] in series \
+            and parts[2] in PHASE_NAMES:
+        return f"{_(series[parts[1]])} · {_(PHASE_NAMES[parts[2]])}"
+    return name.replace("-", " ").replace("_", " ")
 
 
 def remember(recent, path, keep=12):
@@ -180,6 +188,26 @@ class BackgroundSection:
                                   MODES.index(mode_of(self.s)), on_change=self._set_mode)
         rows.add(self.mode_row)
 
+        # Dynamic: which series follows the sun.
+        self.series_box = Gtk.Box(spacing=10, margin_top=10, margin_bottom=10,
+                                  halign=Gtk.Align.START)
+        self.series_buttons = {}
+        for key, name in wallpapers.SERIES:
+            button = Gtk.Button(css_classes=["background-recent"], tooltip_text=_(name))
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            box.append(thumb(wallpapers.path(key, "dusk"), 150, 84))
+            box.append(Gtk.Label(label=_(name), css_classes=["caption"]))
+            button.set_child(box)
+            button.connect("clicked", lambda _b, k=key: self._set_series(k))
+            self.series_box.append(button)
+            self.series_buttons[key] = button
+        self.series_expander = Adw.ExpanderRow(
+            title=_("Series"), subtitle=_("The same landscape at dawn, day, dusk and night"),
+            expanded=True)
+        self.series_expander.add_row(Adw.PreferencesRow(child=self.series_box,
+                                                        activatable=False))
+        rows.add(self.series_expander)
+
         # Picture: the recent ones and the ways to find more.
         self.recent_box = Gtk.Box(spacing=8, margin_top=10, margin_bottom=10)
         picture = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background-picker"])
@@ -254,8 +282,8 @@ class BackgroundSection:
         page.add(rows)
 
         if self.s is not None:
-            for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
-                        "wallpaper-slideshow-folder", "wallpaper-daily"):
+            for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-dynamic-series",
+                        "wallpaper-slideshow", "wallpaper-slideshow-folder", "wallpaper-daily"):
                 self.s.connect(f"changed::{key}", lambda *_a: self.refresh())
             # The shell downloads today's picture: show it when it arrives.
             from aurora import dailypicture
@@ -271,7 +299,8 @@ class BackgroundSection:
     def refresh(self):
         mode = mode_of(self.s)
         current = self.s.get_string("wallpaper") if self.s else ""
-        shown = DYNAMIC_PREVIEW if mode == "dynamic" else current
+        series = wallpapers.chosen_series(self.s)
+        shown = wallpapers.path(series, sun.phase()) if mode == "dynamic" else current
         daily = None
         if mode == "daily":
             from aurora import dailypicture
@@ -292,6 +321,9 @@ class BackgroundSection:
             "color": _("A calm, solid color"),
         }[mode])
         self.picture_expander.set_visible(mode == "picture")
+        self.series_expander.set_visible(mode == "dynamic")
+        for key, button in self.series_buttons.items():
+            (button.add_css_class if key == series else button.remove_css_class)("current")
         self.color_expander.set_visible(mode == "color")
         for row in self.slide_rows:
             row.set_visible(mode == "slideshow")
@@ -336,6 +368,11 @@ class BackgroundSection:
         if mode == "color":
             self._set_color(COLORS[0])
         self.refresh()
+
+    def _set_series(self, key):
+        if self.s is not None:
+            self.s.set_string("wallpaper-dynamic-series", key)
+            self.s.set_boolean("wallpaper-dynamic", True)
 
     def choose(self, path):
         if self.s is None:

@@ -268,3 +268,24 @@ def test_snapped_windows_keep_the_gap():
     assert (l["x"], l["y"]) == (10, 50)                    # full gap at the screen's edges
     assert r["x"] - (l["x"] + l["width"]) == 10            # the same gap between them
     assert r["x"] + r["width"] == 990 and r["y"] + r["height"] == 790
+
+
+def test_included_wallpapers_have_readable_names():
+    from aurora.settingsapp.backgrounds import pretty_name
+    assert pretty_name("/usr/share/backgrounds/aurora/aurora-veil-dusk.png") == "Veil · Dusk"
+    assert pretty_name("/home/me/Pictures/my-cat_photo.jpg") == "my cat photo"
+
+
+def test_dynamic_series_fall_back_to_the_default():
+    from aurora import wallpapers
+
+    class Settings:
+        def __init__(self, value):
+            self.value = value
+
+        def get_string(self, _key):
+            return self.value
+    assert wallpapers.chosen_series(Settings("horizon")) == "horizon"
+    assert wallpapers.chosen_series(Settings("gone")) == wallpapers.DEFAULT_SERIES
+    assert wallpapers.chosen_series(None) == wallpapers.DEFAULT_SERIES
+    assert wallpapers.path("veil", "night").endswith("/aurora-veil-night.png")

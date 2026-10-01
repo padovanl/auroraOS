@@ -17,15 +17,17 @@ import time
 
 from gi.repository import GLib, GObject
 
-from aurora import settings, sun
+from aurora import settings, sun, wallpapers
 
-BACKGROUNDS = "/usr/share/backgrounds/aurora"
-DEFAULT_WALLPAPER = os.path.join(BACKGROUNDS, "aurora-dawn.png")
-PHASES = ("dawn", "day", "dusk", "night")
+BACKGROUNDS = wallpapers.BACKGROUNDS
+DEFAULT_WALLPAPER = wallpapers.default_picture()
+PHASES = wallpapers.PHASES
 
 
 def dynamic_path(phase):
-    return os.path.join(BACKGROUNDS, f"aurora-dynamic-{phase}.png")
+    """The dynamic background's picture for this part of the day, from the
+    series chosen in Settings."""
+    return wallpapers.path(wallpapers.chosen_series(settings.get()), phase)
 
 
 def cache_link():
@@ -69,7 +71,8 @@ class DayCycle(GObject.Object):
         self._slide_index = 0
         s = settings.get()
         if s:
-            for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-slideshow",
+            for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-dynamic-series",
+                        "wallpaper-slideshow",
                         "wallpaper-slideshow-minutes", "wallpaper-slideshow-folder",
                         "wallpaper-slideshow-shuffle", "wallpaper-daily"):
                 s.connect(f"changed::{key}", lambda *a: self._wallpaper_changed())
@@ -121,7 +124,7 @@ class DayCycle(GObject.Object):
         for root, _dirs, names in os.walk(folder):
             found += [os.path.join(root, name) for name in names
                       if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
-                      and not name.startswith("aurora-dynamic-")]
+                      and not name.startswith("aurora-dynamic-")]  # the same as a series
             if len(found) > 5000:
                 break
         found.sort()

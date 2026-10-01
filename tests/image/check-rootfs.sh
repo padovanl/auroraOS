@@ -41,7 +41,7 @@ expect "GTK3 theme (adw-gtk3)" test -f "$ROOTFS/usr/share/themes/adw-gtk3-dark/g
 expect "no adw-gtk3 GTK 4 CSS" test ! -e "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-4.0"
 expect "Qt follows GNOME settings" chroot "$ROOTFS" dpkg -s qgnomeplatform-qt6
 expect "plymouth hand-over for greetd" test -f "$ROOTFS/etc/systemd/system/greetd.service.d/aurora-plymouth.conf"
-expect "wallpaper" test -f "$ROOTFS/usr/share/backgrounds/aurora/aurora-dawn.png"
+expect "wallpaper series" test -s "$ROOTFS/usr/share/backgrounds/aurora/aurora-veil-day.png"
 expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
 
 echo "== features"

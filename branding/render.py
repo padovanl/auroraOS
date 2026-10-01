@@ -12,9 +12,7 @@ import sys
 import cairo
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "wallpapers"))
 sys.path.insert(0, HERE)
-import generate  # noqa: E402
 import logo  # noqa: E402
 
 def plymouth(out):
