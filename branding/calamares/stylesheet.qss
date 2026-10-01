@@ -15,12 +15,14 @@ QWidget {
 /* Room around each page, like a sheet of paper inside the window. */
 #mainApp QStackedWidget { padding: 4px 26px 0 26px; }
 
-/* The legend under each partition bar on a soft card. Calamares paints the legend's names in black whatever the
-   palette, so the card is light for them to be read. */
+/* The legend under each partition bar, a little apart from it. Calamares
+   paints the partitions' names in black whatever the style, so the card is
+   light: Aurora's lavender, not white (a gradient comes out in stripes). */
 #mainApp PartitionLabelsView {
-    background-color: #ebe6f5;
-    border-radius: 10px;
-    padding: 3px 10px;
+    background-color: #e4d9ff;
+    border-radius: 12px;
+    padding: 4px 12px;
+    margin: 10px 0 10px 0;
     min-height: 46px;
 }
 
@@ -140,9 +142,9 @@ QComboBox QAbstractItemView::item:hover { background-color: rgba(255, 255, 255, 
 QComboBox QAbstractItemView::item:selected { background-color: rgba(169, 112, 255, 0.35); }
 
 /* Message boxes ("Continue with installation?") are windows of their own:
-   the dark look too. (Their last line used to be cut off: with Qt's own
-   title bar drawn inside the window, the dialog lost its height; Wayfire now
-   draws title bars for Qt apps, see wayfire.ini.) */
+   the dark look too. (Their last line used to be cut off by Qt's own title
+   bar drawn inside the window; Wayfire now draws title bars for Qt apps,
+   see wayfire.ini.) */
 QMessageBox, QDialog { background-color: #1a1625; color: #f2eefa; }
 QDialog QLabel { color: #f2eefa; }
 QMessageBox QLabel { color: #f2eefa; }

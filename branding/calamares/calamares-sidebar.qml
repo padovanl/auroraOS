@@ -85,13 +85,37 @@ Rectangle {
                         color: done ? header.accent : header.dim
                         Behavior on color { ColorAnimation { duration: 250 } }
                     }
-                    // Glow behind the current step.
+                    // Behind the current step, a soft halo that breathes, and a
+                    // ring that keeps rippling outward from it.
                     Rectangle {
+                        id: halo
                         visible: now
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 0
-                        width: 26; height: 26; radius: 13
-                        color: Qt.rgba(0.66, 0.44, 1.0, 0.28)
+                        y: 13 - height / 2
+                        width: 30; height: 30; radius: 15
+                        color: Qt.rgba(0.80, 0.50, 1.0, 0.5)
+                        SequentialAnimation on scale {
+                            running: now
+                            loops: Animation.Infinite
+                            NumberAnimation { from: 0.85; to: 1.35; duration: 1100; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 1.35; to: 0.85; duration: 1100; easing.type: Easing.InOutSine }
+                        }
+                    }
+                    Rectangle {
+                        id: ripple
+                        visible: now
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 13 - height / 2
+                        width: 22; height: 22; radius: 11
+                        color: "transparent"
+                        border.width: 2
+                        border.color: header.rose
+                        ParallelAnimation {
+                            running: now
+                            loops: Animation.Infinite
+                            NumberAnimation { target: ripple; property: "scale"; from: 1.0; to: 1.8; duration: 1800; easing.type: Easing.OutCubic }
+                            NumberAnimation { target: ripple; property: "opacity"; from: 0.8; to: 0.0; duration: 1800; easing.type: Easing.OutCubic }
+                        }
                     }
                     Rectangle {
                         id: dot
