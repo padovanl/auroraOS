@@ -41,9 +41,27 @@ def defaults_for(lang):
     return [m for m, l, _n in METHODS if l == code]
 
 
+def chosen_layouts():
+    """The keyboard layouts from Settings → Language & Region (the compositor's
+    environment file), else the session's."""
+    path = os.path.join(config_home(), "labwc", "environment")
+    try:
+        with open(path) as f:
+            for line in f:
+                key, sep, value = line.strip().partition("=")
+                if sep and key == "XKB_DEFAULT_LAYOUT" and value.strip().strip('"'):
+                    return value.strip().strip('"')
+    except OSError:
+        pass
+    return os.environ.get("XKB_DEFAULT_LAYOUT", "us")
+
+
 def profile_text(layout, methods):
-    layout = (layout or "us").split(",")[0] or "us"
-    items = [f"keyboard-{layout}"] + list(methods)
+    """Fcitx's profile: every keyboard layout, then the input methods, so
+    Ctrl+Space goes through them all and typing letters keeps your layout."""
+    layouts = [x for x in (layout or "us").split(",") if x] or ["us"]
+    items = [f"keyboard-{x}" for x in layouts] + list(methods)
+    layout = layouts[0]
     lines = ["[Groups/0]", "Name=Default", f"Default Layout={layout}",
              f"DefaultIM={methods[0] if methods else items[0]}", ""]
     for i, name in enumerate(items):
@@ -96,7 +114,7 @@ def save(methods, layout=None):
     with open(choice_path(), "w") as f:
         f.write("".join(m + "\n" for m in methods))
     os.makedirs(os.path.dirname(profile_path()), exist_ok=True)
-    layout = layout or os.environ.get("XKB_DEFAULT_LAYOUT", "us")
+    layout = layout or chosen_layouts()
     with open(profile_path(), "w") as f:
         f.write(profile_text(layout, methods))
     ensure_private()

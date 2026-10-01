@@ -600,3 +600,15 @@ def test_input_methods_stay_private(tmp_path):
     assert "0=clipboard\n1=cloudpinyin" in text and "X=1" in text and "Y=2" in text
     im.ensure_private(str(path))
     assert path.read_text().count("cloudpinyin") == 1
+
+
+def test_input_methods_keep_every_layout(tmp_path, monkeypatch):
+    from aurora import inputmethods as im
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    (tmp_path / "labwc").mkdir()
+    (tmp_path / "labwc" / "environment").write_text("XKB_DEFAULT_LAYOUT=it,us\n")
+    assert im.chosen_layouts() == "it,us"
+    im.save(["pinyin"])
+    text = (tmp_path / "fcitx5" / "profile").read_text()
+    assert "Default Layout=it" in text
+    assert text.index("keyboard-it") < text.index("keyboard-us") < text.index("Name=pinyin")

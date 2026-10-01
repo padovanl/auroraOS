@@ -227,8 +227,14 @@ class Language(Page):
         env["XKB_DEFAULT_OPTIONS"] = xkb_options(env.get("XKB_DEFAULT_OPTIONS", ""), "grp:",
                                                  "grp:alt_shift_toggle" if len(codes) > 1 else "")
         write_conf(path, env)
-        from aurora import compositor
+        from aurora import compositor, inputmethods
         compositor.refresh()
+        # Fcitx, when it runs, types with its own copy of the layouts.
+        methods = inputmethods.chosen()
+        if methods:
+            inputmethods.save(methods, ",".join(codes))
+            if os.environ.get("AURORA_INPUT_METHOD") == "fcitx":
+                apps.spawn(["fcitx5-remote", "-r"])
         self._refresh_layouts()
 
     def _refresh_layouts(self):
