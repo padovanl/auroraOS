@@ -52,6 +52,42 @@ def audio_nodes():
     return sinks, sources, default_sink, default_source
 
 
+def app_streams(data=None):
+    """Apps playing sound now, like Windows' Volume Mixer: [{"id", "app", "icon",
+    "title"}], one per stream, from pw-dump's JSON (read now if not given)."""
+    if data is None:
+        try:
+            data = json.loads(_run(["pw-dump"]) or "[]")
+        except json.JSONDecodeError:
+            data = []
+    streams = []
+    for obj in data:
+        if obj.get("type") != "PipeWire:Interface:Node":
+            continue
+        props = (obj.get("info") or {}).get("props") or {}
+        if props.get("media.class") != "Stream/Output/Audio":
+            continue
+        app = props.get("application.name") or props.get("application.process.binary") \
+            or props.get("node.name") or "?"
+        # ALSA programs show up as "PipeWire ALSA [program]".
+        m = re.match(r"PipeWire ALSA \[(.+)\]$", app)
+        app = m.group(1) if m else app
+        streams.append({"id": obj["id"], "app": app,
+                        "icon": props.get("application.icon-name")
+                        or (props.get("application.process.binary") or "").lower()
+                        or "audio-x-generic",
+                        "title": props.get("media.name", "")})
+    return streams
+
+
+def set_stream_volume(node_id, value):
+    _run(["wpctl", "set-volume", str(node_id), f"{max(value, 0):.2f}"])
+
+
+def toggle_stream_mute(node_id):
+    _run(["wpctl", "set-mute", str(node_id), "toggle"])
+
+
 def get_volume(target):
     out = _run(["wpctl", "get-volume", target])
     m = re.search(r"Volume:\s*([\d.]+)", out)

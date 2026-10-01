@@ -368,6 +368,19 @@ class QuickSettings(Gtk.Popover):
                           checked=profile == sh.power_profiles.current)
         elif key in ("output", "input"):
             sinks, sources, dsink, dsource = audio_nodes()
+            if key == "output":
+                # Each app's own volume, under the devices (Windows' Volume Mixer).
+                from aurora import mixerui
+                from aurora.shell.services import app_streams
+                streams = app_streams()
+                if streams:
+                    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                                  margin_top=8, css_classes=["qs-mixer"])
+                    box.append(Gtk.Label(label=_("Apps"), xalign=0, css_classes=["heading"]))
+                    apps_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+                    mixerui.fill(apps_box, streams)
+                    box.append(apps_box)
+                    d.rows.append(box)
             nodes, default = (sinks, dsink) if key == "output" else (sources, dsource)
             icon = "audio-speakers-symbolic" if key == "output" else "audio-input-microphone-symbolic"
             if not nodes:

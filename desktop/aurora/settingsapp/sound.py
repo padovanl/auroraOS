@@ -25,6 +25,15 @@ class Sound(Page):
         self._rows = []
         self.refresh()
 
+        # Volume Mixer: each app playing sound, with its own volume.
+        mixer = self.group(_("Volume Mixer"), _("Apps playing sound right now"))
+        self.mixer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                                 margin_top=6, margin_bottom=6)
+        mixer.add(self.mixer_box)
+        self._mixer_source = 0
+        self.connect("map", lambda *_a: self._start_mixer())
+        self.connect("unmap", lambda *_a: self._stop_mixer())
+
         aurora = settings.get()
         if aurora is not None:
             loud = self.group()
@@ -49,6 +58,26 @@ class Sound(Page):
                     ["pw-play", f"{SOUNDS}/{n}.wav"]))
                 preview.add_suffix(play)
                 alerts.add(preview)
+
+    def _start_mixer(self):
+        self._update_mixer()
+        if not self._mixer_source:
+            self._mixer_source = GLib.timeout_add_seconds(2, self._update_mixer)
+
+    def _stop_mixer(self):
+        if self._mixer_source:
+            GLib.source_remove(self._mixer_source)
+            self._mixer_source = 0
+
+    def _update_mixer(self):
+        from aurora import mixerui
+        from aurora.shell.services import app_streams
+        aurora = settings.get()
+        loud = aurora is not None and aurora.get_boolean("volume-overamplify")
+        mixerui.fill(self.mixer_box, app_streams(),
+                     _("When an app plays sound, its volume appears here"),
+                     maximum=1.5 if loud else 1.0)
+        return GLib.SOURCE_CONTINUE
 
     def refresh(self):
         for group, row in self._rows:

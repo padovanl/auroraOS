@@ -367,3 +367,20 @@ def test_archive_names(tmp_path):
     assert a.archive_name([str(tmp_path / "x"), str(tmp_path / "y")]) == tmp_path.name
     (tmp_path / "Holiday.zip").write_text("")
     assert a.free_name(str(tmp_path), "Holiday", ".zip").endswith("Holiday (2).zip")
+
+
+def test_volume_mixer_lists_apps_playing_sound():
+    pytest = __import__("pytest")
+    services = pytest.importorskip("aurora.shell.services")
+    dump = [
+        {"id": 40, "type": "PipeWire:Interface:Node", "info": {"props": {
+            "media.class": "Audio/Sink", "node.name": "speakers"}}},
+        {"id": 77, "type": "PipeWire:Interface:Node", "info": {"props": {
+            "media.class": "Stream/Output/Audio", "application.name": "Firefox",
+            "application.icon-name": "firefox-esr", "media.name": "YouTube"}}},
+        {"id": 78, "type": "PipeWire:Interface:Node", "info": {"props": {
+            "media.class": "Stream/Output/Audio", "application.process.binary": "Spotify"}}},
+    ]
+    got = services.app_streams(dump)
+    assert [(s["id"], s["app"], s["icon"]) for s in got] == [
+        (77, "Firefox", "firefox-esr"), (78, "Spotify", "spotify")]
