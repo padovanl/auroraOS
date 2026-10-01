@@ -17,11 +17,14 @@ if pgrep -x calamares >/dev/null; then
     sudo -n pkill -9 -x calamares 2>/dev/null
 fi
 
+# No title bar: the installer's header draws the title, centered, in Aurora's
+# font, with minimize and close (calamares-sidebar.qml). Wayfire and labwc
+# leave it undecorated too; Super+drag moves it.
 exec sudo -n env \
     WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
     XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
     XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
     QT_QPA_PLATFORM=wayland \
-    QT_WAYLAND_DISABLE_WINDOWDECORATION=0 \
+    QT_WAYLAND_DISABLE_WINDOWDECORATION=1 \
     LANG="${LANG:-en_US.UTF-8}" \
     calamares "$@"

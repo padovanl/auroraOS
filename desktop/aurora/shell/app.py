@@ -437,6 +437,13 @@ class Shell(Adw.Application):
                 return 1
             for window in windows:
                 window.activate()
+        elif cmd == "minimize":
+            # Minimize an app's windows (the installer's own button uses it).
+            windows = self.toplevels.for_app(arg)
+            if not windows:
+                return 1
+            for window in windows:
+                window.minimize()
         else:
             print(f"aurora-shell: unknown command {cmd}", file=sys.stderr)
 

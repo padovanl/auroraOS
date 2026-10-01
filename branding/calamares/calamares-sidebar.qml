@@ -10,7 +10,7 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     id: header
-    height: 80
+    height: 96
     color: "#14101e"
 
     readonly property color accent: "#a970ff"
@@ -32,30 +32,55 @@ Rectangle {
         }
     }
 
-    RowLayout {
-        anchors.fill: parent
-        anchors.leftMargin: 22
-        anchors.rightMargin: 26
-        spacing: 28
-
-        RowLayout {
-            spacing: 10
-            Layout.alignment: Qt.AlignVCenter
-            Image {
-                source: "file:/" + Branding.imagePath(Branding.ProductLogo)
-                sourceSize.width: 40
-                sourceSize.height: 40
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 40
-            }
-            Text {
-                text: Branding.string(Branding.ShortProductName)
-                color: "#ffffff"
-                font.pixelSize: 19
-                font.weight: Font.DemiBold
-                font.letterSpacing: 0.5
+    Text {
+        id: title
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        text: qsTr("%1 Installer").arg(Branding.string(Branding.ProductName))
+        color: "#efe9fa"
+        font.pixelSize: 13
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.8
+    }
+    // Minimize and close, where a title bar has them.
+    Row {
+        anchors.right: parent.right
+        anchors.rightMargin: 12
+        anchors.verticalCenter: title.verticalCenter
+        spacing: 8
+        Repeater {
+            model: [{ glyph: "−", action: "minimize" }, { glyph: "×", action: "close" }]
+            Rectangle {
+                width: 22; height: 22; radius: 11
+                color: area.containsMouse
+                       ? (modelData.action === "close" ? header.rose : Qt.rgba(1, 1, 1, 0.22))
+                       : Qt.rgba(1, 1, 1, 0.09)
+                Behavior on color { ColorAnimation { duration: 120 } }
+                Text {
+                    anchors.centerIn: parent
+                    text: modelData.glyph
+                    color: "white"
+                    font.pixelSize: 15
+                }
+                MouseArea {
+                    id: area
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: modelData.action === "close"
+                               ? ViewManager.quit()
+                               : Qt.openUrlExternally("aurora-installer:minimize")
+                }
             }
         }
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        anchors.topMargin: 40
+        anchors.leftMargin: 22
+        anchors.rightMargin: 26
+        spacing: 0
 
         // The steps.
         Row {
@@ -70,16 +95,16 @@ Rectangle {
                 model: ViewManager
                 Item {
                     width: steps.cell
-                    height: 56
+                    height: 40
                     readonly property bool done: index < header.current
                     readonly property bool now: index === header.current
 
                     // Line to the next step.
                     Rectangle {
                         visible: index < steps.count - 1
-                        x: parent.width / 2 + 13
-                        y: 12
-                        width: parent.width - 26
+                        x: parent.width / 2 + 11
+                        y: 8
+                        width: parent.width - 22
                         height: 2
                         radius: 1
                         color: done ? header.accent : header.dim
@@ -91,8 +116,8 @@ Rectangle {
                         id: halo
                         visible: now
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 13 - height / 2
-                        width: 30; height: 30; radius: 15
+                        y: 9 - height / 2
+                        width: 26; height: 26; radius: 13
                         color: Qt.rgba(0.80, 0.50, 1.0, 0.5)
                         SequentialAnimation on scale {
                             running: now
@@ -105,8 +130,8 @@ Rectangle {
                         id: ripple
                         visible: now
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 13 - height / 2
-                        width: 22; height: 22; radius: 11
+                        y: 9 - height / 2
+                        width: 18; height: 18; radius: 9
                         color: "transparent"
                         border.width: 2
                         border.color: header.rose
@@ -120,8 +145,8 @@ Rectangle {
                     Rectangle {
                         id: dot
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: now ? 3 : 5
-                        width: now ? 20 : 16
+                        y: now ? 1 : 3
+                        width: now ? 16 : 12
                         height: width
                         radius: width / 2
                         border.width: (done || now) ? 0 : 2
@@ -135,19 +160,19 @@ Rectangle {
                             visible: done
                             text: "✓"
                             color: "white"
-                            font.pixelSize: 10
+                            font.pixelSize: 8
                             font.bold: true
                         }
                     }
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 32
+                        y: 21
                         width: parent.width - 6
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
                         text: display
                         color: now ? "#ffffff" : (done ? header.text : "#8d8399")
-                        font.pixelSize: 12
+                        font.pixelSize: 11
                         font.weight: now ? Font.DemiBold : Font.Normal
                     }
                 }

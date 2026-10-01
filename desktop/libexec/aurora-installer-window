@@ -1,0 +1,13 @@
+#!/bin/sh
+# The installer's header buttons (calamares-sidebar.qml) open
+# aurora-installer:minimize. Calamares runs as root and can't minimize its own
+# window on Wayland: ask the live user's shell to do it.
+case "$1" in
+    aurora-installer:minimize) action=minimize ;;
+    *) exit 1 ;;
+esac
+user=${SUDO_USER:-$(id -un 1000 2>/dev/null)}
+uid=$(id -u "$user") || exit 1
+exec runuser -u "$user" -- env XDG_RUNTIME_DIR="/run/user/$uid" \
+    DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" \
+    aurora-shell "$action" io.calamares.calamares

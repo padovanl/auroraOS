@@ -12,6 +12,10 @@ QWidget {
 #mainApp QWidget { color: #f2eefa; }
 #mainApp QStackedWidget, #mainApp QFrame, #mainApp QScrollArea { background-color: transparent; }
 
+/* The header (calamares-sidebar.qml): the title with its buttons, then the
+   steps. */
+QQuickWidget { min-height: 96px; max-height: 96px; }
+
 /* Room around each page, like a sheet of paper inside the window. */
 #mainApp QStackedWidget { padding: 4px 26px 0 26px; }
 
