@@ -105,8 +105,11 @@ MANIFEST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..",
 # of the compositor, so it has WAYLAND_DISPLAY and DISPLAY), minus the
 # gtk4-layer-shell preload the shell removes before starting apps: apps start
 # the way they would from the dock or Launchpad.
-USER_ENV = ("runuser -u aurora -- bash -c 'while IFS= read -r -d \"\" kv; do export \"$kv\"; "
-            "done < /proc/$(pgrep -o -u aurora -f [/]usr/bin/aurora-shell)/environ; "
+# The desktop user: "aurora" in the live system; AURORA_TEST_USER for an
+# installed one.
+DESKTOP_USER = os.environ.get("AURORA_TEST_USER", "aurora")
+USER_ENV = (f"runuser -u {DESKTOP_USER} -- bash -c 'while IFS= read -r -d \"\" kv; do export \"$kv\"; "
+            f"done < /proc/$(pgrep -o -u {DESKTOP_USER} -f [/]usr/bin/aurora-shell)/environ; "
             "unset LD_PRELOAD AURORA_SHELL_PRELOADED; exec \"$@\"' _ ")
 
 

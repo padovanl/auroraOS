@@ -573,3 +573,30 @@ def test_screen_keyboard_sends_keys():
     assert osk.wtype_args(None, "a") == ["wtype", "--", "a"]
     assert osk.wtype_args("BackSpace") == ["wtype", "-k", "BackSpace"]
     assert osk.wtype_args(None, "c", ctrl=True) == ["wtype", "-M", "ctrl", "-k", "c", "-m", "ctrl"]
+
+
+def test_input_methods(tmp_path, monkeypatch):
+    from aurora import inputmethods as im
+    monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+    assert im.chosen() is None
+    assert im.defaults_for("zh_CN.UTF-8") == ["pinyin"] and im.defaults_for("en_US") == []
+    assert im.setup(lang="en_US.UTF-8") is False and im.chosen() is None
+    assert im.setup(lang="ko_KR.UTF-8", layout="kr") is True
+    assert im.chosen() == ["hangul"]
+    text = (tmp_path / "fcitx5" / "profile").read_text()
+    assert "Name=keyboard-kr" in text and "Name=hangul" in text and "DefaultIM=hangul" in text
+    im.save([])
+    assert im.setup(lang="ko_KR.UTF-8") is False      # turned off by hand: stays off
+
+
+def test_input_methods_stay_private(tmp_path):
+    from aurora import inputmethods as im
+    path = tmp_path / "config"
+    im.ensure_private(str(path))
+    assert "[Behavior/DisabledAddons]\n0=cloudpinyin" in path.read_text()
+    path.write_text("[Hotkey]\nX=1\n\n[Behavior/DisabledAddons]\n0=clipboard\n\n[Behavior]\nY=2\n")
+    im.ensure_private(str(path))
+    text = path.read_text()
+    assert "0=clipboard\n1=cloudpinyin" in text and "X=1" in text and "Y=2" in text
+    im.ensure_private(str(path))
+    assert path.read_text().count("cloudpinyin") == 1

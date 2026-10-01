@@ -26,6 +26,13 @@ export XKB_DEFAULT_LAYOUT="${XKBLAYOUT:-us}"
 export XKB_DEFAULT_VARIANT="${XKBVARIANT:-}"
 export XKB_DEFAULT_OPTIONS="${XKBOPTIONS:-}"
 
+# Input methods (Chinese, Korean, Japanese): Fcitx 5, only when one is in use
+# (chosen in Settings → Language & Region, or the language needs one).
+if command -v fcitx5 >/dev/null 2>&1 && aurora-input-methods setup 2>/dev/null; then
+    export XMODIFIERS=@im=fcitx GTK_IM_MODULE=fcitx QT_IM_MODULE=fcitx SDL_IM_MODULE=fcitx
+    export AURORA_INPUT_METHOD=fcitx
+fi
+
 # greetd does not run a login shell: give the session the usual login PATH.
 PATH="$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games"
 export PATH

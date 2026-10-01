@@ -36,7 +36,7 @@ class VM:
         self.qmp_path = os.path.join(self.tmp, "qmp.sock")
         self.step = 0
         cmd = ["qemu-system-x86_64", "-enable-kvm", "-cpu", "host", "-machine", "q35",
-               "-smp", "4", "-m", "6144", "-cdrom", iso, "-boot", "d",
+               "-smp", "4", "-m", "6144",
                # Only this display, as on real machines and Hyper-V: without
                # -vga none, QEMU adds a second, empty standard VGA screen.
                "-vga", "none",
@@ -48,6 +48,8 @@ class VM:
                "-device", "virtio-serial",
                "-chardev", f"socket,path={self.qga},server=on,wait=off,id=qga0",
                "-device", "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0"]
+        if iso:
+            cmd += ["-cdrom", iso, "-boot", "d"]
         if disk:
             if not os.path.exists(disk):
                 subprocess.run(["qemu-img", "create", "-q", "-f", "qcow2", disk, "40G"],

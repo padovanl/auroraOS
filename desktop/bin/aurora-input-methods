@@ -1,0 +1,14 @@
+#!/usr/bin/python3
+"""aurora-input-methods setup: exit 0 when an input method is in use (see
+aurora.inputmethods); used by aurora-session."""
+import os
+import sys
+
+sys.path.insert(0, os.environ.get("AURORA_LIBDIR", "/usr/lib/aurora"))
+
+from aurora import inputmethods  # noqa: E402
+
+if sys.argv[1:2] == ["setup"]:
+    sys.exit(0 if inputmethods.setup() else 1)
+print("usage: aurora-input-methods setup", file=sys.stderr)
+sys.exit(2)

@@ -40,6 +40,22 @@ LibreOffice come in the 20 languages of the boot menu:</p>
 <kbd>Alt</kbd>+<kbd>Shift</kbd>. The <strong>Compose key</strong> types special characters
 (<kbd>Compose</kbd> <kbd>e</kbd> <kbd>'</kbd> gives é). Your layouts are kept in
 <span class="path">~/.config/aurora/keyboard.conf</span>.</p>
+<h2 id="chinese-korean-and-japanese"><a class="anchor" href="#chinese-korean-and-japanese" aria-hidden="true">#</a>Chinese, Korean and Japanese</h2>
+<p>Settings → Language &amp; Region → <strong>Input Methods</strong>: <em>Chinese (Pinyin)</em>,
+<em>Korean (Hangul)</em> and <em>Japanese (Mozc)</em>. Type the sound in Latin letters and pick
+the characters from the suggestions that appear next to the cursor (<kbd>Space</kbd> takes the
+first, numbers the others; Hangul composes syllables as you type). <kbd>Ctrl</kbd>+<kbd>Space</kbd>
+switches between plain letters and the input method; the top bar shows which one is on (拼, 한,
+あ). It works with the on-screen keyboard too.</p>
+<ul>
+  <li>When the system language is Chinese, Korean or Japanese, its input method is on from the first login.</li>
+  <li>Turning one on for the first time needs a log out and in (apps learn about it when they start).</li>
+  <li><em>Input method settings</em> opens Fcitx's configuration: shortcuts, number of suggestions, fuzzy pinyin, the Shuangpin layouts.</li>
+  <li>Online suggestions (“Cloud Pinyin”) are off: they would send what you type to an online service. Turn them on in the input method settings if you want them.</li>
+</ul>
+<p>Aurora uses <strong>Fcitx 5</strong> with its Pinyin engine (libime), libhangul and Mozc. The
+choice is kept in <span class="path">~/.config/aurora/input-methods</span> and
+<span class="path">~/.config/fcitx5/profile</span>; Fcitx runs only when an input method is on.</p>
 <h2 id="date-and-time"><a class="anchor" href="#date-and-time" aria-hidden="true">#</a>Date and time</h2>
 <p>Settings → Date &amp; Time: <em>Automatic date &amp; time</em> (from the internet), the
 time zone and the 24-hour clock. Seconds in the top bar clock are in Settings → Desktop &amp;
@@ -47,7 +63,7 @@ Dock → Top Bar.</p>
       <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/07-system.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="accessibility.html"><span>Previous</span>Accessibility</a><a class="next" href="ai-overview.html"><span>Next</span>Turning on Aurora AI</a></nav>
     </article>
-    <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#language">Language</a></li><li class="h2"><a href="#keyboard-layouts">Keyboard layouts</a></li><li class="h2"><a href="#date-and-time">Date and time</a></li></ul></nav>
+    <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#language">Language</a></li><li class="h2"><a href="#keyboard-layouts">Keyboard layouts</a></li><li class="h2"><a href="#chinese-korean-and-japanese">Chinese, Korean and Japanese</a></li><li class="h2"><a href="#date-and-time">Date and time</a></li></ul></nav>
   </main>
 </div>
 <script src="manual.js"></script>

@@ -10,9 +10,9 @@ import subprocess
 
 from gi.repository import Adw, Gtk
 
-from aurora import config_path
+from aurora import apps, config_path
 from aurora.i18n import _
-from aurora.settingsapp.util import Page, combo_row, run, toast
+from aurora.settingsapp.util import Page, combo_row, run, switch_row, toast
 
 # Native names for the languages Aurora ships.
 LANGUAGE_NAMES = {
@@ -154,6 +154,38 @@ class Language(Page):
         self.add_row = add
         kb.add(add)
         self._refresh_layouts()
+
+        import shutil
+        if shutil.which("fcitx5"):
+            from aurora import inputmethods
+            ims = self.group(_("Input Methods"),
+                             _("Type Chinese, Korean or Japanese: write the sound in letters and "
+                               "pick the characters it suggests. Ctrl+Space switches between "
+                               "letters and the input method; it works with the screen "
+                               "keyboard too."))
+            current = inputmethods.chosen() or []
+            names = {"pinyin": _("Chinese (Pinyin)"), "hangul": _("Korean (Hangul)"),
+                     "mozc": _("Japanese (Mozc)")}
+            for method, _code, _english in inputmethods.METHODS:
+                ims.add(switch_row(names[method], method in current,
+                                   lambda on, m=method: self._set_input_method(m, on)))
+            settings_row = Adw.ActionRow(title=_("Input method settings"), activatable=True,
+                                         subtitle=_("Shortcuts, suggestions, fuzzy pinyin"))
+            settings_row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
+            settings_row.connect("activated", lambda *_a: apps.spawn(["fcitx5-configtool"]))
+            ims.add(settings_row)
+
+    def _set_input_method(self, method, on):
+        from aurora import inputmethods
+        current = [m for m in (inputmethods.chosen() or []) if m != method]
+        if on:
+            current.append(method)
+        inputmethods.save(current)
+        if os.environ.get("AURORA_INPUT_METHOD") == "fcitx":
+            apps.spawn(["fcitx5-remote", "-r"])     # reload the profile
+            toast(self, _("Press Ctrl+Space to switch"))
+        else:
+            toast(self, _("Log out and back in to start typing with it"))
 
     def _index(self, loc):
         base = loc.split(".")[0]

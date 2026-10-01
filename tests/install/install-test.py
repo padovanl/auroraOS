@@ -305,6 +305,7 @@ def main():
     ap.add_argument("--out", default="work/install-test")
     ap.add_argument("--timeout", type=int, default=1800, help="seconds allowed for installing")
     ap.add_argument("--keep-disk", action="store_true")
+    ap.add_argument("--disk-size", default=DISK_SIZE, help="size of the empty disk (e.g. 100G)")
     ap.add_argument("--hyperv-identity", action="store_true",
                     help="exercise Hyper-V EFI policy using QEMU SMBIOS (not Hyper-V firmware)")
     args = ap.parse_args()
@@ -313,7 +314,7 @@ def main():
     disk = os.path.join(out, f"disk-{args.firmware}.qcow2")
     if os.path.exists(disk):
         ap.error(f"refusing to overwrite existing test disk: {disk}")
-    subprocess.run(["qemu-img", "create", "-q", "-f", "qcow2", disk, DISK_SIZE], check=True)
+    subprocess.run(["qemu-img", "create", "-q", "-f", "qcow2", disk, args.disk_size], check=True)
 
     results = []
     if install(args, disk, out, results):

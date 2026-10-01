@@ -1742,6 +1742,11 @@ LibreOffice translations.
 - **Live:** pick a language in the boot menu.
 - **Installed:** Settings → Language & Region (language, formats, keyboard layouts,
   switch layouts with <kbd>Alt</kbd>+<kbd>Shift</kbd>).
+- **Chinese, Korean and Japanese input:** Settings → Language & Region → Input Methods turns
+  on Pinyin, Hangul or Mozc (Fcitx 5). Suggestions appear next to the cursor, also when typing
+  on the on-screen keyboard; <kbd>Ctrl</kbd>+<kbd>Space</kbd> switches. A Chinese, Korean or
+  Japanese system gets its input method from the first login. Cloud Pinyin is off, so what you
+  type stays on the computer.
 - **Aurora's own apps** (shell, Settings, Files, Dev Hub, Game Hub, the Assistant and
   every AI message) are fully translated into English, Italian, Spanish, French, German,
   Portuguese, Russian, Chinese (Simplified), Japanese, Arabic and Hindi. The remaining
