@@ -10,10 +10,31 @@ wallpaper=$(readlink -f "${XDG_CACHE_HOME:-$HOME/.cache}/aurora/wallpaper" 2>/de
 clock="%H:%M"
 [ "$(gsettings get org.aurora.desktop clock-format 2>/dev/null)" = "'12h'" ] && clock="%l:%M %p"
 
+# This account's name and picture go into a copy of the layout and style.
+style_dir=/usr/share/aurora/style
+run=${XDG_RUNTIME_DIR:-/tmp}/aurora-lock
+mkdir -p "$run"
+user=$(id -un)
+name=$(getent passwd "$user" | cut -d: -f5 | cut -d, -f1)
+[ -n "$name" ] || name=$user
+initial=$(printf '%s' "$name" | cut -c1 | tr '[:lower:]' '[:upper:]')
+# XML-escaped, then escaped again for sed's replacement text.
+escape() { printf '%s' "$1" | sed -e 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' | sed -e 's/[&|\\]/\\&/g'; }
+sed -e "s|@NAME@|$(escape "$name")|" -e "s|@INITIAL@|$(escape "$initial")|" \
+    "$style_dir/lock.ui" > "$run/lock.ui"
+cp "$style_dir/lock.css" "$run/lock.css"
+for face in "/var/lib/AccountsService/icons/$user" "$HOME/.face"; do
+    if [ -r "$face" ] && [ -s "$face" ]; then
+        printf '#avatar { background-image: url("file://%s"); }\n#avatar-initial { color: transparent; }\n' \
+            "$face" >> "$run/lock.css"
+        break
+    fi
+done
+
 exec gtklock --daemonize \
     --background "$wallpaper" \
-    --style /usr/share/aurora/style/lock.css \
-    --layout /usr/share/aurora/style/lock.ui \
+    --style "$run/lock.css" \
+    --layout "$run/lock.ui" \
     --time-format "$clock" \
     --date-format "%A, %-d %B" \
     --idle-hide --idle-timeout 20 \

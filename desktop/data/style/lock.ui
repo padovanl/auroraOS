@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Keep gtklock's expected IDs and signal handlers; only change the layout. -->
+<!-- Aurora's lock screen, laid out like Windows': the time and date high on the
+     wallpaper; under them the account's picture and name, and the password
+     field with its arrow. Keep gtklock's expected IDs and signal handlers.
+     aurora-lock fills in @NAME@ and @INITIAL@ for the account. -->
 <interface>
   <object class="GtkBox" id="window-box">
     <property name="name">window-box</property>
     <property name="halign">center</property>
-    <property name="valign">center</property>
+    <property name="valign">fill</property>
+    <property name="vexpand">1</property>
     <property name="orientation">vertical</property>
-    <property name="spacing">18</property>
     <child>
       <object class="GtkBox" id="info-box">
         <property name="name">info-box</property>
@@ -35,18 +38,30 @@
     </child>
     <child>
       <object class="GtkRevealer" id="body-revealer">
-        <property name="transition-type">slide-down</property>
-        <property name="transition-duration">220</property>
+        <property name="transition-type">crossfade</property>
+        <property name="transition-duration">260</property>
         <property name="reveal-child">1</property>
+        <property name="vexpand">1</property>
+        <property name="valign">center</property>
         <child>
           <object class="GtkGrid" id="body-grid">
             <property name="name">body-grid</property>
-            <property name="row-spacing">10</property>
+            <property name="halign">center</property>
+            <property name="row-spacing">14</property>
             <child>
-              <object class="GtkLabel" id="input-label">
-                <property name="name">input-label</property>
-                <property name="label" translatable="yes">Password:</property>
-                <property name="halign">start</property>
+              <object class="GtkBox" id="avatar">
+                <property name="name">avatar</property>
+                <property name="halign">center</property>
+                <property name="width-request">112</property>
+                <property name="height-request">112</property>
+                <child>
+                  <object class="GtkLabel" id="avatar-initial">
+                    <property name="name">avatar-initial</property>
+                    <property name="label">@INITIAL@</property>
+                    <property name="hexpand">1</property>
+                    <property name="halign">center</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -54,19 +69,61 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="input-field">
-                <property name="name">input-field</property>
-                <property name="width-request">320</property>
-                <property name="visibility">0</property>
-                <property name="caps-lock-warning">0</property>
-                <property name="input-purpose">password</property>
-                <property name="secondary-icon-name">view-reveal-symbolic</property>
-                <signal name="icon-release" handler="window_pw_toggle_vis"/>
-                <signal name="activate" handler="window_pw_check"/>
+              <object class="GtkLabel" id="user-name">
+                <property name="name">user-name</property>
+                <property name="label">@NAME@</property>
+                <property name="halign">center</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="name">password-row</property>
+                <property name="halign">center</property>
+                <property name="spacing">0</property>
+                <child>
+                  <object class="GtkEntry" id="input-field">
+                    <property name="name">input-field</property>
+                    <property name="width-request">300</property>
+                    <property name="visibility">0</property>
+                    <property name="caps-lock-warning">0</property>
+                    <property name="input-purpose">password</property>
+                    <property name="placeholder-text" translatable="yes">Password</property>
+                    <property name="secondary-icon-name">view-reveal-symbolic</property>
+                    <signal name="icon-release" handler="window_pw_toggle_vis"/>
+                    <signal name="activate" handler="window_pw_check"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="unlock-button">
+                    <property name="name">unlock-button</property>
+                    <property name="tooltip-text" translatable="yes">Unlock</property>
+                    <signal name="clicked" handler="window_pw_check"/>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">go-next-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="input-label">
+                <property name="name">input-label</property>
+                <property name="label"></property>
+                <property name="halign">center</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
             <child>
@@ -94,13 +151,13 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">4</property>
               </packing>
             </child>
             <child>
               <object class="GtkBox">
                 <property name="spacing">8</property>
-                <property name="halign">fill</property>
+                <property name="halign">center</property>
                 <child>
                   <object class="GtkLabel" id="warning-label">
                     <property name="name">warning-label</property>
@@ -109,22 +166,12 @@
                 <child>
                   <object class="GtkLabel" id="error-label">
                     <property name="name">error-label</property>
-                    <property name="hexpand">1</property>
-                    <property name="halign">start</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="unlock-button">
-                    <property name="name">unlock-button</property>
-                    <property name="label" translatable="yes">Unlock</property>
-                    <style><class name="suggested-action"/></style>
-                    <signal name="clicked" handler="window_pw_check"/>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">5</property>
               </packing>
             </child>
           </object>

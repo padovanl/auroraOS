@@ -25,5 +25,7 @@ def test_lock_layout_keeps_gtklock_contract():
     signals = [node.attrib["handler"] for node in tree.findall(".//signal")]
     assert signals.count("window_pw_check") == 2
     assert signals.count("window_pw_toggle_vis") == 1
-    assert "--layout /usr/share/aurora/style/lock.ui" in (
-        ROOT / "desktop/bin/aurora-lock").read_text()
+    script = (ROOT / "desktop/bin/aurora-lock").read_text()
+    assert 'style_dir=/usr/share/aurora/style' in script and '--layout "$run/lock.ui"' in script
+    text = path.read_text()
+    assert "@NAME@" in text and "@INITIAL@" in text
