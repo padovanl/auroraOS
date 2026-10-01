@@ -82,8 +82,12 @@ if [ "$hyperv" = 1 ] && [ "${1:-}" = --install ] && command -v efibootmgr >/dev/
     done
 fi
 
-# Both paths must be complete, with no fallback tool in \EFI\BOOT.
+# Both paths must be complete, with no fallback tool in \EFI\BOOT. Newer
+# grub-install copies fbx64.efi there with --force-extra-removable: remove it.
 esp_dir=/boot/efi/EFI
+for d in "$esp_dir"/BOOT "$esp_dir"/boot; do
+    rm -f "$d/fbx64.efi" "$d/FBX64.EFI"
+done
 test -s "$esp_dir/debian/shimx64.efi"
 test -s "$esp_dir/debian/grubx64.efi"
 grep -q '^search' "$esp_dir/debian/grub.cfg"
