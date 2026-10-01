@@ -130,10 +130,25 @@ def generate():
                 prefix = "release_binding" if keybind.get("onRelease") == "yes" else "binding"
                 config["command"][f"{prefix}_{name}"] = key
                 config["command"][f"command_{name}"] = action.get("command", "")
+            elif key and action is not None and action.get("name") == "SnapToRegion" \
+                    and action.get("region", "").endswith("-third"):
+                # Thirds: no native Wayfire slot, the shell places the window.
+                name = f"aurora_{index}"
+                config["command"][f"binding_{name}"] = key
+                config["command"][f"command_{name}"] = \
+                    f"aurora-shell snap {action.get('region')}"
     config["vswitch"] = {
         "binding_left": "<ctrl> <alt> KEY_LEFT",
         "binding_right": "<ctrl> <alt> KEY_RIGHT",
     }
+    # Super+1…9 goes to a workspace, Super+Shift+1…9 sends the window there,
+    # as in the labwc session.
+    for n in range(1, 10):
+        config["vswitch"][f"binding_{n}"] = f"<super> KEY_{n}"
+        config["vswitch"][f"send_win_{n}"] = f"<super> <shift> KEY_{n}"
+    config.setdefault("switcher", {})
+    config["switcher"]["next_view"] = "<alt> KEY_TAB | <super> KEY_TAB"
+    config["switcher"]["prev_view"] = "<alt> <shift> KEY_TAB"
     config["wm-actions"]["minimize"] = "<super> KEY_M"
     config["wm-actions"]["toggle_fullscreen"] = "<super> KEY_F"
     config["core"]["close_top_view"] = "<alt> KEY_F4 | <super> KEY_Q"

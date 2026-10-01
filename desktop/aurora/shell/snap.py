@@ -156,6 +156,28 @@ class SnapOverlay(LayerWindow):
                 LS.set_monitor(self, monitor)
                 return
 
+    NAMED_ZONES = {
+        "left": (0, 0, 1 / 2, 1), "right": (1 / 2, 0, 1 / 2, 1),
+        "left-third": (0, 0, 1 / 3, 1), "center-third": (1 / 3, 0, 1 / 3, 1),
+        "right-third": (2 / 3, 0, 1 / 3, 1),
+        "top-left": (0, 0, 1 / 2, 1 / 2), "top-right": (1 / 2, 0, 1 / 2, 1 / 2),
+        "bottom-left": (0, 1 / 2, 1 / 2, 1 / 2), "bottom-right": (1 / 2, 1 / 2, 1 / 2, 1 / 2),
+    }
+
+    def snap_focused(self, name):
+        """Put the focused window in a named zone (Super+Ctrl+D/F/G: thirds)."""
+        zone = self.NAMED_ZONES.get(name)
+        if zone is None or not available():
+            return
+        focused = (_ipc("window-rules/get-focused-view") or {}).get("info") or {}
+        if focused.get("role") != "toplevel":
+            return
+        where = self._where(focused.get("output-name"))
+        if where is None:
+            return
+        area = where.get("workarea") or where.get("geometry")
+        place(focused["id"], zone_geometry(zone, area))
+
     def show_layouts(self):
         if not available():
             self.shell.notifications.notify(

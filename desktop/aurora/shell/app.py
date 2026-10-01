@@ -355,6 +355,9 @@ class Shell(Adw.Application):
             self.snap.show_layouts()
         elif cmd == "always-on-top":
             self.toggle_always_on_top()
+        elif cmd == "snap":
+            # aurora-shell snap left-third|center-third|right-third|left|right…
+            self.snap.snap_focused(arg)
         elif cmd == "clipboard":
             self.launcher.search_for(search_prefix_clipboard())
         elif cmd == "emoji":
