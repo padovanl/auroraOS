@@ -119,8 +119,15 @@ class Audio(GObject.Object):
             self.muted = "[MUTED]" in out
         self.emit("changed")
 
+    @property
+    def maximum(self):
+        """1.0, or 1.5 with Settings → Sound → Over-amplification."""
+        from aurora import settings
+        s = settings.get()
+        return 1.5 if s is not None and s.get_boolean("volume-overamplify") else 1.0
+
     def set_volume(self, value):
-        value = max(0.0, min(1.0, value))
+        value = max(0.0, min(self.maximum, value))
         _run(["wpctl", "set-volume", self.SINK, f"{value:.2f}"])
         if self.muted and value > 0:
             _run(["wpctl", "set-mute", self.SINK, "0"])

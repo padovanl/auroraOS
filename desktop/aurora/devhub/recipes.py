@@ -72,6 +72,9 @@ URIs: https://packages.microsoft.com/repos/code
 Suites: stable
 Components: main
 Architectures: amd64"
+# The package would add its own copy of the repository, signed with another
+# key path: apt then refuses both ("Conflicting values set for option Signed-By").
+echo "code code/add-microsoft-repo boolean false" | sudo debconf-set-selections
 sudo apt-get install -y code
 '''},
     {"id": "vscodium", "cat": "editors", "name": "VSCodium", "icon": "vscodium",

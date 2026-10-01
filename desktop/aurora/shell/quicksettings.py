@@ -497,6 +497,7 @@ class QuickSettings(Gtk.Popover):
         self.header_time.set_label(now.format("%l:%M %p" if twelve else "%H:%M").strip())
         self.header_date.set_label(now.format("%A, %-d %B").replace("  ", " "))
 
+        self.volume.scale.set_range(0, sh.audio.maximum)
         self.volume.set_value(0 if sh.audio.muted else sh.audio.volume, sh.audio.icon_name)
         self.volume.set_visible(sh.audio.available)
         self.mic.set_value(0 if sh.microphone.muted else sh.microphone.volume,
