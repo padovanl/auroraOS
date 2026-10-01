@@ -1,11 +1,13 @@
 # Default apps: what a fresh Aurora OS must offer out of the box.
 # Columns (|-separated): category | name shown to users | desktop file id | launch-test
 # launch-test: "yes" = the boot test starts the app and checks it keeps running.
+#   Transmission is "no": opening a BitTorrent client contacts the public DHT,
+#   which company firewalls report as BitTorrent traffic.
 # The image test checks every entry is installed, visible and executable.
 
 Internet | Web Browser (Firefox)     | firefox-esr.desktop                        | yes
 Internet | Mail (Geary)              | org.gnome.Geary.desktop                    | yes
-Internet | Torrents (Transmission)   | transmission-gtk.desktop                   | yes
+Internet | Torrents (Transmission)   | transmission-gtk.desktop                   | no
 Internet | Remote Desktop (Remmina)  | org.remmina.Remmina.desktop                | yes
 Internet | Nearby Sharing (LocalSend)| localsend_app.desktop                      | yes
 

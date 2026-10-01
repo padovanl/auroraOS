@@ -65,6 +65,8 @@ expect "snapshot before apt (hook)" test -f "$ROOTFS/etc/apt/apt.conf.d/80aurora
 expect "snapshot helper" test -x "$ROOTFS/usr/libexec/aurora-snapshot"
 expect "grub-btrfs menu script (off until a btrfs install)" sh -c "test -f '$ROOTFS/etc/grub.d/41_snapshots-btrfs' && test ! -x '$ROOTFS/etc/grub.d/41_snapshots-btrfs'"
 expect "grub-btrfs menu name" grep -q 'Aurora OS snapshots' "$ROOTFS/etc/default/grub-btrfs/config"
+expect "Transmission keeps quiet until used (no DHT, LPD, PEX or port forwarding)" sh -c "grep -q '\"dht-enabled\": false' '$ROOTFS/etc/skel/.config/transmission/settings.json' && grep -q '\"lpd-enabled\": false' '$ROOTFS/etc/skel/.config/transmission/settings.json'"
+expect "Transmission doesn't start at login" sh -c "! grep -rlq transmission '$ROOTFS/etc/xdg/autostart'"
 expect "grub-btrfsd not enabled on the live system" sh -c "! chroot '$ROOTFS' systemctl is-enabled grub-btrfsd"
 expect "installer defaults to btrfs" grep -q 'defaultFileSystemType: "btrfs"' "$ROOTFS/etc/calamares/modules/partition.conf"
 expect "installer btrfs subvolumes" grep -q 'subvolume: /@home' "$ROOTFS/etc/calamares/modules/mount.conf"

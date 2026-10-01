@@ -32,7 +32,7 @@
 <tr><td><code>make test-unit</code></td><td>pytest unit tests in <span class="path">tests/unit/</span>.</td></tr>
 <tr><td><code>make test-smoke</code></td><td>Starts the shell headless and opens every app and Settings page.</td></tr>
 <tr><td><code>make test-image</code></td><td>Inspects a built ISO: apps, themes, services, boot records.</td></tr>
-<tr><td><code>make test-boot</code></td><td>Boots the ISO with BIOS and UEFI and checks the session.</td></tr>
+<tr><td><code>make test-boot</code></td><td>Boots the ISO with BIOS and UEFI, checks the session and starts every default app marked <code>yes</code> in <span class="path">config/apps.manifest</span>. Transmission is marked <code>no</code>: a BitTorrent client joining its network from a test VM triggers company firewalls' P2P alerts (the VM's traffic leaves with the host's address).</td></tr>
 <tr><td><code>make test-interact</code></td><td>Uses the live desktop like a person: clicks, keys, windows.</td></tr>
 <tr><td><code>make test-install</code></td><td>Installs Aurora in a VM and checks the installed system.</td></tr>
 </tbody></table></div>
