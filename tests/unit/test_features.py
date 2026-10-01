@@ -356,3 +356,14 @@ def test_storage_cleanup(tmp_path):
     past = time.time() - 40 * 86400
     os.utime(downloads / "a.zip", (past, past))
     assert [os.path.basename(p) for p in h.old_files(str(downloads), 30)] == ["a.zip"]
+
+
+def test_archive_names(tmp_path):
+    from aurora.files import archives as a
+    assert a.is_archive("photos.tar.xz") and a.is_archive("A.ZIP") and not a.is_archive("a.txt")
+    (tmp_path / "Holiday").mkdir()
+    assert a.archive_name([str(tmp_path / "Holiday")]) == "Holiday"
+    assert a.archive_name([str(tmp_path / "report.pdf")]) == "report"
+    assert a.archive_name([str(tmp_path / "x"), str(tmp_path / "y")]) == tmp_path.name
+    (tmp_path / "Holiday.zip").write_text("")
+    assert a.free_name(str(tmp_path), "Holiday", ".zip").endswith("Holiday (2).zip")

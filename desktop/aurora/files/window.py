@@ -178,8 +178,16 @@ class Sidebar(Gtk.ListBox):
             if vol not in mounted_volumes and vol.get_mount() is None:
                 self._add(vol.get_symbolic_icon(), vol.get_name(), volume=vol)
         self._add("drive-harddisk-symbolic", _("Computer"), Gio.File.new_for_path("/"))
+        # Other computers and NAS boxes on the network, and any other server.
+        self._add("network-workgroup-symbolic", _("Network"), Gio.File.new_for_uri("network:///"))
+        self._add("list-add-symbolic", _("Connect to Server…"))
 
     def _on_row(self, _box, row):
+        if row.file is None and row.volume is None:
+            window = self.get_root()
+            if isinstance(window, FilesWindow):
+                window.connect_to_server()
+            return
         if row.file is not None:
             self.emit("open", row.file)
         elif row.volume is not None:
@@ -631,6 +639,9 @@ class FilesWindow(Adw.ApplicationWindow):
         add("redo", self.redo, ["<Ctrl><Shift>z", "<Ctrl>y"])
         add("rename", self.rename, ["F2"])
         add("batch-rename", self.batch_rename)
+        add("compress", self.compress)
+        add("extract-here", self.extract_here)
+        add("connect-server", self.connect_to_server)
         add("checksums", self.checksums)
         add("compare-folders", self.compare_folders)
         add("ai-git-summary", self.summarize_git_changes)
@@ -712,6 +723,9 @@ class FilesWindow(Adw.ApplicationWindow):
         try:
             info = gfile.query_info("standard::type", Gio.FileQueryInfoFlags.NONE, None)
         except GLib.Error as err:
+            if err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.NOT_MOUNTED):
+                self.mount_and_open(gfile)
+                return
             self.toast(err.message)
             return
         if info.get_file_type() != Gio.FileType.DIRECTORY:
@@ -739,6 +753,11 @@ class FilesWindow(Adw.ApplicationWindow):
     def _display_name(self, gfile):
         if gfile.get_uri_scheme() == "trash":
             return _("Trash")
+        if gfile.get_uri_scheme() == "network":
+            return _("Network")
+        if gfile.get_path() is None and gfile.get_parent() is None:
+            # The top of a server: its name, not "/".
+            return GLib.Uri.parse(gfile.get_uri(), GLib.UriFlags.NONE).get_host() or gfile.get_uri()
         path = gfile.get_path()
         if path == GLib.get_home_dir():
             return _("Home")
@@ -1064,6 +1083,11 @@ class FilesWindow(Adw.ApplicationWindow):
                                      (_("Ask Aurora About This File…"), "ai-ask")])
             sections.append(s)
             if not trash:
+                from aurora.files.archives import is_archive
+                paths = [f.get_path() for f in self.selected_files()]
+                if paths and all(p and is_archive(p) for p in paths):
+                    sections.append([(_("Extract Here"), "extract-here")])
+                sections.append([(_("Compress…"), "compress")])
                 sections.append([(_("Cut"), "cut"), (_("Copy"), "copy"),
                                  (_("Duplicate"), "duplicate"), (_("Rename…"), "rename")])
                 if len(self.selected_files()) > 1:
@@ -1404,6 +1428,101 @@ class FilesWindow(Adw.ApplicationWindow):
                 self.toast(err.message)
         dialog.connect("response", response)
         dialog.present(self)
+
+    # ------------------------------------------------------ archives
+
+    def _run_tool(self, command, done_message):
+        """Run a helper (File Roller) in the background, then refresh."""
+        import subprocess
+        import threading
+
+        def work():
+            try:
+                ok = subprocess.run(command, timeout=3600).returncode == 0
+            except (OSError, subprocess.TimeoutExpired):
+                ok = False
+            GLib.idle_add(lambda: (self.toast(done_message if ok else _("That didn't work")),
+                                   self.reload(), False)[2])
+        threading.Thread(target=work, daemon=True).start()
+
+    def compress(self):
+        from aurora.files import archives
+        paths = [f.get_path() for f in self.selected_files() if f.get_path()]
+        if not paths:
+            return
+        folder = os.path.dirname(paths[0].rstrip("/"))
+        dialog = Adw.AlertDialog(heading=_("Compress"),
+                                 body=_("{n} items into one archive").format(n=len(paths)))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        entry = Gtk.Entry(text=archives.archive_name(paths), activates_default=True)
+        box.append(entry)
+        formats = Gtk.DropDown.new_from_strings([_(label) for _s, label in archives.FORMATS])
+        box.append(formats)
+        dialog.set_extra_child(box)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("ok", _("Compress"))
+        dialog.set_default_response("ok")
+        dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+
+        def response(_d, resp):
+            name = entry.get_text().strip()
+            if resp != "ok" or not name or "/" in name:
+                return
+            suffix = archives.FORMATS[formats.get_selected()][0]
+            target = archives.free_name(folder, name, suffix)
+            self.toast(_("Compressing…"))
+            self._run_tool(archives.compress_command(paths, target),
+                           _("{name} is ready").format(name=os.path.basename(target)))
+        dialog.connect("response", response)
+        dialog.present(self)
+        entry.grab_focus()
+
+    def extract_here(self):
+        from aurora.files import archives
+        paths = [f.get_path() for f in self.selected_files()
+                 if f.get_path() and archives.is_archive(f.get_path())]
+        if paths:
+            self.toast(_("Extracting…"))
+            self._run_tool(archives.extract_command(paths), _("Extracted"))
+
+    # ------------------------------------------------------ network
+
+    def connect_to_server(self):
+        """Open a shared folder on another computer: Windows shares (smb://),
+        SSH (sftp://), FTP or WebDAV."""
+        dialog = Adw.AlertDialog(heading=_("Connect to Server"),
+                                 body=_("For example smb://192.168.1.10/Shared for a Windows "
+                                        "or NAS shared folder, or sftp://user@server"))
+        entry = Gtk.Entry(placeholder_text="smb://", activates_default=True)
+        dialog.set_extra_child(entry)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("ok", _("Connect"))
+        dialog.set_default_response("ok")
+        dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
+
+        def response(_d, resp):
+            address = entry.get_text().strip()
+            if resp != "ok" or not address:
+                return
+            if "://" not in address:
+                address = "smb://" + address.lstrip("\\/").replace("\\", "/")
+            self.mount_and_open(Gio.File.new_for_uri(address))
+        dialog.connect("response", response)
+        dialog.present(self)
+        entry.grab_focus()
+
+    def mount_and_open(self, gfile):
+        """Open a network location, asking for the password when it needs one."""
+        def mounted(f, res):
+            try:
+                f.mount_enclosing_volume_finish(res)
+            except GLib.Error as err:
+                if not err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.ALREADY_MOUNTED):
+                    self.toast(err.message)
+                    return
+            self.open_location(f)
+        gfile.mount_enclosing_volume(Gio.MountMountFlags.NONE, Gtk.MountOperation.new(self),
+                                     None, mounted)
 
     def _ask_name(self, heading, initial, action_label, callback, select_stem=True):
         dialog = Adw.AlertDialog(heading=heading)
