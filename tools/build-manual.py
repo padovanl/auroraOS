@@ -218,6 +218,7 @@ SHELL_COMMANDS = {
     "quick-settings": ("", "Open the Control Center."),
     "logout": ("", "Log out."),
     "focus": ("", "Start or stop a focus session."),
+    "osk": ("[show|hide|toggle]", "Show or hide the on-screen keyboard."),
     "windows": ("", "Print the open windows as JSON, one per line (for scripts and tests)."),
 }
 

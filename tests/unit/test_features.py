@@ -562,3 +562,14 @@ def test_hotspot_command_and_password():
     cmd = services.hotspot_command("wlan0", "Desk Aurora", pw)
     assert cmd[:4] == ["nmcli", "device", "wifi", "hotspot"]
     assert cmd[cmd.index("ssid") + 1] == "Desk Aurora" and cmd[-1] == pw
+
+
+def test_screen_keyboard_sends_keys():
+    pytest = __import__("pytest")
+    try:
+        from aurora.shell import osk
+    except (ImportError, ValueError):
+        pytest.skip("needs gtk4-layer-shell")
+    assert osk.wtype_args(None, "a") == ["wtype", "--", "a"]
+    assert osk.wtype_args("BackSpace") == ["wtype", "-k", "BackSpace"]
+    assert osk.wtype_args(None, "c", ctrl=True) == ["wtype", "-M", "ctrl", "-k", "c", "-m", "ctrl"]

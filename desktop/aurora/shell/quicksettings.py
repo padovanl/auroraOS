@@ -303,20 +303,10 @@ class QuickSettings(Gtk.Popover):
         # Give the popover time to close so it isn't in the recording.
         GLib.timeout_add(400, lambda: self.shell.recorder.toggle(area, sound) and False)
 
-    @staticmethod
-    def _screen_keyboard_running():
-        import subprocess
-        return subprocess.run(["pgrep", "-x", "wvkbd-mobintl"],
-                              capture_output=True).returncode == 0
-
     def _set_screen_keyboard(self, on):
         """Show or hide the on-screen keyboard (for touch screens and tablets)."""
-        import subprocess
-        if on and not self._screen_keyboard_running():
-            subprocess.Popen(["wvkbd-mobintl", "-L", "260"], start_new_session=True)
-        elif not on:
-            subprocess.run(["pkill", "-x", "wvkbd-mobintl"])
-        GLib.timeout_add(400, lambda: self.refresh() or False)
+        self.popdown()
+        (self.shell.osk.show_keyboard if on else self.shell.osk.hide_keyboard)()
 
     def _set_hotspot(self, on):
         self.t_hotspot.set_state(on, _("Starting…") if on else None)
@@ -553,10 +543,8 @@ class QuickSettings(Gtk.Popover):
             active = net.hotspot_active()
             self.t_hotspot.set_state(active, net.hotspot_credentials()[0] if active else None)
             toggles.append(self.t_hotspot)
-        import shutil
-        if shutil.which("wvkbd-mobintl"):
-            self.t_osk.set_state(self._screen_keyboard_running())
-            toggles.append(self.t_osk)
+        self.t_osk.set_state(getattr(sh, "_osk", None) is not None and sh.osk.showing)
+        toggles.append(self.t_osk)
         if sh.recorder.available:
             self.t_rec.set_state(sh.recorder.recording,
                                  _("Recording…") if sh.recorder.recording else None)

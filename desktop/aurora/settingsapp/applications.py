@@ -1,7 +1,6 @@
 """Apps (default applications, startup apps), Notifications and Accessibility."""
 
 import os
-import shutil
 import xml.etree.ElementTree as ET
 
 from gi.repository import Adw, Gio, GLib, Gtk
@@ -182,7 +181,6 @@ class Notifications(Page):
                             on_change=lambda i: s.set_string("removable-media-action", ids[i])))
 
 
-SCREEN_KEYBOARD = "wvkbd-mobintl"
 SCREEN_KEYBOARD_AUTOSTART = os.path.join(GLib.get_user_config_dir(), "autostart",
                                          "aurora-screen-keyboard.desktop")
 TEXT_SIZES = [(1.0, N_("Default")), (1.25, N_("Large")), (1.5, N_("Larger"))]
@@ -274,8 +272,9 @@ class Accessibility(Page):
                                              "has them; Aurora AI can dictate what you say.")))
 
         typing = self.group(_("Typing"))
-        if shutil.which(SCREEN_KEYBOARD):
-            typing.add(switch_row(_("Screen keyboard"), os.path.exists(SCREEN_KEYBOARD_AUTOSTART),
+        aurora_s = settings.get()
+        if aurora_s is not None:
+            typing.add(switch_row(_("Screen keyboard"), aurora_s.get_boolean("screen-keyboard"),
                                   self._screen_keyboard,
                                   subtitle=_("A keyboard on the screen, for touch screens or "
                                              "when a keyboard is hard to use")))
@@ -325,15 +324,13 @@ class Accessibility(Page):
             mouse.set_int("double-click", ms)
 
     def _screen_keyboard(self, on):
-        if on:
-            os.makedirs(os.path.dirname(SCREEN_KEYBOARD_AUTOSTART), exist_ok=True)
-            with open(SCREEN_KEYBOARD_AUTOSTART, "w") as f:
-                f.write("[Desktop Entry]\nType=Application\nName=Screen Keyboard\n"
-                        f"Exec={SCREEN_KEYBOARD} -L 260\nNoDisplay=true\n")
-            apps.spawn([SCREEN_KEYBOARD, "-L", "260"])
-        else:
-            try:
-                os.remove(SCREEN_KEYBOARD_AUTOSTART)
-            except FileNotFoundError:
-                pass
-            apps.spawn(["pkill", "-x", SCREEN_KEYBOARD])
+        """Aurora's own on-screen keyboard: shown now and at every login."""
+        s = settings.get()
+        if s is not None:
+            s.set_boolean("screen-keyboard", on)
+        # The old wvkbd autostart entry, from before Aurora had its own keyboard.
+        try:
+            os.remove(SCREEN_KEYBOARD_AUTOSTART)
+        except OSError:
+            pass
+        apps.spawn(["aurora-shell", "osk", "show" if on else "hide"])

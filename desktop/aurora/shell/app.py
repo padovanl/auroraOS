@@ -132,6 +132,8 @@ class Shell(Adw.Application):
         # Storage Sense: old Trash items, temporary files and Downloads, as
         # Settings → Storage asks; soon after login, then every four hours.
         GLib.timeout_add_seconds(120, self._storage_sense)
+        if settings.get() is not None and settings.get().get_boolean("screen-keyboard"):
+            GLib.timeout_add_seconds(2, lambda: self.osk.show_keyboard() or False)
         from aurora.shell.lockkeys import LockKeys
         self.lock_keys = LockKeys(self)
         from aurora.shell.screentrack import ScreenTimeTracker
@@ -353,6 +355,10 @@ class Shell(Adw.Application):
                 self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
+        elif cmd == "osk":
+            # aurora-shell osk [show|hide|toggle]
+            {"show": self.osk.show_keyboard, "hide": self.osk.hide_keyboard}.get(
+                arg, self.osk.toggle)()
         elif cmd == "show-desktop":
             self.toggle_desktop()
         elif cmd == "snap-layouts":
@@ -479,6 +485,21 @@ class Shell(Adw.Application):
         threading.Thread(target=work, daemon=True).start()
         GLib.timeout_add_seconds(4 * 3600, lambda: self._storage_sense() and False)
         return False
+
+    @property
+    def osk(self):
+        """The on-screen keyboard, made the first time it's needed."""
+        if getattr(self, "_osk", None) is None:
+            from aurora.shell.osk import ScreenKeyboard
+            self._osk = ScreenKeyboard(self)
+        return self._osk
+
+    def osk_changed(self):
+        for panel in self.panels.windows():
+            qs = getattr(panel, "status", None)
+            pop = qs.get_popover() if qs is not None else None
+            if pop is not None and pop.get_visible():
+                pop.refresh()
 
     def toggle_desktop(self):
         """Show the desktop, or bring back the windows it hid (a second click),

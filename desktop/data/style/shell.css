@@ -667,3 +667,16 @@ window.pinned-shot:hover .pinned-close { opacity: 1; }
 button.panel-show-desktop { min-width: 8px; min-height: 20px; padding: 0 2px; margin-left: 4px;
   border-radius: 3px; border-left: 1px solid alpha(@shell_fg, 0.25); }
 button.panel-show-desktop:hover { background-color: alpha(@shell_fg, 0.18); }
+
+/* The on-screen keyboard. */
+window.aurora-osk { background: transparent; }
+.aurora-osk .osk-box { padding: 10px 12px 12px; margin: 0 8px 8px; border-radius: 22px;
+  background-color: rgba(28, 24, 38, 0.94); border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35); }
+.aurora-osk button.osk-key { border-radius: 12px; padding: 0; font-size: 17px; font-weight: 600;
+  color: #f2eefa; background-color: rgba(255, 255, 255, 0.10); min-height: 0; }
+.aurora-osk button.osk-key:hover { background-color: rgba(255, 255, 255, 0.18); }
+.aurora-osk button.osk-key:active { background-color: @accent_bg_color; }
+.aurora-osk button.osk-special { background-color: rgba(255, 255, 255, 0.05); font-size: 15px; }
+.aurora-osk button.osk-on { background-color: alpha(@accent_bg_color, 0.55); }
+.aurora-osk button.osk-locked { background-color: @accent_bg_color; }
