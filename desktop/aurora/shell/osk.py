@@ -68,7 +68,7 @@ class ScreenKeyboard(LayerWindow):
         self.shift = 0          # 0 off, 1 next letter, 2 caps lock
         self.ctrl = False
         self.layer = "letters"
-        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=7,
                            css_classes=["osk-box"], halign=Gtk.Align.CENTER)
         self.set_child(self.box)
         self.available = shutil.which("wtype") is not None
@@ -97,7 +97,8 @@ class ScreenKeyboard(LayerWindow):
         while (row := self.box.get_first_child()) is not None:
             self.box.remove(row)
         for keys in self._rows():
-            row = Gtk.Box(spacing=6, homogeneous=False, halign=Gtk.Align.CENTER)
+            row = Gtk.Box(spacing=7, homogeneous=False, halign=Gtk.Align.CENTER,
+                          css_classes=["osk-row"])
             for key in keys:
                 label, name, width = (key, None, 1) if isinstance(key, str) else key
                 if isinstance(key, str) and self.layer == "letters" and self.shift:
@@ -106,6 +107,8 @@ class ScreenKeyboard(LayerWindow):
                 button.set_size_request(int(56 * width), 52)
                 if name in STATES or name in ("BackSpace", "Return", "Tab", "Escape"):
                     button.add_css_class("osk-special")
+                if name in ("space", "Return", "BackSpace", "shift"):
+                    button.add_css_class(f"osk-{name.lower()}")
                 if (name == "shift" and self.shift) or (name == "ctrl" and self.ctrl):
                     button.add_css_class("osk-on")
                 if name == "shift" and self.shift == 2:
