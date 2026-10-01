@@ -124,6 +124,8 @@ class Shell(Adw.Application):
         self.notifications = NotificationServer(self)
         from aurora.shell.sysnotify import SystemNotifications
         self.sysnotify = SystemNotifications(self)
+        self._night_light_warned = False
+        self.daycycle.connect("night-light-unsupported", self._on_night_light_unsupported)
         GLib.idle_add(self._notify_compositor_fallback)
         from aurora.shell.keepawake import KeepAwake
         self.keep_awake = KeepAwake()
@@ -197,6 +199,16 @@ class Shell(Adw.Application):
         except OSError:
             pass
         return GLib.SOURCE_REMOVE
+
+    def _on_night_light_unsupported(self, _daycycle):
+        if self._night_light_warned:
+            return
+        self._night_light_warned = True
+        self.sysnotify.notify(
+            _("Night Light can't change this screen's colors"),
+            _("The graphics driver doesn't allow it. This is usual in a virtual machine; "
+              "on a computer, install the graphics driver from Settings → Updates → Additional Drivers."),
+            "night-light-symbolic")
 
     def _notify_compositor_fallback(self):
         if os.environ.get("AURORA_COMPOSITOR") != "labwc":

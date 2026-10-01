@@ -180,7 +180,7 @@ msgid "Stop generating"
 msgstr "停止生成"
 
 #: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:664
+#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:676
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
@@ -304,7 +304,7 @@ msgid "Writing Tools"
 msgstr "写作工具"
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:538
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:550
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -417,7 +417,7 @@ msgstr "保存此工作区中已打开窗口的位置"
 #: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:440 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:452 aurora/shell/desktopicons.py:179
 msgid "Cancel"
 msgstr "取消"
 
@@ -1386,7 +1386,7 @@ msgstr "发送给 Aurora AI 之前请检查更改。"
 msgid "Loading…"
 msgstr "正在加载…"
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:668
+#: aurora/files/window.py:1249 aurora/shell/app.py:680
 msgid "Ask Aurora"
 msgstr "问问 Aurora"
 
@@ -2128,35 +2128,43 @@ msgstr "夜灯"
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "暖色调在夜间更护眼。"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:162
+msgid "Not available on this screen"
+msgstr "此屏幕不可用"
+
+#: aurora/settingsapp/appearance.py:163
+msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
+msgstr "显卡驱动不允许更改颜色（虚拟机中很常见）。"
+
+#: aurora/settingsapp/appearance.py:168
 msgid "Schedule"
 msgstr "计划"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Sunset to Sunrise"
 msgstr "日落到日出"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Manual"
 msgstr "手动"
 
-#: aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/appearance.py:169
 msgid "All the Time"
 msgstr "始终"
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:171
 msgid "Sunset and sunrise follow your time zone"
 msgstr "日落和日出时间根据你的时区计算"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "从"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "到"
 
-#: aurora/settingsapp/appearance.py:174
+#: aurora/settingsapp/appearance.py:181
 msgid "Color temperature"
 msgstr "色温"
 
@@ -4951,132 +4959,140 @@ msgstr "24 小时制"
 msgid "Opening App Center…"
 msgstr "正在打开应用中心…"
 
-#: aurora/shell/app.py:210
+#: aurora/shell/app.py:208
+msgid "Night Light can't change this screen's colors"
+msgstr "夜灯无法更改此屏幕的颜色"
+
+#: aurora/shell/app.py:209
+msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
+msgstr "显卡驱动不允许。这在虚拟机中很常见；在电脑上，请在 设置 → 更新 → 附加驱动 中安装显卡驱动。"
+
+#: aurora/shell/app.py:222
 msgid "Graphics fallback started"
 msgstr "已启动备用图形模式"
 
-#: aurora/shell/app.py:211
+#: aurora/shell/app.py:223
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire 无法启动。Aurora 已改为打开安全桌面。选择此通知查看启动报告。"
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:225
 msgid "Open System Health"
 msgstr "打开系统健康"
 
-#: aurora/shell/app.py:355
+#: aurora/shell/app.py:367
 msgid "Writing tools are off"
 msgstr "写作工具已关闭"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Restart didn't happen"
 msgstr "没有重启"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Shut down didn't happen"
 msgstr "没有关机"
 
-#: aurora/shell/app.py:436
+#: aurora/shell/app.py:448
 msgid "Sleep didn't happen"
 msgstr "没有进入睡眠"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Restart Anyway"
 msgstr "仍然重启"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Shut Down Anyway"
 msgstr "仍然关机"
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:450
 msgid "Sleep Anyway"
 msgstr "仍然睡眠"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top"
 msgstr "始终置顶"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top Off"
 msgstr "已取消置顶"
 
-#: aurora/shell/app.py:539
+#: aurora/shell/app.py:551
 msgid "Set it up in Settings → AI."
 msgstr "在“设置 → AI”中配置。"
 
-#: aurora/shell/app.py:545
+#: aurora/shell/app.py:557
 msgid "Dictation is off"
 msgstr "语音输入已关闭"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:564
 msgid "Dictation isn't installed yet"
 msgstr "语音输入尚未安装"
 
-#: aurora/shell/app.py:556
+#: aurora/shell/app.py:568
 msgid "Listening… press Super+H to stop"
 msgstr "正在聆听… 按 Super+H 停止"
 
-#: aurora/shell/app.py:558
+#: aurora/shell/app.py:570
 msgid "Writing it down…"
 msgstr "正在转写…"
 
-#: aurora/shell/app.py:572
+#: aurora/shell/app.py:584
 msgid "Nothing was heard"
 msgstr "什么也没听到"
 
-#: aurora/shell/app.py:581
+#: aurora/shell/app.py:593
 msgid "Read aloud is off"
 msgstr "朗读已关闭"
 
-#: aurora/shell/app.py:588
+#: aurora/shell/app.py:600
 msgid "Select some text first"
 msgstr "请先选中一些文本"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:670
 msgid "Screenshot captured"
 msgstr "已截图"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:671
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "已保存到 {path} 并复制到剪贴板。"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Pin to Screen"
 msgstr "固定到屏幕"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Annotate"
 msgstr "标注"
 
-#: aurora/shell/app.py:665
+#: aurora/shell/app.py:677
 msgid "Copy Text"
 msgstr "复制文本"
 
-#: aurora/shell/app.py:727 aurora/shell/app.py:734
+#: aurora/shell/app.py:739 aurora/shell/app.py:746
 msgid "Text Recognition"
 msgstr "文字识别"
 
-#: aurora/shell/app.py:727
+#: aurora/shell/app.py:739
 msgid "No text found"
 msgstr "未找到文字"
 
-#: aurora/shell/app.py:728
+#: aurora/shell/app.py:740
 msgid "Try a larger or sharper area."
 msgstr "请尝试更大或更清晰的区域。"
 
-#: aurora/shell/app.py:734
+#: aurora/shell/app.py:746
 msgid "Text copied"
 msgstr "文本已复制"
 
-#: aurora/shell/app.py:773 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:785 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 msgid "Screen Recording"
 msgstr "屏幕录制"
 
-#: aurora/shell/app.py:773
+#: aurora/shell/app.py:785
 msgid "Screen recording saved"
 msgstr "屏幕录制已保存"
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:786
 msgid "Saved to {path}."
 msgstr "已保存到 {path}。"
 

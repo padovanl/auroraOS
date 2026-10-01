@@ -180,7 +180,7 @@ msgid "Stop generating"
 msgstr "Arrêter la génération"
 
 #: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:664
+#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:676
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
@@ -304,7 +304,7 @@ msgid "Writing Tools"
 msgstr "Outils d'écriture"
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:538
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:550
 msgid "Aurora AI"
 msgstr "Aurora IA"
 
@@ -417,7 +417,7 @@ msgstr "Enregistrer la position des fenêtres ouvertes pour cet espace de travai
 #: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:440 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:452 aurora/shell/desktopicons.py:179
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1386,7 +1386,7 @@ msgstr "Vérifiez les modifications avant de les envoyer à Aurora AI."
 msgid "Loading…"
 msgstr "Chargement…"
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:668
+#: aurora/files/window.py:1249 aurora/shell/app.py:680
 msgid "Ask Aurora"
 msgstr "Demander à Aurora"
 
@@ -2132,35 +2132,43 @@ msgstr "Éclairage nocturne"
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "Des couleurs plus chaudes fatiguent moins les yeux la nuit."
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:162
+msgid "Not available on this screen"
+msgstr "Indisponible sur cet écran"
+
+#: aurora/settingsapp/appearance.py:163
+msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
+msgstr "Le pilote graphique ne permet pas de changer les couleurs (habituel dans une machine virtuelle)."
+
+#: aurora/settingsapp/appearance.py:168
 msgid "Schedule"
 msgstr "Programmation"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Sunset to Sunrise"
 msgstr "Du coucher au lever du soleil"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Manual"
 msgstr "Manuel"
 
-#: aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/appearance.py:169
 msgid "All the Time"
 msgstr "Toujours"
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:171
 msgid "Sunset and sunrise follow your time zone"
 msgstr "Le coucher et le lever du soleil suivent votre fuseau horaire"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "De"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "À"
 
-#: aurora/settingsapp/appearance.py:174
+#: aurora/settingsapp/appearance.py:181
 msgid "Color temperature"
 msgstr "Température de couleur"
 
@@ -4959,132 +4967,140 @@ msgstr "Horloge 24 heures"
 msgid "Opening App Center…"
 msgstr "Ouverture du Centre d’applications…"
 
-#: aurora/shell/app.py:210
+#: aurora/shell/app.py:208
+msgid "Night Light can't change this screen's colors"
+msgstr "L'éclairage nocturne ne peut pas changer les couleurs de cet écran"
+
+#: aurora/shell/app.py:209
+msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
+msgstr "Le pilote graphique ne le permet pas. C'est habituel dans une machine virtuelle ; sur un ordinateur, installez le pilote graphique depuis Paramètres → Mises à jour → Pilotes supplémentaires."
+
+#: aurora/shell/app.py:222
 msgid "Graphics fallback started"
 msgstr "Graphismes de secours démarrés"
 
-#: aurora/shell/app.py:211
+#: aurora/shell/app.py:223
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire n'a pas pu démarrer. Aurora a ouvert le bureau sûr à la place. Sélectionnez cette notification pour consulter le rapport de démarrage."
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:225
 msgid "Open System Health"
 msgstr "Ouvrir l'état du système"
 
-#: aurora/shell/app.py:355
+#: aurora/shell/app.py:367
 msgid "Writing tools are off"
 msgstr "Les outils d'écriture sont désactivés"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Restart didn't happen"
 msgstr "Le redémarrage n'a pas eu lieu"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Shut down didn't happen"
 msgstr "L'arrêt n'a pas eu lieu"
 
-#: aurora/shell/app.py:436
+#: aurora/shell/app.py:448
 msgid "Sleep didn't happen"
 msgstr "La mise en veille n'a pas eu lieu"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Restart Anyway"
 msgstr "Redémarrer quand même"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Shut Down Anyway"
 msgstr "Éteindre quand même"
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:450
 msgid "Sleep Anyway"
 msgstr "Mettre en veille quand même"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top"
 msgstr "Toujours au premier plan"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top Off"
 msgstr "Premier plan désactivé"
 
-#: aurora/shell/app.py:539
+#: aurora/shell/app.py:551
 msgid "Set it up in Settings → AI."
 msgstr "Configurez-la dans Paramètres → IA."
 
-#: aurora/shell/app.py:545
+#: aurora/shell/app.py:557
 msgid "Dictation is off"
 msgstr "La dictée est désactivée"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:564
 msgid "Dictation isn't installed yet"
 msgstr "La dictée n'est pas encore installée"
 
-#: aurora/shell/app.py:556
+#: aurora/shell/app.py:568
 msgid "Listening… press Super+H to stop"
 msgstr "Écoute… appuyez sur Super+H pour arrêter"
 
-#: aurora/shell/app.py:558
+#: aurora/shell/app.py:570
 msgid "Writing it down…"
 msgstr "Transcription…"
 
-#: aurora/shell/app.py:572
+#: aurora/shell/app.py:584
 msgid "Nothing was heard"
 msgstr "Rien n'a été entendu"
 
-#: aurora/shell/app.py:581
+#: aurora/shell/app.py:593
 msgid "Read aloud is off"
 msgstr "La lecture à voix haute est désactivée"
 
-#: aurora/shell/app.py:588
+#: aurora/shell/app.py:600
 msgid "Select some text first"
 msgstr "Sélectionnez d'abord du texte"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:670
 msgid "Screenshot captured"
 msgstr "Capture d'écran effectuée"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:671
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "Enregistrée dans {path} et copiée dans le presse-papiers."
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Pin to Screen"
 msgstr "Épingler à l'écran"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Annotate"
 msgstr "Annoter"
 
-#: aurora/shell/app.py:665
+#: aurora/shell/app.py:677
 msgid "Copy Text"
 msgstr "Copier le texte"
 
-#: aurora/shell/app.py:727 aurora/shell/app.py:734
+#: aurora/shell/app.py:739 aurora/shell/app.py:746
 msgid "Text Recognition"
 msgstr "Reconnaissance de texte"
 
-#: aurora/shell/app.py:727
+#: aurora/shell/app.py:739
 msgid "No text found"
 msgstr "Aucun texte trouvé"
 
-#: aurora/shell/app.py:728
+#: aurora/shell/app.py:740
 msgid "Try a larger or sharper area."
 msgstr "Essayez une zone plus grande ou plus nette."
 
-#: aurora/shell/app.py:734
+#: aurora/shell/app.py:746
 msgid "Text copied"
 msgstr "Texte copié"
 
-#: aurora/shell/app.py:773 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:785 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 msgid "Screen Recording"
 msgstr "Enregistrement de l'écran"
 
-#: aurora/shell/app.py:773
+#: aurora/shell/app.py:785
 msgid "Screen recording saved"
 msgstr "Enregistrement de l'écran sauvegardé"
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:786
 msgid "Saved to {path}."
 msgstr "Enregistré dans {path}."
 

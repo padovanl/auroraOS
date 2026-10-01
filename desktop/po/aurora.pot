@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aurora\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 20:10+0200\n"
+"POT-Creation-Date: 2026-10-01 20:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -238,7 +238,7 @@ msgid "Stop generating"
 msgstr ""
 
 #: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:664
+#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:676
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
@@ -387,7 +387,7 @@ msgid "Writing Tools"
 msgstr ""
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:538
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:550
 #, no-python-format
 msgid "Aurora AI"
 msgstr ""
@@ -522,7 +522,7 @@ msgstr ""
 #: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:440 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:452 aurora/shell/desktopicons.py:179
 #, no-python-format
 msgid "Cancel"
 msgstr ""
@@ -1598,7 +1598,7 @@ msgstr ""
 msgid "Loading…"
 msgstr ""
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:668
+#: aurora/files/window.py:1249 aurora/shell/app.py:680
 #, no-python-format
 msgid "Ask Aurora"
 msgstr ""
@@ -2541,42 +2541,53 @@ msgstr ""
 msgid "Warmer colors are easier on the eyes at night."
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:162
+#, no-python-format
+msgid "Not available on this screen"
+msgstr ""
+
+#: aurora/settingsapp/appearance.py:163
+#, no-python-format
+msgid ""
+"The graphics driver doesn't allow color changes (usual in a virtual machine)."
+msgstr ""
+
+#: aurora/settingsapp/appearance.py:168
 #, no-python-format
 msgid "Schedule"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 #, no-python-format
 msgid "Sunset to Sunrise"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 #, no-python-format
 msgid "Manual"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/appearance.py:169
 #, no-python-format
 msgid "All the Time"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:171
 #, no-python-format
 msgid "Sunset and sunrise follow your time zone"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:144
 #, no-python-format
 msgid "From"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:146
 #, no-python-format
 msgid "To"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:174
+#: aurora/settingsapp/appearance.py:181
 #, no-python-format
 msgid "Color temperature"
 msgstr ""
@@ -6091,165 +6102,178 @@ msgstr ""
 msgid "Opening App Center…"
 msgstr ""
 
-#: aurora/shell/app.py:210
+#: aurora/shell/app.py:208
+#, no-python-format
+msgid "Night Light can't change this screen's colors"
+msgstr ""
+
+#: aurora/shell/app.py:209
+#, no-python-format
+msgid ""
+"The graphics driver doesn't allow it. This is usual in a virtual machine; on "
+"a computer, install the graphics driver from Settings → Updates → Additional "
+"Drivers."
+msgstr ""
+
+#: aurora/shell/app.py:222
 #, no-python-format
 msgid "Graphics fallback started"
 msgstr ""
 
-#: aurora/shell/app.py:211
+#: aurora/shell/app.py:223
 #, no-python-format
 msgid ""
 "Wayfire could not start. Aurora opened the safe desktop instead. Select this "
 "notification to review the startup report."
 msgstr ""
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:225
 #, no-python-format
 msgid "Open System Health"
 msgstr ""
 
-#: aurora/shell/app.py:355
+#: aurora/shell/app.py:367
 #, no-python-format
 msgid "Writing tools are off"
 msgstr ""
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 #, no-python-format
 msgid "Restart didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 #, no-python-format
 msgid "Shut down didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:436
+#: aurora/shell/app.py:448
 #, no-python-format
 msgid "Sleep didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 #, no-python-format
 msgid "Restart Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 #, no-python-format
 msgid "Shut Down Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:450
 #, no-python-format
 msgid "Sleep Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 #, no-python-format
 msgid "Always on Top"
 msgstr ""
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 #, no-python-format
 msgid "Always on Top Off"
 msgstr ""
 
-#: aurora/shell/app.py:539
+#: aurora/shell/app.py:551
 #, no-python-format
 msgid "Set it up in Settings → AI."
 msgstr ""
 
-#: aurora/shell/app.py:545
+#: aurora/shell/app.py:557
 #, no-python-format
 msgid "Dictation is off"
 msgstr ""
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:564
 #, no-python-format
 msgid "Dictation isn't installed yet"
 msgstr ""
 
-#: aurora/shell/app.py:556
+#: aurora/shell/app.py:568
 #, no-python-format
 msgid "Listening… press Super+H to stop"
 msgstr ""
 
-#: aurora/shell/app.py:558
+#: aurora/shell/app.py:570
 #, no-python-format
 msgid "Writing it down…"
 msgstr ""
 
-#: aurora/shell/app.py:572
+#: aurora/shell/app.py:584
 #, no-python-format
 msgid "Nothing was heard"
 msgstr ""
 
-#: aurora/shell/app.py:581
+#: aurora/shell/app.py:593
 #, no-python-format
 msgid "Read aloud is off"
 msgstr ""
 
-#: aurora/shell/app.py:588
+#: aurora/shell/app.py:600
 #, no-python-format
 msgid "Select some text first"
 msgstr ""
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:670
 #, no-python-format
 msgid "Screenshot captured"
 msgstr ""
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:671
 #, no-python-format, python-brace-format
 msgid "Saved to {path} and copied to the clipboard."
 msgstr ""
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 #, no-python-format
 msgid "Pin to Screen"
 msgstr ""
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 #, no-python-format
 msgid "Annotate"
 msgstr ""
 
-#: aurora/shell/app.py:665
+#: aurora/shell/app.py:677
 #, no-python-format
 msgid "Copy Text"
 msgstr ""
 
-#: aurora/shell/app.py:727 aurora/shell/app.py:734
+#: aurora/shell/app.py:739 aurora/shell/app.py:746
 #, no-python-format
 msgid "Text Recognition"
 msgstr ""
 
-#: aurora/shell/app.py:727
+#: aurora/shell/app.py:739
 #, no-python-format
 msgid "No text found"
 msgstr ""
 
-#: aurora/shell/app.py:728
+#: aurora/shell/app.py:740
 #, no-python-format
 msgid "Try a larger or sharper area."
 msgstr ""
 
-#: aurora/shell/app.py:734
+#: aurora/shell/app.py:746
 #, no-python-format
 msgid "Text copied"
 msgstr ""
 
-#: aurora/shell/app.py:773 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:785 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 #, no-python-format
 msgid "Screen Recording"
 msgstr ""
 
-#: aurora/shell/app.py:773
+#: aurora/shell/app.py:785
 #, no-python-format
 msgid "Screen recording saved"
 msgstr ""
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:786
 #, no-python-format, python-brace-format
 msgid "Saved to {path}."
 msgstr ""

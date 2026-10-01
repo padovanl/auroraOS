@@ -57,7 +57,10 @@ Aurora uses Inter for the interface, JetBrains Mono for code, and Noto for every
 
 <h2 id="night-light"><a class="anchor" href="#night-light" aria-hidden="true">#</a>Night Light</h2>
 <p>Warmer colors in the evening: from sunset to sunrise, on your own schedule, or all the
-time; choose the warmth.</p>
+time; choose the warmth. It changes the screen's color tables, which the graphics driver
+has to allow: virtual machines and a few drivers don't. Then Aurora says so with a notification
+and on the Night Light settings, instead of silently doing nothing; on a computer, installing
+the graphics driver (Settings → Updates → Additional Drivers) usually fixes it.</p>
       <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/03-desktop.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="widgets.html"><span>Previous</span>Desktop widgets</a><a class="next" href="windows.html"><span>Next</span>Working with windows</a></nav>
     </article>

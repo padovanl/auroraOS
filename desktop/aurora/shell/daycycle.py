@@ -33,8 +33,31 @@ def cache_link():
     return os.path.join(base, "aurora", "wallpaper")
 
 
+def unsupported_marker():
+    return os.path.join(GLib.get_user_runtime_dir(), "aurora-night-light-unsupported")
+
+
+def night_light_unsupported(value=None):
+    """Whether Night Light failed on every screen this session (Settings
+    shows it); with a value, records it."""
+    path = unsupported_marker()
+    if value is None:
+        return os.path.exists(path)
+    try:
+        if value:
+            open(path, "w").close()
+        elif os.path.exists(path):
+            os.remove(path)
+    except OSError:
+        pass
+    return value
+
+
 class DayCycle(GObject.Object):
-    __gsignals__ = {"wallpaper-changed": (GObject.SignalFlags.RUN_FIRST, None, ())}
+    __gsignals__ = {"wallpaper-changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
+                    # wlsunset couldn't change any screen's colors (no gamma
+                    # tables: virtual machines, some drivers).
+                    "night-light-unsupported": (GObject.SignalFlags.RUN_FIRST, None, ())}
 
     def __init__(self):
         super().__init__()
@@ -56,6 +79,9 @@ class DayCycle(GObject.Object):
                         "night-light-to", "night-light-temperature"):
                 s.connect(f"changed::{key}", lambda *a: self.sync_night_light())
         self._sync_scheme()
+        # A wlsunset left by a shell that crashed would fight the new one.
+        subprocess.run(["pkill", "-u", str(os.getuid()), "-x", "wlsunset"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.sync_night_light()
         self._update_link()
         GLib.timeout_add_seconds(60, self._tick)
@@ -213,7 +239,48 @@ class DayCycle(GObject.Object):
             return
         if self._night_light is not None:
             self._night_light.terminate()
+            self._night_light.wait()
             self._night_light = None
         self._night_args = args
         if args is not None and shutil.which("wlsunset"):
-            self._night_light = subprocess.Popen(["wlsunset"] + args)
+            # Line-buffered, or its log only arrives when it exits.
+            line_buffered = ["stdbuf", "-oL", "-eL"] if shutil.which("stdbuf") else []
+            self._night_light = subprocess.Popen(line_buffered + ["wlsunset"] + args,
+                                                 stdout=subprocess.PIPE,
+                                                 stderr=subprocess.STDOUT, text=True)
+            self._watch_night_light(self._night_light)
+
+    def _watch_night_light(self, proc):
+        """Read wlsunset's log: when it can't get gamma control of any screen,
+        Night Light would silently do nothing, so say so."""
+        state = {"outputs": 0, "failed": 0, "rest": ""}
+        fd = proc.stdout.fileno()
+
+        def on_data(_fd, cond):
+            # os.read, not readline: a buffered reader would keep lines the
+            # watch never hears about.
+            try:
+                data = os.read(fd, 4096).decode(errors="replace") if cond & GLib.IOCondition.IN else ""
+            except OSError:
+                data = ""
+            if not data:
+                return False
+            lines = (state["rest"] + data).split("\n")
+            state["rest"] = lines.pop()
+            for line in lines:
+                on_line(line)
+            return True
+
+        def on_line(line):
+            if line.startswith("registry: adding output"):
+                state["outputs"] += 1
+            elif "gamma control of output" in line and "failed" in line:
+                state["failed"] += 1
+                if state["failed"] == state["outputs"]:
+                    night_light_unsupported(True)
+                    self.emit("night-light-unsupported")
+            elif line.startswith("setting temperature") and not state["failed"]:
+                night_light_unsupported(False)
+
+        GLib.io_add_watch(fd, GLib.PRIORITY_DEFAULT,
+                          GLib.IOCondition.IN | GLib.IOCondition.HUP, on_data)

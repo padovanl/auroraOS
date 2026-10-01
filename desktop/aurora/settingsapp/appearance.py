@@ -156,6 +156,13 @@ class Appearance(Page):
             night = self.group(_("Night Light"), _("Warmer colors are easier on the eyes at night."))
             night.add(switch_row(_("Night Light"), aurora.get_boolean("night-light"),
                                  lambda v: aurora.set_boolean("night-light", v)))
+            from aurora.shell.daycycle import night_light_unsupported
+            if night_light_unsupported():
+                night.add(Adw.ActionRow(
+                    title=_("Not available on this screen"),
+                    subtitle=_("The graphics driver doesn't allow color changes (usual in "
+                               "a virtual machine)."),
+                    css_classes=["warning"]))
             schedules = ["sunset", "manual", "always"]
             current = aurora.get_string("night-light-schedule")
             night.add(combo_row(_("Schedule"), [_("Sunset to Sunrise"), _("Manual"),

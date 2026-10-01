@@ -180,7 +180,7 @@ msgid "Stop generating"
 msgstr "Interrompi la generazione"
 
 #: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:664
+#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:676
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
@@ -304,7 +304,7 @@ msgid "Writing Tools"
 msgstr "Strumenti di scrittura"
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:538
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:550
 msgid "Aurora AI"
 msgstr "Aurora IA"
 
@@ -417,7 +417,7 @@ msgstr "Salva la posizione delle finestre aperte per questa area di lavoro"
 #: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:440 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:452 aurora/shell/desktopicons.py:179
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -1386,7 +1386,7 @@ msgstr "Controlla le modifiche prima di inviarle ad Aurora AI."
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:668
+#: aurora/files/window.py:1249 aurora/shell/app.py:680
 msgid "Ask Aurora"
 msgstr "Chiedi ad Aurora"
 
@@ -2132,35 +2132,43 @@ msgstr "Luce notturna"
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "I colori più caldi affaticano meno gli occhi di notte."
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:162
+msgid "Not available on this screen"
+msgstr "Non disponibile su questo schermo"
+
+#: aurora/settingsapp/appearance.py:163
+msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
+msgstr "Il driver grafico non permette di cambiare i colori (normale in una macchina virtuale)."
+
+#: aurora/settingsapp/appearance.py:168
 msgid "Schedule"
 msgstr "Programmazione"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Sunset to Sunrise"
 msgstr "Dal tramonto all’alba"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Manual"
 msgstr "Manuale"
 
-#: aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/appearance.py:169
 msgid "All the Time"
 msgstr "Sempre"
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:171
 msgid "Sunset and sunrise follow your time zone"
 msgstr "Alba e tramonto seguono il tuo fuso orario"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "Dalle"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "Alle"
 
-#: aurora/settingsapp/appearance.py:174
+#: aurora/settingsapp/appearance.py:181
 msgid "Color temperature"
 msgstr "Temperatura colore"
 
@@ -4959,132 +4967,140 @@ msgstr "Formato 24 ore"
 msgid "Opening App Center…"
 msgstr "Apertura di App Center…"
 
-#: aurora/shell/app.py:210
+#: aurora/shell/app.py:208
+msgid "Night Light can't change this screen's colors"
+msgstr "Luce notturna non può cambiare i colori di questo schermo"
+
+#: aurora/shell/app.py:209
+msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
+msgstr "Il driver grafico non lo permette. È normale in una macchina virtuale; su un computer, installa il driver grafico da Impostazioni → Aggiornamenti → Driver aggiuntivi."
+
+#: aurora/shell/app.py:222
 msgid "Graphics fallback started"
 msgstr "Grafica di riserva avviata"
 
-#: aurora/shell/app.py:211
+#: aurora/shell/app.py:223
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire non è riuscito ad avviarsi. Aurora ha aperto il desktop sicuro. Seleziona questa notifica per vedere il rapporto di avvio."
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:225
 msgid "Open System Health"
 msgstr "Apri Salute del sistema"
 
-#: aurora/shell/app.py:355
+#: aurora/shell/app.py:367
 msgid "Writing tools are off"
 msgstr "Gli strumenti di scrittura sono disattivati"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Restart didn't happen"
 msgstr "Il riavvio non è avvenuto"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Shut down didn't happen"
 msgstr "Lo spegnimento non è avvenuto"
 
-#: aurora/shell/app.py:436
+#: aurora/shell/app.py:448
 msgid "Sleep didn't happen"
 msgstr "La sospensione non è avvenuta"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Restart Anyway"
 msgstr "Riavvia comunque"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Shut Down Anyway"
 msgstr "Spegni comunque"
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:450
 msgid "Sleep Anyway"
 msgstr "Sospendi comunque"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top"
 msgstr "Sempre in primo piano"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top Off"
 msgstr "Primo piano disattivato"
 
-#: aurora/shell/app.py:539
+#: aurora/shell/app.py:551
 msgid "Set it up in Settings → AI."
 msgstr "Configurala in Impostazioni → IA."
 
-#: aurora/shell/app.py:545
+#: aurora/shell/app.py:557
 msgid "Dictation is off"
 msgstr "La dettatura è disattivata"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:564
 msgid "Dictation isn't installed yet"
 msgstr "La dettatura non è ancora installata"
 
-#: aurora/shell/app.py:556
+#: aurora/shell/app.py:568
 msgid "Listening… press Super+H to stop"
 msgstr "In ascolto… premi Super+H per fermare"
 
-#: aurora/shell/app.py:558
+#: aurora/shell/app.py:570
 msgid "Writing it down…"
 msgstr "Trascrizione…"
 
-#: aurora/shell/app.py:572
+#: aurora/shell/app.py:584
 msgid "Nothing was heard"
 msgstr "Non è stato sentito nulla"
 
-#: aurora/shell/app.py:581
+#: aurora/shell/app.py:593
 msgid "Read aloud is off"
 msgstr "La lettura ad alta voce è disattivata"
 
-#: aurora/shell/app.py:588
+#: aurora/shell/app.py:600
 msgid "Select some text first"
 msgstr "Prima seleziona del testo"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:670
 msgid "Screenshot captured"
 msgstr "Screenshot acquisito"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:671
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "Salvato in {path} e copiato negli appunti."
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Pin to Screen"
 msgstr "Fissa sullo schermo"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Annotate"
 msgstr "Annota"
 
-#: aurora/shell/app.py:665
+#: aurora/shell/app.py:677
 msgid "Copy Text"
 msgstr "Copia testo"
 
-#: aurora/shell/app.py:727 aurora/shell/app.py:734
+#: aurora/shell/app.py:739 aurora/shell/app.py:746
 msgid "Text Recognition"
 msgstr "Riconoscimento del testo"
 
-#: aurora/shell/app.py:727
+#: aurora/shell/app.py:739
 msgid "No text found"
 msgstr "Nessun testo trovato"
 
-#: aurora/shell/app.py:728
+#: aurora/shell/app.py:740
 msgid "Try a larger or sharper area."
 msgstr "Prova con un’area più grande o più nitida."
 
-#: aurora/shell/app.py:734
+#: aurora/shell/app.py:746
 msgid "Text copied"
 msgstr "Testo copiato"
 
-#: aurora/shell/app.py:773 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:785 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 msgid "Screen Recording"
 msgstr "Registrazione schermo"
 
-#: aurora/shell/app.py:773
+#: aurora/shell/app.py:785
 msgid "Screen recording saved"
 msgstr "Registrazione dello schermo salvata"
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:786
 msgid "Saved to {path}."
 msgstr "Salvata in {path}."
 

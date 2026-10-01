@@ -193,6 +193,17 @@ class VM:
             time.sleep(0.08)
         time.sleep(pause)
 
+    def scroll(self, x, y, clicks, pause=0.6):
+        """Turn the wheel over (x, y): positive clicks scroll down."""
+        self.move(x, y)
+        time.sleep(0.15)
+        wheel = "wheel-down" if clicks > 0 else "wheel-up"
+        for _ in range(abs(clicks)):
+            self.button(wheel, True)
+            self.button(wheel, False)
+            time.sleep(0.03)
+        time.sleep(pause)
+
     def right_click(self, x, y, pause=0.8):
         self.click(x, y, button="right", pause=pause)
 

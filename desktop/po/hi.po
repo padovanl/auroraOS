@@ -180,7 +180,7 @@ msgid "Stop generating"
 msgstr "जवाब बनाना रोकें"
 
 #: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:664
+#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:676
 #: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
@@ -304,7 +304,7 @@ msgid "Writing Tools"
 msgstr "लेखन उपकरण"
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:538
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:550
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -417,7 +417,7 @@ msgstr "इस कार्यक्षेत्र के लिए खुल�
 #: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:440 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:452 aurora/shell/desktopicons.py:179
 msgid "Cancel"
 msgstr "रद्द करें"
 
@@ -1386,7 +1386,7 @@ msgstr "Aurora AI को भेजने से पहले परिवर्�
 msgid "Loading…"
 msgstr "लोड हो रहा है…"
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:668
+#: aurora/files/window.py:1249 aurora/shell/app.py:680
 msgid "Ask Aurora"
 msgstr "Aurora से पूछें"
 
@@ -2132,35 +2132,43 @@ msgstr "रात्रि प्रकाश"
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "गर्म रंग शाम को आँखों के लिए आरामदायक होते हैं।"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:162
+msgid "Not available on this screen"
+msgstr "इस स्क्रीन पर उपलब्ध नहीं"
+
+#: aurora/settingsapp/appearance.py:163
+msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
+msgstr "ग्राफ़िक्स ड्राइवर रंग बदलने नहीं देता (वर्चुअल मशीन में आम)।"
+
+#: aurora/settingsapp/appearance.py:168
 msgid "Schedule"
 msgstr "समय-सारणी"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Sunset to Sunrise"
 msgstr "सूर्यास्त से सूर्योदय तक"
 
-#: aurora/settingsapp/appearance.py:161
+#: aurora/settingsapp/appearance.py:168
 msgid "Manual"
 msgstr "मैन्युअल"
 
-#: aurora/settingsapp/appearance.py:162
+#: aurora/settingsapp/appearance.py:169
 msgid "All the Time"
 msgstr "हमेशा"
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:171
 msgid "Sunset and sunrise follow your time zone"
 msgstr "सूर्यास्त और सूर्योदय आपके समय क्षेत्र से निकाले जाते हैं"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "से"
 
-#: aurora/settingsapp/appearance.py:167 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:174 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "तक"
 
-#: aurora/settingsapp/appearance.py:174
+#: aurora/settingsapp/appearance.py:181
 msgid "Color temperature"
 msgstr "रंग तापमान"
 
@@ -4959,132 +4967,140 @@ msgstr "24-घंटे का समय"
 msgid "Opening App Center…"
 msgstr "ऐप सेंटर खुल रहा है…"
 
-#: aurora/shell/app.py:210
+#: aurora/shell/app.py:208
+msgid "Night Light can't change this screen's colors"
+msgstr "नाइट लाइट इस स्क्रीन के रंग नहीं बदल सकती"
+
+#: aurora/shell/app.py:209
+msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
+msgstr "ग्राफ़िक्स ड्राइवर इसकी अनुमति नहीं देता। वर्चुअल मशीन में ऐसा आम है; कंप्यूटर पर सेटिंग्स → अपडेट → अतिरिक्त ड्राइवर से ग्राफ़िक्स ड्राइवर इंस्टॉल करें।"
+
+#: aurora/shell/app.py:222
 msgid "Graphics fallback started"
 msgstr "ग्राफ़िक्स वैकल्पिक मोड शुरू हुआ"
 
-#: aurora/shell/app.py:211
+#: aurora/shell/app.py:223
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire शुरू नहीं हो सका। Aurora ने इसके बजाय सुरक्षित डेस्कटॉप खोला। स्टार्टअप रिपोर्ट देखने के लिए यह सूचना चुनें।"
 
-#: aurora/shell/app.py:213
+#: aurora/shell/app.py:225
 msgid "Open System Health"
 msgstr "सिस्टम स्वास्थ्य खोलें"
 
-#: aurora/shell/app.py:355
+#: aurora/shell/app.py:367
 msgid "Writing tools are off"
 msgstr "लेखन उपकरण बंद हैं"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Restart didn't happen"
 msgstr "रीस्टार्ट नहीं हुआ"
 
-#: aurora/shell/app.py:435
+#: aurora/shell/app.py:447
 msgid "Shut down didn't happen"
 msgstr "शट डाउन नहीं हुआ"
 
-#: aurora/shell/app.py:436
+#: aurora/shell/app.py:448
 msgid "Sleep didn't happen"
 msgstr "स्लीप नहीं हुआ"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Restart Anyway"
 msgstr "फिर भी रीस्टार्ट करें"
 
-#: aurora/shell/app.py:437
+#: aurora/shell/app.py:449
 msgid "Shut Down Anyway"
 msgstr "फिर भी शट डाउन करें"
 
-#: aurora/shell/app.py:438
+#: aurora/shell/app.py:450
 msgid "Sleep Anyway"
 msgstr "फिर भी स्लीप करें"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top"
 msgstr "हमेशा ऊपर"
 
-#: aurora/shell/app.py:535
+#: aurora/shell/app.py:547
 msgid "Always on Top Off"
 msgstr "हमेशा ऊपर बंद"
 
-#: aurora/shell/app.py:539
+#: aurora/shell/app.py:551
 msgid "Set it up in Settings → AI."
 msgstr "सेटिंग्स → AI में सेट करें।"
 
-#: aurora/shell/app.py:545
+#: aurora/shell/app.py:557
 msgid "Dictation is off"
 msgstr "डिक्टेशन बंद है"
 
-#: aurora/shell/app.py:552
+#: aurora/shell/app.py:564
 msgid "Dictation isn't installed yet"
 msgstr "डिक्टेशन अभी स्थापित नहीं है"
 
-#: aurora/shell/app.py:556
+#: aurora/shell/app.py:568
 msgid "Listening… press Super+H to stop"
 msgstr "सुन रहा हूँ… रोकने के लिए Super+H दबाएँ"
 
-#: aurora/shell/app.py:558
+#: aurora/shell/app.py:570
 msgid "Writing it down…"
 msgstr "लिखा जा रहा है…"
 
-#: aurora/shell/app.py:572
+#: aurora/shell/app.py:584
 msgid "Nothing was heard"
 msgstr "कुछ सुनाई नहीं दिया"
 
-#: aurora/shell/app.py:581
+#: aurora/shell/app.py:593
 msgid "Read aloud is off"
 msgstr "पढ़कर सुनाना बंद है"
 
-#: aurora/shell/app.py:588
+#: aurora/shell/app.py:600
 msgid "Select some text first"
 msgstr "पहले कुछ टेक्स्ट चुनें"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:670
 msgid "Screenshot captured"
 msgstr "स्क्रीनशॉट लिया गया"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:671
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "{path} में सहेजा गया और क्लिपबोर्ड पर कॉपी किया गया।"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Pin to Screen"
 msgstr "स्क्रीन पर पिन करें"
 
-#: aurora/shell/app.py:664
+#: aurora/shell/app.py:676
 msgid "Annotate"
 msgstr "टिप्पणी करें"
 
-#: aurora/shell/app.py:665
+#: aurora/shell/app.py:677
 msgid "Copy Text"
 msgstr "टेक्स्ट कॉपी करें"
 
-#: aurora/shell/app.py:727 aurora/shell/app.py:734
+#: aurora/shell/app.py:739 aurora/shell/app.py:746
 msgid "Text Recognition"
 msgstr "टेक्स्ट पहचान"
 
-#: aurora/shell/app.py:727
+#: aurora/shell/app.py:739
 msgid "No text found"
 msgstr "कोई टेक्स्ट नहीं मिला"
 
-#: aurora/shell/app.py:728
+#: aurora/shell/app.py:740
 msgid "Try a larger or sharper area."
 msgstr "बड़ा या साफ़ क्षेत्र आज़माएँ।"
 
-#: aurora/shell/app.py:734
+#: aurora/shell/app.py:746
 msgid "Text copied"
 msgstr "टेक्स्ट कॉपी किया गया"
 
-#: aurora/shell/app.py:773 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:785 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 msgid "Screen Recording"
 msgstr "स्क्रीन रिकॉर्डिंग"
 
-#: aurora/shell/app.py:773
+#: aurora/shell/app.py:785
 msgid "Screen recording saved"
 msgstr "स्क्रीन रिकॉर्डिंग सहेजी गई"
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:786
 msgid "Saved to {path}."
 msgstr "{path} में सहेजा गया।"
 
