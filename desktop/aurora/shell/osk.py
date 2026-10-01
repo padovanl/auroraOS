@@ -12,6 +12,7 @@ import subprocess
 
 from gi.repository import GLib, Gtk
 
+from aurora import settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
@@ -39,6 +40,8 @@ MORE = [
      ("→", "Right", 1), ("↑", "Up", 1), ("↓", "Down", 1), ("✕", "hide", 1.2)],
 ]
 STATES = ("shift", "symbols", "more", "ctrl", "hide")
+
+from aurora.shell.osk_themes import THEMES  # noqa: E402
 
 
 def wtype_args(key, text=None, ctrl=False):
@@ -69,7 +72,21 @@ class ScreenKeyboard(LayerWindow):
                            css_classes=["osk-box"], halign=Gtk.Align.CENTER)
         self.set_child(self.box)
         self.available = shutil.which("wtype") is not None
+        s = settings.get()
+        self._theme = None
+        self.apply_theme(s.get_string("screen-keyboard-theme") if s else "classic")
+        if s is not None:
+            s.connect("changed::screen-keyboard-theme",
+                      lambda st, k: self.apply_theme(st.get_string(k)))
         self._build()
+
+    def apply_theme(self, name):
+        if name not in dict(THEMES):
+            name = "classic"
+        if self._theme:
+            self.remove_css_class(f"osk-theme-{self._theme}")
+        self._theme = name
+        self.add_css_class(f"osk-theme-{name}")
 
     # --- drawing -----------------------------------------------------------------
 

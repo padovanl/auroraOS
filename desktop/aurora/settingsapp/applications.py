@@ -274,10 +274,19 @@ class Accessibility(Page):
         typing = self.group(_("Typing"))
         aurora_s = settings.get()
         if aurora_s is not None:
+            from aurora.shell.osk_themes import THEMES as OSK_THEMES
+            ids = [k for k, _l in OSK_THEMES]
+            cur = aurora_s.get_string("screen-keyboard-theme")
+            theme_row = combo_row(_("Keyboard theme"), [_(label) for _k, label in OSK_THEMES],
+                                  ids.index(cur) if cur in ids else 0,
+                                  on_change=lambda i: (aurora_s.set_string(
+                                      "screen-keyboard-theme", ids[i]),
+                                      apps.spawn(["aurora-shell", "osk", "show"])))
             typing.add(switch_row(_("Screen keyboard"), aurora_s.get_boolean("screen-keyboard"),
                                   self._screen_keyboard,
                                   subtitle=_("A keyboard on the screen, for touch screens or "
                                              "when a keyboard is hard to use")))
+            typing.add(theme_row)
         if iface:
             typing.add(switch_row(_("Blinking text cursor"), iface.get_boolean("cursor-blink"),
                                   lambda v: iface.set_boolean("cursor-blink", v)))

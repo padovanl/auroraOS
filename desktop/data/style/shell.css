@@ -680,3 +680,54 @@ window.aurora-osk { background: transparent; }
 .aurora-osk button.osk-special { background-color: rgba(255, 255, 255, 0.05); font-size: 15px; }
 .aurora-osk button.osk-on { background-color: alpha(@accent_bg_color, 0.55); }
 .aurora-osk button.osk-locked { background-color: @accent_bg_color; }
+
+/* On-screen keyboard themes (Settings → Accessibility → Keyboard theme). */
+window.osk-theme-light .osk-box { background-color: rgba(245, 243, 250, 0.97); border-color: rgba(0, 0, 0, 0.08); }
+window.osk-theme-light button.osk-key { color: #1d1b25; background-color: #ffffff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
+window.osk-theme-light button.osk-special { background-color: #dcd8e6; }
+window.osk-theme-light button.osk-key:hover { background-color: #ece9f4; }
+
+window.osk-theme-accent .osk-box { background-image: linear-gradient(160deg, alpha(@accent_bg_color, 0.95), alpha(@accent_bg_color, 0.7)); }
+window.osk-theme-accent button.osk-key { background-color: rgba(255, 255, 255, 0.22); color: #fff; }
+window.osk-theme-accent button.osk-special { background-color: rgba(0, 0, 0, 0.18); }
+window.osk-theme-accent button.osk-on, window.osk-theme-accent button.osk-key:active { background-color: #ffffff; color: @accent_bg_color; }
+
+window.osk-theme-glass .osk-box { background-color: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.35); }
+window.osk-theme-glass button.osk-key { background-color: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.28); color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6); }
+
+/* Comic: bubbly cartoon keys with a thick ink outline and a hard shadow. */
+window.osk-theme-comic .osk-box { background-color: #fff6d6; border: 3px solid #1b1b1b; border-radius: 28px; box-shadow: 6px 6px 0 #1b1b1b; }
+window.osk-theme-comic button.osk-key { font-family: "Comic Neue", "Comic Sans MS", cursive; font-size: 21px; font-weight: 800;
+  color: #1b1b1b; background-color: #ffd23f; border: 3px solid #1b1b1b; border-radius: 18px 22px 16px 24px;
+  box-shadow: 3px 3px 0 #1b1b1b; }
+window.osk-theme-comic button.osk-special { background-color: #4ecdc4; }
+window.osk-theme-comic button.osk-key:hover { background-color: #ffe27a; }
+window.osk-theme-comic button.osk-key:active { background-color: #ff6b6b; box-shadow: 0 0 0 #1b1b1b; margin: 3px -3px -3px 3px; }
+window.osk-theme-comic button.osk-on { background-color: #ff6b6b; }
+
+/* Typewriter: round brass-rimmed keys and typewriter type. */
+window.osk-theme-typewriter .osk-box { background-image: linear-gradient(180deg, #5b3a29, #3e2619); border: 2px solid #a67c52; }
+window.osk-theme-typewriter button.osk-key { font-family: "Courier Prime", "Courier New", monospace; font-size: 20px; font-weight: 700;
+  color: #2b2118; background-color: #f2e8d5; border: 3px solid #b8925a; border-radius: 999px;
+  box-shadow: 0 3px 0 #2a1a10, inset 0 2px 0 #ffffff; }
+window.osk-theme-typewriter button.osk-special { background-color: #d8c7a6; }
+window.osk-theme-typewriter button.osk-key:active { box-shadow: 0 0 0 #2a1a10; margin-top: 3px; margin-bottom: -3px; }
+window.osk-theme-typewriter button.osk-on { background-color: #c0392b; color: #f2e8d5; }
+
+/* Neon: dark keys with glowing outlines. */
+window.osk-theme-neon .osk-box { background-color: rgba(8, 6, 18, 0.96); border: 1px solid #ff2fd5; box-shadow: 0 0 24px rgba(255, 47, 213, 0.45); }
+window.osk-theme-neon button.osk-key { background-color: transparent; color: #7df9ff; border: 2px solid #7df9ff;
+  box-shadow: 0 0 8px rgba(125, 249, 255, 0.55), inset 0 0 6px rgba(125, 249, 255, 0.25);
+  text-shadow: 0 0 6px #7df9ff; }
+window.osk-theme-neon button.osk-special { color: #ff2fd5; border-color: #ff2fd5;
+  box-shadow: 0 0 8px rgba(255, 47, 213, 0.55), inset 0 0 6px rgba(255, 47, 213, 0.25); text-shadow: 0 0 6px #ff2fd5; }
+window.osk-theme-neon button.osk-key:active, window.osk-theme-neon button.osk-on { background-color: rgba(125, 249, 255, 0.25); }
+
+/* Pixel: square 8-bit keys with a blocky shadow. */
+window.osk-theme-pixel .osk-box { background-color: #1e1e3f; border: 4px solid #ffffff; border-radius: 0; box-shadow: none; }
+window.osk-theme-pixel button.osk-key { font-family: "JetBrains Mono", monospace; font-size: 18px; font-weight: 800;
+  color: #ffffff; background-color: #3c3cbe; border-radius: 0; border: 2px solid #ffffff;
+  box-shadow: 4px 4px 0 #000000; }
+window.osk-theme-pixel button.osk-special { background-color: #e04040; }
+window.osk-theme-pixel button.osk-key:active { box-shadow: none; margin: 4px -4px -4px 4px; }
+window.osk-theme-pixel button.osk-on { background-color: #20c060; }
