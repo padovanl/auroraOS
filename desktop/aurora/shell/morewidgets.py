@@ -218,7 +218,7 @@ class CountdownWidget(DesktopWidget):
             self.number.set_label(str(-days))
             self.unit.set_label(ngettext("day ago", "days ago", -days))
         self.when.set_label(GLib.DateTime.new_local(target.year, target.month, target.day,
-                                                    0, 0, 0).format("%a %e %b %Y")
+                                                    0, 0, 0).format("%a %-d %b %Y")
                             .replace("  ", " "))
 
 

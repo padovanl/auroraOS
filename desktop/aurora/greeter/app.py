@@ -217,7 +217,7 @@ class Greeter(Adw.ApplicationWindow):
     def _tick(self):
         now = GLib.DateTime.new_now_local()
         self.clock.set_label(now.format("%H:%M"))
-        self.date.set_label(now.format("%A, %e %B"))
+        self.date.set_label(now.format("%A, %-d %B"))
         return GLib.SOURCE_CONTINUE
 
     def _selected_user(self):

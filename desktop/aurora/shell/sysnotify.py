@@ -4,6 +4,7 @@ updates available, low battery, a nearly full disk, and removable drives
 """
 
 import os
+import re
 import shutil
 import subprocess
 
@@ -49,6 +50,45 @@ def fs_type(path, mounts=None):
     return kind
 
 
+def reboot_needed(running, kernels, flag=False):
+    """An update needs a restart: Debian's flag file, or a newer kernel installed
+    than the one running (`kernels` are the versions in /boot)."""
+    if flag:
+        return True
+    def key(version):
+        return [int(x) if x.isdigit() else x for x in re.split(r"[.\-+~]", version)]
+    try:
+        newest = max(kernels, key=key) if kernels else running
+        return key(newest) > key(running)
+    except TypeError:
+        return False
+
+
+def installed_kernels(boot="/boot"):
+    try:
+        return [n[len("vmlinuz-"):] for n in os.listdir(boot) if n.startswith("vmlinuz-")]
+    except OSError:
+        return []
+
+
+def in_active_hours(hour, start, end):
+    """Active hours may cross midnight (22 to 6)."""
+    if start == end:
+        return True
+    return start <= hour < end if start < end else hour >= start or hour < end
+
+
+def next_quiet_time(now, start, end):
+    """The first moment outside active hours from `now` (a datetime)."""
+    import datetime
+    t = now.replace(minute=0, second=0, microsecond=0)
+    for _ in range(48):
+        if not in_active_hours(t.hour, start, end) and t >= now - datetime.timedelta(hours=1):
+            return max(t, now)
+        t += datetime.timedelta(hours=1)
+    return now
+
+
 def count_updates():
     """Packages with a newer version in the (already refreshed) apt lists."""
     try:
@@ -67,6 +107,8 @@ class SystemNotifications:
         self._action_ids = {}
 
         GLib.timeout_add_seconds(UPDATE_CHECK_FIRST_S, self._check_updates)
+        self._restart_notified = False
+        GLib.timeout_add_seconds(UPDATE_CHECK_FIRST_S + 60, self._check_restart)
         self._disk_warned = set()
         GLib.timeout_add_seconds(60, self._check_disks)
         shell.battery.connect("changed", lambda *a: self._check_battery())
@@ -89,6 +131,71 @@ class SystemNotifications:
             cb(key)
 
     # --- updates ---
+
+    def _check_restart(self):
+        """An update needs a restart: say so once, with Restart Now, Tonight
+        (outside active hours) and Later; restart at the planned time, with a
+        five-minute warning that can postpone it."""
+        import time
+        s = settings.get()
+        planned = s.get_int64("update-restart-at") if s else 0
+        if planned and time.time() >= planned:
+            s.set_int64("update-restart-at", 0)
+            self._warn_restart()
+        elif reboot_needed(os.uname().release, installed_kernels(),
+                           os.path.exists("/run/reboot-required")):
+            auto = s is not None and s.get_boolean("update-auto-restart")
+            if auto and not planned:
+                self._plan_restart_tonight(quiet=True)
+            elif not self._restart_notified:
+                self._restart_notified = True
+                self.notify(_("Restart to finish updating"),
+                            _("An update needs a restart. Your apps will close; save "
+                              "your work first."),
+                            "system-reboot",
+                            [("now", _("Restart Now")), ("tonight", _("Tonight")),
+                             ("later", _("Later"))],
+                            self._restart_choice)
+        GLib.timeout_add_seconds(15 * 60, self._check_restart)
+        return False
+
+    def _restart_choice(self, key):
+        if key == "now":
+            self.shell.power.reboot()
+        elif key == "tonight":
+            self._plan_restart_tonight()
+
+    def _plan_restart_tonight(self, quiet=False):
+        import datetime
+        s = settings.get()
+        if s is None:
+            return
+        start = s.get_int("update-active-hours-start")
+        end = s.get_int("update-active-hours-end")
+        when = next_quiet_time(datetime.datetime.now(), start, end)
+        s.set_int64("update-restart-at", int(when.timestamp()))
+        if not quiet:
+            self.notify(_("Restart planned"),
+                        _("Aurora will restart at {time}, outside your active hours.").format(
+                            time=when.strftime("%H:%M")), "system-reboot")
+
+    def _warn_restart(self):
+        def choice(key):
+            if key == "postpone":
+                import time
+                s = settings.get()
+                if s is not None:
+                    s.set_int64("update-restart-at", int(time.time()) + 3600)
+                GLib.source_remove(self._restart_source)
+            elif key == "now":
+                GLib.source_remove(self._restart_source)
+                self.shell.power.reboot()
+        self.notify(_("Restarting in 5 minutes"),
+                    _("To finish installing updates. Save your work."), "system-reboot",
+                    [("now", _("Restart Now")), ("postpone", _("In an Hour"))], choice,
+                    urgency=2)
+        self._restart_source = GLib.timeout_add_seconds(
+            300, lambda: (subprocess.Popen(["systemctl", "reboot"]), False)[1])
 
     def _check_updates(self):
         n = count_updates()

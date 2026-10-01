@@ -384,3 +384,19 @@ def test_volume_mixer_lists_apps_playing_sound():
     got = services.app_streams(dump)
     assert [(s["id"], s["app"], s["icon"]) for s in got] == [
         (77, "Firefox", "firefox-esr"), (78, "Spotify", "spotify")]
+
+
+def test_restart_after_updates():
+    import datetime
+    pytest = __import__("pytest")
+    sn = pytest.importorskip("aurora.shell.sysnotify")
+    assert sn.reboot_needed("6.12.38-amd64", ["6.12.38-amd64", "6.12.41-amd64"])
+    assert not sn.reboot_needed("6.12.41-amd64", ["6.12.38-amd64", "6.12.41-amd64"])
+    assert sn.reboot_needed("6.12.41-amd64", [], flag=True)
+    assert sn.in_active_hours(10, 8, 23) and not sn.in_active_hours(2, 8, 23)
+    assert sn.in_active_hours(23, 22, 6) and sn.in_active_hours(3, 22, 6)
+    assert not sn.in_active_hours(12, 22, 6)
+    now = datetime.datetime(2026, 10, 1, 15, 20)
+    assert sn.next_quiet_time(now, 8, 23) == datetime.datetime(2026, 10, 1, 23, 0)
+    late = datetime.datetime(2026, 10, 1, 23, 40)
+    assert sn.next_quiet_time(late, 8, 23) == late

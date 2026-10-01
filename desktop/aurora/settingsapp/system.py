@@ -16,7 +16,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
 from aurora.i18n import _
-from aurora.settingsapp.util import Page, run, switch_row, toast
+from aurora.settingsapp.util import Page, combo_row, run, switch_row, toast
 
 
 def admin(*args, stdin=None):
@@ -657,6 +657,25 @@ class Updates(Page):
         open_sw = Adw.ButtonRow(title=_("Open App Center to Update…"))
         open_sw.connect("activated", lambda *_: apps.spawn(["gnome-software", "--mode=updates"]))
         g.add(open_sw)
+
+        aurora = settings.get()
+        if aurora is not None:
+            restart = self.group(_("Restarts"),
+                                 _("Some updates need a restart. Aurora never restarts while "
+                                   "you're working: during your active hours it only asks."))
+            hours = [f"{h:02d}:00" for h in range(24)]
+            restart.add(combo_row(_("Active hours start"), hours,
+                                  aurora.get_int("update-active-hours-start"),
+                                  on_change=lambda i: aurora.set_int(
+                                      "update-active-hours-start", i)))
+            restart.add(combo_row(_("Active hours end"), hours,
+                                  aurora.get_int("update-active-hours-end"),
+                                  on_change=lambda i: aurora.set_int(
+                                      "update-active-hours-end", i)))
+            restart.add(switch_row(_("Restart automatically outside active hours"),
+                                   aurora.get_boolean("update-auto-restart"),
+                                   lambda v: aurora.set_boolean("update-auto-restart", v),
+                                   subtitle=_("With a five-minute warning you can postpone")))
 
         drivers = self.group(_("Additional Drivers"),
                              _("Proprietary drivers for hardware that needs them."))

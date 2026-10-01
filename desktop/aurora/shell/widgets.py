@@ -408,7 +408,7 @@ class ClockWidget(DesktopWidget):
         seconds = s is not None and s.get_boolean("clock-show-seconds")
         fmt = ("%l:%M" if twelve else "%H:%M") + (":%S" if seconds else "") + (" %p" if twelve else "")
         self.time.set_label(now.format(fmt).strip())
-        self.date.set_label(now.format("%a %e %b").replace("  ", " "))
+        self.date.set_label(now.format("%a %-d %b").replace("  ", " "))
         self.face.queue_draw()
 
     def _draw(self, _area, cr, width, height):

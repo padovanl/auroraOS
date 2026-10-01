@@ -207,6 +207,8 @@ class QuickSettings(Gtk.Popover):
         self.t_awake = Toggle("view-reveal-symbolic", _("Keep Awake"),
                               shell.keep_awake.set_active)
         shell.keep_awake.connect("changed", lambda *_: self.refresh())
+        self.t_osk = Toggle("input-keyboard-symbolic", _("Screen Keyboard"),
+                            self._set_screen_keyboard)
         self.grid = Gtk.Grid(column_spacing=10, row_spacing=10, column_homogeneous=True)
         box.append(self.grid)
 
@@ -295,6 +297,21 @@ class QuickSettings(Gtk.Popover):
         self.popdown()
         # Give the popover time to close so it isn't in the recording.
         GLib.timeout_add(400, lambda: self.shell.recorder.toggle() and False)
+
+    @staticmethod
+    def _screen_keyboard_running():
+        import subprocess
+        return subprocess.run(["pgrep", "-x", "wvkbd-mobintl"],
+                              capture_output=True).returncode == 0
+
+    def _set_screen_keyboard(self, on):
+        """Show or hide the on-screen keyboard (for touch screens and tablets)."""
+        import subprocess
+        if on and not self._screen_keyboard_running():
+            subprocess.Popen(["wvkbd-mobintl", "-L", "260"], start_new_session=True)
+        elif not on:
+            subprocess.run(["pkill", "-x", "wvkbd-mobintl"])
+        GLib.timeout_add(400, lambda: self.refresh() or False)
 
     def _airplane_on(self):
         net, bt = self.shell.network, self.shell.bluetooth
@@ -434,7 +451,7 @@ class QuickSettings(Gtk.Popover):
         now = GLib.DateTime.new_now_local()
         twelve = s is not None and s.get_string("clock-format") == "12h"
         self.header_time.set_label(now.format("%l:%M %p" if twelve else "%H:%M").strip())
-        self.header_date.set_label(now.format("%A, %e %B").replace("  ", " "))
+        self.header_date.set_label(now.format("%A, %-d %B").replace("  ", " "))
 
         self.volume.set_value(0 if sh.audio.muted else sh.audio.volume, sh.audio.icon_name)
         self.volume.set_visible(sh.audio.available)
@@ -474,6 +491,10 @@ class QuickSettings(Gtk.Popover):
         if net.wifi_device() is not None or sh.bluetooth.available:
             self.t_air.set_state(self._airplane_on())
             toggles.append(self.t_air)
+        import shutil
+        if shutil.which("wvkbd-mobintl"):
+            self.t_osk.set_state(self._screen_keyboard_running())
+            toggles.append(self.t_osk)
         if sh.recorder.available:
             self.t_rec.set_state(sh.recorder.recording,
                                  _("Recording…") if sh.recorder.recording else None)

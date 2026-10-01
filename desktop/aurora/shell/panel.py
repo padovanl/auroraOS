@@ -140,7 +140,7 @@ class Clock(Gtk.MenuButton):
     def _on_show(self, *_a):
         now = GLib.DateTime.new_now_local()
         self._calendar.select_day(now)
-        self._date.set_label(now.format("%A, %e %B %Y").replace("  ", " "))
+        self._date.set_label(now.format("%A, %-d %B %Y").replace("  ", " "))
         self._weather.refresh()
 
     def _tick(self):
@@ -151,7 +151,7 @@ class Clock(Gtk.MenuButton):
         time_fmt = ("%H:%M" if fmt_24 else "%l:%M") + (":%S" if seconds else "")
         if not fmt_24:
             time_fmt += " %p"
-        self._label.set_label(now.format(f"%a %e %b  {time_fmt}").replace("  ", " ").strip())
+        self._label.set_label(now.format(f"%a %-d %b  {time_fmt}").replace("  ", " ").strip())
         # Wake up right at the next second/minute boundary.
         delay = 1000 - now.get_microsecond() // 1000 if seconds else \
             (60 - now.get_second()) * 1000
