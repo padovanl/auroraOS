@@ -70,6 +70,7 @@ translations:
 		msgfmt --check -o build/locale/$$lang/LC_MESSAGES/aurora.mo $$po || exit 1; \
 	done
 	mkdir -p build/locale
+	$(PYTHON) po/gtklock-catalogs.py po/gtklock.json build/locale
 
 # Three series of four pictures (dawn, day, dusk, night) in
 # branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png.

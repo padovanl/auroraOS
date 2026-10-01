@@ -60,12 +60,12 @@ window {
 }
 
 #input-field {
-  min-height: 42px;
-  border-radius: 10px 0 0 10px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  min-height: 46px;
+  border-radius: 999px 0 0 999px;
+  padding: 0 8px 0 20px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-right: none;
-  background-color: rgba(20, 16, 34, 0.55);
+  background-color: rgba(18, 14, 32, 0.45);
   color: #ffffff;
   caret-color: #ffffff;
   box-shadow: none;
@@ -73,26 +73,38 @@ window {
 }
 
 #input-field:focus {
-  border-color: rgba(255, 255, 255, 0.6);
-  background-color: rgba(20, 16, 34, 0.7);
+  border-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(18, 14, 32, 0.75);
 }
 
+/* The arrow: Aurora's gradient, see-through like the field, closing the
+   pill on the right; a soft highlight on top and a glow around it. */
 #unlock-button {
-  min-width: 46px;
-  min-height: 42px;
+  min-width: 58px;
+  min-height: 46px;
   padding: 0;
-  border-radius: 0 10px 10px 0;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-left: none;
-  background-image: none;
-  background-color: rgba(255, 255, 255, 0.16);
+  border-radius: 0 999px 999px 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%),
+                    linear-gradient(120deg, rgba(185, 140, 255, 0.72), rgba(255, 134, 163, 0.72));
   color: #ffffff;
-  box-shadow: none;
-  -gtk-icon-shadow: none;
+  box-shadow: 0 0 22px rgba(190, 120, 255, 0.35);
+  -gtk-icon-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 #unlock-button:hover {
-  background-color: rgba(255, 255, 255, 0.28);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%),
+                    linear-gradient(120deg, rgba(195, 155, 255, 0.88), rgba(255, 150, 176, 0.88));
+  box-shadow: 0 0 28px rgba(190, 120, 255, 0.55);
+}
+
+#unlock-button:active {
+  background-image: linear-gradient(120deg, rgba(150, 90, 240, 0.85), rgba(240, 90, 128, 0.85));
+}
+
+#unlock-button image {
+  -gtk-icon-transform: scale(1.3);
 }
 
 #input-label {
@@ -102,12 +114,23 @@ window {
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
+/* Wrong password, Caps Lock: a small pill under the field. No padding or
+   border: gtklock never hides these labels, and an empty one must stay
+   invisible; the messages carry their own spaces at both ends instead. */
 #warning-label, #error-label {
   font-family: Inter;
-  font-size: 11pt;
+  font-size: 12pt;
   font-weight: 600;
-  color: #ffd1dc;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  border-radius: 999px;
+  /* Only behind the text itself: an empty label paints nothing. */
+  padding: 0 3px;
+  background-clip: content-box;
+  background-color: rgba(214, 54, 96, 0.78);
+}
+
+#warning-label {
+  background-color: rgba(196, 128, 20, 0.8);
 }
 
 #message-revealer infobar { border-radius: 10px; }
