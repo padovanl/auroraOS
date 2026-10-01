@@ -129,6 +129,9 @@ class Shell(Adw.Application):
         self.keep_awake = KeepAwake()
         from aurora.shell.refit import WindowRefit
         self.window_refit = WindowRefit(self)
+        # Storage Sense: old Trash items, temporary files and Downloads, as
+        # Settings → Storage asks; soon after login, then every four hours.
+        GLib.timeout_add_seconds(120, self._storage_sense)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
@@ -445,6 +448,22 @@ class Shell(Adw.Application):
             Gio.AppInfo.launch_default_for_uri(GLib.filename_to_uri(GLib.get_home_dir()), None)
 
     # --- Aurora AI: dictation and read-aloud ---
+
+    def _storage_sense(self):
+        import threading
+
+        def work():
+            from aurora import housekeeping
+            try:
+                done = housekeeping.run_storage_sense(settings.get("org.gnome.desktop.privacy"),
+                                                      settings.get())
+                if any(done.values()):
+                    print(f"aurora: storage sense: {done}")
+            except Exception as err:  # noqa: BLE001 - never take the shell down
+                print(f"aurora: storage sense failed: {err}")
+        threading.Thread(target=work, daemon=True).start()
+        GLib.timeout_add_seconds(4 * 3600, lambda: self._storage_sense() and False)
+        return False
 
     def toggle_always_on_top(self):
         """Keep the focused window above the others, or stop (Super+T)."""

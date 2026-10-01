@@ -24,6 +24,7 @@ from aurora.settingsapp.language import Language  # noqa: E402
 from aurora.settingsapp.network import Network  # noqa: E402
 from aurora.settingsapp.power import Power  # noqa: E402
 from aurora.settingsapp.sound import Sound  # noqa: E402
+from aurora.settingsapp.storage import Storage  # noqa: E402
 from aurora.settingsapp.timedate import DateTime  # noqa: E402
 
 # Sidebar sections, like Ubuntu's Settings: connectivity, look & feel,
@@ -34,7 +35,7 @@ SECTIONS = [
     [Mouse, Keyboard, Printers, Accessibility],
     [Privacy, Permissions, Sharing],
     [AI],
-    [Users, Language, DateTime, Updates, Health, About],
+    [Users, Language, DateTime, Updates, Storage, Health, About],
 ]
 PAGES = [p for section in SECTIONS for p in section]
 

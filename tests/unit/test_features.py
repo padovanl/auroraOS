@@ -331,3 +331,28 @@ def test_picture_of_the_day_fallbacks():
         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/A.jpg/3840px-A.jpg"
     assert d.commons_sized(big, 2000) == "https://upload.wikimedia.org/wikipedia/commons/4/47/A.jpg"
     assert d.market("it_IT.UTF-8") == "it-IT" and d.market("C") == "en-US"
+
+
+def test_storage_cleanup(tmp_path):
+    import os
+    import time
+    from aurora import housekeeping as h
+    trash = tmp_path / "Trash"
+    (trash / "files").mkdir(parents=True)
+    (trash / "info").mkdir()
+    for name, date in (("old.txt", "2020-01-01T10:00:00"), ("new.txt", None)):
+        (trash / "files" / name).write_text("x" * 5000)
+        if date:
+            (trash / "info" / f"{name}.trashinfo").write_text(
+                f"[Trash Info]\nPath=/x/{name}\nDeletionDate={date}\n")
+    assert h.tree_size(str(trash)) >= 8192
+    assert h.empty_trash(older_than_days=30, trash=str(trash)) == 1
+    assert sorted(os.listdir(trash / "files")) == ["new.txt"]
+    assert h.empty_trash(trash=str(trash)) == 1
+    downloads = tmp_path / "Downloads"
+    downloads.mkdir()
+    (downloads / "a.zip").write_text("a")
+    (downloads / "b.zip").write_text("b")
+    past = time.time() - 40 * 86400
+    os.utime(downloads / "a.zip", (past, past))
+    assert [os.path.basename(p) for p in h.old_files(str(downloads), 30)] == ["a.zip"]
