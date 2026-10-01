@@ -7,9 +7,10 @@ session. Wayfire's INI is generated atomically on login and after changes.
 import configparser
 import os
 import re
+import shlex
 import xml.etree.ElementTree as ET
 
-from aurora import data_path, settings
+from aurora import config_path, data_path, settings
 from aurora.labwcconf import path as labwc_path
 
 
@@ -52,6 +53,38 @@ def _source_xml():
         except (OSError, ET.ParseError):
             continue
     return None
+
+
+def display_outputs(text):
+    """Wayfire [output:NAME] options from the wlr-randr commands Settings →
+    Displays saves (displays.sh). Wayfire re-reads its configuration whenever
+    it is rewritten, and an output it has no section for goes back to its
+    preferred mode at scale 1: so the choices live here too."""
+    outputs = {}
+    for line in text.splitlines():
+        try:
+            words = shlex.split(line)
+        except ValueError:
+            continue
+        if len(words) < 4 or words[0] != "wlr-randr" or words[1] != "--output":
+            continue
+        options = outputs.setdefault(words[2], {})
+        flag, value = words[3], words[4] if len(words) > 4 else ""
+        if flag == "--off":
+            options["mode"] = "off"
+        elif flag == "--on":
+            if options.get("mode") == "off":
+                options["mode"] = "auto"
+        elif flag == "--mode":
+            m = re.fullmatch(r"(\d+)x(\d+)(?:@([\d.]+)Hz)?", value)
+            if m:
+                refresh = f"@{round(float(m.group(3)) * 1000)}" if m.group(3) else ""
+                options["mode"] = f"{m.group(1)}x{m.group(2)}{refresh}"
+        elif flag == "--scale" and re.fullmatch(r"[\d.]+", value):
+            options["scale"] = value
+        elif flag == "--transform" and value in ("normal", "90", "180", "270"):
+            options["transform"] = value
+    return outputs
 
 
 def generate():
@@ -154,6 +187,13 @@ def generate():
     config["core"]["close_top_view"] = "<alt> KEY_F4 | <super> KEY_Q"
     config["grid"].update({"slot_l": "<super> KEY_LEFT", "slot_r": "<super> KEY_RIGHT",
                            "slot_c": "<super> KEY_UP", "restore": "<super> KEY_DOWN"})
+
+    try:
+        with open(config_path("displays.sh"), encoding="utf-8") as stream:
+            for name, options in display_outputs(stream.read()).items():
+                config[f"output:{name}"] = options
+    except OSError:
+        pass
 
     target = path()
     os.makedirs(os.path.dirname(target), exist_ok=True)

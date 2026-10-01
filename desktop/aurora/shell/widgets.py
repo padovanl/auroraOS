@@ -168,6 +168,13 @@ def free_spot(width, height, others, area_width, area_height, top=0, edge=0,
     return None
 
 
+def rects_overlap(a, b):
+    """Whether two (x, y, width, height) rectangles cover each other."""
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    return ax < bx + bw and bx < ax + aw and ay < by + bh and by < ay + ah
+
+
 def widget_sizes(area_height):
     """(small, wide) side in px for a screen this high: 170 px at 1080 p,
     growing and shrinking with the screen, within readable limits."""
@@ -1089,6 +1096,38 @@ class WidgetLayer:
         for widget in self.widgets:
             widget.resize()
             self._place(widget)
+        self._separate()
+
+    def _separate(self):
+        """Widgets keep their places as fractions of the screen, but not below
+        a readable size: on a smaller screen (or a larger scale) neighbours
+        can overlap. Move each one that does just clear of the others, the
+        same way a new widget finds its spot; what is saved stays as it was,
+        so they return to their places on the larger screen."""
+        width, height = self.area()
+        if width < 320 or height < 240:
+            return      # the monitor's size isn't known yet
+        placed = []
+        for widget in sorted(self.widgets, key=lambda w: (w.get_margin_start(),
+                                                         w.get_margin_top())):
+            # The sizes the layout gives them: allocations may still be from
+            # the previous screen size.
+            w, h = widget.target_size()
+            x, y = widget.get_margin_start(), widget.get_margin_top()
+            if any(rects_overlap((x, y, w, h), o) for o in placed):
+                below = [o for o in placed if rects_overlap((x, y, w, h), o)]
+                ny = max(oy + oh for _ox, oy, _ow, oh in below)
+                if ny + h <= height - EDGE_INSET and not any(
+                        rects_overlap((x, ny, w, h), o) for o in placed):
+                    y = ny
+                else:
+                    spot = free_spot(w, h, placed, width, height, top=TOP_INSET,
+                                     edge=EDGE_INSET, gap=0)
+                    if spot is not None:
+                        x, y = (int(v) for v in spot)
+                widget.set_margin_start(int(x))
+                widget.set_margin_top(int(y))
+            placed.append((x, y, w, h))
 
     # dragging (driven by the desktop surface's drag gesture, see wallpaper.py)
     def widget_at(self, picked):
@@ -1171,6 +1210,7 @@ class WidgetLayer:
             self._add_widget(item)
         self._restyle()
         self._tick_all()
+        self._separate()
 
     def _external_change(self):
         if not self._saving:

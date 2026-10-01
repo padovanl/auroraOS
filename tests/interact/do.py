@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Send expressions to tests/interact/serve.py, one after another."""
 
+import os
 import socket
 import sys
 
 for expr in sys.argv[1:]:
     s = socket.socket(socket.AF_UNIX)
-    s.connect("/tmp/aurora-interact.sock")
+    s.connect(os.environ.get("AURORA_INTERACT_SOCK", "/tmp/aurora-interact.sock"))
     s.sendall(expr.encode() + b"\n")
     data = b""
     while not data.endswith(b"\n"):

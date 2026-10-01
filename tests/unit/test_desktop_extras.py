@@ -249,3 +249,10 @@ def test_new_widgets_find_a_free_spot():
     x, y = free_spot(100, 100, column, 1000, 600, top=40, edge=10)
     assert x + 100 <= 890 and y == 40
     assert free_spot(100, 100, [(0, 0, 1000, 600)], 1000, 600) is None
+
+
+def test_widget_rectangles_overlap():
+    from aurora.shell.widgets import rects_overlap
+    assert rects_overlap((0, 0, 100, 100), (50, 50, 100, 100))
+    assert not rects_overlap((0, 0, 100, 100), (100, 0, 100, 100))   # side by side
+    assert not rects_overlap((0, 0, 100, 100), (0, 100, 100, 100))   # one under the other

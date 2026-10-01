@@ -63,28 +63,51 @@ class Agent:
         self.sock.connect(self.path)
         self.buf = b""
 
-    def request(self, execute, args=None, timeout=10):
-        msg = {"execute": execute}
-        if args:
-            msg["arguments"] = args
-        self.sock.settimeout(timeout)
-        self.sock.sendall(json.dumps(msg).encode() + b"\n")
+    def _line(self):
         while b"\n" not in self.buf:
             chunk = self.sock.recv(65536)
             if not chunk:
                 raise ConnectionError("agent closed")
             self.buf += chunk
         line, self.buf = self.buf.split(b"\n", 1)
-        reply = json.loads(line)
+        return line
+
+    def request(self, execute, args=None, timeout=10):
+        msg = {"execute": execute}
+        if args:
+            msg["arguments"] = args
+        self.sock.settimeout(timeout)
+        try:
+            self.sock.sendall(json.dumps(msg).encode() + b"\n")
+            reply = json.loads(self._line())
+        except (OSError, ValueError):
+            # A reply may still arrive later and answer the next request:
+            # resynchronise before that one.
+            self.stale = True
+            raise
         if "error" in reply:
             raise RuntimeError(reply["error"].get("desc"))
         return reply.get("return")
 
     def sync(self):
-        token = int(time.time()) & 0x7FFFFFFF
-        self.request("guest-sync", {"id": token}, timeout=3)
+        """guest-sync, skipping any late replies to earlier requests."""
+        token = int(time.time() * 1000) & 0x7FFFFFFF
+        self.sock.settimeout(5)
+        self.buf = b""
+        self.sock.sendall(json.dumps({"execute": "guest-sync",
+                                      "arguments": {"id": token}}).encode() + b"\n")
+        while True:
+            try:
+                reply = json.loads(self._line())
+            except ValueError:
+                continue
+            if reply.get("return") == token:
+                self.stale = False
+                return
 
     def run(self, command, timeout=30):
+        if getattr(self, "stale", False):
+            self.sync()
         pid = self.request("guest-exec", {"path": "/bin/sh", "arg": ["-c", command],
                                           "capture-output": True})["pid"]
         deadline = time.time() + timeout

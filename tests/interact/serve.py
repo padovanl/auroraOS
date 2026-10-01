@@ -5,7 +5,8 @@
     tests/interact/do.py 'vm.click(953, 1037)' 'vm.shot("dock")'
 
 Each expression is evaluated with `vm` (a tests/interact/vm.VM) and its result is
-printed. The socket lives at /tmp/aurora-interact.sock.
+printed. The socket lives at /tmp/aurora-interact.sock, or at
+$AURORA_INTERACT_SOCK to drive several VMs at once.
 """
 
 import argparse
@@ -17,7 +18,7 @@ import traceback
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from vm import VM  # noqa: E402
 
-SOCK = "/tmp/aurora-interact.sock"
+SOCK = os.environ.get("AURORA_INTERACT_SOCK", "/tmp/aurora-interact.sock")
 
 
 def main():
