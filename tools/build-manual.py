@@ -23,7 +23,6 @@ import html
 import json
 import os
 import re
-import subprocess
 import sys
 import xml.etree.ElementTree as ET
 
@@ -663,15 +662,6 @@ def plain(body):
     text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", body, flags=re.S)
     text = re.sub(r"<[^>]+>", " ", text)
     return re.sub(r"\s+", " ", html.unescape(text)).strip()
-
-
-def last_change(paths):
-    try:
-        out = subprocess.run(["git", "log", "-1", "--format=%cs", "--"] + paths, cwd=ROOT,
-                             capture_output=True, text=True, timeout=10).stdout.strip()
-        return out
-    except (OSError, subprocess.TimeoutExpired):
-        return ""
 
 
 ICON = ('<svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><defs><linearGradient '
