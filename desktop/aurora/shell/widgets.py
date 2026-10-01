@@ -1055,7 +1055,10 @@ class WidgetLayer:
         self._menu = None
         self._drag = None           # (widget, start x, start y, moved)
         self._dropped = (None, 0)   # (widget, time) of the last drop: that click opens nothing
-        monitor.connect("notify::geometry", lambda *_: self.relayout())
+        self._relayout_source = 0
+        for prop in ("geometry", "scale-factor", "scale"):
+            if monitor.find_property(prop) is not None:
+                monitor.connect(f"notify::{prop}", lambda *_: self._relayout_soon())
         style = Adw.StyleManager.get_default()
         style.connect("notify::dark", lambda *_: self._restyle())
         iface = settings.interface()
@@ -1073,6 +1076,12 @@ class WidgetLayer:
 
     # geometry
     def area(self):
+        """The desktop's size: the wallpaper surface the widgets sit on (it
+        fills the screen). GDK's monitor geometry can be stale after a
+        fractional scale change, so it is only the fallback."""
+        width, height = self.overlay.get_width(), self.overlay.get_height()
+        if width > 0 and height > 0:
+            return width, height
         geometry = self.monitor.get_geometry()
         return geometry.width, geometry.height
 
@@ -1087,6 +1096,18 @@ class WidgetLayer:
         x, y = self.clamp(widget, int(widget.item["x"] * width), int(widget.item["y"] * height))
         widget.set_margin_start(int(x))
         widget.set_margin_top(int(y))
+
+    def _relayout_soon(self):
+        """While the scale changes, the monitor passes through in-between
+        sizes: lay out once it has settled."""
+        if self._relayout_source:
+            GLib.source_remove(self._relayout_source)
+
+        def run():
+            self._relayout_source = 0
+            self.relayout()
+            return GLib.SOURCE_REMOVE
+        self._relayout_source = GLib.timeout_add(400, run)
 
     def relayout(self):
         """The resolution changed: same places (fractions of the screen), sizes
@@ -1500,6 +1521,10 @@ class WidgetLayer:
 
     def _every_second(self):
         self._seconds += 1
+        area = self.area()
+        if area != getattr(self, "_last_area", area):
+            self._relayout_soon()
+        self._last_area = area
         for widget in self.widgets:
             if widget.interval and self._seconds % widget.interval == 0:
                 widget.update()

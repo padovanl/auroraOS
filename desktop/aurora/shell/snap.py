@@ -20,12 +20,13 @@ import time
 
 from gi.repository import Gdk, GLib, Gtk, Pango
 
-from aurora import apps, compositor, wayfirelayout
+from aurora import apps, compositor, settings, wayfirelayout
 from aurora.i18n import _
 from aurora.shell.layer import LS, Keyboard, Layer, LayerWindow
 
 from aurora.shell.snapzones import (  # noqa: F401 - re-exported for callers
-    LAYOUTS, LEFT_HALF, RIGHT_HALF, candidates, other_half, zone_geometry)
+    EDGE_BOTTOM, EDGE_LEFT, EDGE_RIGHT, EDGE_TOP, LAYOUTS, LEFT_HALF, RIGHT_HALF,
+    candidates, other_half, with_gaps, zone_geometry)
 
 PICKER_WIDTH = 96   # one layout in the picker
 PICKER_HEIGHT = 60
@@ -41,6 +42,12 @@ def _ipc(method, data=None):
     except (OSError, ValueError, ConnectionError) as err:
         print(f"aurora: snap: {method}: {err}")
         return None
+
+
+def gap():
+    """Settings → Desktop & Dock → Gaps around snapped windows, in pixels."""
+    s = settings.get()
+    return s.get_int("window-gaps") if s is not None else 0
 
 
 def place(view_id, geometry):
@@ -176,7 +183,7 @@ class SnapOverlay(LayerWindow):
         if where is None:
             return
         area = where.get("workarea") or where.get("geometry")
-        place(focused["id"], zone_geometry(zone, area))
+        place(focused["id"], with_gaps(zone_geometry(zone, area), area, gap()))
 
     def show_layouts(self):
         if not available():
@@ -228,7 +235,8 @@ class SnapOverlay(LayerWindow):
     def _chose(self, layout, zone):
         rest = [z for z in layout if z != zone]
         if self.target is not None:
-            place(self.target, self._screen(zone_geometry(zone, self.area)))
+            place(self.target, self._screen(with_gaps(zone_geometry(zone, self.area),
+                                                      self.area, gap())))
             self.placed.add(self.target)
             self._assist(rest)
         else:
@@ -286,7 +294,7 @@ class SnapOverlay(LayerWindow):
         return button
 
     def _fill(self, view_id, g):
-        place(view_id, self._screen(g))
+        place(view_id, self._screen(with_gaps(g, self.area, gap())))
         self.placed.add(view_id)
         self._assist(self.zones[1:])
 
@@ -300,6 +308,21 @@ class SnapOverlay(LayerWindow):
             self.close_overlay()
             return True
         return False
+
+    def _gap_tiled(self, view, edges):
+        """Wayfire snapped a window (Super+arrows, or dragged to an edge):
+        leave the gap from Settings around it. Not when maximized."""
+        size = gap()
+        full = EDGE_TOP | EDGE_BOTTOM | EDGE_LEFT | EDGE_RIGHT
+        if size <= 0 or not edges or edges == full or view.get("id") is None:
+            return
+        where = self._where(view.get("output-name"))
+        g = view.get("geometry")
+        if where is None or not g:
+            return
+        area = where.get("workarea") or where.get("geometry")
+        _ipc("window-rules/configure-view",
+             {"id": view["id"], "geometry": with_gaps(g, area, size)})
 
     # --- Snap Assist after Super+←/→ ------------------------------------------------
 
@@ -323,6 +346,7 @@ class SnapOverlay(LayerWindow):
 
     def _on_tiled(self, message):
         view = message.get("view") or {}
+        self._gap_tiled(view, message.get("new-edges"))
         zone = other_half(message.get("new-edges"))
         if zone is None or message.get("old-edges") == message.get("new-edges") \
                 or self.get_visible():

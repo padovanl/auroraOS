@@ -28,6 +28,22 @@ def zone_geometry(zone, area):
     return {"x": left, "y": top, "width": right - left, "height": bottom - top}
 
 
+def with_gaps(g, area, gap):
+    """A snapped window's geometry with Settings' gap around it: the full gap
+    along the work area's edges, half of it on sides shared with a neighbour,
+    so every space between windows is the same."""
+    if gap <= 0:
+        return dict(g)
+    half = gap // 2
+    left = gap if g["x"] <= area["x"] else half
+    top = gap if g["y"] <= area["y"] else half
+    right = gap if g["x"] + g["width"] >= area["x"] + area["width"] else gap - half
+    bottom = gap if g["y"] + g["height"] >= area["y"] + area["height"] else gap - half
+    return {"x": g["x"] + left, "y": g["y"] + top,
+            "width": max(1, g["width"] - left - right),
+            "height": max(1, g["height"] - top - bottom)}
+
+
 def other_half(edges):
     """The zone left free by a window snapped to a half, or None."""
     if edges == LEFT_HALF:

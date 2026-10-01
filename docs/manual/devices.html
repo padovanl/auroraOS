@@ -26,10 +26,17 @@
       <h1>Displays, Bluetooth and printers</h1>
       <p class="lead">Monitors, resolution and scale, Bluetooth devices, printers and scanners</p>
       <h2 id="displays"><a class="anchor" href="#displays" aria-hidden="true">#</a>Displays</h2>
-<p>Settings → Displays: arrangement of several monitors, which is primary, resolution, refresh
-rate, scale (for high-resolution screens) and rotation. The layout is saved in
-<span class="path">~/.config/aurora/displays.sh</span> and applied at login. Windows and widgets
-keep their proportions when the resolution changes.</p>
+<p>Settings → Displays lists each connected monitor with: on or off, resolution and refresh
+rate (★ marks the monitor's preferred mode), scale (100–200 %, for high-resolution screens) and
+orientation. As on Windows, a change must be confirmed: <em>Keep Changes</em>, or
+<em>Revert</em>, which also happens by itself after 15 seconds, so a mode the screen can't show
+never leaves you with a black screen.</p>
+<p>Kept choices are saved in <span class="path">~/.config/aurora/displays.sh</span> and applied
+at login; in the Aurora session they also go into Wayfire's configuration, so they stay when it
+is reloaded. Monitors are placed side by side automatically; arranging them by hand and choosing
+the primary one aren't in Settings yet (<code>wlr-randr --output NAME --pos X,Y</code> does it for
+the session). Desktop widgets keep their places, as fractions of the screen, and move just
+enough not to overlap on a smaller screen or a larger scale.</p>
 <h2 id="bluetooth"><a class="anchor" href="#bluetooth" aria-hidden="true">#</a>Bluetooth</h2>
 <p>Settings → Bluetooth: turn it on, make the computer visible, pair new devices (keyboards,
 mice, headphones, phones) and connect or forget paired ones. The Control Center's Bluetooth

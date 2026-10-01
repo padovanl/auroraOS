@@ -329,10 +329,12 @@ class Launcher(LayerWindow):
         spotlight = mode == "spotlight"
         for cls, on in (("mode-spotlight", spotlight), ("mode-grid", not spotlight)):
             (self.add_css_class if on else self.remove_css_class)(cls)
-        monitor_h = 900
+        # The launcher fills the screen once shown: its own height is right
+        # even when GDK's monitor size is stale after a scale change.
+        monitor_h = self.get_height()
         surface_monitor = self.get_display().get_monitors().get_item(0)
-        if surface_monitor is not None:
-            monitor_h = surface_monitor.get_geometry().height
+        if monitor_h <= 0:
+            monitor_h = surface_monitor.get_geometry().height if surface_monitor else 900
         self.root.set_margin_top(int(monitor_h * 0.2) if spotlight else 64)
         self.root.set_valign(Gtk.Align.START if spotlight else Gtk.Align.FILL)
         self.root.set_size_request(680 if spotlight else 900, -1)

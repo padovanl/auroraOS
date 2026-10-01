@@ -256,3 +256,15 @@ def test_widget_rectangles_overlap():
     assert rects_overlap((0, 0, 100, 100), (50, 50, 100, 100))
     assert not rects_overlap((0, 0, 100, 100), (100, 0, 100, 100))   # side by side
     assert not rects_overlap((0, 0, 100, 100), (0, 100, 100, 100))   # one under the other
+
+
+def test_snapped_windows_keep_the_gap():
+    from aurora.shell.snapzones import with_gaps
+    area = {"x": 0, "y": 40, "width": 1000, "height": 760}
+    left = {"x": 0, "y": 40, "width": 500, "height": 760}
+    right = {"x": 500, "y": 40, "width": 500, "height": 760}
+    assert with_gaps(left, area, 0) == left
+    l, r = with_gaps(left, area, 10), with_gaps(right, area, 10)
+    assert (l["x"], l["y"]) == (10, 50)                    # full gap at the screen's edges
+    assert r["x"] - (l["x"] + l["width"]) == 10            # the same gap between them
+    assert r["x"] + r["width"] == 990 and r["y"] + r["height"] == 790

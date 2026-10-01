@@ -28,7 +28,7 @@ def apply_labwc(s):
     cfg.save()
 
 
-def _write_gtk_css(version, imports):
+def _write_gtk_css(version, imports, rules=""):
     d = os.path.expanduser(f"~/.config/gtk-{version}.0")
     path = os.path.join(d, "gtk.css")
     user = ""
@@ -38,7 +38,7 @@ def _write_gtk_css(version, imports):
         # Keep whatever the user wrote after our managed header.
         user = text.split(GTK_MARK, 1)[1] if GTK_MARK in text else text
     os.makedirs(d, exist_ok=True)
-    head = "".join(f'@import url("file://{i}");\n' for i in imports)
+    head = "".join(f'@import url("file://{i}");\n' for i in imports) + rules
     with open(path, "w") as f:
         f.write(head + GTK_MARK + (user if user.startswith("\n") else "\n" + user))
 
@@ -98,7 +98,14 @@ def apply_gtk(s):
             imports.append(data_path("gtk", f"gtk{version}-traffic.css"))
         if version == "4" and s.get_boolean("window-animations"):
             imports.append(data_path("gtk", "gtk4-animations.css"))
-        _write_gtk_css(version, [i for i in imports if os.path.exists(i) or "gtk-accent" in i])
+        # Corner radius from Settings, for the windows apps draw themselves
+        # (libadwaita's variable; GTK 3's decoration and title bar).
+        radius = s.get_int("window-corner-radius")
+        rules = (f":root {{ --window-radius: {radius}px; }}\n" if version == "4" else
+                 f"decoration, window.csd, window.csd > .titlebar {{ "
+                 f"border-top-left-radius: {radius}px; border-top-right-radius: {radius}px; }}\n")
+        _write_gtk_css(version, [i for i in imports if os.path.exists(i) or "gtk-accent" in i],
+                       rules)
 
     wm = settings.get("org.gnome.desktop.wm.preferences")
     if wm is not None:
@@ -119,4 +126,6 @@ def apply():
 
 
 if __name__ == "__main__":
+    from gi.repository import Gio
     apply()
+    Gio.Settings.sync()     # before exiting, or the writes are lost

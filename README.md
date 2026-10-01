@@ -239,7 +239,7 @@ learning was the point. — *Luca Padovan*
   (Writer, Calc, Impress), Calendar, Contacts, Weather, Maps, Clocks, Calculator, Text
   Editor, Image Viewer, Document Viewer (PDF), Music (Rhythmbox), Videos (Celluloid, with
   codecs), Camera, Sound Recorder, Document Scanner, Backups (Déjà Dup), Remote Desktop
-  (Remmina), Transmission, Archive Manager, Disks, Disk Usage, System Monitor, Logs,
+  (Remmina), Transmission, Archive Manager, Disks, Disk Usage, Logs,
   Characters, Fonts, Power Statistics, Firmware, Passwords and Keys, App Center (GNOME
   Software with Flatpak), and **LocalSend** for sending files to any nearby device.
 - The full list, with what the tests check for each app, is in
@@ -1487,7 +1487,7 @@ set up a feature, and every place it appears has its own switch.
 | Music | **Rhythmbox** | Lollypop, Amberol | A complete music library and podcasts. |
 | Store | **GNOME Software** + Flatpak plugin | KDE Discover, our own | Covers apt, Flatpak and firmware (fwupd) updates in one place. |
 | Backups / snapshots | **Déjà Dup** / **Timeshift** | Borg/Vorta, Snapper | Déjà Dup for personal files (encrypted, incremental). Timeshift for system snapshots, automatic on btrfs (see [Snapshots](#system-snapshots-timeshift-btrfs-mode--grub-btrfs)). |
-| Personal | Calendar, Contacts, Weather, Maps, Clocks, Calculator, Camera (Snapshot), Sound Recorder, Scanner, Remmina, Transmission, Disks, Disk Usage, System Monitor, Logs, Characters, Fonts, Power Statistics, Firmware, games | — | The same everyday set Ubuntu ships (GTK 4 versions wherever they exist), listed in `config/apps.manifest` and tested to launch. |
+| Personal | Calendar, Contacts, Weather, Maps, Clocks, Calculator, Camera (Snapshot), Sound Recorder, Scanner, Remmina, Transmission, Disks, Disk Usage, Logs, Characters, Fonts, Power Statistics, Firmware, games | — | The same everyday set Ubuntu ships (GTK 4 versions wherever they exist), listed in `config/apps.manifest` and tested to launch. GNOME System Monitor stays installed but out of Launchpad: Task Manager covers it. |
 
 ### Security and privacy
 - **Firewall on by default:** ufw, the simplest way to "deny incoming, allow outgoing"
