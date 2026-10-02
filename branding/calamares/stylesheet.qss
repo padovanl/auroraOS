@@ -8,7 +8,7 @@ QWidget {
 /* The window is dark; what is inside it is transparent unless a rule below
    says otherwise. (Painting every child dark here outranks the rules for
    buttons and fields, and flattens them.) */
-#mainApp { background-color: #1a1625; }
+#mainApp { background-color: #1a1625; border-radius: 8px; }
 #mainApp QWidget { color: #f2eefa; }
 #mainApp QStackedWidget, #mainApp QFrame, #mainApp QScrollArea { background-color: transparent; }
 
@@ -21,10 +21,12 @@ QWidget {
 
 #mainApp #slideshow QTabWidget::pane {
     border: none;
+    border-radius: 8px;
     background-color: #1b1428;
 }
 #mainApp #slideshow QStackedWidget {
     padding: 0;
+    border-radius: 8px;
     background-color: #1b1428;
 }
 

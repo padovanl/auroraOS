@@ -26,6 +26,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         pkgconf \
         g++ \
         qt6-base-dev \
+        qt6-declarative-dev \
         apt-utils \
         make \
         rsync \

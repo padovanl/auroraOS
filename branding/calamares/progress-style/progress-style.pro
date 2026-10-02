@@ -1,4 +1,4 @@
-QT += widgets
+QT += widgets quickcontrols2
 TEMPLATE = lib
 CONFIG += plugin c++17
 TARGET = aurora-installer-style

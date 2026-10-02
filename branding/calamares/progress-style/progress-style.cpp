@@ -1,7 +1,11 @@
 #include <QColor>
 #include <QElapsedTimer>
+#include <QEvent>
+#include <QPainterPath>
 #include <QProgressBar>
 #include <QProxyStyle>
+#include <QQuickStyle>
+#include <QRegion>
 #include <QStylePlugin>
 #include <QStringList>
 #include <QTimer>
@@ -12,13 +16,29 @@
 class InstallerStyle : public QProxyStyle
 {
 public:
-    InstallerStyle() : QProxyStyle(QStringLiteral("Fusion")) {}
+    InstallerStyle() : QProxyStyle(QStringLiteral("Fusion"))
+    {
+        QQuickStyle::setStyle(QStringLiteral("Fusion"));
+    }
 
     using QProxyStyle::polish;
 
     void polish(QWidget* widget) override
     {
         QProxyStyle::polish(widget);
+        if (widget->objectName() == QStringLiteral("mainApp") && widget->isWindow()) {
+            widget->setAttribute(Qt::WA_TranslucentBackground);
+            widget->installEventFilter(this);
+            roundWidget(widget);
+        } else if (widget->objectName() == QStringLiteral("qml")) {
+            for (auto* parent = widget->parentWidget(); parent; parent = parent->parentWidget()) {
+                if (parent->objectName() == QStringLiteral("slideshow")) {
+                    widget->installEventFilter(this);
+                    roundWidget(widget);
+                    break;
+                }
+            }
+        }
         auto* bar = qobject_cast<QProgressBar*>(widget);
         if (!bar || bar->objectName() != QStringLiteral("exec-progress")
             || bar->findChild<QTimer*>(QStringLiteral("aurora-progress-animation")))
@@ -53,6 +73,30 @@ public:
                 .arg(stops.join(QStringLiteral(", "))));
         });
         timer->start();
+    }
+
+protected:
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if (event->type() == QEvent::Resize || event->type() == QEvent::Show) {
+            if (auto* widget = qobject_cast<QWidget*>(watched)) {
+                if (event->type() == QEvent::Show && widget->objectName() == QStringLiteral("mainApp")) {
+                    auto margins = widget->contentsMargins();
+                    margins.setBottom(std::max(16, margins.bottom()));
+                    widget->setContentsMargins(margins);
+                }
+                roundWidget(widget);
+            }
+        }
+        return QProxyStyle::eventFilter(watched, event);
+    }
+
+private:
+    static void roundWidget(QWidget* widget)
+    {
+        QPainterPath outline;
+        outline.addRoundedRect(QRectF(widget->rect()), 8, 8);
+        widget->setMask(QRegion(outline.toFillPolygon().toPolygon()));
     }
 };
 
