@@ -19,6 +19,15 @@ QWidget {
 /* Room around each page, like a sheet of paper inside the window. */
 #mainApp QStackedWidget { padding: 4px 26px 0 26px; }
 
+#mainApp #slideshow QTabWidget::pane {
+    border: none;
+    background-color: #1b1428;
+}
+#mainApp #slideshow QStackedWidget {
+    padding: 0;
+    background-color: #1b1428;
+}
+
 /* The legend under each partition bar, a little apart from it. Calamares
    paints the partitions' names in black whatever the style, so the card is
    light: Aurora's lavender, not white (a gradient comes out in stripes). */
