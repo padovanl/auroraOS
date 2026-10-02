@@ -357,11 +357,18 @@ class DesktopWidget(Gtk.Widget):
         if self.remove_button.get_visible():
             size = self.remove_button.measure(Gtk.Orientation.HORIZONTAL, -1)[1]
             self.remove_button.allocate(size, size, -1, None)
+        child = self.get_first_child()
+        while child is not None:
+            if isinstance(child, Gtk.Popover):
+                child.present()
+            child = child.get_next_sibling()
 
     def do_dispose(self):
-        for child in (self.card, self.remove_button):
-            if child is not None and child.get_parent() is self:
-                child.unparent()
+        child = self.get_first_child()
+        while child is not None:
+            sibling = child.get_next_sibling()
+            child.unparent()
+            child = sibling
         Gtk.Widget.do_dispose(self)
 
     def build(self):
@@ -1469,6 +1476,10 @@ class WidgetLayer:
                 control.connect("clicked", lambda b, k=key: self._pick_folder(widget, k, b))
             row.append(control)
             box.append(row)
+        done = Gtk.Button(label=_("Done"), halign=Gtk.Align.END,
+                          css_classes=["suggested-action"])
+        done.connect("clicked", lambda *_: pop.popdown())
+        box.append(done)
         pop.set_child(box)
         pop.set_parent(widget)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))

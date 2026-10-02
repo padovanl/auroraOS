@@ -1,5 +1,7 @@
 """Desktop widgets: the saved list, placement, sizes and the dev/gamer parsers."""
 
+import pytest
+
 from aurora.shell import devwidgets, widgets
 
 
@@ -117,3 +119,60 @@ def test_widget_options_are_saved_and_sanitised():
     items = widgets.load_list(text)
     assert items[0]["options"] == {"style": "digital"}
     assert "options" not in items[1]
+
+
+def test_widget_allocation_presents_popovers(monkeypatch):
+    from types import SimpleNamespace
+
+    if not widgets.Gtk.init_check():
+        pytest.skip("GTK display unavailable")
+    popover = widgets.Gtk.Popover()
+    presented = []
+    monkeypatch.setattr(popover, "present", lambda: presented.append(True))
+    widget = SimpleNamespace(
+        card=SimpleNamespace(allocate=lambda *_: None),
+        remove_button=SimpleNamespace(get_visible=lambda: False),
+        get_first_child=lambda: popover)
+    widgets.DesktopWidget.do_size_allocate(widget, 200, 200, -1)
+    assert presented == [True]
+
+
+def test_widget_customize_can_be_closed(monkeypatch):
+    if not widgets.Gtk.init_check():
+        pytest.skip("GTK display unavailable")
+
+    def settle():
+        loop = widgets.GLib.MainLoop()
+        widgets.GLib.timeout_add(60, lambda: (loop.quit(), False)[1])
+        loop.run()
+
+    layer = widgets.WidgetLayer.__new__(widgets.WidgetLayer)
+    layer.sizes = (170, 356)
+    saved = []
+    layer.save = lambda: saved.append(True)
+    accent = widgets.Gdk.RGBA()
+    accent.parse("#a970ff")
+    monkeypatch.setattr(widgets, "accent_rgba", lambda: accent)
+    widget = widgets.ClockWidget(layer, {"kind": "clock"})
+    window = widgets.Gtk.Window(child=widget, default_width=600, default_height=400)
+    window.present()
+    try:
+        settle()
+        for unused in range(2):
+            layer.customize(widget)
+            settle()
+            popover = widget.get_last_child()
+            assert isinstance(popover, widgets.Gtk.Popover)
+            assert popover.get_mapped()
+            assert popover.get_width() > 0 and popover.get_height() > 0
+            box = popover.get_child()
+            choice = box.get_first_child().get_next_sibling().get_last_child()
+            choice.set_selected(1)
+            assert widget.option("style") == "digital"
+            box.get_last_child().emit("clicked")
+            settle()
+            assert not popover.get_visible()
+            assert popover.get_parent() is None
+        assert saved == [True]
+    finally:
+        window.destroy()

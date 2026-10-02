@@ -247,12 +247,6 @@ Presentation {
                 fillMode: Image.PreserveAspectFit
                 smooth: true
                 asynchronous: true
-                // A slow zoom while the slide is shown.
-                NumberAnimation on scale {
-                    from: 1.0; to: 1.04; duration: 8000
-                    running: presentation.activatedInCalamares
-                    loops: Animation.Infinite
-                }
             }
         }
     }
