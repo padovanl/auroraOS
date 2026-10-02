@@ -134,7 +134,7 @@ def test_installer_progress_animation_keeps_real_value(qt_app, installer_style, 
 
 
 @pytest.mark.parametrize("size", ((1060, 660), (800, 600)))
-def test_installer_rounding_and_navigation_spacing(qt_app, installer_style, size):
+def test_slideshow_rounding_does_not_change_window_geometry(qt_app, installer_style, size):
     window = QtWidgets.QWidget()
     window.setObjectName("mainApp")
     layout = QtWidgets.QVBoxLayout(window)
@@ -162,13 +162,17 @@ def test_installer_rounding_and_navigation_spacing(qt_app, installer_style, size
         for width, height in (size, (size[0] - 80, size[1] - 40)):
             window.resize(width, height)
             qt_app.processEvents()
-            assert window.height() - navigation.geometry().bottom() - 1 >= 16
-            for widget in (window, slide):
-                assert not widget.mask().isEmpty()
-                assert not widget.mask().contains(widget.rect().topLeft())
-                assert not widget.mask().contains(widget.rect().bottomRight())
-                assert widget.mask().contains(widget.rect().center())
-                assert widget.mask().boundingRect() == widget.rect()
+            assert window.size() == QtCore.QSize(width, height)
+            assert window.mask().isEmpty()
+            assert window.contentsMargins() == QtCore.QMargins()
+            assert not slide.mask().isEmpty()
+            assert not slide.mask().contains(slide.rect().topLeft())
+            assert not slide.mask().contains(slide.rect().bottomRight())
+            assert slide.mask().contains(slide.rect().center())
+            assert slide.mask().boundingRect() == slide.rect()
+            assert navigation.layout().contentsMargins().bottom() == 16
+            for button in navigation.findChildren(QtWidgets.QPushButton):
+                assert navigation.height() - button.geometry().bottom() - 1 >= 16
     finally:
         window.close()
 

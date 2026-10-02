@@ -1,6 +1,7 @@
 #include <QColor>
 #include <QElapsedTimer>
 #include <QEvent>
+#include <QLayout>
 #include <QPainterPath>
 #include <QProgressBar>
 #include <QProxyStyle>
@@ -26,17 +27,19 @@ public:
     void polish(QWidget* widget) override
     {
         QProxyStyle::polish(widget);
-        if (widget->objectName() == QStringLiteral("mainApp") && widget->isWindow()) {
-            widget->setAttribute(Qt::WA_TranslucentBackground);
-            widget->installEventFilter(this);
-            roundWidget(widget);
-        } else if (widget->objectName() == QStringLiteral("qml")) {
+        if (widget->objectName() == QStringLiteral("qml")) {
             for (auto* parent = widget->parentWidget(); parent; parent = parent->parentWidget()) {
                 if (parent->objectName() == QStringLiteral("slideshow")) {
                     widget->installEventFilter(this);
                     roundWidget(widget);
                     break;
                 }
+            }
+        } else if (widget->objectName() == QStringLiteral("view-button-back")) {
+            if (auto* navigation = widget->parentWidget(); navigation && navigation->layout()) {
+                auto margins = navigation->layout()->contentsMargins();
+                margins.setBottom(std::max(16, margins.bottom()));
+                navigation->layout()->setContentsMargins(margins);
             }
         }
         auto* bar = qobject_cast<QProgressBar*>(widget);
@@ -79,14 +82,8 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event) override
     {
         if (event->type() == QEvent::Resize || event->type() == QEvent::Show) {
-            if (auto* widget = qobject_cast<QWidget*>(watched)) {
-                if (event->type() == QEvent::Show && widget->objectName() == QStringLiteral("mainApp")) {
-                    auto margins = widget->contentsMargins();
-                    margins.setBottom(std::max(16, margins.bottom()));
-                    widget->setContentsMargins(margins);
-                }
+            if (auto* widget = qobject_cast<QWidget*>(watched))
                 roundWidget(widget);
-            }
         }
         return QProxyStyle::eventFilter(watched, event);
     }
