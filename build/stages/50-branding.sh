@@ -41,3 +41,11 @@ cp "$OUTB"/calamares/*.png "$cal/"
 cp -r "$SRC/branding/calamares/slides" "$cal/"
 python3 "$SRC/branding/logo.py" mark "$cal/logo.png" 128
 python3 "$SRC/branding/logo.py" static "$cal/welcome.png" 360
+
+style_build="$OUTB/installer-style"
+mkdir -p "$style_build"
+qmake6 "$SRC/branding/calamares/progress-style/progress-style.pro" -o "$style_build/Makefile"
+make -C "$style_build" -j"$(nproc)"
+style_plugins="$ROOTFS/usr/lib/aurora/qt6/styles"
+mkdir -p "$style_plugins"
+cp "$style_build/libaurora-installer-style.so" "$style_plugins/"

@@ -25,6 +25,8 @@ exec sudo -n env \
     XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
     XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
     QT_QPA_PLATFORM=wayland \
+    QT_PLUGIN_PATH=/usr/lib/aurora/qt6 \
+    QT_STYLE_OVERRIDE=aurora-installer \
     QT_WAYLAND_DISABLE_WINDOWDECORATION=1 \
     LANG="${LANG:-en_US.UTF-8}" \
     calamares "$@"

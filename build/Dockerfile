@@ -24,6 +24,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         python3-cffi-backend \
         libwayland-dev \
         pkgconf \
+        g++ \
+        qt6-base-dev \
         apt-utils \
         make \
         rsync \
