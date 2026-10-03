@@ -13,7 +13,7 @@
 <header class="top">
   <button class="menu" aria-label="Contents" aria-expanded="false">☰</button>
   <a class="brand" href="index.html"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff6f91"/><stop offset="1" stop-color="#a970ff"/></linearGradient></defs><path d="M6 26 16 5l10 21" fill="none" stroke="url(#lg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="21" r="2.2" fill="#ffb86b"/></svg><span>Aurora OS <b>Documentation</b></span></a>
-  <span class="version">v0.1</span>
+    <span class="version" data-release-version>latest</span>
   <div class="search"><input type="search" id="q" placeholder="Search the documentation" autocomplete="off" aria-label="Search"><kbd class="hint">/</kbd><div id="results" role="listbox"></div></div>
   <nav class="links"><a href="../index.html">Website</a><a href="https://github.com/padovanl/auroraOS">Source</a>
   <button class="theme" aria-label="Light or dark">◐</button></nav>
@@ -32,7 +32,7 @@ connection. Building takes 20–60 minutes the first time.</p>
 <h2 id="build"><a class="anchor" href="#build" aria-hidden="true">#</a>Build</h2>
 <pre><code>git clone https://github.com/padovanl/auroraOS
 cd auroraOS
-make iso          # out/aurora-os-0.1-amd64.iso and its .sha256</code></pre>
+make iso          # out/aurora-os-VERSION-amd64.iso and its .sha256</code></pre>
 
 <h2 id="make-targets"><a class="anchor" href="#make-targets" aria-hidden="true">#</a>Make targets</h2>
 <div class="table-wrap"><table>
@@ -69,7 +69,7 @@ make iso          # out/aurora-os-0.1-amd64.iso and its .sha256</code></pre>
 session with the tools in <span class="path">desktop/dev/</span>. In a running VM,
 <code>tests/interact/serve.py</code> and <code>do.py</code> push the checkout's code and drive the
 desktop.</p>
-      <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/12-developers.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
+    <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/12-developers.html">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="glossary.html"><span>Previous</span>Glossary</a><a class="next" href="testing.html"><span>Next</span>Testing</a></nav>
     </article>
     <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#requirements">Requirements</a></li><li class="h2"><a href="#build">Build</a></li><li class="h2"><a href="#make-targets">Make targets</a></li><li class="h2"><a href="#stages">Stages</a></li><li class="h2"><a href="#changing-the-desktop-without-rebuilding">Changing the desktop without rebuilding</a></li></ul></nav>

@@ -4,6 +4,19 @@
   "use strict";
   var root = document.documentElement;
 
+  fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
+    .then(function (response) {
+      if (!response.ok) throw new Error("GitHub returned " + response.status);
+      return response.json();
+    })
+    .then(function (release) {
+      var version = release.tag_name.replace(/^v/, "");
+      document.querySelectorAll("[data-release-version]").forEach(function (element) {
+        element.textContent = version;
+      });
+    })
+    .catch(function () {});
+
   // Light or dark: the system's choice until the reader picks one.
   var themeButton = document.querySelector(".theme");
   if (themeButton) {

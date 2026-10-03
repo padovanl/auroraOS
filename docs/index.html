@@ -426,8 +426,8 @@
   <details class="verify">
     <summary>Verify your download (recommended)</summary>
     <p>In the folder where you saved both files, run:</p>
-    <div class="code"><code>sha256sum -c aurora-os-<span data-version>0.1</span>-amd64.iso.sha256</code><button class="copy" data-copy="sha256sum -c aurora-os-0.1-amd64.iso.sha256">Copy</button></div>
-    <p>On macOS use <code>shasum -a 256 -c …</code>; on Windows, <code>certutil -hashfile aurora-os-0.1-amd64.iso SHA256</code> and compare.</p>
+    <div class="code"><code>sha256sum -c aurora-os-<span data-version>latest</span>-amd64.iso.sha256</code><button class="copy" data-copy="sha256sum -c aurora-os-VERSION-amd64.iso.sha256">Copy</button></div>
+    <p>On macOS use <code>shasum -a 256 -c …</code>; on Windows, <code>certutil -hashfile aurora-os-VERSION-amd64.iso SHA256</code> and compare.</p>
   </details>
 </section>
 
@@ -454,7 +454,7 @@
       <div class="os-panel" data-panel="linux" hidden>
         <p>Use GNOME Disks → <em>Restore Disk Image</em>, or a terminal. Replace <code>sdX</code> with
           your stick. This erases it, so double-check the name with <code>lsblk</code>:</p>
-        <div class="code"><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
+        <div class="code"><code>sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
       </div>
     </li>
     <li class="reveal">

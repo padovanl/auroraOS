@@ -18,7 +18,7 @@ processors. virt-manager: enable UEFI (OVMF) if you want it.</p>
 <pre><code>sudo apt install qemu-system-x86 qemu-utils ovmf     # Debian/Ubuntu
 qemu-img create -f qcow2 aurora.qcow2 40G
 qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
-  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -cdrom aurora-os-VERSION-amd64.iso -boot d \
   -drive file=aurora.qcow2,if=virtio \
   -device virtio-vga-gl -display gtk,gl=on \
   -device intel-hda -device hda-duplex \
@@ -34,7 +34,7 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
 
 <h2>On a server, watched from another computer</h2>
 <pre><code># on the server
-build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-0.1-amd64.iso
+build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-VERSION-amd64.iso
 # on your computer
 ssh -L 5930:127.0.0.1:5930 user@server
 remote-viewer spice://127.0.0.1:5930</code></pre>
@@ -61,7 +61,7 @@ software. Your GPU can still run Aurora AI models, from Windows.</p>
 <h2>Create the VM with the script</h2>
 <p><code>tools/hyperv/New-AuroraVM.ps1</code> from Aurora's repository creates everything from the
 ISO's path. In PowerShell as administrator:</p>
-<pre><code>powershell -ExecutionPolicy Bypass -File .\New-AuroraVM.ps1 -IsoPath "$env:USERPROFILE\Desktop\aurora-os-0.1-amd64.iso"</code></pre>
+<pre><code>powershell -ExecutionPolicy Bypass -File .\New-AuroraVM.ps1 -IsoPath "$env:USERPROFILE\Desktop\aurora-os-VERSION-amd64.iso"</code></pre>
 <p>It creates “Aurora” (Generation 2, 8 GB, 4 processors, 60 GB disk in <span class="path">C:\VMs</span>),
 turns Secure Boot off, sets the boot order (DVD, disk, network), keeps Windows' standard and
 automatic checkpoints, sets the resolution and enhanced session, starts the VM and opens its

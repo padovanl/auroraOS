@@ -38,7 +38,7 @@ the release you are reading about.</p>
 </dl>
 
 <h2>Versions</h2>
-<p>This documentation describes <strong>Aurora OS 0.1</strong>. Aurora follows Debian trixie
+<p>This documentation describes the <strong>latest Aurora OS release</strong>. Aurora follows Debian trixie
 for the base system and the Linux 6.12 LTS kernel; Aurora's own desktop is updated through
 the <code>aurora-desktop</code> and <code>aurora-artwork</code> packages. See
 <a href="updates.html">Updates and restarts</a>.</p>
@@ -71,11 +71,11 @@ Secure Boot again (it boots through Debian's signed shim).</p></div>
 
 <!-- page: get-aurora | Get Aurora OS | Download or build the ISO, check it, and write it to a USB stick -->
 <h2>The ISO</h2>
-<p>Aurora OS is one file, <code>aurora-os-0.1-amd64.iso</code>, that boots on BIOS and UEFI
+<p>Aurora OS is one file, <code>aurora-os-VERSION-amd64.iso</code>, that boots on BIOS and UEFI
 computers. Download it from the <a href="../index.html#download">website</a> or build it
 yourself (<a href="building.html">Building Aurora</a>). Check the download against its
 checksum file before writing it:</p>
-<pre><code>sha256sum -c aurora-os-0.1-amd64.iso.sha256</code></pre>
+<pre><code>sha256sum -c aurora-os-VERSION-amd64.iso.sha256</code></pre>
 <p>The output must say <code>OK</code>. If it doesn't, download the ISO again.</p>
 
 <h2>Write it to a USB stick</h2>
@@ -89,7 +89,7 @@ checksum file before writing it:</p>
 <h3>On Linux, from a terminal</h3>
 <p>Find the stick's device name with <code>lsblk</code> (for example <code>/dev/sdb</code>),
 then write the image. Check the name twice: writing to the wrong disk destroys its data.</p>
-<pre><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
+<pre><code>sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
 
 <h2>Try it without a USB stick</h2>
 <p>Boot the ISO in a virtual machine: QEMU, GNOME Boxes, virt-manager, VirtualBox, VMware or

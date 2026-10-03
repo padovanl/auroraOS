@@ -13,7 +13,7 @@
 <header class="top">
   <button class="menu" aria-label="Contents" aria-expanded="false">☰</button>
   <a class="brand" href="index.html"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff6f91"/><stop offset="1" stop-color="#a970ff"/></linearGradient></defs><path d="M6 26 16 5l10 21" fill="none" stroke="url(#lg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="21" r="2.2" fill="#ffb86b"/></svg><span>Aurora OS <b>Documentation</b></span></a>
-  <span class="version">v0.1</span>
+    <span class="version" data-release-version>latest</span>
   <div class="search"><input type="search" id="q" placeholder="Search the documentation" autocomplete="off" aria-label="Search"><kbd class="hint">/</kbd><div id="results" role="listbox"></div></div>
   <nav class="links"><a href="../index.html">Website</a><a href="https://github.com/padovanl/auroraOS">Source</a>
   <button class="theme" aria-label="Light or dark">◐</button></nav>
@@ -42,7 +42,7 @@ processors. virt-manager: enable UEFI (OVMF) if you want it.</p>
 <pre><code>sudo apt install qemu-system-x86 qemu-utils ovmf     # Debian/Ubuntu
 qemu-img create -f qcow2 aurora.qcow2 40G
 qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
-  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -cdrom aurora-os-VERSION-amd64.iso -boot d \
   -drive file=aurora.qcow2,if=virtio \
   -device virtio-vga-gl -display gtk,gl=on \
   -device intel-hda -device hda-duplex \
@@ -58,7 +58,7 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
 
 <h2 id="on-a-server-watched-from-another-computer"><a class="anchor" href="#on-a-server-watched-from-another-computer" aria-hidden="true">#</a>On a server, watched from another computer</h2>
 <pre><code># on the server
-build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-0.1-amd64.iso
+build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-VERSION-amd64.iso
 # on your computer
 ssh -L 5930:127.0.0.1:5930 user@server
 remote-viewer spice://127.0.0.1:5930</code></pre>
@@ -72,7 +72,7 @@ remote-viewer spice://127.0.0.1:5930</code></pre>
 <h2 id="virtualbox-and-vmware"><a class="anchor" href="#virtualbox-and-vmware" aria-hidden="true">#</a>VirtualBox and VMware</h2>
 <p>Create a <em>Debian 64-bit</em> VM, enable EFI for UEFI, give it 128 MB of video memory and
 turn 3D acceleration on if available. The guest tools are already in Aurora.</p>
-      <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/09-vms.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
+    <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/09-vms.html">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="ai-features.html"><span>Previous</span>Where Aurora AI helps</a><a class="next" href="hyper-v.html"><span>Next</span>Hyper-V</a></nav>
     </article>
     <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#graphics-in-a-vm">Graphics in a VM</a></li><li class="h2"><a href="#gnome-boxes-and-virt-manager">GNOME Boxes and virt-manager</a></li><li class="h2"><a href="#qemu-from-a-terminal">QEMU from a terminal</a></li><li class="h2"><a href="#on-a-server-watched-from-another-computer">On a server, watched from another computer</a></li><li class="h2"><a href="#windows-with-wsl-2">Windows with WSL 2</a></li><li class="h2"><a href="#virtualbox-and-vmware">VirtualBox and VMware</a></li></ul></nav>

@@ -4,6 +4,8 @@
 
 # Aurora OS
 
+[![Latest release](https://img.shields.io/github/v/release/padovanl/auroraOS?display_name=release&label=release)](https://github.com/padovanl/auroraOS/releases/latest)
+
 **A beautiful, developer-ready Linux distribution built on Debian.**
 
 A calm macOS-inspired desktop written from scratch, the tools developers use every day
@@ -287,7 +289,7 @@ screen. Everything the installer needs is on the USB stick, so it **works offlin
 Build it (see [Build it yourself](#build-it-yourself)), or download a release when they are
 published. Check the download:
 ```sh
-sha256sum -c aurora-os-0.1-amd64.iso.sha256
+sha256sum -c aurora-os-VERSION-amd64.iso.sha256
 ```
 
 ### Try it in a virtual machine (QEMU)
@@ -304,9 +306,9 @@ make run-uefi     # the same with UEFI firmware
 ```
 `build/run-qemu.sh` takes a few options for everything else:
 ```sh
-build/run-qemu.sh --uefi --disk aurora.qcow2 aurora-os-0.1-amd64.iso   # install on a 40 GB virtual disk
+build/run-qemu.sh --uefi --disk aurora.qcow2 aurora-os-VERSION-amd64.iso   # install on a 40 GB virtual disk
 build/run-qemu.sh --uefi --disk aurora.qcow2 ''                        # start the installed system
-build/run-qemu.sh --software aurora-os-0.1-amd64.iso                   # no 3D, like Hyper-V
+build/run-qemu.sh --software aurora-os-VERSION-amd64.iso                   # no 3D, like Hyper-V
 ```
 With `--uefi --disk`, the firmware's boot entries are kept in `aurora.qcow2.vars`, as on
 a real PC.
@@ -314,7 +316,7 @@ a real PC.
 **Just the ISO**, with no repository:
 ```sh
 qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
-  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -cdrom aurora-os-VERSION-amd64.iso -boot d \
   -device virtio-vga-gl -display gtk,gl=on \
   -device intel-hda -device hda-duplex \
   -nic user,model=virtio-net-pci -usb -device usb-tablet
@@ -333,7 +335,7 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
 qemu-img create -f qcow2 aurora.qcow2 40G
 # 1. boot the ISO with the disk attached, then run "Install Aurora OS" from the dock
 qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4G \
-  -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -cdrom aurora-os-VERSION-amd64.iso -boot d \
   -drive file=aurora.qcow2,if=virtio \
   -device virtio-vga-gl -display gtk,gl=on -nic user,model=virtio-net-pci -usb -device usb-tablet
 # 2. after the installer finishes, start from the disk (no -cdrom)
@@ -349,7 +351,7 @@ slow, since every frame travels as X11. Serve the screen with SPICE on the serve
 instead, and open it through an SSH tunnel:
 ```sh
 # on the server (inside tmux or screen, so it keeps running)
-build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-0.1-amd64.iso
+build/run-qemu.sh --uefi --disk aurora.qcow2 --spice 5930 aurora-os-VERSION-amd64.iso
 # on your computer (Windows: PowerShell or cmd)
 ssh -L 5930:127.0.0.1:5930 user@server
 remote-viewer spice://127.0.0.1:5930    # virt-viewer; on Windows from virt-manager.org
@@ -381,7 +383,7 @@ switching the VM to a newer ISO.
 - **Linux, from a terminal** (replace `sdX` with your stick, and check twice, because this
   erases it):
   ```sh
-  sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync
+  sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync
   ```
 
 ### 3. Boot from the stick

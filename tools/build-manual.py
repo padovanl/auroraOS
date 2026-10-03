@@ -32,7 +32,6 @@ OUT = os.path.join(ROOT, "docs", "manual")
 DESKTOP = os.path.join(ROOT, "desktop")
 sys.path.insert(0, DESKTOP)
 REPO_URL = "https://github.com/padovanl/auroraOS"
-VERSION = "0.1"
 
 
 def esc(text):
@@ -708,7 +707,7 @@ def page_html(title, desc, body, sections, current, crumbs, prev_page, next_page
 <header class="top">
   <button class="menu" aria-label="Contents" aria-expanded="false">☰</button>
   <a class="brand" href="index.html">{ICON}<span>Aurora OS <b>Documentation</b></span></a>
-  <span class="version">v{VERSION}</span>
+    <span class="version" data-release-version>latest</span>
   <div class="search"><input type="search" id="q" placeholder="Search the documentation" autocomplete="off" aria-label="Search"><kbd class="hint">/</kbd><div id="results" role="listbox"></div></div>
   <nav class="links"><a href="../index.html">Website</a><a href="{REPO_URL}">Source</a>
   <button class="theme" aria-label="Light or dark">◐</button></nav>
@@ -721,7 +720,7 @@ def page_html(title, desc, body, sections, current, crumbs, prev_page, next_page
       <h1>{esc(title)}</h1>
       {f'<p class="lead">{esc(desc)}</p>' if desc else ""}
       {body}
-      <footer class="meta">{f"Last updated {updated} · " if updated else ""}<a href="{edit}">Edit this page</a> · Aurora OS {VERSION} · GPL-3.0-or-later</footer>
+    <footer class="meta">{f"Last updated {updated} · " if updated else ""}<a href="{edit}">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       {pager}
     </article>
     {toc(body)}
@@ -777,7 +776,7 @@ def build():
             'Use the search box (press <kbd>/</kbd>) or browse by topic.</p>'
             '<div class="areas">' + "".join(cards) + "</div>")
     with open(os.path.join(OUT, "index.html"), "w", encoding="utf-8") as f:
-        f.write(page_html("Aurora OS Documentation", f"The official documentation for Aurora OS {VERSION}.",
+        f.write(page_html("Aurora OS Documentation", "The official documentation for the latest Aurora OS release.",
                           home, sections, "index", '<a href="index.html">Documentation</a>',
                           None, flat[0] if flat else None, "", None))
     with open(os.path.join(OUT, "search.json"), "w", encoding="utf-8") as f:

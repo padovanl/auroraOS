@@ -13,7 +13,7 @@
 <header class="top">
   <button class="menu" aria-label="Contents" aria-expanded="false">☰</button>
   <a class="brand" href="index.html"><svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#ff6f91"/><stop offset="1" stop-color="#a970ff"/></linearGradient></defs><path d="M6 26 16 5l10 21" fill="none" stroke="url(#lg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="21" r="2.2" fill="#ffb86b"/></svg><span>Aurora OS <b>Documentation</b></span></a>
-  <span class="version">v0.1</span>
+    <span class="version" data-release-version>latest</span>
   <div class="search"><input type="search" id="q" placeholder="Search the documentation" autocomplete="off" aria-label="Search"><kbd class="hint">/</kbd><div id="results" role="listbox"></div></div>
   <nav class="links"><a href="../index.html">Website</a><a href="https://github.com/padovanl/auroraOS">Source</a>
   <button class="theme" aria-label="Light or dark">◐</button></nav>
@@ -26,11 +26,11 @@
       <h1>Get Aurora OS</h1>
       <p class="lead">Download or build the ISO, check it, and write it to a USB stick</p>
       <h2 id="the-iso"><a class="anchor" href="#the-iso" aria-hidden="true">#</a>The ISO</h2>
-<p>Aurora OS is one file, <code>aurora-os-0.1-amd64.iso</code>, that boots on BIOS and UEFI
+<p>Aurora OS is one file, <code>aurora-os-VERSION-amd64.iso</code>, that boots on BIOS and UEFI
 computers. Download it from the <a href="../index.html#download">website</a> or build it
 yourself (<a href="building.html">Building Aurora</a>). Check the download against its
 checksum file before writing it:</p>
-<pre><code>sha256sum -c aurora-os-0.1-amd64.iso.sha256</code></pre>
+<pre><code>sha256sum -c aurora-os-VERSION-amd64.iso.sha256</code></pre>
 <p>The output must say <code>OK</code>. If it doesn't, download the ISO again.</p>
 
 <h2 id="write-it-to-a-usb-stick"><a class="anchor" href="#write-it-to-a-usb-stick" aria-hidden="true">#</a>Write it to a USB stick</h2>
@@ -44,12 +44,12 @@ checksum file before writing it:</p>
 <h3 id="on-linux-from-a-terminal"><a class="anchor" href="#on-linux-from-a-terminal" aria-hidden="true">#</a>On Linux, from a terminal</h3>
 <p>Find the stick's device name with <code>lsblk</code> (for example <code>/dev/sdb</code>),
 then write the image. Check the name twice: writing to the wrong disk destroys its data.</p>
-<pre><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
+<pre><code>sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code></pre>
 
 <h2 id="try-it-without-a-usb-stick"><a class="anchor" href="#try-it-without-a-usb-stick" aria-hidden="true">#</a>Try it without a USB stick</h2>
 <p>Boot the ISO in a virtual machine: QEMU, GNOME Boxes, virt-manager, VirtualBox, VMware or
 Hyper-V. See <a href="virtual-machines.html">Virtual machines</a>.</p>
-      <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/01-getting-started.html">Edit this page</a> · Aurora OS 0.1 · GPL-3.0-or-later</footer>
+    <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/01-getting-started.html">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="requirements.html"><span>Previous</span>System requirements</a><a class="next" href="boot-menu.html"><span>Next</span>The boot menu</a></nav>
     </article>
     <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#the-iso">The ISO</a></li><li class="h2"><a href="#write-it-to-a-usb-stick">Write it to a USB stick</a></li><li class="h3"><a href="#on-any-system">On any system</a></li><li class="h3"><a href="#on-linux-from-a-terminal">On Linux, from a terminal</a></li><li class="h2"><a href="#try-it-without-a-usb-stick">Try it without a USB stick</a></li></ul></nav>

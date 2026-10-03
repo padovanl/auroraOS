@@ -61,7 +61,7 @@
       <div class="os-panel" data-panel="linux" hidden>
         <p>Use GNOME Disks → <em>Restore Disk Image</em>, or a terminal. Replace <code>sdX</code> with
           your stick. This erases it, so double-check the name with <code>lsblk</code>:</p>
-        <div class="code"><code>sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-0.1-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
+        <div class="code"><code>sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code><button class="copy" data-copy="sudo dd if=aurora-os-VERSION-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync">Copy</button></div>
       </div>
     </li>
     <li class="reveal">
@@ -157,7 +157,7 @@
   <div class="grid-2">
     <div class="card reveal"><h4>▶️ Live system</h4>
       <pre><code>qemu-system-x86_64 -enable-kvm -machine q35 -cpu host \
-  -smp 4 -m 4G -cdrom aurora-os-0.1-amd64.iso -boot d \
+  -smp 4 -m 4G -cdrom aurora-os-VERSION-amd64.iso -boot d \
   -device virtio-vga-gl -display gtk,gl=on \
   -device intel-hda -device hda-duplex \
   -nic user,model=virtio-net-pci -usb -device usb-tablet</code></pre>

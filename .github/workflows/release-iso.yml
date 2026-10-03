@@ -1,0 +1,70 @@
+name: Release ISO
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (for example, 0.2 or 1.0.0)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-iso
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate the version
+        shell: bash
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?([.-][0-9A-Za-z]+)*$ ]]; then
+            echo "Invalid version: $VERSION" >&2
+            exit 1
+          fi
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune --all --force
+
+      - name: Set the ISO version
+        run: sed -i "s/^AURORA_VERSION=.*/AURORA_VERSION=\"$VERSION\"/" config/aurora.conf
+
+      - name: Build the ISO
+        run: make iso
+
+      - name: Verify release artifacts
+        run: |
+          cd out
+          sha256sum --check "aurora-os-$VERSION-amd64.iso.sha256"
+
+      - name: Publish the GitHub release
+        shell: bash
+        run: |
+          tag="v$VERSION"
+          iso="out/aurora-os-$VERSION-amd64.iso"
+          checksum="$iso.sha256"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$iso" "$checksum" --clobber
+          else
+            gh release create "$tag" "$iso" "$checksum" \
+              --target "$GITHUB_SHA" \
+              --title "Aurora OS $VERSION" \
+              --generate-notes
+          fi

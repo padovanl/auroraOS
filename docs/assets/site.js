@@ -1,20 +1,42 @@
-// Aurora OS website behaviour. Edit these two constants when publishing.
+// Aurora OS website behaviour.
 const REPO = "https://github.com/padovanl/auroraOS";
-const VERSION = "0.1";
+const VERSION = "latest";
 
-const iso = `aurora-os-${VERSION}-amd64.iso`;
+const releasePage = `${REPO}/releases/latest`;
 
 // Links that point into the repository and its releases.
 document.querySelectorAll("[data-repo-link]").forEach((a) => {
   a.href = REPO + (a.dataset.path || "");
 });
 document.querySelectorAll("[data-download]").forEach((a) => {
-  a.href = `${REPO}/releases/latest/download/${iso}`;
+  a.href = releasePage;
 });
 document.querySelectorAll("[data-checksum]").forEach((a) => {
-  a.href = `${REPO}/releases/latest/download/${iso}.sha256`;
+  a.href = releasePage;
 });
 document.querySelectorAll("[data-version]").forEach((el) => { el.textContent = VERSION; });
+
+fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
+  .then((response) => {
+    if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
+    return response.json();
+  })
+  .then((release) => {
+    const iso = release.assets.find((asset) => /^aurora-os-(.+)-amd64\.iso$/.test(asset.name));
+    if (!iso) return;
+
+    const version = iso.name.match(/^aurora-os-(.+)-amd64\.iso$/)[1];
+    const checksum = release.assets.find((asset) => asset.name === `${iso.name}.sha256`);
+    document.querySelectorAll("[data-download]").forEach((a) => { a.href = iso.browser_download_url; });
+    document.querySelectorAll("[data-checksum]").forEach((a) => {
+      a.href = checksum ? checksum.browser_download_url : release.html_url;
+    });
+    document.querySelectorAll("[data-version]").forEach((el) => { el.textContent = version; });
+    document.querySelectorAll("[data-copy^='sha256sum -c aurora-os-']").forEach((button) => {
+      button.dataset.copy = `sha256sum -c ${iso.name}.sha256`;
+    });
+  })
+  .catch((error) => console.warn("Could not load the latest Aurora OS release", error));
 
 // Layout switcher.
 const captions = {
