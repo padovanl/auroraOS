@@ -11,9 +11,6 @@ document.querySelectorAll("[data-repo-link]").forEach((a) => {
 document.querySelectorAll("[data-download]").forEach((a) => {
   a.href = releasePage;
 });
-document.querySelectorAll("[data-checksum]").forEach((a) => {
-  a.href = releasePage;
-});
 document.querySelectorAll("[data-version]").forEach((el) => { el.textContent = VERSION; });
 
 fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
@@ -30,36 +27,9 @@ fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
 
     const isoName = iso ? iso.name : parts[0].name.replace(/\.part-[0-9]+$/, "");
     const version = isoName.match(/^aurora-os-(.+)-amd64\.iso$/)[1];
-    const checksum = release.assets.find((asset) => asset.name === `${isoName}.sha256`);
-    document.querySelectorAll("[data-download]").forEach((link) => {
-      if (iso) {
-        link.href = iso.browser_download_url;
-        return;
-      }
-
-      link.href = parts[0].browser_download_url;
-      link.textContent = `Download part 1 of ${parts.length}`;
-      parts.slice(1).forEach((part, index) => {
-        const partLink = link.cloneNode();
-        partLink.removeAttribute("data-download");
-        partLink.href = part.browser_download_url;
-        partLink.textContent = `Download part ${index + 2} of ${parts.length}`;
-        link.after(partLink);
-        link = partLink;
-      });
-    });
-    document.querySelectorAll("[data-checksum]").forEach((a) => {
-      a.href = checksum ? checksum.browser_download_url : release.html_url;
-    });
     document.querySelectorAll("[data-version]").forEach((el) => { el.textContent = version; });
     document.querySelectorAll("[data-copy^='sha256sum -c aurora-os-']").forEach((button) => {
       button.dataset.copy = `sha256sum -c ${isoName}.sha256`;
-    });
-    document.querySelectorAll("[data-split-download]").forEach((element) => {
-      element.hidden = Boolean(iso);
-    });
-    document.querySelectorAll("[data-iso-name]").forEach((element) => {
-      element.textContent = isoName;
     });
   })
   .catch((error) => console.warn("Could not load the latest Aurora OS release", error));
