@@ -287,7 +287,11 @@ screen. Everything the installer needs is on the USB stick, so it **works offlin
 
 ### 1. Get the ISO
 Build it (see [Build it yourself](#build-it-yourself)), or download a release when they are
-published. Check the download:
+published. GitHub limits release files to 2 GB, so larger ISOs are published in numbered
+parts: download every `.iso.part-*` file and join them before checking the download:
+```sh
+cat aurora-os-VERSION-amd64.iso.part-* > aurora-os-VERSION-amd64.iso
+```
 ```sh
 sha256sum -c aurora-os-VERSION-amd64.iso.sha256
 ```

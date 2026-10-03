@@ -59,12 +59,41 @@ jobs:
           tag="v$VERSION"
           iso="out/aurora-os-$VERSION-amd64.iso"
           checksum="$iso.sha256"
+          notes="$RUNNER_TEMP/release-notes.md"
+          assets=("$checksum")
+
+          if (( $(stat -c %s "$iso") < 2147483648 )); then
+            assets+=("$iso")
+            cat > "$notes" <<EOF
+          Download the ISO and its SHA-256 checksum, then verify it with:
+
+          \`sha256sum -c $(basename "$checksum")\`
+          EOF
+          else
+            split --bytes=1900M --numeric-suffixes=1 --suffix-length=2 \
+              "$iso" "$iso.part-"
+            mapfile -t parts < <(printf '%s\n' "$iso".part-* | sort)
+            parts_checksum="$iso.parts.sha256"
+            sha256sum "${parts[@]}" | sed 's|out/||g' > "$parts_checksum"
+            assets+=("${parts[@]}" "$parts_checksum")
+            cat > "$notes" <<EOF
+          GitHub limits each release asset to 2 GiB, so the ISO is provided in parts.
+          Download every \`.iso.part-*\` file into one directory, then rebuild and verify it:
+
+          \`cat $(basename "$iso").part-* > $(basename "$iso")\`
+
+          \`sha256sum -c $(basename "$checksum")\`
+
+          On Windows, run \`copy /b $(basename "$iso").part-* $(basename "$iso")\`.
+          EOF
+          fi
 
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "$iso" "$checksum" --clobber
+            gh release edit "$tag" --title "Aurora OS $VERSION" --notes-file "$notes"
           else
-            gh release create "$tag" "$iso" "$checksum" \
+            gh release create "$tag" \
               --target "$GITHUB_SHA" \
               --title "Aurora OS $VERSION" \
-              --generate-notes
+              --notes-file "$notes"
           fi
+          gh release upload "$tag" "${assets[@]}" --clobber

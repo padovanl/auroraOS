@@ -23,17 +23,27 @@ fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
   })
   .then((release) => {
     const iso = release.assets.find((asset) => /^aurora-os-(.+)-amd64\.iso$/.test(asset.name));
-    if (!iso) return;
+    const parts = release.assets
+      .filter((asset) => /^aurora-os-(.+)-amd64\.iso\.part-[0-9]+$/.test(asset.name))
+      .sort((left, right) => left.name.localeCompare(right.name));
+    if (!iso && !parts.length) return;
 
-    const version = iso.name.match(/^aurora-os-(.+)-amd64\.iso$/)[1];
-    const checksum = release.assets.find((asset) => asset.name === `${iso.name}.sha256`);
-    document.querySelectorAll("[data-download]").forEach((a) => { a.href = iso.browser_download_url; });
+    const isoName = iso ? iso.name : parts[0].name.replace(/\.part-[0-9]+$/, "");
+    const version = isoName.match(/^aurora-os-(.+)-amd64\.iso$/)[1];
+    const checksum = release.assets.find((asset) => asset.name === `${isoName}.sha256`);
+    document.querySelectorAll("[data-download]").forEach((a) => {
+      a.href = iso ? iso.browser_download_url : release.html_url;
+      if (!iso) a.textContent = "Download ISO parts";
+    });
     document.querySelectorAll("[data-checksum]").forEach((a) => {
       a.href = checksum ? checksum.browser_download_url : release.html_url;
     });
     document.querySelectorAll("[data-version]").forEach((el) => { el.textContent = version; });
     document.querySelectorAll("[data-copy^='sha256sum -c aurora-os-']").forEach((button) => {
-      button.dataset.copy = `sha256sum -c ${iso.name}.sha256`;
+      button.dataset.copy = `sha256sum -c ${isoName}.sha256`;
+    });
+    document.querySelectorAll("[data-split-download]").forEach((element) => {
+      element.hidden = Boolean(iso);
     });
   })
   .catch((error) => console.warn("Could not load the latest Aurora OS release", error));

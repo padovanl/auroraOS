@@ -71,10 +71,12 @@ Secure Boot again (it boots through Debian's signed shim).</p></div>
 
 <!-- page: get-aurora | Get Aurora OS | Download or build the ISO, check it, and write it to a USB stick -->
 <h2>The ISO</h2>
-<p>Aurora OS is one file, <code>aurora-os-VERSION-amd64.iso</code>, that boots on BIOS and UEFI
-computers. Download it from the <a href="../index.html#download">website</a> or build it
-yourself (<a href="building.html">Building Aurora</a>). Check the download against its
-checksum file before writing it:</p>
+<p>Aurora OS is an image named <code>aurora-os-VERSION-amd64.iso</code> that boots on BIOS and
+UEFI computers. Download it from the <a href="../index.html#download">website</a> or build it
+yourself (<a href="building.html">Building Aurora</a>). GitHub limits files to 2 GB, so a
+larger image is published in numbered parts. Download every part and join them first:</p>
+<pre><code>cat aurora-os-VERSION-amd64.iso.part-* &gt; aurora-os-VERSION-amd64.iso</code></pre>
+<p>Then check the reconstructed image against its checksum file before writing it:</p>
 <pre><code>sha256sum -c aurora-os-VERSION-amd64.iso.sha256</code></pre>
 <p>The output must say <code>OK</code>. If it doesn't, download the ISO again.</p>
 
