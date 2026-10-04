@@ -124,7 +124,7 @@ def test_widget_options_are_saved_and_sanitised():
 def test_widget_allocation_presents_popovers(monkeypatch):
     from types import SimpleNamespace
 
-    if not widgets.Gtk.init_check():
+    if not widgets.Gtk.init_check() or widgets.Gdk.Display.get_default() is None:
         pytest.skip("GTK display unavailable")
     popover = widgets.Gtk.Popover()
     presented = []
@@ -138,7 +138,7 @@ def test_widget_allocation_presents_popovers(monkeypatch):
 
 
 def test_widget_customize_can_be_closed(monkeypatch):
-    if not widgets.Gtk.init_check():
+    if not widgets.Gtk.init_check() or widgets.Gdk.Display.get_default() is None:
         pytest.skip("GTK display unavailable")
 
     def settle():

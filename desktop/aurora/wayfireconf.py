@@ -170,6 +170,12 @@ def generate():
                 config["command"][f"binding_{name}"] = key
                 config["command"][f"command_{name}"] = \
                     f"aurora-shell snap {action.get('region')}"
+            elif key and action is not None and action.get("name") == "ToggleAlwaysOnTop":
+                # labwc owns this action natively. Wayfire needs Aurora's IPC
+                # bridge, while keeping the same shared shortcut definition.
+                name = f"aurora_{index}"
+                config["command"][f"binding_{name}"] = key
+                config["command"][f"command_{name}"] = "aurora-shell always-on-top"
     config["vswitch"] = {
         "binding_left": "<ctrl> <alt> KEY_LEFT",
         "binding_right": "<ctrl> <alt> KEY_RIGHT",

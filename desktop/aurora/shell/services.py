@@ -728,6 +728,10 @@ class Recorder(GObject.Object):
             self.proc.wait(10)
         except subprocess.TimeoutExpired:
             self.proc.kill()
+            # Reap it as well as killing it.  Otherwise a stubborn recorder
+            # remains as a zombie until the shell exits, and a later toggle or
+            # process monitor still sees a recording process.
+            self.proc.wait()
         self.proc = None
         self.emit("changed")
         self.emit("saved", self.path)

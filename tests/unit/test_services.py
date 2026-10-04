@@ -1,5 +1,6 @@
 """Shell hardware services must never stop the shell on unusual hardware."""
 
+import subprocess
 from types import SimpleNamespace
 
 from aurora.shell import services
@@ -41,3 +42,35 @@ def test_a_failing_service_becomes_unavailable():
     s = _service(Broken)
     assert s.available is False and s.volume == 0.0
     assert s.icon_name == "audio-volume-muted-symbolic"
+
+
+def test_a_stubborn_recorder_is_killed_and_reaped():
+    class Process:
+        def __init__(self):
+            self.waits = 0
+            self.killed = False
+            self.signals = []
+
+        def poll(self):
+            return None
+
+        def send_signal(self, value):
+            self.signals.append(value)
+
+        def wait(self, timeout=None):
+            self.waits += 1
+            if self.waits == 1:
+                raise subprocess.TimeoutExpired("wf-recorder", timeout)
+            return -9
+
+        def kill(self):
+            self.killed = True
+
+    recorder = services.Recorder.__new__(services.Recorder)
+    services.GObject.Object.__init__(recorder)
+    recorder.proc, recorder.path = Process(), "/tmp/recording.mp4"
+    process = recorder.proc
+    recorder.stop()
+    assert process.signals == [services.signal.SIGINT]
+    assert process.killed and process.waits == 2
+    assert recorder.proc is None
