@@ -56,6 +56,7 @@ def describe_shortcut(action, command, element):
         "UnMaximize": _("Restore window size"),
         "Iconify": _("Minimize window"),
         "ToggleFullscreen": _("Full screen"),
+        "ToggleAlwaysOnTop": _("Keep window on top"),
         "ToggleMagnify": _("Zoom on or off"),
         "ZoomIn": _("Zoom in"),
         "ZoomOut": _("Zoom out"),

@@ -340,7 +340,8 @@ class Shell(Adw.Application):
                 for t in self.toplevels.toplevels:
                     cmdline.print_literal(json.dumps({
                         "app_id": t.app_id, "title": t.title, "activated": t.activated,
-                        "minimized": t.minimized, "maximized": getattr(t, "maximized", False)}) + "\n")
+                        "minimized": t.minimized, "maximized": getattr(t, "maximized", False),
+                        "fullscreen": getattr(t, "fullscreen", False)}) + "\n")
                 return 0
             return self.handle(args) or 0
         return 0

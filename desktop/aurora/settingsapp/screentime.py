@@ -4,7 +4,7 @@ time today with an optional daily limit (a reminder when it's reached)."""
 import datetime
 import json
 
-from gi.repository import Adw, Gdk, Gtk, Pango
+from gi.repository import Adw, Gdk, GLib, Gtk, Pango
 
 from aurora import apps, screentime, settings
 from aurora.i18n import _
@@ -72,8 +72,12 @@ class ScreenTime(Page):
         ranked = screentime.top(usage)
         for app_id, seconds in ranked[:15]:
             info = apps.find_app(app_id)
+            # Adw.ActionRow parses subtitle strings as Pango markup even when
+            # use-markup is disabled on some libadwaita versions.  Durations
+            # such as "< 1 min" therefore need escaping at the boundary.
             row = Adw.ActionRow(title=info.get_display_name() if info else app_id,
-                                subtitle=screentime.duration(seconds))
+                                subtitle=GLib.markup_escape_text(
+                                    screentime.duration(seconds)))
             icon = Gtk.Image(pixel_size=32)
             if info is not None and info.get_icon() is not None:
                 icon.set_from_gicon(info.get_icon())

@@ -54,10 +54,15 @@ class DesktopIcon(Gtk.Button):
     """A file on the desktop. App launchers (.desktop files) show the app's name and
     icon and start the app; everything else opens with its default app."""
 
-    def __init__(self, gfile, info=None, app=None):
+    def __init__(self, gfile, info=None, app=None, selection_key=None):
         super().__init__(css_classes=["flat", "desktop-icon"])
         self.gfile = gfile
         self.app = app
+        # Live-only launchers (notably Install Aurora OS) are real desktop
+        # icons even though they do not come from ~/Desktop and therefore have
+        # no GFile.  Give every icon a stable key so those launchers can still
+        # participate in click/rectangle selection.
+        self.selection_key = selection_key or (gfile.get_basename() if gfile else None)
         if app is None and gfile is not None and gfile.get_basename().endswith(".desktop"):
             self.app = Gio.DesktopAppInfo.new_from_filename(gfile.get_path() or "")
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
@@ -297,8 +302,8 @@ class DesktopIcons(Gtk.Fixed):
     def select(self, icon=None, extend=False):
         if not extend:
             self._selected.clear()
-        if icon is not None and icon.gfile is not None:
-            name = icon.gfile.get_basename()
+        if icon is not None and icon.selection_key is not None:
+            name = icon.selection_key
             if extend and name in self._selected:
                 self._selected.remove(name)
             else:
@@ -306,7 +311,8 @@ class DesktopIcons(Gtk.Fixed):
         self._sync_selection()
 
     def selected_files(self):
-        return [icon.gfile for name, icon in self._icons.items() if name in self._selected]
+        return [icon.gfile for name, icon in self._icons.items()
+                if name in self._selected and icon.gfile is not None]
 
     def select_rect(self, x1, y1, x2, y2, original=()):
         left, right = sorted((x1, x2))
@@ -422,7 +428,8 @@ class DesktopIcons(Gtk.Fixed):
         # The live system offers the installer on the desktop, like Ubuntu's.
         installer = Gio.DesktopAppInfo.new("aurora-installer.desktop") if is_live() else None
         if installer is not None:
-            add_icon(DesktopIcon(None, app=installer))
+            key = "__aurora_installer__"
+            add_icon(DesktopIcon(None, app=installer, selection_key=key), key)
         for info in infos[:MAX_ITEMS]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
             add_icon(icon, info.get_name())

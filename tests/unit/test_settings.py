@@ -30,6 +30,12 @@ def test_workspaces_and_regions_read_naturally():
     assert describe_shortcut("SnapToRegion", None, kb) == "Move window to the top-left quarter"
 
 
+def test_always_on_top_is_native_in_the_compatibility_session():
+    key, action, command, element = next(row for row in keybinds() if row[0] == "W-t")
+    assert action == "ToggleAlwaysOnTop" and command is None
+    assert describe_shortcut(action, command, element) == "Keep window on top"
+
+
 def test_custom_shortcuts_show_their_command():
     kb = ET.fromstring('<keybind key="W-g" aurora-custom="yes">'
                        '<action name="Execute" command="gimp" /></keybind>')

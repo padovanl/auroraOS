@@ -145,6 +145,18 @@ gsettings reset org.aurora.desktop ai-provider; gsettings reset org.aurora.deskt
 aurora-shell search "? how do I free disk space"; sleep 1.5; grim "$out/smoke/spotlight-ask.png"
 aurora-shell launcher spotlight
 
+# These tests require a real GDK display.  The unit-test container deliberately
+# skips them when no compositor is available; exercise them here so widget
+# popover allocation and repeated Customize/Done cycles remain covered.
+if PYTHONPATH=/src/desktop python3 -m pytest -q -p no:cacheprovider \
+        /src/tests/unit/test_widgets.py \
+        -k 'widget_allocation_presents_popovers or widget_customize_can_be_closed' \
+        >"$out/smoke/widget-popovers.log" 2>&1; then
+    echo "ok: widget popovers"
+else
+    echo "FAILED: widget popovers"; fail=1; tail -30 "$out/smoke/widget-popovers.log"
+fi
+
 if grep -q "Traceback" "$out/shell.log"; then
     echo "FAILED: shell raised an exception"; fail=1
     sed -n '/Traceback/,$p' "$out/shell.log" | head -30

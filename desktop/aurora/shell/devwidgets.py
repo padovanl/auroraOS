@@ -9,7 +9,10 @@ import shutil
 import subprocess
 import threading
 
-from gi.repository import GLib, Gtk, Pango
+import gi
+
+gi.require_version("Gtk", "4.0")
+from gi.repository import GLib, Gtk, Pango  # noqa: E402
 
 from aurora import apps
 from aurora.i18n import N_, _, ngettext
@@ -510,4 +513,3 @@ class GamesWidget(DesktopWidget):
     def _play(self, appid):
         if not self.layer.editing:
             apps.spawn(["xdg-open", f"steam://rungameid/{appid}"])
-

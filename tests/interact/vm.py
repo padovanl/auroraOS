@@ -146,9 +146,11 @@ class VM:
         return pushed
 
     def restart_shell(self):
-        self.user("pkill -f '^/usr/bin/python3 /usr/bin/[a]urora-shell$'; "
-                  "rm -f $XDG_RUNTIME_DIR/aurora-shell.ready; "
-                  "setsid -f aurora-shell >>$XDG_RUNTIME_DIR/aurora-shell.log 2>&1 < /dev/null; "
+        # Let the session's real watchdog restart it. Starting a replacement
+        # here detached it from that watchdog, making later crash-recovery
+        # checks fail even though the installed session behaves correctly.
+        self.user("rm -f $XDG_RUNTIME_DIR/aurora-shell.ready; "
+                  "pkill -f '^/usr/bin/python3 /usr/bin/[a]urora-shell$'; "
                   "for i in $(seq 40); do test -f $XDG_RUNTIME_DIR/aurora-shell.ready && exit 0; "
                   "sleep 0.5; done; exit 1", timeout=40)
         time.sleep(2)
