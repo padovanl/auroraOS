@@ -282,7 +282,7 @@ location and time zone (detected automatically), keyboard, disk, user and a summ
 the keyboard page, **Detect…** finds your layout with two or three questions about what
 is printed on your keys (which letters start the top row, which character is next to L). For
 the disk you can erase it, install alongside another OS, replace a partition, or partition
-by hand. It supports LUKS2 encryption and btrfs (the default, with automatic snapshots),
+by hand. It supports LUKS encryption and btrfs (the default, with automatic snapshots),
 ext4 or xfs. On the user page you set your
 name, user name, password and computer name, and choose **automatic login** or the login
 screen. Everything the installer needs is on the USB stick, so it **works offline**.
@@ -419,11 +419,14 @@ The live desktop works like Ubuntu's "Try": use it as much as you like, nothing 
    2 GB RAM, power plugged in).
 2. **Location**: click your region on the map; time zone and formats follow.
 3. **Keyboard**: pick the layout and try it in the test field.
-4. **Disk**:
+4. **Disk** (what is ready-picked follows your disks: *Erase disk* on empty ones,
+   *Install alongside* next to Windows or another system):
    - *Erase disk* for a clean install. Optionally tick **Encrypt system** and choose a
-     passphrase. Keep the file system on **btrfs** (the default) to get automatic
-     snapshots and rollback from the boot menu.
-   - *Install alongside* to keep Windows or another Linux (drag the divider to size them).
+     passphrase, typed at every start. Keep the file system on **btrfs** (the default)
+     to get automatic snapshots and rollback from the boot menu.
+   - *Install alongside* to keep Windows or another Linux: click the partition to shrink,
+     drag the divider to size them. The boot menu then offers both, and Windows' own boot
+     files are left alone.
    - *Replace a partition* or *Manual partitioning* for full control.
 5. **Users**: your name, user name, password, computer name, and whether to
    **log in automatically**.
@@ -1059,7 +1062,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   debian-installer, writing our own.
 - **Why:** Calamares is distribution-independent and used by Debian live, Manjaro, KDE
   neon, Lubuntu and many others. It handles the hard parts well: partitioning with KPMcore
-  (erase, alongside, replace, manual), LUKS2 encryption, BIOS and UEFI boot loaders. Its
+  (erase, alongside, replace, manual), LUKS encryption, BIOS and UEFI boot loaders. Its
   modules are easy to extend in Python. Subiquity and Anaconda are tied to their own
   distributions. Writing our own partitioner would put users' data at risk.
 - **Aurora additions:** our own branding and slideshow. `aurora-finalize` sets up the
@@ -1081,7 +1084,7 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   works by clicking only: Calamares shows QML pages in a widget that never gets the
   keyboard, which is also why the page has no search or "type here" field.
 
-#### File systems: btrfs by default (ext4 and xfs available); LUKS2 encryption
+#### File systems: btrfs by default (ext4 and xfs available); LUKS encryption
 - **Alternatives:** ext4 by default (Ubuntu, Debian), XFS (RHEL), ZFS (Ubuntu offered it
   experimentally).
 - **Why:** btrfs makes snapshots instant and nearly free (copy-on-write), which is what
@@ -1506,7 +1509,7 @@ set up a feature, and every place it appears has its own switch.
 - **Automatic security updates** with unattended-upgrades, like Ubuntu. Fedora and Debian
   don't do this by default.
 - **AppArmor** (Debian default) confines services and several apps.
-- **Full-disk encryption** (LUKS2) and **Secure Boot** on installed UEFI systems.
+- **Full-disk encryption** (LUKS) and **Secure Boot** on installed UEFI systems.
 - **Least privilege:** Settings never runs as root. One audited helper does privileged
   actions through polkit.
 - **No telemetry**, no crash uploads, no ads, no account required.

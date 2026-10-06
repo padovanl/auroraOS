@@ -158,8 +158,29 @@ def _grub_icons(out):
         c.arc(12, 12, 6.2, 0, 2 * math.pi)
         c.stroke()
 
+    def aurora(c):  # The installed system: Aurora's arch with its dot
+        c.move_to(4.5, 19.5)
+        c.curve_to(7, 10, 9.5, 4, 12, 4)
+        c.curve_to(14.5, 4, 17, 10, 19.5, 19.5)
+        c.stroke()
+        c.move_to(8.5, 19.5)
+        c.curve_to(10, 13.5, 11, 11, 12, 11)
+        c.curve_to(13, 11, 14, 13.5, 15.5, 19.5)
+        c.stroke()
+        c.arc(12, 17.6, 1.5, 0, 2 * math.pi)
+        c.fill()
+
+    def windows(c):  # Windows, found by os-prober: four panes
+        for x, y in ((3.5, 3.5), (12.8, 3.5), (3.5, 12.8), (12.8, 12.8)):
+            _rounded(c, x, y, 7.7, 7.7, 1.2)
+            c.fill()
+
+    # GRUB looks for icons/<class>.png, class by class: the installed menu's
+    # entries are --class aurora / windows / efi, other systems --class os.
     for name, draw in (("try", play), ("install", install), ("safe", safe),
-                       ("language", language), ("disk", disk), ("firmware", firmware)):
+                       ("language", language), ("disk", disk), ("firmware", firmware),
+                       ("aurora", aurora), ("windows", windows), ("efi", firmware),
+                       ("os", disk)):
         _icon(out, name, draw)
 
 

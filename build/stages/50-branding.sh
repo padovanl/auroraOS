@@ -29,6 +29,32 @@ for spec in "Inter-Regular:16" "Inter-Regular:18" "Inter-SemiBold:18" "Inter-Sem
         -o "$OUTB/grub/$name-$size.pf2" "$inter/$name.otf"
 done
 
+# The same look for the installed system's boot menu, in the root file system
+# (GRUB reads it there, like the kernel). Its menu has up to five entries:
+# Aurora, Advanced options, Windows (or another system), UEFI firmware
+# settings, snapshots: logo and card sit higher, rows closer, a card for five
+# that scrolls when there are more, above the key hints on a 768-pixel screen.
+installed="$ROOTFS/usr/share/grub/themes/aurora"
+rm -rf "$installed"
+mkdir -p "$installed"
+cp -r "$OUTB/grub/." "$installed/"
+rm -f "$installed/theme.txt" "$installed/theme-bios.txt"
+sed -e 's/^    top = 9%$/    top = 6%/' \
+    -e 's/^    top = 9%+124$/    top = 6%+124/' \
+    -e 's/^    top = 9%+170$/    top = 6%+170/' \
+    -e 's/^    top = 9%+212$/    top = 6%+208/' \
+    -e 's/^    item_spacing = 22$/    item_spacing = 12/' \
+    -e 's/^    height = 392$/    height = 300/' \
+    -e 's/^    scrollbar = false$/    scrollbar = true/' \
+    -e 's/Choose how to start/Choose a system/' \
+    "$OUTB/grub/theme.txt" > "$installed/theme.txt"
+# BIOS: no firmware settings entry, one row (42 px) less.
+sed 's/^    height = 300$/    height = 258/' "$installed/theme.txt" > "$installed/theme-bios.txt"
+for want in 'top = 6%+208' 'item_spacing = 12' 'height = 300'; do
+    grep -q "$want" "$installed/theme.txt" || die "installed GRUB theme: '$want' not applied"
+done
+grep -q 'height = 258' "$installed/theme-bios.txt" || die "installed GRUB theme: BIOS height not applied"
+
 # Installer branding.
 cal="$ROOTFS/etc/calamares/branding/aurora"
 mkdir -p "$cal"
