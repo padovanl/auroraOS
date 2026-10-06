@@ -37,10 +37,10 @@ change partitions or install next to another system.</p></div>
   <li><strong>Welcome.</strong> Choose the installer's language. It checks the requirements: 20 GB of disk, 2 GB of memory, and the power cable on a laptop.</li>
   <li><strong>Location.</strong> Click your region on the map, or let it be detected. This sets the time zone and the formats for dates, numbers and units. Day and month names always follow the system language; units, numbers and money follow the region.</li>
   <li><strong>Keyboard.</strong> Pick the layout and its variant, and type in the test field. Not sure which one you have? Click <strong>Detect…</strong>: it asks two or three questions about what is printed on your keys (which letters start the top row, which character is next to L) and selects the layout.</li>
-  <li><strong>Disk.</strong> Choose where Aurora goes:
+  <li><strong>Disk.</strong> Choose where Aurora goes. Nothing is picked for you on a disk that holds another system, except <em>Install alongside</em>, so Next can't wipe it by mistake:
     <ul>
       <li><em>Erase disk</em>: a clean install on the whole disk. Tick <strong>Encrypt system</strong> for full-disk encryption (LUKS2) and choose a passphrase: you'll type it at every start.</li>
-      <li><em>Install alongside</em>: keeps Windows or another Linux; drag the divider to share the disk.</li>
+      <li><em>Install alongside</em>: keeps Windows or another Linux. Click the partition to shrink in the <em>Current</em> bar (Windows' big NTFS one), then drag the divider in the <em>After</em> bar to share the space; the installer proposes half each. Its files stay as they were, and Windows' small EFI partition (100 MB is enough) is shared.</li>
       <li><em>Replace a partition</em>: installs onto one existing partition.</li>
       <li><em>Manual partitioning</em>: full control. Aurora needs a root partition (<code>/</code>) and, on UEFI, an EFI system partition (FAT32, 300 MB or more, mounted on <code>/boot/efi</code>).</li>
     </ul>
@@ -53,7 +53,7 @@ change partitions or install next to another system.</p></div>
 
 <h2 id="what-the-installer-sets-up"><a class="anchor" href="#what-the-installer-sets-up" aria-hidden="true">#</a>What the installer sets up</h2>
 <ul>
-  <li>The boot loader: GRUB, through Debian's signed shim on UEFI (Secure Boot works), or GRUB on the disk on BIOS.</li>
+  <li>The boot loader: GRUB, through Debian's signed shim on UEFI (Secure Boot works), or GRUB on the disk on BIOS. Next to Windows, the boot menu lists <em>Windows Boot Manager</em> too (for 5 seconds at every start; Aurora is the default), and Windows' own files in the EFI partition, including its fallback <code>\EFI\BOOT\BOOTX64.EFI</code>, are left alone: Aurora lives in <code>\EFI\debian</code> and starts from its own firmware entry.</li>
   <li>On btrfs: subvolumes <code>@</code> (system) and <code>@home</code> (your files) with compression, Timeshift, a “Fresh install” snapshot at first boot and the snapshots boot menu.</li>
   <li>Compressed swap in memory (zram).</li>
   <li>The firewall (on), automatic security updates (on), and the <code>trixie-backports</code> source for newer kernels when you want them.</li>

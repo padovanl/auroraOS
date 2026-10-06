@@ -49,18 +49,46 @@ fi
 direct=0
 [ "$hyperv" = 1 ] && [ "$secure_boot" = 0 ] && direct=1
 
-printf 'grub-efi-amd64 grub2/force_efi_extra_removable boolean true\n' | debconf-set-selections
-if [ "$hyperv" = 1 ]; then
-    printf 'grub-efi-amd64 grub2/update_nvram boolean false\n' | debconf-set-selections
+esp_dir=/boot/efi/EFI
+# Installed next to Windows or another system that already starts from
+# \EFI\BOOT: that copy is theirs (the firmware's last resort for them), so
+# Aurora lives in \EFI\debian only, starts from its own boot entry, and
+# reaches the other system through its GRUB menu. Decided at installation and
+# remembered; on Hyper-V the removable path is needed whatever is there.
+shared=0
+if [ "${1:-}" = --install ]; then
+    if [ "$hyperv" = 0 ] && [ -e "$esp_dir/BOOT/BOOTX64.EFI" ] &&
+       find "$esp_dir" -mindepth 1 -maxdepth 1 -type d ! -iname BOOT ! -iname debian |
+           grep -q .; then
+        shared=1
+    fi
+elif [ "$(cat "$marker" 2>/dev/null)" = shim-shared ]; then
+    shared=1
 fi
 
+removable=true
+[ "$shared" = 1 ] && removable=false
+printf 'grub-efi-amd64 grub2/force_efi_extra_removable boolean %s\n' "$removable" |
+    debconf-set-selections
+# GRUB's package scripts run grub-install on every GRUB update, into
+# \EFI\<GRUB_DISTRIBUTOR> ("aurora", a second copy) and with a new firmware
+# entry for it, put first each time. Only this helper installs: no entries
+# from the package (the installer's call below adds the one entry), and the
+# stray copy and its entries are removed further down.
+printf 'grub-efi-amd64 grub2/update_nvram boolean false\n' | debconf-set-selections
+
 args=(--target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=debian
-      --uefi-secure-boot --force-extra-removable --recheck)
+      --uefi-secure-boot --recheck)
+[ "$shared" = 1 ] || args+=(--force-extra-removable)
 # Only the installer adds a boot entry, and never on Hyper-V; updates just
 # refresh the files and leave the firmware's boot order alone.
 if [ "${1:-}" = --install ] && [ "$hyperv" = 0 ]; then
     if ! grub-install "${args[@]}"; then
-        echo 'Cannot register an EFI boot entry; the disk still boots through \EFI\BOOT' >&2
+        if [ "$shared" = 1 ]; then
+            echo 'Cannot register an EFI boot entry: choose "debian" in the firmware boot menu' >&2
+        else
+            echo 'Cannot register an EFI boot entry; the disk still boots through \EFI\BOOT' >&2
+        fi
         grub-install "${args[@]}" --no-nvram
     fi
 else
@@ -82,32 +110,57 @@ if [ "$hyperv" = 1 ] && [ "${1:-}" = --install ] && command -v efibootmgr >/dev/
     done
 fi
 
-# Both paths must be complete, with no fallback tool in \EFI\BOOT. Newer
-# grub-install copies fbx64.efi there with --force-extra-removable: remove it.
-esp_dir=/boot/efi/EFI
-for d in "$esp_dir"/BOOT "$esp_dir"/boot; do
-    rm -f "$d/fbx64.efi" "$d/FBX64.EFI"
-done
+# The copy GRUB's package scripts left in \EFI\aurora, and the firmware
+# entries pointing there on this ESP (older systems got one per GRUB update).
+stray=$(find "$esp_dir" -mindepth 1 -maxdepth 1 -type d -iname aurora | head -n1)
+if [ -n "$stray" ] && [ -e "$stray/grubx64.efi" ]; then
+    rm -rf "$stray"
+fi
+if command -v efibootmgr >/dev/null; then
+    esp=$(findmnt -no SOURCE /boot/efi)
+    partuuid=$(lsblk -no PARTUUID "$esp" 2>/dev/null | tr '[:upper:]' '[:lower:]')
+    efibootmgr -v 2>/dev/null | while read -r num rest; do
+        case "$num" in Boot[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]*) ;; *) continue ;; esac
+        lower=$(printf '%s' "$rest" | tr '[:upper:]' '[:lower:]')
+        if [ -n "$partuuid" ] && printf '%s' "$lower" | grep -q "$partuuid" &&
+           printf '%s' "$lower" | grep -qF '\efi\aurora\'; then
+            id=${num#Boot}; id=${id%\*}
+            echo "Removing EFI boot entry Boot$id (a stray copy in \\EFI\\aurora)"
+            efibootmgr -q -b "$id" -B || true
+        fi
+    done
+fi
+
 test -s "$esp_dir/debian/shimx64.efi"
 test -s "$esp_dir/debian/grubx64.efi"
 grep -q '^search' "$esp_dir/debian/grub.cfg"
-cmp -s "$esp_dir/BOOT/grubx64.efi" "$esp_dir/debian/grubx64.efi"
-test ! -e "$esp_dir/BOOT/fbx64.efi"
-if [ "$direct" = 1 ]; then
-    # After the checks above: grub-install (and GRUB's own package scripts on
-    # updates, which run before this) put shim there again each time.
-    monolithic=/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi
-    test -s "$monolithic"
-    install -m 0644 "$monolithic" "$esp_dir/BOOT/BOOTX64.EFI"
-    cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$monolithic"
+if [ "$shared" = 1 ]; then
+    : # \EFI\BOOT belongs to the other system: not touched, not checked.
 else
-    cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$esp_dir/debian/shimx64.efi"
+    # Both paths must be complete, with no fallback tool in \EFI\BOOT. Newer
+    # grub-install copies fbx64.efi there with --force-extra-removable: remove it.
+    for d in "$esp_dir"/BOOT "$esp_dir"/boot; do
+        rm -f "$d/fbx64.efi" "$d/FBX64.EFI"
+    done
+    cmp -s "$esp_dir/BOOT/grubx64.efi" "$esp_dir/debian/grubx64.efi"
+    test ! -e "$esp_dir/BOOT/fbx64.efi"
+    if [ "$direct" = 1 ]; then
+        # After the checks above: grub-install (and GRUB's own package scripts on
+        # updates, which run before this) put shim there again each time.
+        monolithic=/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi
+        test -s "$monolithic"
+        install -m 0644 "$monolithic" "$esp_dir/BOOT/BOOTX64.EFI"
+        cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$monolithic"
+    else
+        cmp -s "$esp_dir/BOOT/BOOTX64.EFI" "$esp_dir/debian/shimx64.efi"
+    fi
 fi
 grub-script-check /boot/grub/grub.cfg
 
 mode=shim
 [ "$hyperv" = 1 ] && mode=shim-no-nvram
 [ "$direct" = 1 ] && mode=direct
+[ "$shared" = 1 ] && mode=shim-shared
 echo "Aurora EFI installation: $mode"
 mkdir -p /var/lib/aurora
 printf '%s\n' "$mode" > "$marker"

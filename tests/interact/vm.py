@@ -9,6 +9,7 @@ step so a failure can be looked at.
 import importlib.util
 import json
 import os
+import shutil
 import socket
 import subprocess
 import tempfile
@@ -27,7 +28,8 @@ def quote(s):
 
 
 class VM:
-    def __init__(self, iso, out, firmware="bios", vga="virtio-vga", grub_keys=(), disk=""):
+    def __init__(self, iso, out, firmware="bios", vga="virtio-vga", grub_keys=(), disk="",
+                 nvram=""):
         self.out = out
         os.makedirs(out, exist_ok=True)
         self.tmp = tempfile.mkdtemp(prefix="aurora-interact-")
@@ -58,6 +60,12 @@ class VM:
         if firmware == "uefi":
             ovmf = next(p for p in bt.OVMF_CANDIDATES if os.path.exists(p))
             cmd += ["-drive", f"if=pflash,format=raw,readonly=on,file={ovmf}"]
+            if nvram:
+                # The firmware's boot entries, kept in a file like a PC's NVRAM
+                # (created empty the first time).
+                if not os.path.exists(nvram):
+                    shutil.copy(ovmf.replace("CODE", "VARS"), nvram)
+                cmd += ["-drive", f"if=pflash,format=raw,file={nvram}"]
         self.qemu = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         if grub_keys:
             # Pick another boot menu entry, e.g. ("down", "down", "ret") for
