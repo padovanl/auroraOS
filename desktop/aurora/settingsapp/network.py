@@ -124,9 +124,20 @@ class Network(Page):
     def _share(self, ssid):
         conn = self.net.known_connection(ssid)
         name = conn.get_id() if conn is not None else ssid
-        password = subprocess.run(["nmcli", "-s", "-g", "802-11-wireless-security.psk",
-                                   "connection", "show", name],
-                                  capture_output=True, text=True).stdout.strip()
+        try:
+            result = subprocess.run(
+                ["nmcli", "-s", "-g", "802-11-wireless-security.psk",
+                 "connection", "show", name], capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.TimeoutExpired):
+            toast(self, _("That didn't work"))
+            return
+        password = result.stdout.strip()
+        secure = conn is not None and conn.get_setting_wireless_security() is not None
+        if result.returncode != 0 or (secure and not password):
+            # Never display an open-network QR code for a protected network:
+            # phones would reject it and the dialog would misleadingly look valid.
+            toast(self, _("That didn't work"))
+            return
         try:
             svg = qr_svg(wifi_qr_payload(ssid, password))
         except ImportError:

@@ -337,13 +337,18 @@ class Network(GObject.Object):
         dev = self.wifi_device()
 
         def work():
-            if on and dev is not None:
-                ssid, password = self.hotspot_credentials()
-                ok = subprocess.run(hotspot_command(dev.get_iface(), ssid, password),
-                                    capture_output=True, timeout=40).returncode == 0
-            else:
-                ok = subprocess.run(["nmcli", "connection", "down", HOTSPOT_NAME],
-                                    capture_output=True, timeout=20).returncode == 0
+            try:
+                if on and dev is not None:
+                    ssid, password = self.hotspot_credentials()
+                    ok = subprocess.run(hotspot_command(dev.get_iface(), ssid, password),
+                                        capture_output=True, timeout=40).returncode == 0
+                elif not on:
+                    ok = subprocess.run(["nmcli", "connection", "down", HOTSPOT_NAME],
+                                        capture_output=True, timeout=20).returncode == 0
+                else:
+                    ok = False
+            except (OSError, subprocess.TimeoutExpired):
+                ok = False
             GLib.idle_add(lambda: (self.emit("changed"), done and done(ok), False)[2])
         threading.Thread(target=work, daemon=True).start()
 
@@ -752,28 +757,52 @@ class Recorder(GObject.Object):
         if sound:
             monitor = _run(["pactl", "get-default-sink"]).strip()
             cmd += [f"--audio={monitor}.monitor"] if monitor else ["--audio"]
-        self.proc = subprocess.Popen(cmd,
-                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            self.proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL,
+                                         stderr=subprocess.DEVNULL)
+        except OSError:
+            self.proc = None
+            self.path = None
+            self.emit("changed")
+            return
         self.emit("changed")
 
     def stop(self):
-        if not self.recording:
+        if self.proc is None:
             return
-        self.proc.send_signal(signal.SIGINT)
-        try:
-            self.proc.wait(10)
-        except subprocess.TimeoutExpired:
-            self.proc.kill()
-            # Reap it as well as killing it.  Otherwise a stubborn recorder
-            # remains as a zombie until the shell exits, and a later toggle or
-            # process monitor still sees a recording process.
+        if self.proc.poll() is None:
+            try:
+                self.proc.send_signal(signal.SIGINT)
+            except ProcessLookupError:
+                pass  # it exited between poll() and the signal
+            try:
+                self.proc.wait(10)
+            except subprocess.TimeoutExpired:
+                self.proc.kill()
+                # Reap it as well as killing it. Otherwise a stubborn recorder
+                # remains as a zombie until the shell exits.
+                self.proc.wait()
+        else:
             self.proc.wait()
+        path = self.path
         self.proc = None
+        self.path = None
         self.emit("changed")
-        self.emit("saved", self.path)
+        try:
+            saved = bool(path and os.path.isfile(path) and os.path.getsize(path) > 0)
+        except OSError:
+            saved = False
+        if saved:
+            self.emit("saved", path)
 
     def toggle(self, area=False, sound=False):
-        self.stop() if self.recording else self.start(area, sound)
+        if self.recording:
+            self.stop()
+        else:
+            # Reap a recorder that died on its own before starting another.
+            if self.proc is not None:
+                self.stop()
+            self.start(area, sound)
 
 
 class Media(GObject.Object):

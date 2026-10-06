@@ -841,7 +841,14 @@ class Shell(Adw.Application):
         want = s is not None and s.get_boolean("screen-sharing")
         if want and self._vnc is None and shutil.which("wayvnc"):
             from aurora import screenshare
-            self._vnc = subprocess.Popen(screenshare.command())
+            try:
+                self._vnc = subprocess.Popen(screenshare.command())
+            except OSError as err:
+                # A broken key/config or an executable that disappeared must
+                # not make the desktop restart forever at every shell launch.
+                print(f"aurora: screen sharing could not start ({err})")
+                self._vnc = None
+                s.set_boolean("screen-sharing", False)
         elif not want and self._vnc is not None:
             self._vnc.terminate()
             self._vnc = None
@@ -851,10 +858,19 @@ class Shell(Adw.Application):
         s = settings.get()
         want = s is None or s.get_boolean("clipboard-history")
         if want and self._clip_watch is None and shutil.which("wl-paste"):
-            self._clip_watch = subprocess.Popen(
-                ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"])
-            self._image_clip_watch = subprocess.Popen(
-                ["wl-paste", "--type", "image/png", "--watch", "aurora-clipboard", "store-image"])
+            try:
+                self._clip_watch = subprocess.Popen(
+                    ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"])
+                self._image_clip_watch = subprocess.Popen(
+                    ["wl-paste", "--type", "image/png", "--watch",
+                     "aurora-clipboard", "store-image"])
+            except OSError as err:
+                print(f"aurora: clipboard history could not start ({err})")
+                if self._clip_watch is not None:
+                    self._clip_watch.terminate()
+                self._clip_watch = self._image_clip_watch = None
+                if s is not None:
+                    s.set_boolean("clipboard-history", False)
         elif not want and self._clip_watch is not None:
             self._clip_watch.terminate()
             self._clip_watch = None
