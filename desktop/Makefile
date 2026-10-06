@@ -37,7 +37,10 @@ install: protocols translations wallpapers sounds
 	$(PYTHON) $(BRANDING)/icons/generate.py $(SHAREDIR)/icons
 	install -d $(SHAREDIR)/wayland-sessions $(SHAREDIR)/applications
 	install -m 644 data/wayland-sessions/*.desktop $(SHAREDIR)/wayland-sessions/
-	install -m 644 data/applications/*.desktop $(SHAREDIR)/applications/
+	# With every language's name and description (Name[it]=File…).
+	for f in data/applications/*.desktop; do \
+		msgfmt --desktop --template=$$f -d po -o $(SHAREDIR)/applications/$$(basename $$f) || exit 1; \
+	done
 	install -d $(SHAREDIR)/xdg-desktop-portal
 	install -m 644 data/portals/*.conf $(SHAREDIR)/xdg-desktop-portal/
 	install -d $(SHAREDIR)/glib-2.0/schemas
@@ -98,6 +101,10 @@ pot:
 	xgettext --from-code=UTF-8 --language=Python --keyword=_ --keyword=N_ \
 		--keyword=ngettext:1,2 --add-comments=TRANSLATORS --flag=_:1:no-python-format \
 		--package-name=aurora -o po/aurora.pot $$(find aurora -name '*.py' | sort)
+	# App names and descriptions in Launchpad, the dock and menus (the
+	# hidden helpers' entries are never shown).
+	xgettext --from-code=UTF-8 --language=Desktop -k -kName -kGenericName -kComment -j \
+		-o po/aurora.pot $$(ls data/applications/*.desktop | grep -v -e installer-window -e io.calamares)
 	for po in po/*.po; do [ -e "$$po" ] && msgmerge -q -U --backup=none $$po po/aurora.pot; done; true
 
 check:

@@ -1767,7 +1767,8 @@ LibreOffice translations.
   bundled languages (Dutch, Polish, Swedish, Turkish, Ukrainian, Chinese (Traditional),
   Korean) show Aurora's own apps in English for now.
 - **Translating Aurora's own apps:** strings use gettext (domain `aurora`). Run
-  `make -C desktop pot` to regenerate `desktop/po/aurora.pot`. Add translations to
+  `make -C desktop pot` to regenerate `desktop/po/aurora.pot`; it includes the apps'
+  names and descriptions from their `.desktop` files, merged back per language at install. Add translations to
   `desktop/po/sources/<lang>.json` (English text → translation) and run
   `tools/po-from-json.py <lang>`, or edit a `.po` file directly. They are compiled at
   build time.

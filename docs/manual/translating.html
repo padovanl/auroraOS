@@ -26,7 +26,7 @@
       <h1>Translating Aurora</h1>
       <p class="lead">Adding or fixing translations of Aurora&#x27;s own apps</p>
       <ol class="steps">
-  <li>Strings are marked with gettext (<code>_("…")</code>) in the domain <code>aurora</code>. Regenerate the template: <code>make -C desktop pot</code>.</li>
+  <li>Strings are marked with gettext (<code>_("…")</code>) in the domain <code>aurora</code>. Regenerate the template: <code>make -C desktop pot</code>. It also takes the apps' names and descriptions from <span class="path">desktop/data/applications/*.desktop</span>; <code>make install</code> writes them back with every language (<code>Name[it]=File</code>), so Launchpad and the dock show them translated. A language needs its line in <span class="path">desktop/po/LINGUAS</span>.</li>
   <li>Translations are kept as JSON in <span class="path">desktop/po/sources/LANG.json</span>: English text → translation; plurals as a list with one form per plural category.</li>
   <li>Build the <code>.po</code> file: <code>tools/po-from-json.py LANG</code>. It rejects a translation whose <code>{placeholders}</code> differ from the English, so a typo can't break the app.</li>
   <li>To add a language to the system, add a line to <span class="path">config/locales.list</span>.</li>
