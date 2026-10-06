@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -234,6 +235,53 @@ def test_incremental_build_reinstalls_same_version_desktop_packages():
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     script = open(os.path.join(root, "build", "stages", "40-desktop.sh")).read()
     assert "--reinstall" in script
+
+
+def test_admin_user_creation_is_transactional_and_uses_existing_groups_only():
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    script = open(os.path.join(root, "desktop", "libexec", "aurora-admin")).read()
+    add_user = script[script.index("    add-user)"):script.index("    delete-user)")]
+    assert add_user.index("read -r password") < add_user.index("useradd")
+    assert 'getent group "$group"' in add_user
+    assert 'if ! printf' in add_user and 'userdel --remove "$user"' in add_user
+
+
+def test_admin_user_creation_filters_groups_and_rolls_back(tmp_path):
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    script = os.path.join(root, "desktop", "libexec", "aurora-admin")
+    bindir, log = tmp_path / "bin", tmp_path / "calls"
+    bindir.mkdir()
+    commands = {
+        "getent": "#!/bin/sh\ncase \"$2\" in audio|sudo) exit 0;; *) exit 2;; esac\n",
+        "useradd": "#!/bin/sh\nprintf 'useradd:%s\\n' \"$*\" >> \"$ADMIN_TEST_LOG\"\n",
+        "chpasswd": "#!/bin/sh\ncat >/dev/null\nexit \"${ADMIN_CHPASSWD_RC:-0}\"\n",
+        "userdel": "#!/bin/sh\nprintf 'userdel:%s\\n' \"$*\" >> \"$ADMIN_TEST_LOG\"\n",
+    }
+    for name, body in commands.items():
+        path = bindir / name
+        path.write_text(body)
+        path.chmod(0o755)
+    env = dict(os.environ, PATH=f"{bindir}:/usr/bin:/bin", ADMIN_TEST_LOG=str(log),
+               ADMIN_CHPASSWD_RC="1")
+    result = subprocess.run([script, "add-user", "newuser", "New User", "yes"],
+                            input="secret\n", text=True, env=env, capture_output=True)
+    calls = log.read_text()
+    assert result.returncode == 1
+    assert "--groups audio,sudo" in calls
+    assert "docker" not in calls and "scanner" not in calls
+    assert "userdel:--remove newuser" in calls
+
+
+def test_admin_service_disable_actions_are_idempotent():
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    script = open(os.path.join(root, "desktop", "libexec", "aurora-admin")).read()
+    for command in ('ufw --force delete allow "KDE Connect"',
+                    'ufw --force delete allow "LocalSend"',
+                    "ufw --force delete allow 5900/tcp",
+                    "systemctl disable --now ssh.service",
+                    "systemctl disable --now ssh.socket"):
+        line = next(line for line in script.splitlines() if command in line)
+        assert "|| true" in line
 
 
 # --- AI languages ------------------------------------------------------------

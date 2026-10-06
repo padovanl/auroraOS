@@ -19,20 +19,22 @@ case "$cmd" in
         case "${1:-}" in
             # The marker lets Settings show the state (ufw's rules are root-only).
             on) ufw allow "KDE Connect" && mkdir -p /etc/aurora && touch /etc/aurora/phone-allowed ;;
-            off) ufw delete allow "KDE Connect"; rm -f /etc/aurora/phone-allowed ;;
+            off) ufw --force delete allow "KDE Connect" >/dev/null 2>&1 || true
+                 rm -f /etc/aurora/phone-allowed ;;
             *) exit 2 ;;
         esac ;;
     vnc)
         case "${1:-}" in
             on) ufw allow 5900/tcp comment "Aurora screen sharing" ;;
-            off) ufw delete allow 5900/tcp ;;
+            off) ufw --force delete allow 5900/tcp >/dev/null 2>&1 || true ;;
             *) exit 2 ;;
         esac ;;
     nearby)
         # LocalSend listens on port 53317 on the local network.
         case "${1:-}" in
             on) ufw allow "LocalSend" && mkdir -p /etc/aurora && touch /etc/aurora/nearby-allowed ;;
-            off) ufw delete allow "LocalSend"; rm -f /etc/aurora/nearby-allowed ;;
+            off) ufw --force delete allow "LocalSend" >/dev/null 2>&1 || true
+                 rm -f /etc/aurora/nearby-allowed ;;
             *) exit 2 ;;
         esac ;;
     battery-limit)
@@ -54,7 +56,8 @@ case "$cmd" in
     ssh)
         case "${1:-}" in
             on) systemctl enable --now ssh.service ;;
-            off) systemctl disable --now ssh.service ssh.socket ;;
+            off) systemctl disable --now ssh.service >/dev/null 2>&1 || true
+                 systemctl disable --now ssh.socket >/dev/null 2>&1 || true ;;
             *) exit 2 ;;
         esac ;;
     auto-updates)
@@ -78,12 +81,22 @@ EOF
     add-user)
         user="${1:-}"; name="${2:-}"; admin="${3:-no}"
         valid_user "$user" || exit 2
-        groups="audio,video,render,input,plugdev,netdev,lpadmin,scanner,bluetooth,users"
-        [ "$admin" = yes ] && groups="$groups,sudo,docker"
-        useradd --create-home --shell /bin/bash --comment "$name" --groups "$groups" "$user"
         # Password arrives on stdin, never on the command line.
-        IFS= read -r password
-        printf '%s:%s\n' "$user" "$password" | chpasswd ;;
+        IFS= read -r password && [ -n "$password" ] || exit 2
+        groups=""
+        wanted=(audio video render input plugdev netdev lpadmin scanner bluetooth users)
+        [ "$admin" = yes ] && wanted+=(sudo docker)
+        for group in "${wanted[@]}"; do
+            getent group "$group" >/dev/null || continue
+            groups="${groups:+$groups,}$group"
+        done
+        args=(--create-home --shell /bin/bash --comment "$name")
+        [ -n "$groups" ] && args+=(--groups "$groups")
+        useradd "${args[@]}" "$user"
+        if ! printf '%s:%s\n' "$user" "$password" | chpasswd; then
+            userdel --remove "$user" >/dev/null 2>&1 || true
+            exit 1
+        fi ;;
     delete-user)
         user="${1:-}"
         valid_user "$user" || exit 2
