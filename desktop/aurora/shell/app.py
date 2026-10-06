@@ -34,7 +34,7 @@ from aurora.shell.osd import OSD  # noqa: E402
 from aurora.shell.panel import Panel  # noqa: E402
 from aurora.shell.services import (  # noqa: E402
     Audio, Battery, Bluetooth, Brightness, Media, Microphone, Network, Power, PowerProfiles,
-    Recorder,
+    Recorder, unique_capture_path,
 )
 from aurora.shell.toplevels import ToplevelTracker  # noqa: E402
 from aurora.shell.wallpaper import Wallpaper  # noqa: E402
@@ -67,6 +67,7 @@ class Shell(Adw.Application):
         super().__init__(application_id="org.aurora.Shell",
                          flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.started = False
+        self._selecting = False
 
     # --- lifecycle ---
 
@@ -89,7 +90,7 @@ class Shell(Adw.Application):
             ("suspend", lambda *_: self.power.suspend(), None),
             ("reboot", lambda *_: self.power.reboot(), None),
             ("poweroff", lambda *_: self.power.poweroff(), None),
-            ("lock", lambda *_: self.power.lock(), None),
+            ("lock", lambda *_: self.lock(), None),
             ("logout", lambda *_: self.power.logout(), None),
         ):
             action = Gio.SimpleAction.new(name, GLib.VariantType(ptype) if ptype else None)
@@ -115,7 +116,7 @@ class Shell(Adw.Application):
         self.microphone = _service(Microphone)
         self.bluetooth = Bluetooth()
         self.power_profiles = _service(PowerProfiles)
-        self.recorder = Recorder()
+        self.recorder = Recorder(self)
         self.recorder.connect("saved", self._on_recording_saved)
         self.media = Media()
         self.toplevels = ToplevelTracker()
@@ -346,9 +347,47 @@ class Shell(Adw.Application):
             return self.handle(args) or 0
         return 0
 
+    def close_overlays(self, keep=None):
+        """Close keyboard-grabbing shell surfaces except the one being opened.
+
+        Without this, a surface can remain hidden under a newer one and consume
+        the next shortcut after the top surface closes.
+        """
+        launcher = getattr(self, "launcher", None)
+        if launcher is not None and launcher is not keep and launcher.get_visible():
+            launcher.hide_launcher()
+        overview = getattr(self, "overview", None)
+        if overview is not None and overview is not keep and overview.get_visible():
+            overview.hide_overview()
+        shortcuts = getattr(self, "shortcuts_overlay", None)
+        if shortcuts is not None and shortcuts is not keep and shortcuts.get_visible():
+            shortcuts.set_visible(False)
+        panels = getattr(self, "panels", None)
+        if panels is not None:
+            for panel in panels.windows():
+                if panel is not keep:
+                    panel.close_menus()
+
+    def begin_selection(self):
+        if self._selecting:
+            return False
+        self._selecting = True
+        return True
+
+    def end_selection(self):
+        self._selecting = False
+
+    def lock(self):
+        self.close_overlays()
+        self.power.lock()
+
     def handle(self, args):
         cmd, rest = args[0], args[1:]
         arg = rest[0] if rest else ""
+        # Area selection owns the keyboard.  Commands triggered while slurp is
+        # active must not appear later, after the user cancels with Escape.
+        if self._selecting:
+            return 0
         if cmd == "launcher":
             self.launcher.toggle(arg or None)
         elif cmd == "search":
@@ -422,6 +461,8 @@ class Shell(Adw.Application):
                 layer.set_editing(True)
         elif cmd == "keep-awake":
             self.keep_awake.set_active(not self.keep_awake.active)
+        elif cmd == "lock":
+            self.lock()
         elif cmd == "quick-settings":
             for panel in self.panels.windows()[:1]:
                 if arg == "hide":
@@ -633,7 +674,7 @@ class Shell(Adw.Application):
             for panel in self.panels.windows()[:1]:
                 panel.open_notifications()
         elif action == "lock":
-            self.power.lock()
+            self.lock()
         elif action == "screen-off":
             apps.spawn(["sh", "-c", "sleep 0.5; wlopm --off '*'"])
 
@@ -644,8 +685,7 @@ class Shell(Adw.Application):
                 or os.path.expanduser("~/Pictures")
             folder = os.path.join(pictures, "Screenshots")
         os.makedirs(folder, exist_ok=True)
-        stamp = GLib.DateTime.new_now_local().format("%Y-%m-%d_%H-%M-%S")
-        path = os.path.join(folder, f"Screenshot_{stamp}.png")
+        path = unique_capture_path(folder, "Screenshot", ".png")
         argv = ["grim"]
         if area:
             geometry = subprocess.run(["slurp"], capture_output=True, text=True).stdout.strip()
@@ -657,7 +697,12 @@ class Shell(Adw.Application):
         return path
 
     def screenshot(self, area=False):
-        path = self._grab(area)
+        if area:
+            self._grab_area_async(self._finish_screenshot)
+            return
+        self._finish_screenshot(self._grab(False))
+
+    def _finish_screenshot(self, path):
         if path is None:
             return
         if shutil.which("wl-copy"):
@@ -683,6 +728,26 @@ class Shell(Adw.Application):
                 path=GLib.markup_escape_text(path.replace(GLib.get_home_dir(), "~"))),
             path, actions=self._screenshot_actions(), on_action=on_action)
 
+    def _grab_area_async(self, callback, folder=None):
+        """Run slurp/grim without blocking shell commands; ignore them meanwhile."""
+        if not self.begin_selection():
+            return
+        import threading
+
+        def work():
+            try:
+                path = self._grab(True, folder=folder)
+            except (OSError, subprocess.SubprocessError):
+                path = None
+
+            def finish():
+                self.end_selection()
+                callback(path)
+                return False
+            GLib.idle_add(finish)
+
+        threading.Thread(target=work, daemon=True).start()
+
     def _screenshot_actions(self):
         actions = [("default", _("Open")), ("pin", _("Pin to Screen")), ("edit", _("Annotate")),
                    ("text", _("Copy Text"))]
@@ -695,9 +760,15 @@ class Shell(Adw.Application):
         """Keep a screenshot floating above the windows (an area is taken first
         when no file is given)."""
         if path is None:
-            path = self._grab(True, folder=GLib.get_user_runtime_dir())
-            if path is None:
-                return
+            self._grab_area_async(self._finish_pin_screenshot,
+                                  folder=GLib.get_user_runtime_dir())
+            return
+
+        self._finish_pin_screenshot(path)
+
+    def _finish_pin_screenshot(self, path):
+        if not path:
+            return
         from aurora.shell.pinshot import pin
         try:
             pin(self, path)
@@ -723,9 +794,9 @@ class Shell(Adw.Application):
 
     def screenshot_text(self):
         """Select an area and copy the text in it (OCR), like Live Text."""
-        path = self._grab(True, folder=GLib.get_user_runtime_dir())
-        if path is not None:
-            self.copy_text_from(path, remove=True)
+        self._grab_area_async(
+            lambda path: self.copy_text_from(path, remove=True) if path is not None else None,
+            folder=GLib.get_user_runtime_dir())
 
     def copy_text_from(self, path, remove=False):
         import threading

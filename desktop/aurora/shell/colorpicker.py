@@ -40,6 +40,9 @@ def hex_color(rgb):
 
 
 def pick(shell):
+    if not shell.begin_selection():
+        return
+
     def work():
         try:
             point = subprocess.run(["slurp", "-p", "-b", "#00000000"], capture_output=True,
@@ -54,6 +57,8 @@ def pick(shell):
             GLib.idle_add(lambda: (done(color, f"rgb({r}, {g}, {b})"), False)[1])
         except (OSError, ValueError, subprocess.SubprocessError) as e:
             GLib.idle_add(lambda: (failed(str(e)), False)[1])
+        finally:
+            GLib.idle_add(lambda: (shell.end_selection(), False)[1])
 
     def done(color, rgb):
         shell.notifications.notify(

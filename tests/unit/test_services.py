@@ -4,7 +4,7 @@ import subprocess
 from types import SimpleNamespace
 
 from aurora.shell import services
-from aurora.shell.app import _service
+from aurora.shell.app import Shell, _service
 
 
 def battery_with(props):
@@ -74,3 +74,69 @@ def test_a_stubborn_recorder_is_killed_and_reaped():
     assert process.signals == [services.signal.SIGINT]
     assert process.killed and process.waits == 2
     assert recorder.proc is None
+
+
+def test_capture_paths_do_not_replace_files_from_the_same_second(tmp_path, monkeypatch):
+    class Date:
+        def format(self, _pattern):
+            return "2026-10-05_12-34-56"
+
+    monkeypatch.setattr(services.GLib.DateTime, "new_now_local", lambda: Date())
+    first = services.unique_capture_path(str(tmp_path), "Screenshot", ".png")
+    assert first.endswith("Screenshot_2026-10-05_12-34-56.png")
+    open(first, "w").close()
+    second = services.unique_capture_path(str(tmp_path), "Screenshot", ".png")
+    assert second.endswith("Screenshot_2026-10-05_12-34-56_2.png")
+
+
+def test_opening_a_shell_surface_closes_the_others():
+    class Surface:
+        def __init__(self):
+            self.visible = True
+            self.closed = False
+
+        def get_visible(self):
+            return self.visible
+
+        def hide_launcher(self):
+            self.closed = True
+
+        def hide_overview(self):
+            self.closed = True
+
+        def set_visible(self, value):
+            self.visible = value
+            self.closed = not value
+
+        def close_menus(self):
+            self.closed = True
+
+    shell = SimpleNamespace()
+    shell.launcher, shell.overview, shell.shortcuts_overlay = Surface(), Surface(), Surface()
+    panel, keep = Surface(), Surface()
+    shell.panels = SimpleNamespace(windows=lambda: [panel, keep])
+    Shell.close_overlays(shell, keep)
+    assert shell.launcher.closed and shell.overview.closed and shell.shortcuts_overlay.closed
+    assert panel.closed and not keep.closed
+
+
+def test_cancelling_pin_selection_does_not_start_another_selection():
+    callbacks = []
+    shell = SimpleNamespace(
+        _finish_pin_screenshot=lambda path: None,
+        _grab_area_async=lambda callback, folder=None: callbacks.append(callback),
+    )
+    Shell.pin_screenshot(shell)
+    assert callbacks == [shell._finish_pin_screenshot]
+    callbacks[0](None)  # cancellation is a no-op, not a new selection
+    assert len(callbacks) == 1
+
+
+def test_lock_closes_keyboard_overlays_before_starting_lock_screen():
+    events = []
+    shell = SimpleNamespace(
+        close_overlays=lambda: events.append("close"),
+        power=SimpleNamespace(lock=lambda: events.append("lock")),
+    )
+    Shell.lock(shell)
+    assert events == ["close", "lock"]

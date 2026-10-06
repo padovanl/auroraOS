@@ -15,7 +15,10 @@ bash "$SRC/build/package-desktop.sh" "$BUILD" "$OUT/debs" "$version"
 log "installing Aurora packages"
 mkdir -p "$ROOTFS/tmp/aurora-debs"
 cp "$OUT"/debs/aurora-*_"$version"_all.deb "$ROOTFS/tmp/aurora-debs/"
-in_chroot sh -c 'apt-get install -y --allow-downgrades /tmp/aurora-debs/*.deb'
+# Development rebuilds can legitimately keep the same version (it is based on
+# the commit count) while their working-tree contents change. Reinstall local
+# packages so an incremental ISO never silently retains the previous payload.
+in_chroot sh -c 'apt-get install -y --reinstall --allow-downgrades /tmp/aurora-debs/*.deb'
 rm -rf "$ROOTFS/tmp/aurora-debs"
 
 # The Aurora archive key; the source is switched on once the repository is

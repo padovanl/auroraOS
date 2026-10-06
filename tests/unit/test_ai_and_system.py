@@ -230,6 +230,12 @@ def test_package_build_script_splits_artwork():
     assert "Maintainer: Luca Padovan" in script
 
 
+def test_incremental_build_reinstalls_same_version_desktop_packages():
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    script = open(os.path.join(root, "build", "stages", "40-desktop.sh")).read()
+    assert "--reinstall" in script
+
+
 # --- AI languages ------------------------------------------------------------
 
 class _Settings:

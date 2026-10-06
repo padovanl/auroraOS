@@ -7,6 +7,7 @@ import re
 import shutil
 import signal
 import subprocess
+import threading
 
 import gi
 from gi.repository import Gio, GLib, GObject
@@ -19,6 +20,17 @@ def _run(argv):
         return subprocess.run(argv, capture_output=True, text=True, timeout=3).stdout
     except (OSError, subprocess.TimeoutExpired):
         return ""
+
+
+def unique_capture_path(folder, prefix, suffix):
+    """Return a dated path without replacing a capture made in the same second."""
+    stamp = GLib.DateTime.new_now_local().format("%Y-%m-%d_%H-%M-%S")
+    path = os.path.join(folder, f"{prefix}_{stamp}{suffix}")
+    number = 2
+    while os.path.exists(path):
+        path = os.path.join(folder, f"{prefix}_{stamp}_{number}{suffix}")
+        number += 1
+    return path
 
 
 def audio_nodes():
@@ -680,8 +692,9 @@ class Recorder(GObject.Object):
     __gsignals__ = {"changed": (GObject.SignalFlags.RUN_FIRST, None, ()),
                     "saved": (GObject.SignalFlags.RUN_FIRST, None, (str,))}
 
-    def __init__(self):
+    def __init__(self, shell=None):
         super().__init__()
+        self.shell = shell
         self.available = shutil.which("wf-recorder") is not None
         self.proc = None
         self.path = None
@@ -695,6 +708,27 @@ class Recorder(GObject.Object):
         sound, what the computer plays is recorded too."""
         if self.recording or not self.available:
             return
+        if area and self.shell is not None:
+            if not self.shell.begin_selection():
+                return
+
+            def choose():
+                try:
+                    geometry = subprocess.run(
+                        ["slurp"], capture_output=True, text=True, timeout=120).stdout.strip()
+                except (OSError, subprocess.TimeoutExpired):
+                    geometry = ""
+
+                def finish():
+                    self.shell.end_selection()
+                    if geometry:
+                        self._start(geometry, sound)
+                    return False
+                GLib.idle_add(finish)
+
+            threading.Thread(target=choose, daemon=True).start()
+            return
+
         geometry = None
         if area:
             try:
@@ -704,12 +738,14 @@ class Recorder(GObject.Object):
                 geometry = ""
             if not geometry:
                 return      # Esc: nothing chosen
+        self._start(geometry, sound)
+
+    def _start(self, geometry, sound):
         videos = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS) \
             or os.path.expanduser("~/Videos")
         folder = os.path.join(videos, "Screencasts")
         os.makedirs(folder, exist_ok=True)
-        stamp = GLib.DateTime.new_now_local().format("%Y-%m-%d_%H-%M-%S")
-        self.path = os.path.join(folder, f"Screencast_{stamp}.mp4")
+        self.path = unique_capture_path(folder, "Screencast", ".mp4")
         cmd = ["wf-recorder", "-f", self.path]
         if geometry:
             cmd += ["-g", geometry]

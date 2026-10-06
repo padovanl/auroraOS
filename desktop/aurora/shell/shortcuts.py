@@ -30,6 +30,7 @@ class ShortcutsOverlay(LayerWindow):
         super().__init__(shell, "aurora-shortcuts", layer=Layer.OVERLAY,
                          anchors=("top", "bottom", "left", "right"), exclusive=-1,
                          keyboard=Keyboard.EXCLUSIVE)
+        self.shell = shell
         self.add_css_class("aurora-shortcuts")
         from aurora.settingsapp.inputs import _to_accel
         self._to_accel = _to_accel
@@ -66,6 +67,7 @@ class ShortcutsOverlay(LayerWindow):
         if self.get_visible():
             self.set_visible(False)
             return
+        self.shell.close_overlays(self)
         self._fill()
         self.present()
 

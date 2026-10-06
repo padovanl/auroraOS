@@ -46,6 +46,7 @@ def describe_shortcut(action, command, element):
         "aurora-files": _("Files"),
         "aurora-taskmanager": _("Task Manager"),
         "aurora-settings": _("Settings"),
+        "aurora-shell lock": _("Lock screen"),
         "aurora-lock": _("Lock screen"),
     }
     actions = {

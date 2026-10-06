@@ -325,6 +325,7 @@ class Launcher(LayerWindow):
         self.entry.set_position(-1)
 
     def show_launcher(self, mode="spotlight"):
+        self.shell.close_overlays(self)
         self.mode = mode
         spotlight = mode == "spotlight"
         for cls, on in (("mode-spotlight", spotlight), ("mode-grid", not spotlight)):

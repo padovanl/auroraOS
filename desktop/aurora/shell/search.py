@@ -427,7 +427,8 @@ SETTINGS_PAGES = [
 # --- System actions ("restart", "lock"…) ---------------------------------
 
 SYSTEM_ACTIONS = (
-    (N_("Lock Screen"), "system-lock-screen-symbolic", "lock lock screen", ["aurora-lock"]),
+    (N_("Lock Screen"), "system-lock-screen-symbolic", "lock lock screen",
+     ["aurora-shell", "lock"]),
     (N_("Sleep"), "weather-clear-night-symbolic", "sleep suspend",
      ["systemctl", "suspend"]),
     (N_("Restart"), "system-reboot-symbolic", "restart reboot", ["systemctl", "reboot"]),

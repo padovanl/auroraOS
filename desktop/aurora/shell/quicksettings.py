@@ -268,7 +268,7 @@ class QuickSettings(Gtk.Popover):
             ("applets-screenshooter-symbolic", _("Screenshot"),
              lambda: GLib.timeout_add(300, lambda: shell.screenshot(area=True) and False)),
             ("emblem-system-symbolic", _("Settings"), lambda: shell.open_settings("")),
-            ("system-lock-screen-symbolic", _("Lock"), shell.power.lock),
+            ("system-lock-screen-symbolic", _("Lock"), shell.lock),
         ):
             b = Gtk.Button(icon_name=icon, tooltip_text=tip, css_classes=["circular", "qs-round"])
             b.connect("clicked", lambda _b, cb=cb: (self.popdown(), cb()))

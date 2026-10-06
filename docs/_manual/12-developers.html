@@ -57,6 +57,7 @@ desktop.</p>
 <tr><td><code>make test-boot</code></td><td>Boots the ISO with BIOS and UEFI, checks the session and starts every default app marked <code>yes</code> in <span class="path">config/apps.manifest</span>. Transmission is marked <code>no</code>: a BitTorrent client joining its network from a test VM triggers company firewalls' P2P alerts (the VM's traffic leaves with the host's address).</td></tr>
 <tr><td><code>make test-interact</code></td><td>Uses the live desktop like a person: clicks, keys, windows.</td></tr>
 <tr><td><code>make test-shortcuts</code></td><td>Presses the documented system-wide keyboard shortcuts in a VM and checks their visible effects, launched apps and window states.</td></tr>
+<tr><td><code>make test-shortcut-edges</code></td><td>Repeats and overlaps shortcuts, cancels modal selection tools, mixes window states and checks that no input grab or process is left behind.</td></tr>
 <tr><td><code>make test-install</code></td><td>Installs Aurora in a VM and checks the installed system.</td></tr>
 </tbody></table></div>
 

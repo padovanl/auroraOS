@@ -195,6 +195,7 @@ class Overview(LayerWindow):
             self.show_overview()
 
     def show_overview(self):
+        self.shell.close_overlays(self)
         shot = os.path.join(GLib.get_user_runtime_dir(), "aurora-overview.png")
         texture = None
         try:

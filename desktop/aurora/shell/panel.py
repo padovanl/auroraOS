@@ -570,6 +570,7 @@ class Panel(LayerWindow):
         if button.get_active():
             button.popdown()
             return
+        self.shell.close_overlays(self)
         self.set_keyboard(Keyboard.EXCLUSIVE)
         GLib.timeout_add(120, lambda: button.popup() or False)
 

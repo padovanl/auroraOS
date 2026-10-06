@@ -36,6 +36,12 @@ def test_always_on_top_is_native_in_the_compatibility_session():
     assert describe_shortcut(action, command, element) == "Keep window on top"
 
 
+def test_lock_shortcut_goes_through_the_shell_to_close_overlays():
+    _key, action, command, element = next(row for row in keybinds() if row[0] == "W-l")
+    assert action == "Execute" and command == "aurora-shell lock"
+    assert describe_shortcut(action, command, element) == "Lock screen"
+
+
 def test_custom_shortcuts_show_their_command():
     kb = ET.fromstring('<keybind key="W-g" aurora-custom="yes">'
                        '<action name="Execute" command="gimp" /></keybind>')
