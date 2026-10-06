@@ -39,6 +39,9 @@ the preview, and nothing is uploaded.</p>
   <li>On an installed NVIDIA system: Settings → Software Updates → Additional Drivers.</li>
 </ol>
 
+<h2 id="the-system-doesn-t-start-recovery-mode"><a class="anchor" href="#the-system-doesn-t-start-recovery-mode" aria-hidden="true">#</a>The system doesn't start: recovery mode</h2>
+<p>In the boot menu choose <strong>Advanced options for Aurora GNU/Linux</strong>, then the entry ending in <em>(recovery mode)</em> (the previous kernel is there too, if the newest one is the problem). It starts only the essentials and, after <em>Press Enter for system maintenance</em>, gives a root terminal without asking a password: fix what's needed (<code>apt</code>, <code>journalctl -xb</code> to read what failed), then <code>systemctl default</code> to start normally or <code>reboot</code>. On btrfs, <em>Aurora OS snapshots</em> in the same menu starts yesterday's system instead.</p>
+
 <h2 id="the-desktop-doesn-t-appear-after-login"><a class="anchor" href="#the-desktop-doesn-t-appear-after-login" aria-hidden="true">#</a>The desktop doesn't appear after login</h2>
 <ul>
   <li>At the login screen choose <strong>Aurora Compatibility</strong>.</li>
@@ -89,7 +92,7 @@ aurora-wayfire-config                             # regenerate the Aurora sessio
     <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/10-troubleshooting.html">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="hyper-v.html"><span>Previous</span>Hyper-V</a><a class="next" href="faq.html"><span>Next</span>Frequently asked questions</a></nav>
     </article>
-    <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#system-health-first">System Health first</a></li><li class="h2"><a href="#the-screen-stays-black-after-the-boot-menu">The screen stays black after the boot menu</a></li><li class="h2"><a href="#the-desktop-doesn-t-appear-after-login">The desktop doesn't appear after login</a></li><li class="h2"><a href="#an-app-doesn-t-respond">An app doesn't respond</a></li><li class="h2"><a href="#no-sound">No sound</a></li><li class="h2"><a href="#no-wi-fi">No Wi-Fi</a></li><li class="h2"><a href="#an-update-broke-something">An update broke something</a></li><li class="h2"><a href="#reset-settings">Reset settings</a></li><li class="h2"><a href="#logs">Logs</a></li></ul></nav>
+    <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#system-health-first">System Health first</a></li><li class="h2"><a href="#the-screen-stays-black-after-the-boot-menu">The screen stays black after the boot menu</a></li><li class="h2"><a href="#the-system-doesn-t-start-recovery-mode">The system doesn't start: recovery mode</a></li><li class="h2"><a href="#the-desktop-doesn-t-appear-after-login">The desktop doesn't appear after login</a></li><li class="h2"><a href="#an-app-doesn-t-respond">An app doesn't respond</a></li><li class="h2"><a href="#no-sound">No sound</a></li><li class="h2"><a href="#no-wi-fi">No Wi-Fi</a></li><li class="h2"><a href="#an-update-broke-something">An update broke something</a></li><li class="h2"><a href="#reset-settings">Reset settings</a></li><li class="h2"><a href="#logs">Logs</a></li></ul></nav>
   </main>
 </div>
 <script src="manual.js"></script>

@@ -15,6 +15,9 @@ the preview, and nothing is uploaded.</p>
   <li>On an installed NVIDIA system: Settings → Software Updates → Additional Drivers.</li>
 </ol>
 
+<h2>The system doesn't start: recovery mode</h2>
+<p>In the boot menu choose <strong>Advanced options for Aurora GNU/Linux</strong>, then the entry ending in <em>(recovery mode)</em> (the previous kernel is there too, if the newest one is the problem). It starts only the essentials and, after <em>Press Enter for system maintenance</em>, gives a root terminal without asking a password: fix what's needed (<code>apt</code>, <code>journalctl -xb</code> to read what failed), then <code>systemctl default</code> to start normally or <code>reboot</code>. On btrfs, <em>Aurora OS snapshots</em> in the same menu starts yesterday's system instead.</p>
+
 <h2>The desktop doesn't appear after login</h2>
 <ul>
   <li>At the login screen choose <strong>Aurora Compatibility</strong>.</li>

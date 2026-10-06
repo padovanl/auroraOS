@@ -36,7 +36,7 @@ system, not your files in Home: rolling back never loses your documents.</p>
 
 <h2 id="if-an-update-breaks-something"><a class="anchor" href="#if-an-update-breaks-something" aria-hidden="true">#</a>If an update breaks something</h2>
 <ol class="steps">
-  <li>Restart. In the boot menu choose <strong>Aurora OS snapshots</strong> (hold <kbd>Shift</kbd> or press <kbd>Esc</kbd> while starting if the menu is hidden), then the snapshot from before the update.</li>
+  <li>Restart. In the boot menu (shown for 5 seconds at every start) choose <strong>Aurora OS snapshots</strong>, then the snapshot from before the update: each reads what it is and when, like <em>Before: apt | 2026-10-07 09:12:40</em>. Inside, pick <em>Aurora OS, Linux …</em> (the kernel versions that snapshot has).</li>
   <li>Aurora starts as it was then (read-only for the system). Check that everything works.</li>
   <li>Open <strong>Timeshift</strong> (Settings → Software Updates → Open Timeshift), select the same snapshot and click <strong>Restore</strong>. Restart once more: the rollback is permanent.</li>
 </ol>

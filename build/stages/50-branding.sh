@@ -33,7 +33,8 @@ done
 # (GRUB reads it there, like the kernel). Its menu has up to five entries:
 # Aurora, Advanced options, Windows (or another system), UEFI firmware
 # settings, snapshots: logo and card sit higher, rows closer, a card for five
-# that scrolls when there are more, above the key hints on a 768-pixel screen.
+# that scrolls when there are more, above the key hints on a 768-pixel screen;
+# wider, for "Aurora GNU/Linux, with Linux 6.12.… (recovery mode)" whole.
 installed="$ROOTFS/usr/share/grub/themes/aurora"
 rm -rf "$installed"
 mkdir -p "$installed"
@@ -44,13 +45,15 @@ sed -e 's/^    top = 9%$/    top = 6%/' \
     -e 's/^    top = 9%+170$/    top = 6%+170/' \
     -e 's/^    top = 9%+212$/    top = 6%+208/' \
     -e 's/^    item_spacing = 22$/    item_spacing = 12/' \
+    -e 's/^    left = 50%-290$/    left = 50%-390/' \
+    -e 's/^    width = 580$/    width = 780/' \
     -e 's/^    height = 392$/    height = 300/' \
     -e 's/^    scrollbar = false$/    scrollbar = true/' \
     -e 's/Choose how to start/Choose a system/' \
     "$OUTB/grub/theme.txt" > "$installed/theme.txt"
 # BIOS: no firmware settings entry, one row (42 px) less.
 sed 's/^    height = 300$/    height = 258/' "$installed/theme.txt" > "$installed/theme-bios.txt"
-for want in 'top = 6%+208' 'item_spacing = 12' 'height = 300'; do
+for want in 'top = 6%+208' 'item_spacing = 12' 'height = 300' 'width = 780'; do
     grep -q "$want" "$installed/theme.txt" || die "installed GRUB theme: '$want' not applied"
 done
 grep -q 'height = 258' "$installed/theme-bios.txt" || die "installed GRUB theme: BIOS height not applied"

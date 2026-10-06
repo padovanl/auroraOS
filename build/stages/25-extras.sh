@@ -50,8 +50,21 @@ if [ -n "$gbsrc" ]; then
     make -C "$gbsrc" install DESTDIR="$ROOTFS" PREFIX=/usr INSTALL_DOCS=false >/dev/null
     rm -rf "$gbsrc"
     chmod -x "$ROOTFS/etc/grub.d/41_snapshots-btrfs"
-    sed -i 's|^#GRUB_BTRFS_SUBMENUNAME=.*|GRUB_BTRFS_SUBMENUNAME="Aurora OS snapshots"|; s|^#GRUB_BTRFS_LIMIT=.*|GRUB_BTRFS_LIMIT="20"|' \
+    # Each snapshot reads "Fresh install | 2026-10-07 00:39:43" (what, then
+    # when), without the table header row grub-btrfs puts first: it looked like
+    # an entry and started nothing, and the path column cut off the rest.
+    sed -i 's|^#GRUB_BTRFS_SUBMENUNAME=.*|GRUB_BTRFS_SUBMENUNAME="Aurora OS snapshots"|; s|^#GRUB_BTRFS_LIMIT=.*|GRUB_BTRFS_LIMIT="20"|; s|^#GRUB_BTRFS_TITLE_FORMAT=.*|GRUB_BTRFS_TITLE_FORMAT=("description" "date")|' \
         "$ROOTFS/etc/default/grub-btrfs/config"
+    grep -q '^GRUB_BTRFS_TITLE_FORMAT=("description" "date")' "$ROOTFS/etc/default/grub-btrfs/config" ||
+        die "grub-btrfs: title format not set"
+    grep -q '^header_menu$' "$ROOTFS/etc/grub.d/41_snapshots-btrfs" ||
+        die "grub-btrfs: header_menu call not found (upstream changed?)"
+    sed -i 's/^header_menu$/: # header_menu: no table header row (Aurora)/' "$ROOTFS/etc/grub.d/41_snapshots-btrfs"
+    sed -i -f "$SRC/build/grub-btrfs-titles.sed" "$ROOTFS/etc/grub.d/41_snapshots-btrfs"
+    [ "$(grep -c "menuentry 'Aurora OS, Linux" "$ROOTFS/etc/grub.d/41_snapshots-btrfs")" = 2 ] ||
+        die "grub-btrfs: kernel titles not patched (upstream changed?)"
+    ! grep -q "{ echo }\"$" "$ROOTFS/etc/grub.d/41_snapshots-btrfs" ||
+        die "grub-btrfs: snapshot title row not removed (upstream changed?)"
 fi
 
 # adw-gtk3 is for GTK 3 apps. Its gtk-4.0 folder targets a newer GTK than
