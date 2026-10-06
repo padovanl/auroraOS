@@ -17,6 +17,16 @@ if pgrep -x calamares >/dev/null; then
     sudo -n pkill -9 -x calamares 2>/dev/null
 fi
 
+# The disk option it starts with follows the disks (aurora/installchoice.py):
+# Erase disk when they are all empty, Install alongside next to another
+# system, none otherwise. The shipped configuration says "none".
+conf=/etc/calamares/modules/partition.conf
+pick=$(sudo -n env PYTHONPATH=/usr/lib/aurora timeout 150 python3 -m aurora.installchoice 2>/dev/null)
+case "$pick" in
+    erase|alongside|none)
+        sudo -n sed -i "s/^initialPartitioningChoice:.*/initialPartitioningChoice: $pick/" "$conf" ;;
+esac
+
 # No title bar: the installer's header draws the title, centered, in Aurora's
 # font, with minimize and close (calamares-sidebar.qml). Wayfire and labwc
 # leave it undecorated too; Super+drag moves it.
