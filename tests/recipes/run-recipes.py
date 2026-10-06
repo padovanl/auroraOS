@@ -40,7 +40,7 @@ def check(recipe):
 def run(recipe):
     fd, path = tempfile.mkstemp(prefix=f"recipe-{recipe['id']}-", suffix=".sh")
     with os.fdopen(fd, "w") as f:
-        f.write("#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\n")
+        f.write("#!/bin/bash\nset -euo pipefail\nexport DEBIAN_FRONTEND=noninteractive\n")
         f.write(recipe["script"])
     start = time.time()
     try:

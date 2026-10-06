@@ -1,7 +1,8 @@
 """Dev Hub catalog: what can be installed, how, and how to tell it is installed.
 
 Every recipe installs from the vendor's official source, so users always
-get the current release. Scripts run in a visible terminal with `set -e`;
+get the current release. Scripts run in a visible terminal with strict shell
+error handling;
 anything that needs root uses sudo and asks for the password there.
 """
 
@@ -71,9 +72,13 @@ def flatpak_check(app_id):
 
 
 def docker_service(name, image, port, env=""):
-    return (f"docker volume create {name}-data >/dev/null\n"
-            f"docker run -d --name {name} --restart unless-stopped -p {port} {env} "
+    return (f"if docker container inspect {name} >/dev/null 2>&1; then\n"
+            f"    docker start {name}\n"
+            "else\n"
+            f"    docker volume create {name}-data >/dev/null\n"
+            f"    docker run -d --name {name} --restart unless-stopped -p {port} {env} "
             f"-v {name}-data:/var/lib/{name} {image}\n"
+            "fi\n"
             f"echo; echo '{name} is running on localhost:{port.split(':')[0]}'")
 
 
@@ -198,19 +203,19 @@ aws --version
     # --- data ---
     {"id": "postgres", "cat": "data", "name": N_("PostgreSQL (Docker)"), "icon": "postgresql",
      "fallback_icon": "network-server", "desc": N_("PostgreSQL 17 in a container. User and password: postgres."),
-     "check": "docker container inspect postgres",
+     "check": "test \"$(docker inspect -f '{{.State.Running}}' postgres 2>/dev/null)\" = true",
      "script": docker_service("postgres", "postgres:17", "5432:5432", "-e POSTGRES_PASSWORD=postgres")},
     {"id": "mariadb", "cat": "data", "name": N_("MariaDB (Docker)"), "icon": "mariadb",
      "fallback_icon": "network-server", "desc": N_("MariaDB in a container. Root password: mariadb."),
-     "check": "docker container inspect mariadb",
+     "check": "test \"$(docker inspect -f '{{.State.Running}}' mariadb 2>/dev/null)\" = true",
      "script": docker_service("mariadb", "mariadb:lts", "3306:3306", "-e MARIADB_ROOT_PASSWORD=mariadb")},
     {"id": "redis", "cat": "data", "name": N_("Redis (Docker)"), "icon": "redis",
      "fallback_icon": "network-server", "desc": N_("Redis key-value store in a container."),
-     "check": "docker container inspect redis",
+     "check": "test \"$(docker inspect -f '{{.State.Running}}' redis 2>/dev/null)\" = true",
      "script": docker_service("redis", "redis:7", "6379:6379")},
     {"id": "mongodb", "cat": "data", "name": N_("MongoDB (Docker)"), "icon": "mongodb",
      "fallback_icon": "network-server", "desc": N_("MongoDB document database in a container."),
-     "check": "docker container inspect mongodb",
+     "check": "test \"$(docker inspect -f '{{.State.Running}}' mongodb 2>/dev/null)\" = true",
      "script": docker_service("mongodb", "mongo:8", "27017:27017")},
     {"id": "dbeaver", "cat": "data", "name": "DBeaver", "icon": "io.dbeaver.DBeaverCommunity",
      "fallback_icon": "network-server", "desc": N_("Universal database client (Flathub)."),

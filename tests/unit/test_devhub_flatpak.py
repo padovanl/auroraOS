@@ -4,8 +4,8 @@ import os
 import subprocess
 
 from aurora.devhub.games import RECIPES as GAME_RECIPES
-from aurora.devhub.recipes import APT_REPO, RECIPES as DEV_RECIPES
-from aurora.devhub.app import install_wrapper
+from aurora.devhub.recipes import APT_REPO, RECIPES as DEV_RECIPES, docker_service
+from aurora.devhub.app import INSTALL_SCRIPT_HEADER, install_wrapper
 
 
 def test_flatpak_recipes_configure_matching_user_remote(tmp_path):
@@ -58,6 +58,28 @@ def test_install_wrapper_reports_failure_and_preserves_exit_code(tmp_path):
     assert result.returncode == 17
     assert "Installation failed" in result.stdout
     assert not recipe.exists()
+
+
+def test_recipe_header_does_not_hide_pipeline_failures():
+    result = subprocess.run(["bash"], input=INSTALL_SCRIPT_HEADER + "false | true\n",
+                            capture_output=True, text=True)
+    assert result.returncode != 0
+
+
+def test_docker_service_restarts_an_existing_container():
+    script = docker_service("postgres", "postgres:17", "5432:5432")
+    assert "docker container inspect postgres" in script
+    assert "docker start postgres" in script
+    assert "docker run -d --name postgres" in script
+    assert script.index("docker start postgres") < script.index("docker run -d --name postgres")
+
+
+def test_docker_service_checks_require_a_running_container():
+    services = {"postgres", "mariadb", "redis", "mongodb"}
+    recipes = [recipe for recipe in DEV_RECIPES if recipe["id"] in services]
+    assert {recipe["id"] for recipe in recipes} == services
+    for recipe in recipes:
+        assert ".State.Running" in recipe["check"]
 
 
 def test_external_repositories_remove_conflicting_legacy_definition_first():

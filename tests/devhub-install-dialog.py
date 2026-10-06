@@ -3,6 +3,7 @@
 
 import os
 import shlex
+import sys
 import tempfile
 import time
 
@@ -22,16 +23,18 @@ class Card:
             "check": f"test -f {shlex.quote(marker)}",
         }
         self.refreshed = False
+        self.install_failed = False
 
     def refresh(self):
         self.refreshed = True
 
 
 class TestApp(Adw.Application):
-    def __init__(self, recipe_path, marker):
+    def __init__(self, recipe_path, marker, expect_success):
         super().__init__(application_id="org.aurora.DevHub.InstallDialogTest")
         self.recipe_path = recipe_path
         self.marker = marker
+        self.expect_success = expect_success
         self.ok = False
 
     def do_activate(self):
@@ -51,8 +54,10 @@ class TestApp(Adw.Application):
         def check():
             if dialog.running and time.monotonic() < deadline:
                 return GLib.SOURCE_CONTINUE
+            expected_status = "installed" if self.expect_success else "failed"
             self.ok = (not dialog.running and os.path.exists(self.marker) and
-                       card.refreshed and "installed" in dialog.status.get_label().lower())
+                       card.refreshed and card.install_failed is not self.expect_success and
+                       expected_status in dialog.status.get_label().lower())
             dialog.close()
             parent.close()
             self.quit()
@@ -66,13 +71,16 @@ class TestApp(Adw.Application):
 
 
 def main():
+    expect_success = "--fail-after-install" not in sys.argv[1:]
     marker_fd, marker = tempfile.mkstemp(prefix="devhub-dialog-result-")
     os.close(marker_fd)
     os.remove(marker)
     fd, recipe = tempfile.mkstemp(prefix="devhub-dialog-recipe-", suffix=".sh")
     with os.fdopen(fd, "w") as stream:
         stream.write(f"#!/bin/bash\nprintf done > {shlex.quote(marker)}\n")
-    app = TestApp(recipe, marker)
+        if not expect_success:
+            stream.write("exit 17\n")
+    app = TestApp(recipe, marker, expect_success)
     app.run([])
     if os.path.exists(marker):
         os.remove(marker)

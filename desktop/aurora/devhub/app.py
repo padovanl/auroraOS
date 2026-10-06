@@ -54,6 +54,9 @@ def install_wrapper(path):
             "exit $status")
 
 
+INSTALL_SCRIPT_HEADER = "#!/bin/bash\nset -euo pipefail\n"
+
+
 class InstallWindow(Adw.Window):
     """A friendly, in-app terminal for recipes that may ask for sudo."""
 
@@ -128,6 +131,9 @@ class InstallWindow(Adw.Window):
         if not self.running:
             return
         self.running = False
+        # A recipe can install its executable and still fail during a later
+        # setup step. Keep the card retryable until the whole recipe succeeds.
+        self.card.install_failed = not success
         activities.update(self.activity_id, status="finished" if success else "failed",
                           progress=1.0 if success else 0,
                           error="" if success else detail or _("Installation failed"))
@@ -149,6 +155,7 @@ class Card(Gtk.Box):
                          css_classes=["card", "devhub-card"])
         self.win = win
         self.recipe = recipe
+        self.install_failed = False
         self.set_size_request(240, 190)
         self.append(Gtk.Image(icon_name=icon_for(recipe), pixel_size=48, halign=Gtk.Align.START))
         self.append(Gtk.Label(label=_(recipe["name"]), xalign=0, css_classes=["title-4"]))
@@ -161,7 +168,7 @@ class Card(Gtk.Box):
         self.refresh()
 
     def refresh(self):
-        done = is_installed(self.recipe)
+        done = is_installed(self.recipe) and not self.install_failed
         self.button.set_label(_("Installed") if done else _("Install"))
         self.button.set_sensitive(not done)
         for c in ("suggested-action",):
@@ -342,7 +349,7 @@ class DevHub(Adw.ApplicationWindow):
         r = card.recipe
         fd, path = tempfile.mkstemp(prefix=f"devhub-{r['id']}-", suffix=".sh")
         with os.fdopen(fd, "w") as f:
-            f.write("#!/bin/bash\nset -e\n")
+            f.write(INSTALL_SCRIPT_HEADER)
             f.write(f"echo '▶ Installing {r['name']}'\n")
             f.write(r["script"])
             f.write("\necho\necho '✔ Done. Open a new terminal to use it.'\n")
