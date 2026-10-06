@@ -843,7 +843,7 @@ class Shell(Adw.Application):
             from aurora import screenshare
             try:
                 self._vnc = subprocess.Popen(screenshare.command())
-            except OSError as err:
+            except (OSError, subprocess.SubprocessError) as err:
                 # A broken key/config or an executable that disappeared must
                 # not make the desktop restart forever at every shell launch.
                 print(f"aurora: screen sharing could not start ({err})")

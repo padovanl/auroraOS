@@ -1,11 +1,10 @@
 """Sound: output/input devices and volumes via PipeWire (pw-dump + wpctl)."""
 
 import shutil
-import subprocess
 
 from gi.repository import Adw, GLib, Gtk
 
-from aurora import settings
+from aurora import apps, settings
 from aurora.i18n import _
 from aurora.settingsapp.util import Page, run, switch_row
 from aurora.shell.services import audio_nodes, get_volume
@@ -54,7 +53,7 @@ class Sound(Page):
                 play = Gtk.Button(icon_name="media-playback-start-symbolic",
                                   tooltip_text=_("Play"), valign=Gtk.Align.CENTER,
                                   css_classes=["flat"])
-                play.connect("clicked", lambda _b, n=name: subprocess.Popen(
+                play.connect("clicked", lambda _b, n=name: apps.spawn(
                     ["pw-play", f"{SOUNDS}/{n}.wav"]))
                 preview.add_suffix(play)
                 alerts.add(preview)

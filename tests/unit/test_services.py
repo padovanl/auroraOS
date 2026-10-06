@@ -185,6 +185,44 @@ def test_wifi_share_never_builds_an_open_qr_for_a_secure_network(monkeypatch):
     assert messages
 
 
+def test_password_change_timeout_kills_and_reaps_passwd(monkeypatch):
+    from aurora.settingsapp import system as system_page
+
+    times = iter((0.0, 2.0))
+    killed, waited = [], []
+    monkeypatch.setattr(system_page.pty, "fork", lambda: (123, 9))
+    monkeypatch.setattr(system_page.time, "monotonic", lambda: next(times))
+    monkeypatch.setattr(system_page.os, "kill", lambda pid, sig: killed.append((pid, sig)))
+    monkeypatch.setattr(system_page.os, "waitpid",
+                        lambda pid, flags: (waited.append((pid, flags)) or (pid, 9)))
+    assert system_page.change_password("old", "new", timeout=1) == (False, "")
+    assert killed == [(123, system_page.signal.SIGKILL)]
+    assert waited == [(123, 0)]
+
+
+def test_screen_sharing_files_are_private_and_empty_password_is_replaced(tmp_path, monkeypatch):
+    from aurora import screenshare
+
+    config = tmp_path / "screen-sharing"
+    config.mkdir(mode=0o755)
+    password = config / "password"
+    password.write_text("")
+    password.chmod(0o644)
+
+    def openssl(argv, **_kwargs):
+        key = argv[argv.index("-out") + 1]
+        with open(key, "w") as stream:
+            stream.write("private key")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(screenshare, "folder", lambda: str(config))
+    monkeypatch.setattr(screenshare.subprocess, "run", openssl)
+    value = screenshare.password()
+    assert value and password.read_text() == value
+    for path in (config, password, config / "rsa_key.pem", config / "wayvnc.conf"):
+        assert path.stat().st_mode & 0o077 == 0
+
+
 def test_capture_paths_do_not_replace_files_from_the_same_second(tmp_path, monkeypatch):
     class Date:
         def format(self, _pattern):

@@ -6,6 +6,7 @@ import pty
 import pwd
 import re
 import select
+import signal
 import shutil
 import socket
 import subprocess
@@ -308,7 +309,7 @@ class Sharing(Page):
         row = Adw.ActionRow(title=_("Paired devices"), activatable=True,
                             subtitle=_("Pair, browse the phone’s files, ring it, send files"))
         row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
-        row.connect("activated", lambda *_: subprocess.Popen(["kdeconnect-app"]))
+        row.connect("activated", lambda *_: apps.spawn(["kdeconnect-app"]))
         g.add(row)
 
     def _set_phone(self, on):
@@ -343,7 +344,7 @@ def is_admin(user):
         return False
 
 
-def change_password(old, new):
+def change_password(old, new, timeout=20):
     """Run passwd on a pseudo-terminal; returns (ok, message)."""
     pid, fd = pty.fork()
     if pid == 0:
@@ -351,8 +352,8 @@ def change_password(old, new):
         os.execvp("passwd", ["passwd"])
     out = b""
     answers = [old, new, new]
-    deadline = time.time() + 20
-    while time.time() < deadline:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
         r, _w, _x = select.select([fd], [], [], 0.5)
         if not r:
             continue
@@ -366,6 +367,15 @@ def change_password(old, new):
         if re.search(rb"(?i)password:\s*$", out) and answers:
             os.write(fd, (answers.pop(0) + "\n").encode())
             out += b"\n"
+    else:
+        # passwd may wait forever for an unexpected PAM prompt. Do not leave a
+        # worker and its pseudo-terminal behind after Settings gives up.
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        os.waitpid(pid, 0)
+        return False, ""
     _pid, status = os.waitpid(pid, 0)
     text = out.decode(errors="replace")
     ok = os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0
@@ -544,8 +554,14 @@ class Users(Page):
             if new.get_text() != again.get_text() or not new.get_text():
                 toast(self, _("The new passwords do not match"))
                 return
-            ok, msg = change_password(old.get_text(), new.get_text())
-            toast(self, _("Password changed") if ok else (msg or _("Could not change password")))
+            old_value, new_value = old.get_text(), new.get_text()
+
+            def work():
+                ok, msg = change_password(old_value, new_value)
+                GLib.idle_add(lambda: (toast(
+                    self, _("Password changed") if ok else
+                    (msg or _("Could not change password"))), False)[1])
+            threading.Thread(target=work, daemon=True).start()
         dialog.connect("response", response)
         dialog.present(self.get_root())
 
