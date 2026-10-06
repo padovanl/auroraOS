@@ -13,6 +13,10 @@ APT_REPO = r'''
 add_repo() {  # add_repo NAME KEY_URL "deb822 lines..."
     sudo install -d -m 0755 /etc/apt/keyrings
     curl -fsSL "$2" | gpg --dearmor | sudo tee "/etc/apt/keyrings/$1.gpg" >/dev/null
+    # Vendor packages and older recipes may have left the same repository in
+    # one-line format with a different Signed-By path. APT rejects both before
+    # it can install or repair anything, so replace that stale definition.
+    sudo rm -f "/etc/apt/sources.list.d/$1.list"
     printf '%s\nSigned-By: /etc/apt/keyrings/%s.gpg\n' "$3" "$1" | sudo tee "/etc/apt/sources.list.d/$1.sources" >/dev/null
     sudo apt-get update
 }
@@ -52,6 +56,18 @@ def flatpak(app_id):
     return ("flatpak remote-add --user --if-not-exists flathub "
             "https://dl.flathub.org/repo/flathub.flatpakrepo\n"
             f"flatpak install -y --noninteractive --user flathub {shlex.quote(app_id)}")
+
+
+def flatpak_check(app_id):
+    """Find an app in either Flatpak installation.
+
+    Recipes install for the current user, while the image also ships a system
+    Flathub remote.  An unqualified ``flatpak info`` can therefore inspect the
+    wrong installation and make a successful install look like a failure.
+    """
+    app = shlex.quote(app_id)
+    return (f"flatpak info --user {app} >/dev/null 2>&1 || "
+            f"flatpak info --system {app} >/dev/null 2>&1")
 
 
 def docker_service(name, image, port, env=""):
@@ -94,15 +110,15 @@ sudo apt-get install -y codium
      "script": "curl -f https://zed.dev/install.sh | sh"},
     {"id": "intellij", "cat": "editors", "name": "IntelliJ IDEA Community", "icon": "com.jetbrains.IntelliJ-IDEA-Community",
      "fallback_icon": "applications-development", "desc": N_("The JetBrains IDE for Java and Kotlin (Flathub)."),
-     "check": "flatpak info com.jetbrains.IntelliJ-IDEA-Community",
+     "check": flatpak_check("com.jetbrains.IntelliJ-IDEA-Community"),
      "script": flatpak("com.jetbrains.IntelliJ-IDEA-Community")},
     {"id": "pycharm", "cat": "editors", "name": "PyCharm Community", "icon": "com.jetbrains.PyCharm-Community",
      "fallback_icon": "applications-development", "desc": N_("The JetBrains IDE for Python (Flathub)."),
-     "check": "flatpak info com.jetbrains.PyCharm-Community",
+     "check": flatpak_check("com.jetbrains.PyCharm-Community"),
      "script": flatpak("com.jetbrains.PyCharm-Community")},
     {"id": "android-studio", "cat": "editors", "name": "Android Studio", "icon": "com.google.AndroidStudio",
      "fallback_icon": "applications-development", "desc": N_("Google's IDE for Android apps (Flathub)."),
-     "check": "flatpak info com.google.AndroidStudio",
+     "check": flatpak_check("com.google.AndroidStudio"),
      "script": flatpak("com.google.AndroidStudio")},
 
     # --- languages ---
@@ -198,11 +214,11 @@ aws --version
      "script": docker_service("mongodb", "mongo:8", "27017:27017")},
     {"id": "dbeaver", "cat": "data", "name": "DBeaver", "icon": "io.dbeaver.DBeaverCommunity",
      "fallback_icon": "network-server", "desc": N_("Universal database client (Flathub)."),
-     "check": "flatpak info io.dbeaver.DBeaverCommunity",
+     "check": flatpak_check("io.dbeaver.DBeaverCommunity"),
      "script": flatpak("io.dbeaver.DBeaverCommunity")},
     {"id": "postman", "cat": "data", "name": "Postman", "icon": "com.getpostman.Postman",
      "fallback_icon": "network-server", "desc": N_("API development and testing (Flathub)."),
-     "check": "flatpak info com.getpostman.Postman",
+     "check": flatpak_check("com.getpostman.Postman"),
      "script": flatpak("com.getpostman.Postman")},
     # --- AI ---
     {"id": "claude-code", "cat": "ai", "name": "Claude Code", "icon": "claude",
@@ -290,7 +306,7 @@ aws --version
     {"id": "wezterm", "cat": "shells", "name": "WezTerm", "icon": "org.wezfurlong.wezterm",
      "fallback_icon": "utilities-terminal",
      "desc": N_("A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."),
-     "check": "flatpak info org.wezfurlong.wezterm",
+     "check": flatpak_check("org.wezfurlong.wezterm"),
      "script": flatpak("org.wezfurlong.wezterm")},
     {"id": "tilix", "cat": "shells", "name": "Tilix", "icon": "com.gexperts.Tilix",
      "fallback_icon": "utilities-terminal",
@@ -358,18 +374,18 @@ RECIPES += [
            "command -v glab", apt("glab")),
     recipe("github-desktop", "vcs", "GitHub Desktop", "io.github.shiftey.Desktop",
            N_("GitHub's Git client (community build, Flathub)."),
-           "flatpak info io.github.shiftey.Desktop", flatpak("io.github.shiftey.Desktop")),
+           flatpak_check("io.github.shiftey.Desktop"), flatpak("io.github.shiftey.Desktop")),
     recipe("gitkraken", "vcs", "GitKraken", "com.axosoft.GitKraken",
            N_("A visual Git client with a commit graph (Flathub)."),
-           "flatpak info com.axosoft.GitKraken", flatpak("com.axosoft.GitKraken")),
+           flatpak_check("com.axosoft.GitKraken"), flatpak("com.axosoft.GitKraken")),
     recipe("sublime-merge", "vcs", "Sublime Merge", "com.sublimemerge.App",
            N_("A fast Git client from the makers of Sublime Text (Flathub)."),
-           "flatpak info com.sublimemerge.App", flatpak("com.sublimemerge.App")),
+           flatpak_check("com.sublimemerge.App"), flatpak("com.sublimemerge.App")),
 
     # Containers & virtual machines (Docker and Podman are already installed)
     recipe("podman-desktop", "containers", "Podman Desktop", "io.podman_desktop.PodmanDesktop",
            N_("Manage containers, images and Kubernetes from a window (Flathub)."),
-           "flatpak info io.podman_desktop.PodmanDesktop",
+           flatpak_check("io.podman_desktop.PodmanDesktop"),
            flatpak("io.podman_desktop.PodmanDesktop")),
     recipe("virt-manager", "containers", "Virtual Machine Manager", "virt-manager",
            N_("Full KVM virtual machines with QEMU and libvirt."), "command -v virt-manager",
@@ -400,7 +416,7 @@ RECIPES += [
     # Web development
     recipe("chrome", "web", "Google Chrome", "com.google.Chrome",
            N_("Chrome and its developer tools, for testing sites (Flathub)."),
-           "flatpak info com.google.Chrome", flatpak("com.google.Chrome"), "web-browser"),
+           flatpak_check("com.google.Chrome"), flatpak("com.google.Chrome"), "web-browser"),
     recipe("chromium", "web", "Chromium", "chromium",
            N_("The open-source browser behind Chrome."),
            "command -v chromium", apt("chromium"), "web-browser"),
@@ -439,13 +455,13 @@ RECIPES += [
            + '\nsudo usermod -aG wireshark "$USER"'),
     recipe("bruno", "debug", "Bruno", "com.usebruno.Bruno",
            N_("An offline API client that keeps collections as files (Flathub)."),
-           "flatpak info com.usebruno.Bruno", flatpak("com.usebruno.Bruno")),
+           flatpak_check("com.usebruno.Bruno"), flatpak("com.usebruno.Bruno")),
     recipe("insomnia", "debug", "Insomnia", "rest.insomnia.Insomnia",
            N_("Design and test REST, GraphQL and gRPC APIs (Flathub)."),
-           "flatpak info rest.insomnia.Insomnia", flatpak("rest.insomnia.Insomnia")),
+           flatpak_check("rest.insomnia.Insomnia"), flatpak("rest.insomnia.Insomnia")),
     recipe("devtoolbox", "debug", "Dev Toolbox", "me.iepure.devtoolbox",
            N_("JSON, Base64, JWT, regex, hashes and other converters (Flathub)."),
-           "flatpak info me.iepure.devtoolbox", flatpak("me.iepure.devtoolbox")),
+           flatpak_check("me.iepure.devtoolbox"), flatpak("me.iepure.devtoolbox")),
 
     # Data science
     recipe("jupyterlab", "science", "JupyterLab", "jupyter",
@@ -468,17 +484,17 @@ RECIPES += [
     # Game development
     recipe("godot", "gamedev", "Godot", "org.godotengine.Godot",
            N_("The open-source 2D and 3D game engine (Flathub)."),
-           "flatpak info org.godotengine.Godot", flatpak("org.godotengine.Godot")),
+           flatpak_check("org.godotengine.Godot"), flatpak("org.godotengine.Godot")),
     recipe("blender", "gamedev", "Blender", "org.blender.Blender",
            N_("3D modeling, animation and rendering (Flathub)."),
-           "flatpak info org.blender.Blender", flatpak("org.blender.Blender")),
+           flatpak_check("org.blender.Blender"), flatpak("org.blender.Blender")),
     recipe("love", "gamedev", "LÖVE", "love", N_("Make 2D games in Lua."),
            "command -v love", apt("love")),
 
     # Embedded & hardware
     recipe("arduino", "embedded", "Arduino IDE", "cc.arduino.IDE2",
            N_("Program Arduino and compatible boards (Flathub)."),
-           "flatpak info cc.arduino.IDE2",
+           flatpak_check("cc.arduino.IDE2"),
            flatpak("cc.arduino.IDE2") + '\nsudo usermod -aG dialout "$USER"'),
     recipe("platformio", "embedded", "PlatformIO", "applications-electronics",
            N_("Build and flash firmware for many boards."),
@@ -497,10 +513,10 @@ RECIPES += [
            "command -v gimp", apt("gimp")),
     recipe("drawio", "design", "draw.io", "com.jgraph.drawio.desktop",
            N_("Diagrams: flowcharts, architecture, UML (Flathub)."),
-           "flatpak info com.jgraph.drawio.desktop", flatpak("com.jgraph.drawio.desktop")),
+           flatpak_check("com.jgraph.drawio.desktop"), flatpak("com.jgraph.drawio.desktop")),
     recipe("obsidian", "design", "Obsidian", "md.obsidian.Obsidian",
            N_("Notes in Markdown files, linked together (Flathub)."),
-           "flatpak info md.obsidian.Obsidian", flatpak("md.obsidian.Obsidian")),
+           flatpak_check("md.obsidian.Obsidian"), flatpak("md.obsidian.Obsidian")),
     recipe("zeal", "design", "Zeal", "zeal",
            N_("Offline documentation for hundreds of languages and libraries."),
            "command -v zeal", apt("zeal")),
@@ -510,7 +526,7 @@ RECIPES += [
            "command -v nmap", apt("nmap"), "network-workgroup"),
     recipe("zap", "security", "ZAP", "org.zaproxy.ZAP",
            N_("Find vulnerabilities in web apps (Flathub)."),
-           "flatpak info org.zaproxy.ZAP", flatpak("org.zaproxy.ZAP"), "security-high"),
+           flatpak_check("org.zaproxy.ZAP"), flatpak("org.zaproxy.ZAP"), "security-high"),
     recipe("tailscale", "security", "Tailscale", "tailscale",
            N_("A private network between your devices, built on WireGuard."),
            "command -v tailscale", "curl -fsSL https://tailscale.com/install.sh | sh",

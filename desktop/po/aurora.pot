@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: aurora\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 01:01+0200\n"
+"POT-Creation-Date: 2026-10-06 16:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,7 +108,7 @@ msgid "Attachments require the local AI model"
 msgstr ""
 
 #: aurora/assistant.py:132 aurora/assistant.py:888 aurora/assistant.py:1003
-#: aurora/files/window.py:1099 aurora/shell/desktopicons.py:164
+#: aurora/files/window.py:1134 aurora/shell/desktopicons.py:169
 #: aurora/shell/morewidgets.py:499 aurora/shell/pinshot.py:120
 #, no-python-format
 msgid "Copy"
@@ -130,8 +130,8 @@ msgstr ""
 msgid "Conversations"
 msgstr ""
 
-#: aurora/assistant.py:264 aurora/files/window.py:1204
-#: aurora/files/window.py:1591 aurora/settingsapp/health.py:301
+#: aurora/assistant.py:264 aurora/files/window.py:1239
+#: aurora/files/window.py:1662 aurora/settingsapp/health.py:301
 #: aurora/settingsapp/system.py:143 aurora/settingsapp/system.py:185
 #, no-python-format
 msgid "Close"
@@ -237,9 +237,9 @@ msgstr ""
 msgid "Stop generating"
 msgstr ""
 
-#: aurora/assistant.py:456 aurora/files/window.py:124
-#: aurora/files/window.py:1079 aurora/quicklook.py:141 aurora/shell/app.py:679
-#: aurora/shell/desktopicons.py:159 aurora/shell/dock.py:326
+#: aurora/assistant.py:456 aurora/files/window.py:132
+#: aurora/files/window.py:1114 aurora/quicklook.py:141 aurora/shell/app.py:752
+#: aurora/shell/desktopicons.py:164 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:360
 #, no-python-format
@@ -387,7 +387,7 @@ msgid "Writing Tools"
 msgstr ""
 
 #: aurora/assistant.py:984 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:553
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:602
 #, no-python-format
 msgid "Aurora AI"
 msgstr ""
@@ -414,153 +414,175 @@ msgstr ""
 msgid "Wikimedia Commons: picture of the day"
 msgstr ""
 
+#: aurora/devhub/app.py:63 aurora/devhub/app.py:333
+#, no-python-format, python-brace-format
+msgid "Installing {name}"
+msgstr ""
+
 #: aurora/devhub/app.py:75
+#, no-python-format
+msgid "Downloading and installing…"
+msgstr ""
+
+#: aurora/devhub/app.py:79
+#, no-python-format
+msgid ""
+"If asked, type your administrator password below. The log stays visible so "
+"failures can be diagnosed."
+msgstr ""
+
+#: aurora/devhub/app.py:108
+#, no-python-format
+msgid "Installation is still running"
+msgstr ""
+
+#: aurora/devhub/app.py:117 aurora/devhub/app.py:127
+#, no-python-format
+msgid "Installation failed"
+msgstr ""
+
+#: aurora/devhub/app.py:122 aurora/devhub/app.py:124
+#, no-python-format, python-brace-format
+msgid "{name} installed"
+msgstr ""
+
+#: aurora/devhub/app.py:126
+#, no-python-format
+msgid "Installation failed — review the log below"
+msgstr ""
+
+#: aurora/devhub/app.py:149
 #, no-python-format
 msgid "Installed"
 msgstr ""
 
-#: aurora/devhub/app.py:75 aurora/settingsapp/system.py:735
+#: aurora/devhub/app.py:149 aurora/settingsapp/system.py:735
 #, no-python-format
 msgid "Install"
 msgstr ""
 
-#: aurora/devhub/app.py:82 aurora/shell/panel.py:306
+#: aurora/devhub/app.py:156 aurora/shell/panel.py:306
 msgid "Dev Hub"
 msgstr ""
 
-#: aurora/devhub/app.py:82
+#: aurora/devhub/app.py:156
 msgid "Search tools"
 msgstr ""
 
-#: aurora/devhub/app.py:83
+#: aurora/devhub/app.py:157
 msgid "Your toolbox, one click away"
 msgstr ""
 
-#: aurora/devhub/app.py:84
+#: aurora/devhub/app.py:158
 msgid ""
 "Everything installs from its official source, so you always get the latest "
 "release. Git, Python, Node.js, Docker, Podman and more are already on your "
 "system."
 msgstr ""
 
-#: aurora/devhub/app.py:111
+#: aurora/devhub/app.py:185
 #, no-python-format
 msgid "Project Workspaces"
 msgstr ""
 
-#: aurora/devhub/app.py:112
+#: aurora/devhub/app.py:186
 #, no-python-format
 msgid "Open your editor, terminal and Files together for a project."
 msgstr ""
 
-#: aurora/devhub/app.py:114
+#: aurora/devhub/app.py:188
 #, no-python-format
 msgid "Add Project"
 msgstr ""
 
-#: aurora/devhub/app.py:167 aurora/shell/launcher.py:142
+#: aurora/devhub/app.py:241 aurora/shell/launcher.py:142
 #, no-python-format
 msgid "Open Workspace"
 msgstr ""
 
-#: aurora/devhub/app.py:172 aurora/devhub/app.py:200
+#: aurora/devhub/app.py:246 aurora/devhub/app.py:274
 #, no-python-format
 msgid "Configure Workspace"
 msgstr ""
 
-#: aurora/devhub/app.py:179
+#: aurora/devhub/app.py:253
 #, no-python-format
 msgid "No projects found"
 msgstr ""
 
-#: aurora/devhub/app.py:180
+#: aurora/devhub/app.py:254
 #, no-python-format
 msgid "Add a project folder to begin."
 msgstr ""
 
-#: aurora/devhub/app.py:185
+#: aurora/devhub/app.py:259
 #, no-python-format
 msgid "Choose Project Folder"
 msgstr ""
 
-#: aurora/devhub/app.py:204
+#: aurora/devhub/app.py:278
 #, no-python-format
 msgid "Editor"
 msgstr ""
 
-#: aurora/devhub/app.py:205
+#: aurora/devhub/app.py:279
 #, no-python-format
 msgid "Automatic"
 msgstr ""
 
-#: aurora/devhub/app.py:207 aurora/shell/wallpaper.py:195
+#: aurora/devhub/app.py:281 aurora/shell/wallpaper.py:195
 #, no-python-format
 msgid "Open Terminal"
 msgstr ""
 
-#: aurora/devhub/app.py:208 aurora/shell/wallpaper.py:196 aurora/welcome.py:19
+#: aurora/devhub/app.py:282 aurora/shell/wallpaper.py:196 aurora/welcome.py:19
 #, no-python-format
 msgid "Open Files"
 msgstr ""
 
-#: aurora/devhub/app.py:211
+#: aurora/devhub/app.py:285
 #, no-python-format
 msgid "Save Current Window Layout"
 msgstr ""
 
-#: aurora/devhub/app.py:212
+#: aurora/devhub/app.py:286
 #, no-python-format
 msgid "Save positions of currently open windows for this workspace"
 msgstr ""
 
-#: aurora/devhub/app.py:216 aurora/files/create.py:26
-#: aurora/files/window.py:1166 aurora/files/window.py:1248
-#: aurora/files/window.py:1392 aurora/files/window.py:1429
-#: aurora/files/window.py:1476 aurora/files/window.py:1528
-#: aurora/files/window.py:1608 aurora/files/window.py:1641
+#: aurora/devhub/app.py:290 aurora/files/create.py:26
+#: aurora/files/window.py:1201 aurora/files/window.py:1283
+#: aurora/files/window.py:1463 aurora/files/window.py:1500
+#: aurora/files/window.py:1547 aurora/files/window.py:1599
+#: aurora/files/window.py:1679 aurora/files/window.py:1712
 #: aurora/settingsapp/desktop.py:96 aurora/settingsapp/health.py:275
-#: aurora/settingsapp/inputs.py:281 aurora/settingsapp/storage.py:287
+#: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:463 aurora/settingsapp/system.py:537
 #: aurora/settingsapp/system.py:606 aurora/settingsapp/system.py:624
-#: aurora/shell/app.py:455 aurora/shell/desktopicons.py:179
+#: aurora/shell/app.py:504 aurora/shell/desktopicons.py:184
 #, no-python-format
 msgid "Cancel"
 msgstr ""
 
-#: aurora/devhub/app.py:217 aurora/settingsapp/desktop.py:97
+#: aurora/devhub/app.py:291 aurora/settingsapp/desktop.py:97
 #: aurora/settingsapp/system.py:464
 #, no-python-format
 msgid "Save"
 msgstr ""
 
-#: aurora/devhub/app.py:226
+#: aurora/devhub/app.py:300
 #, no-python-format
 msgid "Saved positions for %d windows."
 msgstr ""
 
-#: aurora/devhub/app.py:228
+#: aurora/devhub/app.py:302
 #, no-python-format
 msgid "Window layout requires the Aurora animated session."
 msgstr ""
 
-#: aurora/devhub/app.py:265
-#, no-python-format, python-brace-format
-msgid "Installing {name}"
-msgstr ""
-
-#: aurora/devhub/app.py:267
+#: aurora/devhub/app.py:335
 #, no-python-format
 msgid "Installing…"
-msgstr ""
-
-#: aurora/devhub/app.py:275 aurora/devhub/app.py:280
-#, no-python-format
-msgid "Installation failed"
-msgstr ""
-
-#: aurora/devhub/app.py:278
-#, no-python-format, python-brace-format
-msgid "{name} installed"
 msgstr ""
 
 #: aurora/devhub/games.py:12
@@ -579,557 +601,557 @@ msgstr ""
 msgid "Android Apps"
 msgstr ""
 
-#: aurora/devhub/games.py:26
+#: aurora/devhub/games.py:21
 msgid ""
 "Valve's store. Proton runs most Windows games; turn it on in Steam Play."
 msgstr ""
 
-#: aurora/devhub/games.py:31
+#: aurora/devhub/games.py:26
 msgid "Epic Games, GOG and Amazon Prime Gaming libraries in one launcher."
 msgstr ""
 
-#: aurora/devhub/games.py:36
+#: aurora/devhub/games.py:31
 msgid "Install scripts for thousands of games, emulators included."
 msgstr ""
 
-#: aurora/devhub/games.py:40
+#: aurora/devhub/games.py:35
 msgid "Run Windows programs in tidy, separate Wine bottles."
 msgstr ""
 
-#: aurora/devhub/games.py:45
+#: aurora/devhub/games.py:40
 msgid ""
 "Install newer Proton-GE and Wine-GE builds for Steam, Lutris and Heroic."
 msgstr ""
 
-#: aurora/devhub/games.py:50
+#: aurora/devhub/games.py:45
 msgid "Feral's daemon: the CPU and GPU run at full speed while you play."
 msgstr ""
 
-#: aurora/devhub/games.py:55
+#: aurora/devhub/games.py:50
 msgid "Frame rate, temperatures and load on top of your games."
 msgstr ""
 
-#: aurora/devhub/games.py:60
+#: aurora/devhub/games.py:55
 msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
 msgstr ""
 
-#: aurora/devhub/games.py:75
+#: aurora/devhub/games.py:70
 msgid "Game Hub"
 msgstr ""
 
-#: aurora/devhub/games.py:75
+#: aurora/devhub/games.py:70
 msgid "Search games and tools"
 msgstr ""
 
-#: aurora/devhub/games.py:76
+#: aurora/devhub/games.py:71
 msgid "Play anything"
 msgstr ""
 
-#: aurora/devhub/games.py:77
+#: aurora/devhub/games.py:72
 msgid ""
 "Steam with Proton runs most Windows games. Add the Epic and GOG stores, "
 "Windows programs with Bottles, and Android apps with Waydroid, each with one "
 "click."
 msgstr ""
 
-#: aurora/devhub/recipes.py:22
+#: aurora/devhub/recipes.py:26
 msgid "Editors & IDEs"
 msgstr ""
 
-#: aurora/devhub/recipes.py:23
+#: aurora/devhub/recipes.py:27
 msgid "Languages & Runtimes"
 msgstr ""
 
-#: aurora/devhub/recipes.py:24
+#: aurora/devhub/recipes.py:28
 msgid "Cloud & DevOps"
 msgstr ""
 
-#: aurora/devhub/recipes.py:25
+#: aurora/devhub/recipes.py:29
 msgid "Databases & API Tools"
 msgstr ""
 
-#: aurora/devhub/recipes.py:26
+#: aurora/devhub/recipes.py:30
 msgid "AI Assistants"
 msgstr ""
 
-#: aurora/devhub/recipes.py:27
+#: aurora/devhub/recipes.py:31
 msgid "Shells & Terminals"
 msgstr ""
 
-#: aurora/devhub/recipes.py:28
+#: aurora/devhub/recipes.py:32
 msgid "Command-Line Tools"
 msgstr ""
 
-#: aurora/devhub/recipes.py:29
+#: aurora/devhub/recipes.py:33
 msgid "Version Control"
 msgstr ""
 
-#: aurora/devhub/recipes.py:30
+#: aurora/devhub/recipes.py:34
 msgid "Containers & Virtual Machines"
 msgstr ""
 
-#: aurora/devhub/recipes.py:31
+#: aurora/devhub/recipes.py:35
 msgid "Web Development"
 msgstr ""
 
-#: aurora/devhub/recipes.py:32
+#: aurora/devhub/recipes.py:36
 msgid "Mobile"
 msgstr ""
 
-#: aurora/devhub/recipes.py:33
+#: aurora/devhub/recipes.py:37
 msgid "Debugging & Performance"
 msgstr ""
 
-#: aurora/devhub/recipes.py:34
+#: aurora/devhub/recipes.py:38
 msgid "Data Science"
 msgstr ""
 
-#: aurora/devhub/recipes.py:35
+#: aurora/devhub/recipes.py:39
 msgid "Game Development"
 msgstr ""
 
-#: aurora/devhub/recipes.py:36
+#: aurora/devhub/recipes.py:40
 msgid "Embedded & Hardware"
 msgstr ""
 
-#: aurora/devhub/recipes.py:37
+#: aurora/devhub/recipes.py:41
 msgid "Design & Documentation"
 msgstr ""
 
-#: aurora/devhub/recipes.py:38
+#: aurora/devhub/recipes.py:42
 msgid "Security & Networking"
 msgstr ""
 
-#: aurora/devhub/recipes.py:67
+#: aurora/devhub/recipes.py:83
 msgid "Microsoft's popular code editor, from the official apt repository."
 msgstr ""
 
-#: aurora/devhub/recipes.py:81
+#: aurora/devhub/recipes.py:97
 msgid "VS Code built from source without telemetry."
 msgstr ""
 
-#: aurora/devhub/recipes.py:92
+#: aurora/devhub/recipes.py:108
 msgid "A very fast, collaborative editor written in Rust."
 msgstr ""
 
-#: aurora/devhub/recipes.py:96
+#: aurora/devhub/recipes.py:112
 msgid "The JetBrains IDE for Java and Kotlin (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:100
+#: aurora/devhub/recipes.py:116
 msgid "The JetBrains IDE for Python (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:104
+#: aurora/devhub/recipes.py:120
 msgid "Google's IDE for Android apps (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:110
+#: aurora/devhub/recipes.py:126
 msgid "rustup, cargo and the stable toolchain."
 msgstr ""
 
-#: aurora/devhub/recipes.py:114
+#: aurora/devhub/recipes.py:130
 msgid "The latest Go release from go.dev, in /usr/local/go."
 msgstr ""
 
-#: aurora/devhub/recipes.py:124
+#: aurora/devhub/recipes.py:140
 msgid "OpenJDK 21 LTS with Maven and Gradle."
 msgstr ""
 
-#: aurora/devhub/recipes.py:127
+#: aurora/devhub/recipes.py:143
 msgid "Node.js versions (fnm)"
 msgstr ""
 
-#: aurora/devhub/recipes.py:128
+#: aurora/devhub/recipes.py:144
 msgid "Install and switch any Node.js version, including the latest LTS."
 msgstr ""
 
-#: aurora/devhub/recipes.py:132
+#: aurora/devhub/recipes.py:148
 msgid "Astral's extremely fast Python package and project manager."
 msgstr ""
 
-#: aurora/devhub/recipes.py:136
+#: aurora/devhub/recipes.py:152
 msgid "All-in-one JavaScript runtime, bundler and test runner."
 msgstr ""
 
-#: aurora/devhub/recipes.py:140
+#: aurora/devhub/recipes.py:156
 msgid "Secure JavaScript and TypeScript runtime."
 msgstr ""
 
-#: aurora/devhub/recipes.py:146
+#: aurora/devhub/recipes.py:162
 msgid "Work with GitHub issues, pull requests and Actions from the terminal."
 msgstr ""
 
-#: aurora/devhub/recipes.py:155
+#: aurora/devhub/recipes.py:171
 msgid "The Kubernetes command-line tool, latest stable."
 msgstr ""
 
-#: aurora/devhub/recipes.py:164
+#: aurora/devhub/recipes.py:180
 msgid "Infrastructure as code by HashiCorp, latest release."
 msgstr ""
 
-#: aurora/devhub/recipes.py:174
+#: aurora/devhub/recipes.py:190
 msgid "Amazon Web Services command-line interface v2."
 msgstr ""
 
-#: aurora/devhub/recipes.py:183
+#: aurora/devhub/recipes.py:199
 msgid "PostgreSQL (Docker)"
 msgstr ""
 
-#: aurora/devhub/recipes.py:184
+#: aurora/devhub/recipes.py:200
 msgid "PostgreSQL 17 in a container. User and password: postgres."
 msgstr ""
 
-#: aurora/devhub/recipes.py:187
+#: aurora/devhub/recipes.py:203
 msgid "MariaDB (Docker)"
 msgstr ""
 
-#: aurora/devhub/recipes.py:188
+#: aurora/devhub/recipes.py:204
 msgid "MariaDB in a container. Root password: mariadb."
 msgstr ""
 
-#: aurora/devhub/recipes.py:191
+#: aurora/devhub/recipes.py:207
 msgid "Redis (Docker)"
 msgstr ""
 
-#: aurora/devhub/recipes.py:192
+#: aurora/devhub/recipes.py:208
 msgid "Redis key-value store in a container."
 msgstr ""
 
-#: aurora/devhub/recipes.py:195
+#: aurora/devhub/recipes.py:211
 msgid "MongoDB (Docker)"
 msgstr ""
 
-#: aurora/devhub/recipes.py:196
+#: aurora/devhub/recipes.py:212
 msgid "MongoDB document database in a container."
 msgstr ""
 
-#: aurora/devhub/recipes.py:200
+#: aurora/devhub/recipes.py:216
 msgid "Universal database client (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:204
+#: aurora/devhub/recipes.py:220
 msgid "API development and testing (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:210
+#: aurora/devhub/recipes.py:226
 msgid ""
 "Anthropic's coding agent in the terminal. Sign in with your Claude "
 "subscription or an API key."
 msgstr ""
 
-#: aurora/devhub/recipes.py:216
+#: aurora/devhub/recipes.py:232
 msgid ""
 "OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an "
 "API key."
 msgstr ""
 
-#: aurora/devhub/recipes.py:222
+#: aurora/devhub/recipes.py:238
 msgid ""
 "Run many more open models locally; Aurora AI can use it as its provider."
 msgstr ""
 
-#: aurora/devhub/recipes.py:228
+#: aurora/devhub/recipes.py:244
 msgid "The Z shell, with autosuggestions and syntax highlighting."
 msgstr ""
 
-#: aurora/devhub/recipes.py:236
+#: aurora/devhub/recipes.py:252
 msgid "Themes and hundreds of plugins for Zsh (installs Zsh too)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:243
+#: aurora/devhub/recipes.py:259
 msgid "A friendly shell with suggestions and colors out of the box."
 msgstr ""
 
-#: aurora/devhub/recipes.py:246
+#: aurora/devhub/recipes.py:262
 msgid "Zsh as default shell"
 msgstr ""
 
-#: aurora/devhub/recipes.py:248
+#: aurora/devhub/recipes.py:264
 msgid "Open new terminals in Zsh (installs it if needed)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:251
+#: aurora/devhub/recipes.py:267
 msgid "fish as default shell"
 msgstr ""
 
-#: aurora/devhub/recipes.py:253
+#: aurora/devhub/recipes.py:269
 msgid "Open new terminals in fish (installs it if needed)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:256
+#: aurora/devhub/recipes.py:272
 msgid "Bash as default shell"
 msgstr ""
 
-#: aurora/devhub/recipes.py:258
+#: aurora/devhub/recipes.py:274
 msgid "Go back to Bash, Aurora's standard shell."
 msgstr ""
 
-#: aurora/devhub/recipes.py:263
+#: aurora/devhub/recipes.py:279
 msgid "A fast, informative prompt for Bash, Zsh and fish."
 msgstr ""
 
-#: aurora/devhub/recipes.py:275
+#: aurora/devhub/recipes.py:291
 msgid ""
 "A terminal workspace with panes, tabs and plugins, an alternative to tmux."
 msgstr ""
 
-#: aurora/devhub/recipes.py:282
+#: aurora/devhub/recipes.py:298
 msgid "A fast, GPU-accelerated terminal with tabs, splits and images."
 msgstr ""
 
-#: aurora/devhub/recipes.py:287
+#: aurora/devhub/recipes.py:303
 msgid "A minimal, very fast GPU-accelerated terminal."
 msgstr ""
 
-#: aurora/devhub/recipes.py:292
+#: aurora/devhub/recipes.py:308
 msgid ""
 "A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:297
+#: aurora/devhub/recipes.py:313
 msgid "A tiling terminal: split one window into many terminals."
 msgstr ""
 
-#: aurora/devhub/recipes.py:302
+#: aurora/devhub/recipes.py:318
 msgid "Several terminals in a grid, with broadcast typing."
 msgstr ""
 
-#: aurora/devhub/recipes.py:305
+#: aurora/devhub/recipes.py:321
 msgid "GNOME Console"
 msgstr ""
 
-#: aurora/devhub/recipes.py:307
+#: aurora/devhub/recipes.py:323
 msgid "A simple terminal, GNOME's default."
 msgstr ""
 
-#: aurora/devhub/recipes.py:331
+#: aurora/devhub/recipes.py:347
 msgid "More CLI tools"
 msgstr ""
 
-#: aurora/devhub/recipes.py:332
+#: aurora/devhub/recipes.py:348
 msgid ""
 "eza (a modern ls), yq (jq for YAML), just (a command runner), tldr pages, "
 "ncdu and duf for disk usage."
 msgstr ""
 
-#: aurora/devhub/recipes.py:337
+#: aurora/devhub/recipes.py:353
 msgid "A smarter cd that remembers the folders you use."
 msgstr ""
 
-#: aurora/devhub/recipes.py:341
+#: aurora/devhub/recipes.py:357
 msgid "Searchable shell history, synced across your machines if you want."
 msgstr ""
 
-#: aurora/devhub/recipes.py:345
+#: aurora/devhub/recipes.py:361
 msgid "Readable, syntax-highlighted git diffs."
 msgstr ""
 
-#: aurora/devhub/recipes.py:350
+#: aurora/devhub/recipes.py:366
 msgid "Read Markdown beautifully in the terminal."
 msgstr ""
 
-#: aurora/devhub/recipes.py:355
+#: aurora/devhub/recipes.py:371
 msgid "Compare and merge files and folders visually."
 msgstr ""
 
-#: aurora/devhub/recipes.py:357
+#: aurora/devhub/recipes.py:373
 msgid "Merge requests, issues and pipelines from the terminal."
 msgstr ""
 
-#: aurora/devhub/recipes.py:360
+#: aurora/devhub/recipes.py:376
 msgid "GitHub's Git client (community build, Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:363
+#: aurora/devhub/recipes.py:379
 msgid "A visual Git client with a commit graph (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:366
+#: aurora/devhub/recipes.py:382
 msgid "A fast Git client from the makers of Sublime Text (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:371
+#: aurora/devhub/recipes.py:387
 msgid "Manage containers, images and Kubernetes from a window (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:375
+#: aurora/devhub/recipes.py:391
 msgid "Full KVM virtual machines with QEMU and libvirt."
 msgstr ""
 
-#: aurora/devhub/recipes.py:380
+#: aurora/devhub/recipes.py:396
 msgid "Simple virtual machines: pick an OS and go."
 msgstr ""
 
-#: aurora/devhub/recipes.py:383
+#: aurora/devhub/recipes.py:399
 msgid "Local Kubernetes clusters running in Docker."
 msgstr ""
 
-#: aurora/devhub/recipes.py:385
+#: aurora/devhub/recipes.py:401
 msgid "A terminal UI for Kubernetes clusters."
 msgstr ""
 
-#: aurora/devhub/recipes.py:391
+#: aurora/devhub/recipes.py:407
 msgid "The package manager for Kubernetes."
 msgstr ""
 
-#: aurora/devhub/recipes.py:394
+#: aurora/devhub/recipes.py:410
 msgid "A terminal UI for Docker."
 msgstr ""
 
-#: aurora/devhub/recipes.py:402
+#: aurora/devhub/recipes.py:418
 msgid "Chrome and its developer tools, for testing sites (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:405
+#: aurora/devhub/recipes.py:421
 msgid "The open-source browser behind Chrome."
 msgstr ""
 
-#: aurora/devhub/recipes.py:408
+#: aurora/devhub/recipes.py:424
 msgid "Trusted HTTPS certificates for localhost."
 msgstr ""
 
-#: aurora/devhub/recipes.py:411
+#: aurora/devhub/recipes.py:427
 msgid "A web server with automatic HTTPS."
 msgstr ""
 
-#: aurora/devhub/recipes.py:413
+#: aurora/devhub/recipes.py:429
 msgid "The popular web server and reverse proxy."
 msgstr ""
 
-#: aurora/devhub/recipes.py:416
+#: aurora/devhub/recipes.py:432
 msgid "Android platform tools"
 msgstr ""
 
-#: aurora/devhub/recipes.py:417
+#: aurora/devhub/recipes.py:433
 msgid "adb and fastboot to talk to Android phones."
 msgstr ""
 
-#: aurora/devhub/recipes.py:420
+#: aurora/devhub/recipes.py:436
 msgid "Google's SDK for mobile, web and desktop apps."
 msgstr ""
 
-#: aurora/devhub/recipes.py:430
+#: aurora/devhub/recipes.py:446
 msgid "Debugging toolkit"
 msgstr ""
 
-#: aurora/devhub/recipes.py:431
+#: aurora/devhub/recipes.py:447
 msgid "gdb, valgrind, strace and perf."
 msgstr ""
 
-#: aurora/devhub/recipes.py:434
+#: aurora/devhub/recipes.py:450
 msgid "Benchmark commands with statistics."
 msgstr ""
 
-#: aurora/devhub/recipes.py:436
+#: aurora/devhub/recipes.py:452
 msgid "Capture and inspect network traffic."
 msgstr ""
 
-#: aurora/devhub/recipes.py:441
+#: aurora/devhub/recipes.py:457
 msgid "An offline API client that keeps collections as files (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:444
+#: aurora/devhub/recipes.py:460
 msgid "Design and test REST, GraphQL and gRPC APIs (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:447
+#: aurora/devhub/recipes.py:463
 msgid "JSON, Base64, JWT, regex, hashes and other converters (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:452
+#: aurora/devhub/recipes.py:468
 msgid "Notebooks for Python, with pandas and matplotlib."
 msgstr ""
 
-#: aurora/devhub/recipes.py:456
+#: aurora/devhub/recipes.py:472
 msgid "conda and mamba with the conda-forge packages."
 msgstr ""
 
-#: aurora/devhub/recipes.py:462
+#: aurora/devhub/recipes.py:478
 msgid "The R language for statistics."
 msgstr ""
 
-#: aurora/devhub/recipes.py:465
+#: aurora/devhub/recipes.py:481
 msgid "A MATLAB-compatible numerical environment."
 msgstr ""
 
-#: aurora/devhub/recipes.py:470
+#: aurora/devhub/recipes.py:486
 msgid "The open-source 2D and 3D game engine (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:473
+#: aurora/devhub/recipes.py:489
 msgid "3D modeling, animation and rendering (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:475
+#: aurora/devhub/recipes.py:491
 msgid "Make 2D games in Lua."
 msgstr ""
 
-#: aurora/devhub/recipes.py:480
+#: aurora/devhub/recipes.py:496
 msgid "Program Arduino and compatible boards (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:484
+#: aurora/devhub/recipes.py:500
 msgid "Build and flash firmware for many boards."
 msgstr ""
 
-#: aurora/devhub/recipes.py:486
+#: aurora/devhub/recipes.py:502
 msgid "Design schematics and circuit boards."
 msgstr ""
 
-#: aurora/devhub/recipes.py:488
+#: aurora/devhub/recipes.py:504
 msgid "Serial consoles"
 msgstr ""
 
-#: aurora/devhub/recipes.py:489
+#: aurora/devhub/recipes.py:505
 msgid "picocom and minicom for serial ports."
 msgstr ""
 
-#: aurora/devhub/recipes.py:494
+#: aurora/devhub/recipes.py:510
 msgid "Vector graphics: icons, diagrams, illustrations."
 msgstr ""
 
-#: aurora/devhub/recipes.py:496
+#: aurora/devhub/recipes.py:512
 msgid "Edit photos and images."
 msgstr ""
 
-#: aurora/devhub/recipes.py:499
+#: aurora/devhub/recipes.py:515
 msgid "Diagrams: flowcharts, architecture, UML (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:502
+#: aurora/devhub/recipes.py:518
 msgid "Notes in Markdown files, linked together (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:505
+#: aurora/devhub/recipes.py:521
 msgid "Offline documentation for hundreds of languages and libraries."
 msgstr ""
 
-#: aurora/devhub/recipes.py:509
+#: aurora/devhub/recipes.py:525
 msgid "Scan networks and ports."
 msgstr ""
 
-#: aurora/devhub/recipes.py:512
+#: aurora/devhub/recipes.py:528
 msgid "Find vulnerabilities in web apps (Flathub)."
 msgstr ""
 
-#: aurora/devhub/recipes.py:515
+#: aurora/devhub/recipes.py:531
 msgid "A private network between your devices, built on WireGuard."
 msgstr ""
 
-#: aurora/devhub/recipes.py:519
+#: aurora/devhub/recipes.py:535
 msgid "SSH that survives sleep and changing networks."
 msgstr ""
 
-#: aurora/files/app.py:76 aurora/files/window.py:250 aurora/files/window.py:398
-#: aurora/files/window.py:399 aurora/settingsapp/ai.py:165
+#: aurora/files/app.py:76 aurora/files/window.py:259 aurora/files/window.py:410
+#: aurora/files/window.py:411 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
 #, no-python-format
 msgid "Files"
 msgstr ""
 
-#: aurora/files/create.py:10 aurora/files/window.py:277
-#: aurora/files/window.py:1684
+#: aurora/files/create.py:10 aurora/files/window.py:289
+#: aurora/files/window.py:1760
 #, no-python-format
 msgid "New Folder"
 msgstr ""
@@ -1139,8 +1161,8 @@ msgstr ""
 msgid "New File"
 msgstr ""
 
-#: aurora/files/create.py:19 aurora/files/properties.py:64
-#: aurora/files/window.py:329 aurora/taskmanager.py:111
+#: aurora/files/create.py:19 aurora/files/properties.py:65
+#: aurora/files/window.py:341 aurora/taskmanager.py:111
 #, no-python-format
 msgid "Name"
 msgstr ""
@@ -1150,7 +1172,7 @@ msgstr ""
 msgid "File name"
 msgstr ""
 
-#: aurora/files/create.py:20 aurora/files/window.py:1684
+#: aurora/files/create.py:20 aurora/files/window.py:1760
 #, no-python-format
 msgid "Untitled Folder"
 msgstr ""
@@ -1160,7 +1182,7 @@ msgstr ""
 msgid "Untitled.txt"
 msgstr ""
 
-#: aurora/files/create.py:28 aurora/files/window.py:1684
+#: aurora/files/create.py:28 aurora/files/window.py:1760
 #, no-python-format
 msgid "Create"
 msgstr ""
@@ -1216,15 +1238,15 @@ msgstr ""
 msgid "Cannot copy a folder into itself"
 msgstr ""
 
-#: aurora/files/operations.py:148 aurora/files/window.py:1349
-#: aurora/files/window.py:1358 aurora/shell/panel.py:216
+#: aurora/files/operations.py:148 aurora/files/window.py:1398
+#: aurora/files/window.py:1407 aurora/shell/panel.py:216
 #, no-python-format
 msgid "Cancelled"
 msgstr ""
 
-#: aurora/files/properties.py:28 aurora/files/window.py:135
-#: aurora/files/window.py:1107 aurora/files/window.py:1116
-#: aurora/shell/desktopicons.py:168
+#: aurora/files/properties.py:28 aurora/files/window.py:143
+#: aurora/files/window.py:1142 aurora/files/window.py:1151
+#: aurora/shell/desktopicons.py:173
 #, no-python-format
 msgid "Properties"
 msgstr ""
@@ -1239,8 +1261,8 @@ msgstr ""
 msgid "Total size"
 msgstr ""
 
-#: aurora/files/properties.py:44 aurora/files/properties.py:70
-#: aurora/files/window.py:1203
+#: aurora/files/properties.py:44 aurora/files/properties.py:71
+#: aurora/files/window.py:1238
 #, no-python-format
 msgid "Calculating…"
 msgstr ""
@@ -1250,537 +1272,537 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: aurora/files/properties.py:66
+#: aurora/files/properties.py:67
 #, no-python-format
 msgid "Type"
 msgstr ""
 
-#: aurora/files/properties.py:68
+#: aurora/files/properties.py:69
 #, no-python-format
 msgid "Location"
 msgstr ""
 
-#: aurora/files/properties.py:70
+#: aurora/files/properties.py:71
 #, no-python-format
 msgid "Contents"
 msgstr ""
 
-#: aurora/files/properties.py:73 aurora/files/window.py:329
+#: aurora/files/properties.py:74 aurora/files/window.py:341
 #, no-python-format
 msgid "Size"
 msgstr ""
 
-#: aurora/files/properties.py:76 aurora/files/window.py:330
+#: aurora/files/properties.py:77 aurora/files/window.py:342
 #, no-python-format
 msgid "Modified"
 msgstr ""
 
-#: aurora/files/properties.py:79
+#: aurora/files/properties.py:80
 #, no-python-format
 msgid "Accessed"
 msgstr ""
 
-#: aurora/files/properties.py:84
+#: aurora/files/properties.py:85
 #, no-python-format
 msgid "Permissions"
 msgstr ""
 
-#: aurora/files/properties.py:99
+#: aurora/files/properties.py:100
 #, no-python-format, python-brace-format
 msgid "{size} · {n} items"
 msgstr ""
 
-#: aurora/files/window.py:126 aurora/files/window.py:290
-#: aurora/files/window.py:316
+#: aurora/files/window.py:134 aurora/files/window.py:302
+#: aurora/files/window.py:328
 #, no-python-format
 msgid "New Tab"
 msgstr ""
 
-#: aurora/files/window.py:127 aurora/files/window.py:291
+#: aurora/files/window.py:135 aurora/files/window.py:303
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:554
 #, no-python-format
 msgid "New Window"
 msgstr ""
 
-#: aurora/files/window.py:131 aurora/files/window.py:279
-#: aurora/files/window.py:1115 aurora/shell/launcher.py:143
+#: aurora/files/window.py:139 aurora/files/window.py:291
+#: aurora/files/window.py:1150 aurora/shell/launcher.py:143
 #, no-python-format
 msgid "Open in Terminal"
 msgstr ""
 
-#: aurora/files/window.py:133 aurora/files/window.py:1100
+#: aurora/files/window.py:141 aurora/files/window.py:1135
 #: aurora/shell/launcher.py:139
 #, no-python-format
 msgid "Copy Path"
 msgstr ""
 
-#: aurora/files/window.py:138 aurora/shell/sysnotify.py:360
+#: aurora/files/window.py:146 aurora/shell/sysnotify.py:360
 #, no-python-format
 msgid "Eject"
 msgstr ""
 
-#: aurora/files/window.py:154 aurora/files/window.py:766
+#: aurora/files/window.py:162 aurora/files/window.py:782
 #: aurora/settingsapp/health.py:40
 #, no-python-format
 msgid "Home"
 msgstr ""
 
-#: aurora/files/window.py:166 aurora/files/window.py:758
+#: aurora/files/window.py:174 aurora/files/window.py:774
 #: aurora/settingsapp/storage.py:26 aurora/settingsapp/system.py:97
 #: aurora/shell/dock.py:305
 #, no-python-format
 msgid "Trash"
 msgstr ""
 
-#: aurora/files/window.py:180 aurora/files/window.py:768
+#: aurora/files/window.py:188 aurora/files/window.py:784
 #, no-python-format
 msgid "Computer"
 msgstr ""
 
-#: aurora/files/window.py:182 aurora/files/window.py:760
+#: aurora/files/window.py:190 aurora/files/window.py:776
 #: aurora/settingsapp/network.py:35 aurora/shell/search.py:405
-#: aurora/shell/widgets.py:55 aurora/shell/widgets.py:865
+#: aurora/shell/widgets.py:56 aurora/shell/widgets.py:873
 #: aurora/taskmanager.py:450
 #, no-python-format
 msgid "Network"
 msgstr ""
 
-#: aurora/files/window.py:183
+#: aurora/files/window.py:191
 #, no-python-format
 msgid "Connect to Server…"
 msgstr ""
 
-#: aurora/files/window.py:256 aurora/welcome.py:48
+#: aurora/files/window.py:265 aurora/welcome.py:48
 #, no-python-format
 msgid "Back"
 msgstr ""
 
-#: aurora/files/window.py:258
+#: aurora/files/window.py:267
 #, no-python-format
 msgid "Forward"
 msgstr ""
 
-#: aurora/files/window.py:278 aurora/files/window.py:1112
+#: aurora/files/window.py:290 aurora/files/window.py:1147
 #: aurora/shell/wallpaper.py:193
 #, no-python-format
 msgid "New File…"
 msgstr ""
 
-#: aurora/files/window.py:282
+#: aurora/files/window.py:294
 #, no-python-format
 msgid "Undo"
 msgstr ""
 
-#: aurora/files/window.py:283
+#: aurora/files/window.py:295
 #, no-python-format
 msgid "Redo"
 msgstr ""
 
-#: aurora/files/window.py:286
+#: aurora/files/window.py:298
 #, no-python-format
 msgid "Show Hidden Files"
 msgstr ""
 
-#: aurora/files/window.py:287
+#: aurora/files/window.py:299
 #, no-python-format
 msgid "List View"
 msgstr ""
 
-#: aurora/files/window.py:292
+#: aurora/files/window.py:304
 #, no-python-format
 msgid "About Files"
 msgstr ""
 
-#: aurora/files/window.py:297 aurora/settingsapp/devices.py:42
+#: aurora/files/window.py:309 aurora/settingsapp/devices.py:42
 #: aurora/shell/panel.py:426
 #, no-python-format
 msgid "Search"
 msgstr ""
 
-#: aurora/files/window.py:338 aurora/files/window.py:927
+#: aurora/files/window.py:350 aurora/files/window.py:958
 #, no-python-format
 msgid "Folder is Empty"
 msgstr ""
 
-#: aurora/files/window.py:365 aurora/files/window.py:1109
-#: aurora/files/window.py:1430 aurora/shell/dock.py:327
-#: aurora/shell/search.py:438
+#: aurora/files/window.py:377 aurora/files/window.py:1144
+#: aurora/files/window.py:1501 aurora/shell/dock.py:327
+#: aurora/shell/search.py:439
 #, no-python-format
 msgid "Empty Trash"
 msgstr ""
 
-#: aurora/files/window.py:366
+#: aurora/files/window.py:378
 #, no-python-format
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr ""
 
-#: aurora/files/window.py:373 aurora/shell/panel.py:230
+#: aurora/files/window.py:385 aurora/shell/panel.py:230
 #, no-python-format
 msgid "Cancel transfer"
 msgstr ""
 
-#: aurora/files/window.py:377
+#: aurora/files/window.py:389
 #, no-python-format
 msgid "Retry"
 msgstr ""
 
-#: aurora/files/window.py:421
+#: aurora/files/window.py:433
 #, no-python-format
 msgid "Close Tab"
 msgstr ""
 
-#: aurora/files/window.py:925
+#: aurora/files/window.py:956
 #, no-python-format
 msgid "No Results Found"
 msgstr ""
 
-#: aurora/files/window.py:926
+#: aurora/files/window.py:957
 #, no-python-format
 msgid "Trash is Empty"
 msgstr ""
 
-#: aurora/files/window.py:1076
+#: aurora/files/window.py:1111
 #, no-python-format
 msgid "Restore"
 msgstr ""
 
-#: aurora/files/window.py:1077
+#: aurora/files/window.py:1112
 #, no-python-format
 msgid "Delete Permanently"
 msgstr ""
 
-#: aurora/files/window.py:1079
+#: aurora/files/window.py:1114
 #, no-python-format
 msgid "Open With…"
 msgstr ""
 
-#: aurora/files/window.py:1080
+#: aurora/files/window.py:1115
 #, no-python-format
 msgid "Quick Look"
 msgstr ""
 
-#: aurora/files/window.py:1082
+#: aurora/files/window.py:1117
 #, no-python-format
 msgid "Send to Nearby Device…"
 msgstr ""
 
-#: aurora/files/window.py:1085
+#: aurora/files/window.py:1120
 #, no-python-format
 msgid "Summarize with Aurora"
 msgstr ""
 
-#: aurora/files/window.py:1086
+#: aurora/files/window.py:1121
 #, no-python-format
 msgid "Ask Aurora About This File…"
 msgstr ""
 
-#: aurora/files/window.py:1092
+#: aurora/files/window.py:1127
 #, no-python-format
 msgid "Extract Here"
 msgstr ""
 
-#: aurora/files/window.py:1093
+#: aurora/files/window.py:1128
 #, no-python-format
 msgid "Compress…"
 msgstr ""
 
-#: aurora/files/window.py:1096
+#: aurora/files/window.py:1131
 #, no-python-format
 msgid "Resize Images…"
 msgstr ""
 
-#: aurora/files/window.py:1097 aurora/files/window.py:1566
+#: aurora/files/window.py:1132 aurora/files/window.py:1637
 #, no-python-format
 msgid "What's Using This?"
 msgstr ""
 
-#: aurora/files/window.py:1099
+#: aurora/files/window.py:1134
 #, no-python-format
 msgid "Cut"
 msgstr ""
 
-#: aurora/files/window.py:1101
+#: aurora/files/window.py:1136
 #, no-python-format
 msgid "Duplicate"
 msgstr ""
 
-#: aurora/files/window.py:1101 aurora/shell/desktopicons.py:166
+#: aurora/files/window.py:1136 aurora/shell/desktopicons.py:171
 #, no-python-format
 msgid "Rename…"
 msgstr ""
 
-#: aurora/files/window.py:1103 aurora/files/window.py:1158
+#: aurora/files/window.py:1138 aurora/files/window.py:1193
 #, no-python-format
 msgid "Rename Multiple…"
 msgstr ""
 
-#: aurora/files/window.py:1104
+#: aurora/files/window.py:1139
 #, no-python-format
 msgid "Compare Folders"
 msgstr ""
 
-#: aurora/files/window.py:1105 aurora/files/window.py:1203
+#: aurora/files/window.py:1140 aurora/files/window.py:1238
 #, no-python-format
 msgid "SHA-256 Checksums"
 msgstr ""
 
-#: aurora/files/window.py:1106 aurora/settingsapp/storage.py:288
-#: aurora/shell/desktopicons.py:167
+#: aurora/files/window.py:1141 aurora/settingsapp/storage.py:288
+#: aurora/shell/desktopicons.py:172
 #, no-python-format
 msgid "Move to Trash"
 msgstr ""
 
-#: aurora/files/window.py:1111 aurora/shell/wallpaper.py:194
+#: aurora/files/window.py:1146 aurora/shell/wallpaper.py:194
 #, no-python-format
 msgid "New Folder…"
 msgstr ""
 
-#: aurora/files/window.py:1113
+#: aurora/files/window.py:1148
 #, no-python-format
 msgid "Paste"
 msgstr ""
 
-#: aurora/files/window.py:1114
+#: aurora/files/window.py:1149
 #, no-python-format
 msgid "Select All"
 msgstr ""
 
-#: aurora/files/window.py:1119 aurora/files/window.py:1242
+#: aurora/files/window.py:1154 aurora/files/window.py:1277
 #, no-python-format
 msgid "Summarize Git Changes…"
 msgstr ""
 
-#: aurora/files/window.py:1159
+#: aurora/files/window.py:1194
 #, no-python-format
 msgid "Replace text in the selected names. No file is overwritten."
 msgstr ""
 
-#: aurora/files/window.py:1161
+#: aurora/files/window.py:1196
 #, no-python-format
 msgid "Find"
 msgstr ""
 
-#: aurora/files/window.py:1162
+#: aurora/files/window.py:1197
 #, no-python-format
 msgid "Replace with"
 msgstr ""
 
-#: aurora/files/window.py:1167 aurora/files/window.py:1670
-#: aurora/shell/desktopicons.py:176 aurora/shell/desktopicons.py:180
+#: aurora/files/window.py:1202 aurora/files/window.py:1746
+#: aurora/shell/desktopicons.py:181 aurora/shell/desktopicons.py:185
 #, no-python-format
 msgid "Rename"
 msgstr ""
 
-#: aurora/files/window.py:1174
+#: aurora/files/window.py:1209
 #, no-python-format
 msgid "Enter text to find"
 msgstr ""
 
-#: aurora/files/window.py:1182
+#: aurora/files/window.py:1217
 #, no-python-format
 msgid "A destination name already exists"
 msgstr ""
 
-#: aurora/files/window.py:1233
+#: aurora/files/window.py:1268
 #, no-python-format
 msgid "Select exactly two folders"
 msgstr ""
 
-#: aurora/files/window.py:1243
+#: aurora/files/window.py:1278
 #, no-python-format
 msgid "Review the changes before sending them to Aurora AI."
 msgstr ""
 
-#: aurora/files/window.py:1245 aurora/settingsapp/system.py:178
-#: aurora/shell/widgets.py:511
+#: aurora/files/window.py:1280 aurora/settingsapp/system.py:178
+#: aurora/shell/widgets.py:519
 #, no-python-format
 msgid "Loading…"
 msgstr ""
 
-#: aurora/files/window.py:1249 aurora/shell/app.py:683
+#: aurora/files/window.py:1284 aurora/shell/app.py:756
 #, no-python-format
 msgid "Ask Aurora"
 msgstr ""
 
-#: aurora/files/window.py:1276
+#: aurora/files/window.py:1311
 #, no-python-format
 msgid "No Git changes found"
 msgstr ""
 
-#: aurora/files/window.py:1278
+#: aurora/files/window.py:1313
 #, no-python-format, python-brace-format
 msgid "Provider: {name}. Review the text before sending."
 msgstr ""
 
-#: aurora/files/window.py:1291
+#: aurora/files/window.py:1326
 #, no-python-format, python-brace-format
 msgid "{n} item(s) cut"
 msgstr ""
 
-#: aurora/files/window.py:1291
+#: aurora/files/window.py:1326
 #, no-python-format, python-brace-format
 msgid "{n} item(s) copied"
 msgstr ""
 
-#: aurora/files/window.py:1377
+#: aurora/files/window.py:1436
 #, no-python-format, python-brace-format
 msgid "{n} item(s) moved to the Trash"
 msgstr ""
 
-#: aurora/files/window.py:1390
+#: aurora/files/window.py:1461
 #, no-python-format, python-brace-format
 msgid "Permanently Delete {n} Item(s)?"
 msgstr ""
 
-#: aurora/files/window.py:1391
+#: aurora/files/window.py:1462
 #, no-python-format
 msgid "Deleted items cannot be restored."
 msgstr ""
 
-#: aurora/files/window.py:1393 aurora/settingsapp/ai.py:336
+#: aurora/files/window.py:1464 aurora/settingsapp/ai.py:336
 #: aurora/shell/morewidgets.py:160
 #, no-python-format
 msgid "Delete"
 msgstr ""
 
-#: aurora/files/window.py:1427
+#: aurora/files/window.py:1498
 #, no-python-format
 msgid "Empty Trash?"
 msgstr ""
 
-#: aurora/files/window.py:1428
+#: aurora/files/window.py:1499
 #, no-python-format
 msgid "All items in the Trash will be permanently deleted."
 msgstr ""
 
-#: aurora/files/window.py:1458
+#: aurora/files/window.py:1529
 #, no-python-format
 msgid "That didn't work"
 msgstr ""
 
-#: aurora/files/window.py:1468 aurora/files/window.py:1477
+#: aurora/files/window.py:1539 aurora/files/window.py:1548
 #, no-python-format
 msgid "Compress"
 msgstr ""
 
-#: aurora/files/window.py:1469
+#: aurora/files/window.py:1540
 #, no-python-format, python-brace-format
 msgid "{n} items into one archive"
 msgstr ""
 
-#: aurora/files/window.py:1487
+#: aurora/files/window.py:1558
 #, no-python-format
 msgid "Compressing…"
 msgstr ""
 
-#: aurora/files/window.py:1489
+#: aurora/files/window.py:1560
 #, no-python-format, python-brace-format
 msgid "{name} is ready"
 msgstr ""
 
-#: aurora/files/window.py:1499
+#: aurora/files/window.py:1570
 #, no-python-format
 msgid "Extracting…"
 msgstr ""
 
-#: aurora/files/window.py:1500
+#: aurora/files/window.py:1571
 #, no-python-format
 msgid "Extracted"
 msgstr ""
 
-#: aurora/files/window.py:1507
+#: aurora/files/window.py:1578
 #, python-brace-format
 msgid "{n} path copied"
 msgid_plural "{n} paths copied"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1517
+#: aurora/files/window.py:1588
 #, no-python-format
 msgid "Resize Images"
 msgstr ""
 
-#: aurora/files/window.py:1518
+#: aurora/files/window.py:1589
 #, python-brace-format
 msgid "{n} picture"
 msgid_plural "{n} pictures"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1523
+#: aurora/files/window.py:1594
 #, no-python-format
 msgid "Keep the format"
 msgstr ""
 
-#: aurora/files/window.py:1524
+#: aurora/files/window.py:1595
 #, no-python-format
 msgid "Resize the originals instead of making copies"
 msgstr ""
 
-#: aurora/files/window.py:1529
+#: aurora/files/window.py:1600
 #, no-python-format
 msgid "Resize"
 msgstr ""
 
-#: aurora/files/window.py:1550
+#: aurora/files/window.py:1621
 #, python-brace-format
 msgid "{n} picture resized"
 msgid_plural "{n} pictures resized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1551
+#: aurora/files/window.py:1622
 #, no-python-format, python-brace-format
 msgid "{n} failed"
 msgstr ""
 
-#: aurora/files/window.py:1568
+#: aurora/files/window.py:1639
 #, no-python-format
 msgid "No program of yours has it open."
 msgstr ""
 
-#: aurora/files/window.py:1569
+#: aurora/files/window.py:1640
 #, no-python-format
 msgid "OK"
 msgstr ""
 
-#: aurora/files/window.py:1572
+#: aurora/files/window.py:1643
 #, no-python-format
 msgid ""
 "These programs have it open. Close them in the program, or end them here "
 "(unsaved work in them is lost)."
 msgstr ""
 
-#: aurora/files/window.py:1579 aurora/taskmanager.py:147
+#: aurora/files/window.py:1650 aurora/taskmanager.py:147
 #: aurora/taskmanager.py:358
 #, no-python-format
 msgid "End Task"
 msgstr ""
 
-#: aurora/files/window.py:1584
+#: aurora/files/window.py:1655
 #, no-python-format
 msgid "Ended"
 msgstr ""
 
-#: aurora/files/window.py:1592
+#: aurora/files/window.py:1663
 #, no-python-format
 msgid "End All"
 msgstr ""
 
-#: aurora/files/window.py:1603
+#: aurora/files/window.py:1674
 #, no-python-format
 msgid "Connect to Server"
 msgstr ""
 
-#: aurora/files/window.py:1604
+#: aurora/files/window.py:1675
 #, no-python-format
 msgid ""
 "For example smb://192.168.1.10/Shared for a Windows or NAS shared folder, or "
 "sftp://user@server"
 msgstr ""
 
-#: aurora/files/window.py:1609 aurora/settingsapp/devices.py:115
+#: aurora/files/window.py:1680 aurora/settingsapp/devices.py:115
 #: aurora/shell/quicksettings.py:459
 #, no-python-format
 msgid "Connect"
@@ -1814,7 +1836,7 @@ msgid "Log In"
 msgstr ""
 
 #: aurora/greeter/app.py:162 aurora/shell/panel.py:311
-#: aurora/shell/search.py:433 aurora/taskmanager.py:617
+#: aurora/shell/search.py:434 aurora/taskmanager.py:617
 #, no-python-format
 msgid "Restart"
 msgstr ""
@@ -1877,7 +1899,7 @@ msgid_plural "{n} items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/quicklook.py:264
+#: aurora/quicklook.py:266
 #, no-python-format, python-brace-format
 msgid "Modified {date}"
 msgstr ""
@@ -1904,15 +1926,15 @@ msgid "Device name"
 msgstr ""
 
 #: aurora/settingsapp/about.py:83 aurora/shell/sysmon.py:124
-#: aurora/shell/widgets.py:567 aurora/shell/widgets.py:586
+#: aurora/shell/widgets.py:575 aurora/shell/widgets.py:594
 #: aurora/taskmanager.py:449
 #, no-python-format
 msgid "Processor"
 msgstr ""
 
 #: aurora/settingsapp/about.py:83 aurora/settingsapp/health.py:219
-#: aurora/shell/sysmon.py:124 aurora/shell/widgets.py:568
-#: aurora/shell/widgets.py:590 aurora/taskmanager.py:113
+#: aurora/shell/sysmon.py:124 aurora/shell/widgets.py:576
+#: aurora/shell/widgets.py:598 aurora/taskmanager.py:113
 #: aurora/taskmanager.py:449
 #, no-python-format
 msgid "Memory"
@@ -2359,7 +2381,26 @@ msgstr ""
 msgid "AI downloads removed"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:12 aurora/shell/widgets.py:688
+#: aurora/settingsapp/app.py:47 aurora/settingsapp/app.py:69
+#: aurora/settingsapp/app.py:81 aurora/settingsapp/app.py:82
+#: aurora/settingsapp/desktop.py:198 aurora/settingsapp/inputs.py:48
+#: aurora/shell/quicksettings.py:270 aurora/shell/search.py:580
+#: aurora/shell/wallpaper.py:200
+#, no-python-format
+msgid "Settings"
+msgstr ""
+
+#: aurora/settingsapp/app.py:101
+#, no-python-format
+msgid "This page could not be loaded"
+msgstr ""
+
+#: aurora/settingsapp/app.py:122
+#, no-python-format
+msgid "Open a specific page"
+msgstr ""
+
+#: aurora/settingsapp/appearance.py:12 aurora/shell/widgets.py:696
 msgid "Blue"
 msgstr ""
 
@@ -2367,11 +2408,11 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:13 aurora/shell/widgets.py:688
+#: aurora/settingsapp/appearance.py:13 aurora/shell/widgets.py:696
 msgid "Green"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:13 aurora/shell/widgets.py:687
+#: aurora/settingsapp/appearance.py:13 aurora/shell/widgets.py:695
 msgid "Yellow"
 msgstr ""
 
@@ -2383,7 +2424,7 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:15 aurora/shell/widgets.py:687
+#: aurora/settingsapp/appearance.py:15 aurora/shell/widgets.py:695
 msgid "Pink"
 msgstr ""
 
@@ -2401,7 +2442,7 @@ msgid "Appearance"
 msgstr ""
 
 #: aurora/settingsapp/appearance.py:68 aurora/settingsapp/desktop.py:172
-#: aurora/shell/widgets.py:395
+#: aurora/shell/widgets.py:403
 #, no-python-format
 msgid "Style"
 msgstr ""
@@ -2510,7 +2551,7 @@ msgid "Subpixel (for LCD screens)"
 msgstr ""
 
 #: aurora/settingsapp/appearance.py:147 aurora/settingsapp/appearance.py:152
-#: aurora/settingsapp/inputs.py:196
+#: aurora/settingsapp/inputs.py:198
 #, no-python-format
 msgid "None"
 msgstr ""
@@ -2592,7 +2633,7 @@ msgstr ""
 msgid "Color temperature"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/inputs.py:358
+#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/inputs.py:360
 #: aurora/shell/panel.py:346 aurora/shell/search.py:430
 #, no-python-format
 msgid "Lock Screen"
@@ -2710,7 +2751,7 @@ msgstr ""
 msgid "No startup apps"
 msgstr ""
 
-#: aurora/settingsapp/applications.py:82 aurora/settingsapp/inputs.py:261
+#: aurora/settingsapp/applications.py:82 aurora/settingsapp/inputs.py:263
 #: aurora/settingsapp/language.py:251 aurora/settingsapp/system.py:135
 #: aurora/settingsapp/system.py:625
 #, no-python-format
@@ -2802,7 +2843,7 @@ msgstr ""
 msgid "Show a notification"
 msgstr ""
 
-#: aurora/settingsapp/applications.py:175 aurora/shell/desktopicons.py:160
+#: aurora/settingsapp/applications.py:175 aurora/shell/desktopicons.py:165
 #, no-python-format
 msgid "Open in Files"
 msgstr ""
@@ -2943,7 +2984,7 @@ msgid ""
 "dictate what you say."
 msgstr ""
 
-#: aurora/settingsapp/applications.py:274 aurora/settingsapp/inputs.py:174
+#: aurora/settingsapp/applications.py:274 aurora/settingsapp/inputs.py:176
 #, no-python-format
 msgid "Typing"
 msgstr ""
@@ -2989,7 +3030,7 @@ msgstr ""
 msgid "Double-click delay"
 msgstr ""
 
-#: aurora/settingsapp/applications.py:302 aurora/settingsapp/inputs.py:147
+#: aurora/settingsapp/applications.py:302 aurora/settingsapp/inputs.py:149
 #, no-python-format
 msgid "Pointer speed"
 msgstr ""
@@ -2997,25 +3038,6 @@ msgstr ""
 #: aurora/settingsapp/applications.py:303
 #, no-python-format
 msgid "Speed, left-handed use and gestures are in Mouse & Touchpad."
-msgstr ""
-
-#: aurora/settingsapp/app.py:47 aurora/settingsapp/app.py:69
-#: aurora/settingsapp/app.py:81 aurora/settingsapp/app.py:82
-#: aurora/settingsapp/desktop.py:198 aurora/settingsapp/inputs.py:48
-#: aurora/shell/quicksettings.py:270 aurora/shell/search.py:579
-#: aurora/shell/wallpaper.py:200
-#, no-python-format
-msgid "Settings"
-msgstr ""
-
-#: aurora/settingsapp/app.py:101
-#, no-python-format
-msgid "This page could not be loaded"
-msgstr ""
-
-#: aurora/settingsapp/app.py:122
-#, no-python-format
-msgid "Open a specific page"
 msgstr ""
 
 #: aurora/settingsapp/backgrounds.py:26
@@ -3101,7 +3123,7 @@ msgstr ""
 msgid "Change picture every"
 msgstr ""
 
-#: aurora/settingsapp/backgrounds.py:251 aurora/shell/widgets.py:913
+#: aurora/settingsapp/backgrounds.py:251 aurora/shell/widgets.py:921
 #, no-python-format
 msgid "15 minutes"
 msgstr ""
@@ -3246,7 +3268,7 @@ msgid "Gaming"
 msgstr ""
 
 #: aurora/settingsapp/desktop.py:64 aurora/settingsapp/health.py:218
-#: aurora/settingsapp/power.py:125 aurora/shell/widgets.py:53
+#: aurora/settingsapp/power.py:125 aurora/shell/widgets.py:54
 #, no-python-format
 msgid "Battery"
 msgstr ""
@@ -3326,7 +3348,7 @@ msgstr ""
 msgid "Bottom"
 msgstr ""
 
-#: aurora/settingsapp/desktop.py:151 aurora/shell/widgets.py:47
+#: aurora/settingsapp/desktop.py:151 aurora/shell/widgets.py:48
 #, no-python-format
 msgid "Clock"
 msgstr ""
@@ -3380,7 +3402,7 @@ msgid "Show widgets"
 msgstr ""
 
 #: aurora/settingsapp/desktop.py:162 aurora/shell/wallpaper.py:197
-#: aurora/shell/widgets.py:1421
+#: aurora/shell/widgets.py:1429
 #, no-python-format
 msgid "Edit Widgets…"
 msgstr ""
@@ -3431,7 +3453,7 @@ msgstr ""
 msgid "Show Trash"
 msgstr ""
 
-#: aurora/settingsapp/desktop.py:179 aurora/settingsapp/inputs.py:369
+#: aurora/settingsapp/desktop.py:179 aurora/settingsapp/inputs.py:371
 #, no-python-format
 msgid "Windows"
 msgstr ""
@@ -3476,12 +3498,12 @@ msgstr ""
 msgid "Icon position"
 msgstr ""
 
-#: aurora/settingsapp/desktop.py:190 aurora/settingsapp/inputs.py:360
+#: aurora/settingsapp/desktop.py:190 aurora/settingsapp/inputs.py:362
 #, no-python-format
 msgid "Top left"
 msgstr ""
 
-#: aurora/settingsapp/desktop.py:190 aurora/settingsapp/inputs.py:360
+#: aurora/settingsapp/desktop.py:190 aurora/settingsapp/inputs.py:362
 #, no-python-format
 msgid "Top right"
 msgstr ""
@@ -3790,14 +3812,14 @@ msgstr ""
 msgid "Enrollment failed. Please try again."
 msgstr ""
 
-#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1349
-#: aurora/taskmanager.py:636 aurora/welcome.py:140
+#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1357
+#: aurora/shell/widgets.py:1480 aurora/taskmanager.py:636 aurora/welcome.py:140
 #, no-python-format
 msgid "Done"
 msgstr ""
 
 #: aurora/settingsapp/health.py:40 aurora/settingsapp/storage.py:28
-#: aurora/shell/widgets.py:50 aurora/shell/widgets.py:1334
+#: aurora/shell/widgets.py:51 aurora/shell/widgets.py:1342
 #, no-python-format
 msgid "System"
 msgstr ""
@@ -3813,8 +3835,8 @@ msgid "See What Uses Space"
 msgstr ""
 
 #: aurora/settingsapp/health.py:70 aurora/settingsapp/storage.py:99
-#: aurora/shell/sysmon.py:126 aurora/shell/widgets.py:569
-#: aurora/shell/widgets.py:593 aurora/taskmanager.py:115
+#: aurora/shell/sysmon.py:126 aurora/shell/widgets.py:577
+#: aurora/shell/widgets.py:601 aurora/taskmanager.py:115
 #: aurora/taskmanager.py:450
 #, no-python-format
 msgid "Disk"
@@ -4219,7 +4241,7 @@ msgstr ""
 msgid "Snap layouts"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:30
+#: aurora/settingsapp/inputs.py:30 aurora/settingsapp/inputs.py:60
 #, no-python-format
 msgid "Keep window on top"
 msgstr ""
@@ -4295,442 +4317,442 @@ msgid "New terminal window"
 msgstr ""
 
 #: aurora/settingsapp/inputs.py:47 aurora/shell/panel.py:308
-#: aurora/shell/search.py:440 aurora/taskmanager.py:658
+#: aurora/shell/search.py:441 aurora/taskmanager.py:658
 #, no-python-format
 msgid "Task Manager"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:49
+#: aurora/settingsapp/inputs.py:49 aurora/settingsapp/inputs.py:50
 #, no-python-format
 msgid "Lock screen"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:52
+#: aurora/settingsapp/inputs.py:53
 #, no-python-format
 msgid "Next window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:53
+#: aurora/settingsapp/inputs.py:54
 #, no-python-format
 msgid "Previous window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:54
+#: aurora/settingsapp/inputs.py:55
 #, no-python-format
 msgid "Close window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:55
+#: aurora/settingsapp/inputs.py:56
 #, no-python-format
 msgid "Maximize window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:56
+#: aurora/settingsapp/inputs.py:57
 #, no-python-format
 msgid "Restore window size"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:57
+#: aurora/settingsapp/inputs.py:58
 #, no-python-format
 msgid "Minimize window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:58
+#: aurora/settingsapp/inputs.py:59
 #, no-python-format
 msgid "Full screen"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:59
+#: aurora/settingsapp/inputs.py:61
 #, no-python-format
 msgid "Zoom on or off"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:60
+#: aurora/settingsapp/inputs.py:62
 #, no-python-format
 msgid "Zoom in"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:61
+#: aurora/settingsapp/inputs.py:63
 #, no-python-format
 msgid "Zoom out"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:62
+#: aurora/settingsapp/inputs.py:64
 #, no-python-format
 msgid "Window menu"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:71
+#: aurora/settingsapp/inputs.py:73
 #, no-python-format
 msgid "Snap window left"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:71
+#: aurora/settingsapp/inputs.py:73
 #, no-python-format
 msgid "Snap window right"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:73
+#: aurora/settingsapp/inputs.py:75
 #, no-python-format
 msgid "Move window to the top-left quarter"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:74
+#: aurora/settingsapp/inputs.py:76
 #, no-python-format
 msgid "Move window to the top-right quarter"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:75
+#: aurora/settingsapp/inputs.py:77
 #, no-python-format
 msgid "Move window to the bottom-left quarter"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:76
+#: aurora/settingsapp/inputs.py:78
 #, no-python-format
 msgid "Move window to the bottom-right quarter"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:77
+#: aurora/settingsapp/inputs.py:79
 #, no-python-format
 msgid "Move window to the left third"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:78
+#: aurora/settingsapp/inputs.py:80
 #, no-python-format
 msgid "Move window to the center third"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:79
+#: aurora/settingsapp/inputs.py:81
 #, no-python-format
 msgid "Move window to the right third"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:85
+#: aurora/settingsapp/inputs.py:87
 #, no-python-format
 msgid "Previous workspace"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:87
+#: aurora/settingsapp/inputs.py:89
 #, no-python-format
 msgid "Next workspace"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:88
+#: aurora/settingsapp/inputs.py:90
 #, no-python-format, python-brace-format
 msgid "Go to workspace {n}"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:90
+#: aurora/settingsapp/inputs.py:92
 #, no-python-format, python-brace-format
 msgid "Move window to workspace {n}"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:96
+#: aurora/settingsapp/inputs.py:98
 #, no-python-format
 msgid "Mouse & Touchpad"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:101
+#: aurora/settingsapp/inputs.py:103
 #, no-python-format
 msgid "General"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:102
+#: aurora/settingsapp/inputs.py:104
 #, no-python-format
 msgid "Left-handed"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:106
+#: aurora/settingsapp/inputs.py:108
 #, no-python-format
 msgid "Mouse"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:110
+#: aurora/settingsapp/inputs.py:112
 #, no-python-format
 msgid "Acceleration"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:110
+#: aurora/settingsapp/inputs.py:112
 #, no-python-format
 msgid "Adaptive"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:110
+#: aurora/settingsapp/inputs.py:112
 #, no-python-format
 msgid "Flat"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:113 aurora/settingsapp/inputs.py:122
+#: aurora/settingsapp/inputs.py:115 aurora/settingsapp/inputs.py:124
 #, no-python-format
 msgid "Natural scrolling"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:116
+#: aurora/settingsapp/inputs.py:118
 #, no-python-format
 msgid "Content moves in the direction of the wheel"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:118
+#: aurora/settingsapp/inputs.py:120
 #, no-python-format
 msgid "Touchpad"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:120
+#: aurora/settingsapp/inputs.py:122
 #, no-python-format
 msgid "Tap to click"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:125
+#: aurora/settingsapp/inputs.py:127
 #, no-python-format
 msgid "Disable while typing"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:130
+#: aurora/settingsapp/inputs.py:132
 #, no-python-format
 msgid "Scroll method"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:130
+#: aurora/settingsapp/inputs.py:132
 #, no-python-format
 msgid "Two fingers"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:130
+#: aurora/settingsapp/inputs.py:132
 #, no-python-format
 msgid "Edge"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:135
+#: aurora/settingsapp/inputs.py:137
 #, no-python-format
 msgid "Secondary click"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:135
+#: aurora/settingsapp/inputs.py:137
 #, no-python-format
 msgid "Two-finger click"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:135
+#: aurora/settingsapp/inputs.py:137
 #, no-python-format
 msgid "Bottom-right corner"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:140
+#: aurora/settingsapp/inputs.py:142
 #, no-python-format
 msgid "Gestures"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:142
+#: aurora/settingsapp/inputs.py:144
 #, no-python-format
 msgid ""
 "Three fingers: up for all windows, down for the desktop, sideways to change "
 "workspace. Pinch with four fingers for Launchpad."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:169 aurora/settingsapp/language.py:144
+#: aurora/settingsapp/inputs.py:171 aurora/settingsapp/language.py:144
 #, no-python-format
 msgid "Keyboard"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:175
+#: aurora/settingsapp/inputs.py:177
 #, no-python-format
 msgid "Keyboard layouts are in Language & Region."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:176
+#: aurora/settingsapp/inputs.py:178
 #, no-python-format
 msgid "Repeat delay (ms)"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:178
+#: aurora/settingsapp/inputs.py:180
 #, no-python-format
 msgid "Repeat rate (per second)"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:180
+#: aurora/settingsapp/inputs.py:182
 #, no-python-format
 msgid "Num Lock on at login"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:186
+#: aurora/settingsapp/inputs.py:188
 #, no-python-format
 msgid "Show Caps Lock and Num Lock on screen"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:189
+#: aurora/settingsapp/inputs.py:191
 #, no-python-format
 msgid "A moment's notice when you press them"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:193
+#: aurora/settingsapp/inputs.py:195
 #, no-python-format
 msgid "Special Characters"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:194
+#: aurora/settingsapp/inputs.py:196
 #, no-python-format
 msgid ""
 "Press the Compose key, then a sequence: ' then e gives é, o then c gives ©, "
 "= then e gives €."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:196
+#: aurora/settingsapp/inputs.py:198
 #, no-python-format
 msgid "Right Alt"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:197
+#: aurora/settingsapp/inputs.py:199
 #, no-python-format
 msgid "Right Super"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:197
+#: aurora/settingsapp/inputs.py:199
 #, no-python-format
 msgid "Menu key"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:198
+#: aurora/settingsapp/inputs.py:200
 #, no-python-format
 msgid "Right Ctrl"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:198
+#: aurora/settingsapp/inputs.py:200
 #, no-python-format
 msgid "Caps Lock"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:201
+#: aurora/settingsapp/inputs.py:203
 #, no-python-format
 msgid "Compose key"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:204
+#: aurora/settingsapp/inputs.py:206
 #, no-python-format
 msgid "Emoji"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:205
+#: aurora/settingsapp/inputs.py:207
 #, no-python-format
 msgid "Super+. opens the emoji picker in any app."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:207
+#: aurora/settingsapp/inputs.py:209
 #, no-python-format
 msgid "Shortcuts"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:208
+#: aurora/settingsapp/inputs.py:210
 #, no-python-format
 msgid "Built-in shortcuts, plus your own commands."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:210 aurora/settingsapp/inputs.py:273
+#: aurora/settingsapp/inputs.py:212 aurora/settingsapp/inputs.py:275
 #, no-python-format
 msgid "Add Custom Shortcut"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:247 aurora/shell/shortcuts.py:84
+#: aurora/settingsapp/inputs.py:249 aurora/shell/shortcuts.py:86
 #, no-python-format
 msgid "Super"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:274
+#: aurora/settingsapp/inputs.py:276
 #, no-python-format
 msgid "Press the key combination, then enter the command to run."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:276
+#: aurora/settingsapp/inputs.py:278
 #, no-python-format
 msgid "Press keys…"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:277
+#: aurora/settingsapp/inputs.py:279
 #, no-python-format
 msgid "Command, e.g. firefox-esr --private-window"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:282 aurora/settingsapp/system.py:607
+#: aurora/settingsapp/inputs.py:284 aurora/settingsapp/system.py:607
 #, no-python-format
 msgid "Add"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:335
+#: aurora/settingsapp/inputs.py:337
 #, no-python-format
 msgid "Multitasking"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:340
+#: aurora/settingsapp/inputs.py:342
 #, no-python-format
 msgid "Workspaces"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:341
+#: aurora/settingsapp/inputs.py:343
 #, no-python-format
 msgid "Switch with Super+1…9 or Ctrl+Alt+Left/Right."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:344
+#: aurora/settingsapp/inputs.py:346
 #, no-python-format
 msgid "Number of workspaces"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:351
+#: aurora/settingsapp/inputs.py:353
 #, no-python-format
 msgid "Hot Corners"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:352
+#: aurora/settingsapp/inputs.py:354
 #, no-python-format
 msgid "Push the pointer into a corner of the screen to…"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:353
+#: aurora/settingsapp/inputs.py:355
 #, no-python-format
 msgid "Do Nothing"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:353
+#: aurora/settingsapp/inputs.py:355
 #, no-python-format
 msgid "Show All Windows"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:354
+#: aurora/settingsapp/inputs.py:356
 #, no-python-format
 msgid "Show Apps (Launchpad)"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:355 aurora/shell/overview.py:95
-#: aurora/shell/panel.py:446 aurora/shell/search.py:442
+#: aurora/settingsapp/inputs.py:357 aurora/shell/overview.py:95
+#: aurora/shell/panel.py:446 aurora/shell/search.py:443
 #, no-python-format
 msgid "Show Desktop"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:356
+#: aurora/settingsapp/inputs.py:358
 #, no-python-format
 msgid "Open Control Center"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:357
+#: aurora/settingsapp/inputs.py:359
 #, no-python-format
 msgid "Open Notifications"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:358
+#: aurora/settingsapp/inputs.py:360
 #, no-python-format
 msgid "Turn Screen Off"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:361
+#: aurora/settingsapp/inputs.py:363
 #, no-python-format
 msgid "Bottom left"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:362
+#: aurora/settingsapp/inputs.py:364
 #, no-python-format
 msgid "Bottom right"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:370
+#: aurora/settingsapp/inputs.py:372
 #, no-python-format
 msgid ""
 "Super+W shows all windows. Super+Left/Right fills half the screen, "
@@ -4738,22 +4760,22 @@ msgid ""
 "dragging a window to drop it into a quarter or third."
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:373
+#: aurora/settingsapp/inputs.py:375
 #, no-python-format
 msgid "Snap windows to screen edges"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:376
+#: aurora/settingsapp/inputs.py:378
 #, no-python-format
 msgid "Drag a window to an edge to fill half the screen"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:377
+#: aurora/settingsapp/inputs.py:379
 #, no-python-format
 msgid "Drag to the top to maximize"
 msgstr ""
 
-#: aurora/settingsapp/inputs.py:380
+#: aurora/settingsapp/inputs.py:382
 #, no-python-format
 msgid "Focus follows the pointer"
 msgstr ""
@@ -4938,21 +4960,21 @@ msgstr ""
 msgid "Nothing"
 msgstr ""
 
-#: aurora/settingsapp/power.py:48 aurora/shell/devwidgets.py:217
+#: aurora/settingsapp/power.py:48 aurora/shell/devwidgets.py:220
 #: aurora/shell/quicksettings.py:17
 #, no-python-format
 msgid "Power Saver"
 msgstr ""
 
-#: aurora/settingsapp/power.py:48 aurora/shell/devwidgets.py:216
+#: aurora/settingsapp/power.py:48 aurora/shell/devwidgets.py:219
 #: aurora/shell/quicksettings.py:16
 #, no-python-format
 msgid "Balanced"
 msgstr ""
 
-#: aurora/settingsapp/power.py:49 aurora/shell/devwidgets.py:215
-#: aurora/shell/devwidgets.py:220 aurora/shell/quicksettings.py:16
-#: aurora/shell/widgets.py:72 aurora/taskmanager.py:668
+#: aurora/settingsapp/power.py:49 aurora/shell/devwidgets.py:218
+#: aurora/shell/devwidgets.py:223 aurora/shell/quicksettings.py:16
+#: aurora/shell/widgets.py:73 aurora/taskmanager.py:668
 #, no-python-format
 msgid "Performance"
 msgstr ""
@@ -5005,7 +5027,7 @@ msgstr ""
 msgid "Suspend the computer when it has not been used for a while."
 msgstr ""
 
-#: aurora/settingsapp/power.py:99 aurora/shell/widgets.py:768
+#: aurora/settingsapp/power.py:99 aurora/shell/widgets.py:776
 #, no-python-format
 msgid "On battery"
 msgstr ""
@@ -5195,7 +5217,7 @@ msgstr ""
 msgid "Screen time is counted while you use apps"
 msgstr ""
 
-#: aurora/settingsapp/screentime.py:93
+#: aurora/settingsapp/screentime.py:97
 #, no-python-format
 msgid "Nothing yet today"
 msgstr ""
@@ -5296,7 +5318,7 @@ msgid "Balance"
 msgstr ""
 
 #: aurora/settingsapp/storage.py:20 aurora/shell/morewidgets.py:407
-#: aurora/shell/widgets.py:1468
+#: aurora/shell/widgets.py:1476
 #, no-python-format
 msgid "Pictures"
 msgstr ""
@@ -6182,17 +6204,17 @@ msgstr ""
 msgid "24-hour clock"
 msgstr ""
 
-#: aurora/shell/app.py:85
+#: aurora/shell/app.py:86
 #, no-python-format
 msgid "Opening App Center…"
 msgstr ""
 
-#: aurora/shell/app.py:208
+#: aurora/shell/app.py:209
 #, no-python-format
 msgid "Night Light can't change this screen's colors"
 msgstr ""
 
-#: aurora/shell/app.py:209
+#: aurora/shell/app.py:210
 #, no-python-format
 msgid ""
 "The graphics driver doesn't allow it. This is usual in a virtual machine; on "
@@ -6200,269 +6222,269 @@ msgid ""
 "Drivers."
 msgstr ""
 
-#: aurora/shell/app.py:222
+#: aurora/shell/app.py:223
 #, no-python-format
 msgid "Graphics fallback started"
 msgstr ""
 
-#: aurora/shell/app.py:223
+#: aurora/shell/app.py:224
 #, no-python-format
 msgid ""
 "Wayfire could not start. Aurora opened the safe desktop instead. Select this "
 "notification to review the startup report."
 msgstr ""
 
-#: aurora/shell/app.py:225
+#: aurora/shell/app.py:226
 #, no-python-format
 msgid "Open System Health"
 msgstr ""
 
-#: aurora/shell/app.py:367
+#: aurora/shell/app.py:407
 #, no-python-format
 msgid "Writing tools are off"
 msgstr ""
 
-#: aurora/shell/app.py:450
+#: aurora/shell/app.py:499
 #, no-python-format
 msgid "Restart didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:450
+#: aurora/shell/app.py:499
 #, no-python-format
 msgid "Shut down didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:451
+#: aurora/shell/app.py:500
 #, no-python-format
 msgid "Sleep didn't happen"
 msgstr ""
 
-#: aurora/shell/app.py:452
+#: aurora/shell/app.py:501
 #, no-python-format
 msgid "Restart Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:452
+#: aurora/shell/app.py:501
 #, no-python-format
 msgid "Shut Down Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:453
+#: aurora/shell/app.py:502
 #, no-python-format
 msgid "Sleep Anyway"
 msgstr ""
 
-#: aurora/shell/app.py:550
+#: aurora/shell/app.py:599
 #, no-python-format
 msgid "Always on Top"
 msgstr ""
 
-#: aurora/shell/app.py:550
+#: aurora/shell/app.py:599
 #, no-python-format
 msgid "Always on Top Off"
 msgstr ""
 
-#: aurora/shell/app.py:554
+#: aurora/shell/app.py:603
 #, no-python-format
 msgid "Set it up in Settings → AI."
 msgstr ""
 
-#: aurora/shell/app.py:560
+#: aurora/shell/app.py:609
 #, no-python-format
 msgid "Dictation is off"
 msgstr ""
 
-#: aurora/shell/app.py:567
+#: aurora/shell/app.py:616
 #, no-python-format
 msgid "Dictation isn't installed yet"
 msgstr ""
 
-#: aurora/shell/app.py:571
+#: aurora/shell/app.py:620
 #, no-python-format
 msgid "Listening… press Super+H to stop"
 msgstr ""
 
-#: aurora/shell/app.py:573
+#: aurora/shell/app.py:622
 #, no-python-format
 msgid "Writing it down…"
 msgstr ""
 
-#: aurora/shell/app.py:587
+#: aurora/shell/app.py:636
 #, no-python-format
 msgid "Nothing was heard"
 msgstr ""
 
-#: aurora/shell/app.py:596
+#: aurora/shell/app.py:645
 #, no-python-format
 msgid "Read aloud is off"
 msgstr ""
 
-#: aurora/shell/app.py:603
+#: aurora/shell/app.py:652
 #, no-python-format
 msgid "Select some text first"
 msgstr ""
 
-#: aurora/shell/app.py:673
+#: aurora/shell/app.py:726
 #, no-python-format
 msgid "Screenshot captured"
 msgstr ""
 
-#: aurora/shell/app.py:674
+#: aurora/shell/app.py:727
 #, no-python-format, python-brace-format
 msgid "Saved to {path} and copied to the clipboard."
 msgstr ""
 
-#: aurora/shell/app.py:679
+#: aurora/shell/app.py:752
 #, no-python-format
 msgid "Pin to Screen"
 msgstr ""
 
-#: aurora/shell/app.py:679
+#: aurora/shell/app.py:752
 #, no-python-format
 msgid "Annotate"
 msgstr ""
 
-#: aurora/shell/app.py:680
+#: aurora/shell/app.py:753
 #, no-python-format
 msgid "Copy Text"
 msgstr ""
 
-#: aurora/shell/app.py:742 aurora/shell/app.py:749
+#: aurora/shell/app.py:821 aurora/shell/app.py:828
 #, no-python-format
 msgid "Text Recognition"
 msgstr ""
 
-#: aurora/shell/app.py:742
+#: aurora/shell/app.py:821
 #, no-python-format
 msgid "No text found"
 msgstr ""
 
-#: aurora/shell/app.py:743
+#: aurora/shell/app.py:822
 #, no-python-format
 msgid "Try a larger or sharper area."
 msgstr ""
 
-#: aurora/shell/app.py:749
+#: aurora/shell/app.py:828
 #, no-python-format
 msgid "Text copied"
 msgstr ""
 
-#: aurora/shell/app.py:788 aurora/shell/quicksettings.py:205
+#: aurora/shell/app.py:867 aurora/shell/quicksettings.py:205
 #: aurora/shell/quicksettings.py:223
 #, no-python-format
 msgid "Screen Recording"
 msgstr ""
 
-#: aurora/shell/app.py:788
+#: aurora/shell/app.py:867
 #, no-python-format
 msgid "Screen recording saved"
 msgstr ""
 
-#: aurora/shell/app.py:789
+#: aurora/shell/app.py:868
 #, no-python-format, python-brace-format
 msgid "Saved to {path}."
 msgstr ""
 
-#: aurora/shell/colorpicker.py:60 aurora/shell/colorpicker.py:66
+#: aurora/shell/colorpicker.py:65 aurora/shell/colorpicker.py:71
 #, no-python-format
 msgid "Color Picker"
 msgstr ""
 
-#: aurora/shell/colorpicker.py:61
+#: aurora/shell/colorpicker.py:66
 #, no-python-format, python-brace-format
 msgid "{color} copied"
 msgstr ""
 
-#: aurora/shell/colorpicker.py:66
+#: aurora/shell/colorpicker.py:71
 #, no-python-format
 msgid "Couldn't read the color"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:95 aurora/shell/widgets.py:66
+#: aurora/shell/devwidgets.py:98 aurora/shell/widgets.py:67
 #, no-python-format
 msgid "Projects"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:126
+#: aurora/shell/devwidgets.py:129
 #, no-python-format
 msgid "Git repositories in ~/Projects, ~/src or ~/code appear here"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:139
+#: aurora/shell/devwidgets.py:142
 #, python-brace-format
 msgid "{n} change"
 msgid_plural "{n} changes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/shell/devwidgets.py:168 aurora/shell/widgets.py:67
+#: aurora/shell/devwidgets.py:171 aurora/shell/widgets.py:68
 #, no-python-format
 msgid "Local Servers"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:190
+#: aurora/shell/devwidgets.py:193
 #, no-python-format
 msgid "Start a dev server and it appears here"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:199
+#: aurora/shell/devwidgets.py:202
 #, no-python-format
 msgid "server"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:237
+#: aurora/shell/devwidgets.py:240
 #, no-python-format
 msgid "Power profiles aren't available here"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:278 aurora/shell/widgets.py:68
+#: aurora/shell/devwidgets.py:281 aurora/shell/widgets.py:69
 #, no-python-format
 msgid "Containers"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:314
+#: aurora/shell/devwidgets.py:317
 #, no-python-format
 msgid "No container engine running"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:316
+#: aurora/shell/devwidgets.py:319
 #, python-brace-format
 msgid "{n} running"
 msgid_plural "{n} running"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/shell/devwidgets.py:364
+#: aurora/shell/devwidgets.py:367
 #, no-python-format
 msgid "Graphics card"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:385 aurora/shell/widgets.py:70
+#: aurora/shell/devwidgets.py:388 aurora/shell/widgets.py:71
 #, no-python-format
 msgid "GPU"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:386
+#: aurora/shell/devwidgets.py:389
 #, no-python-format
 msgid "No statistics from this graphics driver"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:394
+#: aurora/shell/devwidgets.py:397
 #, no-python-format, python-brace-format
 msgid "{used} of {total}"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:466 aurora/shell/widgets.py:71
+#: aurora/shell/devwidgets.py:469 aurora/shell/widgets.py:72
 #, no-python-format
 msgid "Games"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:469
+#: aurora/shell/devwidgets.py:472
 #, no-python-format
 msgid "Open Game Hub"
 msgstr ""
 
-#: aurora/shell/devwidgets.py:488
+#: aurora/shell/devwidgets.py:491
 #, no-python-format
 msgid "Install Steam from Game Hub and your games appear here"
 msgstr ""
@@ -6589,7 +6611,7 @@ msgstr ""
 msgid "Add a task…"
 msgstr ""
 
-#: aurora/shell/morewidgets.py:139 aurora/shell/widgets.py:60
+#: aurora/shell/morewidgets.py:139 aurora/shell/widgets.py:61
 #, no-python-format
 msgid "To Do"
 msgstr ""
@@ -6614,7 +6636,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: aurora/shell/morewidgets.py:179 aurora/shell/widgets.py:686
+#: aurora/shell/morewidgets.py:179 aurora/shell/widgets.py:694
 msgid "Color"
 msgstr ""
 
@@ -6660,7 +6682,7 @@ msgstr[1] ""
 msgid "Show the moon"
 msgstr ""
 
-#: aurora/shell/morewidgets.py:234 aurora/shell/widgets.py:58
+#: aurora/shell/morewidgets.py:234 aurora/shell/widgets.py:59
 #, no-python-format
 msgid "Sun & Moon"
 msgstr ""
@@ -6671,7 +6693,7 @@ msgid "{h} h {m} min of daylight"
 msgstr ""
 
 #: aurora/shell/morewidgets.py:271 aurora/shell/panel.py:53
-#: aurora/shell/widgets.py:526
+#: aurora/shell/widgets.py:534
 #, no-python-format
 msgid "Choose your city in Weather"
 msgstr ""
@@ -6733,7 +6755,7 @@ msgstr ""
 msgid "Music and videos"
 msgstr ""
 
-#: aurora/shell/morewidgets.py:413 aurora/shell/widgets.py:63
+#: aurora/shell/morewidgets.py:413 aurora/shell/widgets.py:64
 #, no-python-format
 msgid "Recent Files"
 msgstr ""
@@ -6748,7 +6770,7 @@ msgid "Items"
 msgstr ""
 
 #: aurora/shell/morewidgets.py:476 aurora/shell/search.py:241
-#: aurora/shell/search.py:250 aurora/shell/widgets.py:64
+#: aurora/shell/search.py:250 aurora/shell/widgets.py:65
 #, no-python-format
 msgid "Clipboard"
 msgstr ""
@@ -6787,7 +6809,7 @@ msgstr ""
 msgid "Accent Color"
 msgstr ""
 
-#: aurora/shell/osk_themes.py:8 aurora/shell/widgets.py:687
+#: aurora/shell/osk_themes.py:8 aurora/shell/widgets.py:695
 msgid "Glass"
 msgstr ""
 
@@ -6830,8 +6852,8 @@ msgstr ""
 msgid "No open windows"
 msgstr ""
 
-#: aurora/shell/panel.py:52 aurora/shell/widgets.py:49
-#: aurora/shell/widgets.py:510 aurora/shell/widgets.py:522
+#: aurora/shell/panel.py:52 aurora/shell/widgets.py:50
+#: aurora/shell/widgets.py:518 aurora/shell/widgets.py:530
 #, no-python-format
 msgid "Weather"
 msgstr ""
@@ -6898,16 +6920,16 @@ msgstr ""
 msgid "App Center"
 msgstr ""
 
-#: aurora/shell/panel.py:310 aurora/shell/search.py:431
+#: aurora/shell/panel.py:310 aurora/shell/search.py:432
 msgid "Sleep"
 msgstr ""
 
-#: aurora/shell/panel.py:312 aurora/shell/search.py:434
+#: aurora/shell/panel.py:312 aurora/shell/search.py:435
 msgid "Shut Down"
 msgstr ""
 
 #: aurora/shell/panel.py:313 aurora/shell/quicksettings.py:351
-#: aurora/shell/search.py:436
+#: aurora/shell/search.py:437
 #, no-python-format
 msgid "Log Out"
 msgstr ""
@@ -7268,77 +7290,77 @@ msgstr ""
 msgid "updates upgrade restart active hours snapshots drivers"
 msgstr ""
 
-#: aurora/shell/search.py:455
+#: aurora/shell/search.py:456
 #, no-python-format
 msgid "System action"
 msgstr ""
 
-#: aurora/shell/search.py:514
+#: aurora/shell/search.py:515
 #, no-python-format
 msgid "same time as here"
 msgstr ""
 
-#: aurora/shell/search.py:526
+#: aurora/shell/search.py:527
 #, no-python-format, python-brace-format
 msgid "{time} in {city}"
 msgstr ""
 
-#: aurora/shell/search.py:562
+#: aurora/shell/search.py:563
 #, no-python-format, python-brace-format
 msgid "Open {url}"
 msgstr ""
 
-#: aurora/shell/search.py:562
+#: aurora/shell/search.py:563
 #, no-python-format
 msgid "Web address"
 msgstr ""
 
-#: aurora/shell/search.py:595
+#: aurora/shell/search.py:596
 #, no-python-format
 msgid "Recent file"
 msgstr ""
 
-#: aurora/shell/search.py:609
+#: aurora/shell/search.py:610
 #, no-python-format, python-brace-format
 msgid "Run “{cmd}”"
 msgstr ""
 
-#: aurora/shell/search.py:609
+#: aurora/shell/search.py:610
 #, no-python-format
 msgid "Command"
 msgstr ""
 
-#: aurora/shell/search.py:614
+#: aurora/shell/search.py:615
 #, no-python-format, python-brace-format
 msgid "Search the web for “{q}”"
 msgstr ""
 
-#: aurora/shell/services.py:233
+#: aurora/shell/services.py:245
 #, no-python-format, python-brace-format
 msgid "{t} until full"
 msgstr ""
 
-#: aurora/shell/services.py:234
+#: aurora/shell/services.py:246
 #, no-python-format, python-brace-format
 msgid "{t} left"
 msgstr ""
 
-#: aurora/shell/services.py:236
+#: aurora/shell/services.py:248
 #, no-python-format
 msgid "charging"
 msgstr ""
 
-#: aurora/shell/shortcuts.py:40
+#: aurora/shell/shortcuts.py:41
 #, no-python-format
 msgid "Keyboard Shortcuts"
 msgstr ""
 
-#: aurora/shell/shortcuts.py:50
+#: aurora/shell/shortcuts.py:51
 #, no-python-format
 msgid "Press any key to close"
 msgstr ""
 
-#: aurora/shell/shortcuts.py:51
+#: aurora/shell/shortcuts.py:52
 #, no-python-format
 msgid "Change Shortcuts…"
 msgstr ""
@@ -7368,8 +7390,8 @@ msgstr ""
 msgid "Leave Empty"
 msgstr ""
 
-#: aurora/shell/sysmon.py:125 aurora/shell/widgets.py:570
-#: aurora/shell/widgets.py:596
+#: aurora/shell/sysmon.py:125 aurora/shell/widgets.py:578
+#: aurora/shell/widgets.py:604
 #, no-python-format
 msgid "Temperature"
 msgstr ""
@@ -7526,211 +7548,211 @@ msgstr ""
 msgid "Display Settings"
 msgstr ""
 
-#: aurora/shell/widgets.py:48
+#: aurora/shell/widgets.py:49
 #, no-python-format
 msgid "Calendar"
 msgstr ""
 
-#: aurora/shell/widgets.py:51
+#: aurora/shell/widgets.py:52
 #, no-python-format
 msgid "Now Playing"
 msgstr ""
 
-#: aurora/shell/widgets.py:52 aurora/shell/widgets.py:707
+#: aurora/shell/widgets.py:53 aurora/shell/widgets.py:715
 #, no-python-format
 msgid "Notes"
 msgstr ""
 
-#: aurora/shell/widgets.py:54 aurora/shell/widgets.py:796
+#: aurora/shell/widgets.py:55 aurora/shell/widgets.py:804
 #, no-python-format
 msgid "World Clock"
 msgstr ""
 
-#: aurora/shell/widgets.py:56
+#: aurora/shell/widgets.py:57
 #, no-python-format
 msgid "Focus"
 msgstr ""
 
-#: aurora/shell/widgets.py:57
+#: aurora/shell/widgets.py:58
 #, no-python-format
 msgid "Photo"
 msgstr ""
 
-#: aurora/shell/widgets.py:61
+#: aurora/shell/widgets.py:62
 #, no-python-format
 msgid "Countdown"
 msgstr ""
 
-#: aurora/shell/widgets.py:62
+#: aurora/shell/widgets.py:63
 #, no-python-format
 msgid "Progress"
 msgstr ""
 
-#: aurora/shell/widgets.py:321 aurora/shell/widgets.py:1425
+#: aurora/shell/widgets.py:322 aurora/shell/widgets.py:1433
 #, no-python-format
 msgid "Remove Widget"
 msgstr ""
 
-#: aurora/shell/widgets.py:396
+#: aurora/shell/widgets.py:404
 msgid "Analog"
 msgstr ""
 
-#: aurora/shell/widgets.py:396
+#: aurora/shell/widgets.py:404
 msgid "Digital"
 msgstr ""
 
-#: aurora/shell/widgets.py:548
+#: aurora/shell/widgets.py:556
 #, no-python-format
 msgid "Offline"
 msgstr ""
 
-#: aurora/shell/widgets.py:558
+#: aurora/shell/widgets.py:566
 #, no-python-format, python-brace-format
 msgid "H {high:.0f}° L {low:.0f}°"
 msgstr ""
 
-#: aurora/shell/widgets.py:672
+#: aurora/shell/widgets.py:680
 #, no-python-format
 msgid "Nothing playing"
 msgstr ""
 
-#: aurora/shell/widgets.py:673
+#: aurora/shell/widgets.py:681
 #, no-python-format
 msgid "Music and videos appear here"
 msgstr ""
 
-#: aurora/shell/widgets.py:700
+#: aurora/shell/widgets.py:708
 #, no-python-format
 msgid "Write a note…"
 msgstr ""
 
-#: aurora/shell/widgets.py:764
+#: aurora/shell/widgets.py:772
 #, no-python-format
 msgid "No battery"
 msgstr ""
 
-#: aurora/shell/widgets.py:766
+#: aurora/shell/widgets.py:774
 #, no-python-format
 msgid "Charging"
 msgstr ""
 
-#: aurora/shell/widgets.py:841
+#: aurora/shell/widgets.py:849
 #, no-python-format
 msgid "same time"
 msgstr ""
 
-#: aurora/shell/widgets.py:857
+#: aurora/shell/widgets.py:865
 msgid "Show the graph"
 msgstr ""
 
-#: aurora/shell/widgets.py:912
+#: aurora/shell/widgets.py:920
 msgid "Length"
 msgstr ""
 
-#: aurora/shell/widgets.py:913
+#: aurora/shell/widgets.py:921
 msgid "25 minutes"
 msgstr ""
 
-#: aurora/shell/widgets.py:914
+#: aurora/shell/widgets.py:922
 msgid "50 minutes"
 msgstr ""
 
-#: aurora/shell/widgets.py:928
+#: aurora/shell/widgets.py:936
 #, no-python-format
 msgid "Start or pause"
 msgstr ""
 
-#: aurora/shell/widgets.py:931
+#: aurora/shell/widgets.py:939
 #, no-python-format
 msgid "Change the length"
 msgstr ""
 
-#: aurora/shell/widgets.py:934
+#: aurora/shell/widgets.py:942
 #, no-python-format
 msgid "Reset"
 msgstr ""
 
-#: aurora/shell/widgets.py:967
+#: aurora/shell/widgets.py:975
 #, no-python-format
 msgid "Focus time is over"
 msgstr ""
 
-#: aurora/shell/widgets.py:968
+#: aurora/shell/widgets.py:976
 #, no-python-format
 msgid "Take a short break."
 msgstr ""
 
-#: aurora/shell/widgets.py:1004
+#: aurora/shell/widgets.py:1012
 msgid "Folder"
 msgstr ""
 
-#: aurora/shell/widgets.py:1005
+#: aurora/shell/widgets.py:1013
 msgid "Change every"
 msgstr ""
 
-#: aurora/shell/widgets.py:1006
+#: aurora/shell/widgets.py:1014
 msgid "Minute"
 msgstr ""
 
-#: aurora/shell/widgets.py:1006
+#: aurora/shell/widgets.py:1014
 msgid "10 minutes"
 msgstr ""
 
-#: aurora/shell/widgets.py:1006
+#: aurora/shell/widgets.py:1014
 msgid "Hour"
 msgstr ""
 
-#: aurora/shell/widgets.py:1016
+#: aurora/shell/widgets.py:1024
 #, no-python-format
 msgid "Photos in your Pictures folder appear here"
 msgstr ""
 
-#: aurora/shell/widgets.py:1333
+#: aurora/shell/widgets.py:1341
 #, no-python-format
 msgid "Everyday"
 msgstr ""
 
-#: aurora/shell/widgets.py:1333
+#: aurora/shell/widgets.py:1341
 #, no-python-format
 msgid "Productivity"
 msgstr ""
 
-#: aurora/shell/widgets.py:1334
+#: aurora/shell/widgets.py:1342
 #, no-python-format
 msgid "Developers"
 msgstr ""
 
-#: aurora/shell/widgets.py:1335
+#: aurora/shell/widgets.py:1343
 #, no-python-format
 msgid "Gamers"
 msgstr ""
 
-#: aurora/shell/widgets.py:1343
+#: aurora/shell/widgets.py:1351
 #, no-python-format
 msgid "Widgets"
 msgstr ""
 
-#: aurora/shell/widgets.py:1345
+#: aurora/shell/widgets.py:1353
 #, no-python-format
 msgid "Click to add · drag to move · right-click to customize"
 msgstr ""
 
-#: aurora/shell/widgets.py:1377
+#: aurora/shell/widgets.py:1385
 #, no-python-format, python-brace-format
 msgid "Add {name}"
 msgstr ""
 
-#: aurora/shell/widgets.py:1423
+#: aurora/shell/widgets.py:1431
 #, no-python-format
 msgid "Customize…"
 msgstr ""
 
-#: aurora/shell/widgets.py:1426
+#: aurora/shell/widgets.py:1434
 #, no-python-format
 msgid "Widget Settings…"
 msgstr ""
 
-#: aurora/shell/widgets.py:1499
+#: aurora/shell/widgets.py:1511
 #, no-python-format
 msgid "Choose a Folder"
 msgstr ""

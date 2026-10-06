@@ -15,7 +15,8 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk, Pango  # noqa: E402
+gi.require_version("Vte", "3.91")
+from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk, Pango, Vte  # noqa: E402
 
 from aurora import VERSION, activities, projectworkspaces  # noqa: E402
 from aurora.devhub.recipes import CATEGORIES, RECIPES  # noqa: E402
@@ -46,11 +47,100 @@ def icon_for(recipe):
 
 
 def install_wrapper(path):
-    """Keep the terminal open for the result, but preserve the recipe's exit code."""
+    """Run and remove a recipe while preserving its exit code."""
     quoted_path = shlex.quote(path)
     return (f"bash {quoted_path}; status=$?; rm -f {quoted_path}; "
             "[ $status -ne 0 ] && echo && echo '✖ Installation failed (see above).'; "
-            "echo; read -rp 'Press Enter to close…' _; exit $status")
+            "exit $status")
+
+
+class InstallWindow(Adw.Window):
+    """A friendly, in-app terminal for recipes that may ask for sudo."""
+
+    def __init__(self, parent, card, path, activity_id):
+        recipe = card.recipe
+        super().__init__(transient_for=parent, modal=True,
+                         title=_("Installing {name}").format(name=_(recipe["name"])),
+                         default_width=760, default_height=500)
+        self.parent_window = parent
+        self.card = card
+        self.recipe = recipe
+        self.activity_id = activity_id
+        self.recipe_path = path
+        self.running = True
+
+        view = Adw.ToolbarView()
+        view.add_top_bar(Adw.HeaderBar())
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10,
+                      margin_top=12, margin_bottom=12, margin_start=12, margin_end=12)
+        self.status = Gtk.Label(label=_("Downloading and installing…"), xalign=0,
+                                css_classes=["title-4"])
+        box.append(self.status)
+        box.append(Gtk.Label(
+            label=_("If asked, type your administrator password below. The log stays "
+                    "visible so failures can be diagnosed."),
+            xalign=0, wrap=True, css_classes=["dim-label"]))
+        self.progress = Gtk.ProgressBar(show_text=False)
+        box.append(self.progress)
+        self.terminal = Vte.Terminal(vexpand=True, hexpand=True)
+        self.terminal.set_scrollback_lines(5000)
+        self.terminal.set_allow_hyperlink(True)
+        frame = Gtk.Frame(child=self.terminal, css_classes=["card"])
+        box.append(frame)
+        view.set_content(box)
+        self.set_content(view)
+
+        self.terminal.connect("child-exited", self._finished)
+        self.connect("close-request", self._close_requested)
+        self._pulse_id = GLib.timeout_add(120, self._pulse)
+        self.terminal.spawn_async(
+            Vte.PtyFlags.DEFAULT, GLib.get_home_dir(),
+            ["/bin/bash", "-c", install_wrapper(path)], None,
+            GLib.SpawnFlags.DEFAULT, None, None, -1, None,
+            self._spawned, None)
+
+    def _spawned(self, _terminal, _pid, error, *_data):
+        if error is None:
+            return
+        try:
+            os.remove(self.recipe_path)
+        except FileNotFoundError:
+            pass
+        self._complete(False, error.message)
+
+    def _pulse(self):
+        if not self.running:
+            return GLib.SOURCE_REMOVE
+        self.progress.pulse()
+        return GLib.SOURCE_CONTINUE
+
+    def _close_requested(self, _window):
+        if self.running:
+            self.status.set_label(_("Installation is still running"))
+            return True
+        return False
+
+    def _finished(self, _terminal, status):
+        success = status == 0 and is_installed(self.recipe)
+        self._complete(success)
+
+    def _complete(self, success, detail=""):
+        if not self.running:
+            return
+        self.running = False
+        activities.update(self.activity_id, status="finished" if success else "failed",
+                          progress=1.0 if success else 0,
+                          error="" if success else detail or _("Installation failed"))
+        self.card.refresh()
+        self.progress.set_fraction(1.0)
+        self.progress.add_css_class("success" if success else "error")
+        if success:
+            self.status.set_label(_("{name} installed").format(name=_(self.recipe["name"])))
+            self.parent_window.toasts.add_toast(Adw.Toast(
+                title=_("{name} installed").format(name=_(self.recipe["name"]))))
+        else:
+            self.status.set_label(_("Installation failed — review the log below"))
+            self.parent_window.toasts.add_toast(Adw.Toast(title=_("Installation failed")))
 
 
 class Card(Gtk.Box):
@@ -256,30 +346,11 @@ class DevHub(Adw.ApplicationWindow):
             f.write(f"echo '▶ Installing {r['name']}'\n")
             f.write(r["script"])
             f.write("\necho\necho '✔ Done. Open a new terminal to use it.'\n")
-        wrapper = install_wrapper(path)
-        try:
-            proc = subprocess.Popen(["foot", "--title", f"{self.get_title()} · {r['name']}",
-                                     "bash", "-c", wrapper])
-        except OSError:
-            proc = subprocess.Popen(["x-terminal-emulator", "-e", "bash", "-c", wrapper])
         activity_id = activities.create(_("Installing {name}").format(name=_(r["name"])),
                                         "install", cancellable=False)
         card.button.set_label(_("Installing…"))
         card.button.set_sensitive(False)
-
-        def poll():
-            if proc.poll() is None:
-                return GLib.SOURCE_CONTINUE
-            activities.update(activity_id, status="finished" if proc.returncode == 0
-                              else "failed", progress=1.0 if proc.returncode == 0 else 0,
-                              error="" if proc.returncode == 0 else _("Installation failed"))
-            card.refresh()
-            if is_installed(r):
-                self.toasts.add_toast(Adw.Toast(title=_("{name} installed").format(name=_(r["name"]))))
-            elif proc.returncode:
-                self.toasts.add_toast(Adw.Toast(title=_("Installation failed")))
-            return GLib.SOURCE_REMOVE
-        GLib.timeout_add(1000, poll)
+        InstallWindow(self, card, path, activity_id).present()
 
 
 class DevHubApp(Adw.Application):

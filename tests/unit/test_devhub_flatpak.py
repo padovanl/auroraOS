@@ -4,7 +4,7 @@ import os
 import subprocess
 
 from aurora.devhub.games import RECIPES as GAME_RECIPES
-from aurora.devhub.recipes import RECIPES as DEV_RECIPES
+from aurora.devhub.recipes import APT_REPO, RECIPES as DEV_RECIPES
 from aurora.devhub.app import install_wrapper
 
 
@@ -34,11 +34,34 @@ def test_flatpak_recipes_configure_matching_user_remote(tmp_path):
         assert calls[1].startswith("install -y --noninteractive --user flathub ")
 
 
+def test_flatpak_recipes_detect_user_or_system_installations(tmp_path):
+    fake = tmp_path / "flatpak"
+    fake.write_text("#!/bin/sh\n"
+                    "test \"$1\" = info || exit 2\n"
+                    "test \"$2\" = \"$FLATPAK_TEST_SCOPE\"\n")
+    fake.chmod(0o755)
+    env = dict(os.environ, PATH=f"{tmp_path}:{os.environ['PATH']}")
+    recipes = [r for r in DEV_RECIPES + GAME_RECIPES if "flatpak install" in r["script"]]
+    for scope in ("--user", "--system"):
+        for recipe in recipes:
+            result = subprocess.run(["bash", "-c", recipe["check"]],
+                                    env=dict(env, FLATPAK_TEST_SCOPE=scope),
+                                    capture_output=True, text=True)
+            assert result.returncode == 0, (recipe["id"], scope, result.stderr)
+
+
 def test_install_wrapper_reports_failure_and_preserves_exit_code(tmp_path):
     recipe = tmp_path / "recipe with spaces.sh"
     recipe.write_text("exit 17\n")
-    result = subprocess.run(["bash", "-c", install_wrapper(str(recipe))], input="\n",
+    result = subprocess.run(["bash", "-c", install_wrapper(str(recipe))],
                             capture_output=True, text=True)
     assert result.returncode == 17
     assert "Installation failed" in result.stdout
     assert not recipe.exists()
+
+
+def test_external_repositories_remove_conflicting_legacy_definition_first():
+    remove = 'sudo rm -f "/etc/apt/sources.list.d/$1.list"'
+    write = 'sudo tee "/etc/apt/sources.list.d/$1.sources"'
+    assert remove in APT_REPO
+    assert APT_REPO.index(remove) < APT_REPO.index(write) < APT_REPO.index("apt-get update")

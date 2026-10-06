@@ -64,9 +64,11 @@ if [ "${AURORA_RELOGIN_TEST:-}" = 1 ]; then
         exit 1
     fi
 fi
-${scenario:+bash $scenario}
+scenario_status=0
+${scenario:+bash $scenario || scenario_status=\$?}
 sleep 1
 grim $out/screen.png
+echo \$scenario_status > $out/scenario-result
 labwc --exit
 EOF
 
@@ -94,3 +96,7 @@ else
     timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
 fi
 echo "screenshot: $out/screen.png"
+if [ -n "$scenario" ]; then
+    test -f "$out/scenario-result"
+    test "$(cat "$out/scenario-result")" = 0
+fi

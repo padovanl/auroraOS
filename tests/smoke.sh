@@ -4,6 +4,7 @@
 # takes a screenshot of each and fails on any Python traceback.
 set -u
 out=/out
+rm -rf "$out/smoke"
 mkdir -p "$out/smoke"
 fail=0
 
@@ -43,6 +44,13 @@ pkill -f aurora-gamehub
 launch assistant-off aurora-assistant
 pkill -f aurora-assistant
 launch devhub aurora-devhub
+if PYTHONPATH=/src/desktop python3 /src/tests/devhub-install-dialog.py \
+        >"$out/smoke/devhub-install-dialog.log" 2>&1; then
+    echo "ok: Dev Hub install dialog"
+else
+    echo "FAILED: Dev Hub install dialog"; fail=1
+    tail -30 "$out/smoke/devhub-install-dialog.log"
+fi
 launch welcome aurora-welcome
 launch settings aurora-settings
 for page in network bluetooth display sound power appearance desktop multitasking \

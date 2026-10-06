@@ -5,7 +5,7 @@ current, with their own graphics runtime). GameMode, MangoHud and Lutris are
 Debian packages. Waydroid comes from its official repository.
 """
 
-from aurora.devhub.recipes import APT_REPO, flatpak
+from aurora.devhub.recipes import APT_REPO, flatpak, flatpak_check
 from aurora.i18n import N_
 
 CATEGORIES = [
@@ -14,11 +14,6 @@ CATEGORIES = [
     ("tools", N_("Performance Tools")),
     ("android", N_("Android Apps")),
 ]
-
-
-def flatpak_check(app_id):
-    return f"flatpak info {app_id} >/dev/null 2>&1 || flatpak info --user {app_id} >/dev/null 2>&1"
-
 
 RECIPES = [
     {"id": "steam", "cat": "stores", "name": "Steam", "icon": "com.valvesoftware.Steam",
