@@ -58,7 +58,8 @@ class PropertiesDialog(Adw.Dialog):
         except GLib.Error as err:
             self._row(group, _("Error"), err.message)
             return
-        icon = Gtk.Image(gicon=info.get_icon(), pixel_size=96, margin_bottom=12)
+        icon = Gtk.Image(pixel_size=96, margin_bottom=12)
+        icon.set_from_gicon(info.get_icon())
         group.set_header_suffix(None)
         group.add(icon)
         self._row(group, _("Name"), info.get_display_name())

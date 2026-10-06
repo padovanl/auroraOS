@@ -18,7 +18,10 @@ windowcontrols > button > image {
   min-height: 18px;
   padding: 0;
   border-radius: 999px;
-  -gtk-icon-size: 0;
+  /* GTK still resolves the button's GIcon.  A zero size makes that lookup
+     emit critical warnings in every GTK4 app; one pixel remains visually
+     hidden under Aurora's 11px background symbol without being invalid. */
+  -gtk-icon-size: 1px;
   color: rgba(61, 34, 48, 0.7);
   background-repeat: no-repeat;
   background-position: center;

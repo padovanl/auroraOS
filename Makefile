@@ -13,7 +13,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
-	test-shortcut-edges \
+	test-shortcut-edges test-files-shortcuts \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
 all: iso
@@ -111,6 +111,10 @@ test-shortcuts:
 # Repeats and overlaps shortcuts, cancels modal selectors, and mixes window states.
 test-shortcut-edges:
 	python3 tests/interact/shortcut_edges.py $(ISO) --out work/shortcut-edge-test
+
+# Drives Files' documented shortcuts, including chained undo/redo operations.
+test-files-shortcuts:
+	python3 tests/interact/files_shortcuts.py $(ISO) --out work/files-shortcut-test
 
 # Installs the ISO onto an empty virtual disk with the real installer (driven by
 # key presses), then boots the installed system and checks it (~20 min each).

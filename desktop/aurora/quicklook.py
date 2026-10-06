@@ -253,7 +253,9 @@ class QuickLook(Adw.Window):
                                    content_fit=Gtk.ContentFit.CONTAIN,
                                    height_request=256, width_request=256))
         else:
-            box.append(Gtk.Image(gicon=info.get_icon(), pixel_size=128))
+            icon = Gtk.Image(pixel_size=128)
+            icon.set_from_gicon(info.get_icon())
+            box.append(icon)
         box.append(Gtk.Label(label=info.get_display_name(), css_classes=["title-2"],
                              wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
                              justify=Gtk.Justification.CENTER))

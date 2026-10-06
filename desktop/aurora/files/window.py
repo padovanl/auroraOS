@@ -11,7 +11,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 
 from aurora import activities, apps
 from aurora.files.icons import icon_for
-from aurora.files.history import History
+from aurora.files.history import History, trashed_uri
 from aurora.files.operations import Job, unique_destination
 from aurora.i18n import _, ngettext
 
@@ -81,7 +81,15 @@ class Sidebar(Gtk.ListBox):
     def _add(self, icon, label, file=None, volume=None, eject=None):
         row = Gtk.ListBoxRow()
         box = Gtk.Box(spacing=12, margin_top=4, margin_bottom=4, margin_start=4, margin_end=4)
-        box.append(Gtk.Image(icon_name=icon) if isinstance(icon, str) else Gtk.Image(gicon=icon))
+        # Set the size before the icon.  PyGObject applies constructor
+        # properties in order, and resolving a GIcon at the default size (-1)
+        # produces GTK criticals (and can leave volume icons blank).
+        image = Gtk.Image(pixel_size=16)
+        if isinstance(icon, str):
+            image.set_from_icon_name(icon)
+        else:
+            image.set_from_gicon(icon)
+        box.append(image)
         box.append(Gtk.Label(label=label, xalign=0, hexpand=True,
                              ellipsize=Pango.EllipsizeMode.END))
         if eject is not None:
@@ -625,7 +633,9 @@ class FilesWindow(Adw.ApplicationWindow):
         add("home", lambda: self.open_location(Gio.File.new_for_path(GLib.get_home_dir())),
             ["<Alt>Home"])
         add("location", self.edit_location, ["<Ctrl>l"])
-        add("open", self.open_selected, ["Return"])
+        # Return is handled by the file views' key controller.  A window-wide
+        # accelerator would steal it from the Ctrl+L entry and name dialogs.
+        add("open", self.open_selected)
         add("open-with", self.open_with)
         add("copy", lambda: self.to_clipboard("copy"), ["<Ctrl>c"])
         add("new-tab", self.new_tab, ["<Ctrl>t"])
@@ -799,7 +809,14 @@ class FilesWindow(Adw.ApplicationWindow):
     def edit_location(self):
         self.path_entry.set_text(self.current.get_path() or self.current.get_uri())
         self.path_stack.set_visible_child_name("entry")
-        self.path_entry.grab_focus()
+        # Ctrl+L is primarily used to type a different path.  Selecting the
+        # current value also lets typing replace it, as in browsers and other
+        # file managers, instead of silently appending to it.
+        def focus_entry():
+            self.path_entry.grab_focus()
+            self.path_entry.select_region(0, -1)
+            return GLib.SOURCE_REMOVE
+        GLib.idle_add(focus_entry)
 
     def _on_path_entry(self, entry):
         text = os.path.expanduser(entry.get_text().strip())
@@ -980,6 +997,10 @@ class FilesWindow(Adw.ApplicationWindow):
     def _on_view_key(self, _ctrl, keyval, _code, state):
         if keyval == Gdk.KEY_space and not state & Gdk.ModifierType.CONTROL_MASK:
             self.quick_look()
+            return True
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter) and not state & (
+                Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK):
+            self.open_selected()
             return True
         return False
 
@@ -1371,16 +1392,25 @@ class FilesWindow(Adw.ApplicationWindow):
             self.delete_selected()
             return
         files = self.selected_files()
+        pending = {"count": len(files), "pairs": []}
         for f in files:
-            f.trash_async(GLib.PRIORITY_DEFAULT, None, self._trash_done)
+            f.trash_async(GLib.PRIORITY_DEFAULT, None, self._trash_done, pending)
         if files:
             self.toast(_("{n} item(s) moved to the Trash").format(n=len(files)))
 
-    def _trash_done(self, f, res):
+    def _trash_done(self, f, res, pending):
         try:
+            original = f.get_path()
             f.trash_finish(res)
+            uri = trashed_uri(original) if original else None
+            if original and uri:
+                pending["pairs"].append((original, uri))
         except GLib.Error as err:
             self.toast(err.message)
+        finally:
+            pending["count"] -= 1
+            if pending["count"] == 0 and pending["pairs"]:
+                self._record_history("trash", pending["pairs"])
 
     def delete_selected(self):
         files = self.selected_files()
@@ -1649,9 +1679,14 @@ class FilesWindow(Adw.ApplicationWindow):
                 callback(name)
         dialog.connect("response", response)
         dialog.present(self)
-        entry.grab_focus()
         stem = os.path.splitext(initial)[0] if select_stem else initial
-        entry.select_region(0, len(stem) if stem else -1)
+        # Adw assigns initial focus after present(); do this in the following
+        # main-loop iteration so its select-all does not overwrite our range.
+        def focus_entry():
+            entry.grab_focus()
+            entry.select_region(0, len(stem) if stem else -1)
+            return GLib.SOURCE_REMOVE
+        GLib.timeout_add(100, focus_entry)
 
     def rename(self):
         infos = self.selected_infos()

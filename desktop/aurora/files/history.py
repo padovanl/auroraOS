@@ -1,8 +1,9 @@
-"""Conservative, in-session undo/redo for local file operations.
+"""Conservative, in-session undo/redo for file operations.
 
 Undo never overwrites an occupied name. A copied or newly created item can be
 removed only while its metadata tree still matches the result of the action.
-Trash is intentionally separate: its existing Restore command is authoritative.
+Trash entries keep their GIO URI so restoring them also removes the matching
+``.trashinfo`` metadata instead of manipulating the trash directory by hand.
 """
 
 import os
@@ -47,9 +48,26 @@ def copy_exact(src, dst):
         shutil.copy2(src, dst, follow_symlinks=False)
 
 
+def trashed_uri(original):
+    """Return the newest trash URI whose recorded origin is *original*."""
+    from gi.repository import Gio
+
+    root = Gio.File.new_for_uri("trash:///")
+    matches = []
+    enum = root.enumerate_children(
+        "standard::name,trash::orig-path,trash::deletion-date",
+        Gio.FileQueryInfoFlags.NONE, None)
+    for info in enum:
+        origin = info.get_attribute_byte_string("trash::orig-path")
+        if origin and os.fsdecode(origin) == original:
+            deleted = info.get_attribute_string("trash::deletion-date") or ""
+            matches.append((deleted, root.get_child(info.get_name()).get_uri()))
+    return max(matches, default=("", None))[1]
+
+
 @dataclass
 class Entry:
-    kind: str  # copy, move, create-file, create-folder
+    kind: str  # copy, move, trash, create-file, create-folder
     pairs: list  # (source path or None, destination path)
     snapshots: list = field(default_factory=list)
 
@@ -58,6 +76,16 @@ class Entry:
             self.snapshots = [signature(dst) for _src, dst in self.pairs]
 
     def undo(self):
+        if self.kind == "trash":
+            from gi.repository import Gio
+
+            for original, uri in self.pairs:
+                if os.path.lexists(original) or not Gio.File.new_for_uri(uri).query_exists(None):
+                    raise FileExistsError(original)
+            for original, uri in reversed(self.pairs):
+                Gio.File.new_for_uri(uri).move(
+                    Gio.File.new_for_path(original), Gio.FileCopyFlags.NONE, None, None)
+            return
         if self.kind in ("copy", "create-file", "create-folder"):
             for (_src, dst), before in zip(self.pairs, self.snapshots):
                 if signature(dst) != before:
@@ -72,6 +100,21 @@ class Entry:
                 shutil.move(dst, src)
 
     def redo(self):
+        if self.kind == "trash":
+            from gi.repository import Gio
+
+            for original, _uri in self.pairs:
+                if not os.path.lexists(original):
+                    raise FileNotFoundError(original)
+            updated = []
+            for original, _uri in self.pairs:
+                Gio.File.new_for_path(original).trash(None)
+                uri = trashed_uri(original)
+                if uri is None:
+                    raise OSError(f"Could not find trashed item: {original}")
+                updated.append((original, uri))
+            self.pairs = updated
+            return
         for src, dst in self.pairs:
             if os.path.lexists(dst):
                 raise FileExistsError(dst)

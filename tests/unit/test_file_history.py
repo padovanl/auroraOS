@@ -1,6 +1,6 @@
 import pytest
 
-from aurora.files.history import History
+from aurora.files.history import Entry, History
 
 
 def test_copy_undo_redo(tmp_path):
@@ -70,3 +70,37 @@ def test_nonempty_created_folder_is_preserved(tmp_path):
     with pytest.raises(OSError):
         history.undo()
     assert (dst / "notes").exists()
+
+
+def test_trash_undo_redo_uses_gio_and_refreshes_uri(tmp_path, monkeypatch):
+    from gi.repository import Gio
+    from aurora.files import history as module
+
+    original = str(tmp_path / "note.txt")
+    restored = []
+    trashed = []
+
+    class FakeFile:
+        def __init__(self, value):
+            self.value = value
+
+        def query_exists(self, _cancel):
+            return True
+
+        def move(self, destination, _flags, _cancel, _progress):
+            restored.append((self.value, destination.value))
+
+        def trash(self, _cancel):
+            trashed.append(self.value)
+
+    monkeypatch.setattr(Gio.File, "new_for_uri", lambda uri: FakeFile(uri))
+    monkeypatch.setattr(Gio.File, "new_for_path", lambda path: FakeFile(path))
+    monkeypatch.setattr(module.os.path, "lexists", lambda path: bool(restored) if path == original else False)
+    monkeypatch.setattr(module, "trashed_uri", lambda path: "trash:///new-note.txt")
+
+    entry = Entry("trash", [(original, "trash:///note.txt")])
+    entry.undo()
+    assert restored == [("trash:///note.txt", original)]
+    entry.redo()
+    assert trashed == [original]
+    assert entry.pairs == [(original, "trash:///new-note.txt")]
