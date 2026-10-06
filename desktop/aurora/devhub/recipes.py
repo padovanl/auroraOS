@@ -137,8 +137,10 @@ sudo apt-get install -y codium
      "script": r'''
 v=$(curl -fsSL 'https://go.dev/VERSION?m=text' | head -1)
 echo "Installing $v"
-curl -fL "https://go.dev/dl/$v.linux-amd64.tar.gz" -o /tmp/go.tgz
-sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tgz && rm /tmp/go.tgz
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+curl -fL "https://go.dev/dl/$v.linux-amd64.tar.gz" -o "$tmp/go.tgz"
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "$tmp/go.tgz"
 /usr/local/go/bin/go version
 '''},
     {"id": "java", "cat": "languages", "name": "Java (OpenJDK 21)", "icon": "openjdk",
@@ -177,8 +179,10 @@ sudo apt-get update && sudo apt-get install -y gh
      "check": "command -v kubectl",
      "script": r'''
 v=$(curl -fsSL https://dl.k8s.io/release/stable.txt)
-curl -fLo /tmp/kubectl "https://dl.k8s.io/release/$v/bin/linux/amd64/kubectl"
-sudo install -m 0755 /tmp/kubectl /usr/local/bin/kubectl && rm /tmp/kubectl
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+curl -fLo "$tmp/kubectl" "https://dl.k8s.io/release/$v/bin/linux/amd64/kubectl"
+sudo install -m 0755 "$tmp/kubectl" /usr/local/bin/kubectl
 kubectl version --client
 '''},
     {"id": "terraform", "cat": "cloud", "name": "Terraform", "icon": "terraform",
@@ -186,17 +190,22 @@ kubectl version --client
      "check": "command -v terraform",
      "script": r'''
 v=$(curl -fsSL https://checkpoint-api.hashicorp.com/v1/check/terraform | sed -E 's/.*"current_version":"([^"]+)".*/\1/')
-curl -fLo /tmp/tf.zip "https://releases.hashicorp.com/terraform/$v/terraform_${v}_linux_amd64.zip"
-unzip -o /tmp/tf.zip terraform -d /tmp && sudo install -m 0755 /tmp/terraform /usr/local/bin/terraform
-rm -f /tmp/tf.zip /tmp/terraform
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+curl -fLo "$tmp/terraform.zip" "https://releases.hashicorp.com/terraform/$v/terraform_${v}_linux_amd64.zip"
+unzip -q "$tmp/terraform.zip" terraform -d "$tmp"
+sudo install -m 0755 "$tmp/terraform" /usr/local/bin/terraform
 terraform version
 '''},
     {"id": "awscli", "cat": "cloud", "name": "AWS CLI", "icon": "aws",
      "fallback_icon": "utilities-terminal", "desc": N_("Amazon Web Services command-line interface v2."),
      "check": "command -v aws",
      "script": r'''
-cd /tmp && curl -fL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o awscliv2.zip
-unzip -oq awscliv2.zip && sudo ./aws/install --update && rm -rf aws awscliv2.zip
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+curl -fL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o "$tmp/awscliv2.zip"
+unzip -q "$tmp/awscliv2.zip" -d "$tmp"
+sudo "$tmp/aws/install" --update
 aws --version
 '''},
 

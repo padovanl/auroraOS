@@ -82,6 +82,16 @@ def test_docker_service_checks_require_a_running_container():
         assert ".State.Running" in recipe["check"]
 
 
+def test_archive_recipes_use_private_temporary_directories():
+    ids = {"go", "kubectl", "terraform", "awscli"}
+    recipes = [recipe for recipe in DEV_RECIPES if recipe["id"] in ids]
+    assert {recipe["id"] for recipe in recipes} == ids
+    for recipe in recipes:
+        assert "tmp=$(mktemp -d)" in recipe["script"]
+        assert "trap 'rm -rf \"$tmp\"' EXIT" in recipe["script"]
+        assert "cd /tmp" not in recipe["script"]
+
+
 def test_external_repositories_remove_conflicting_legacy_definition_first():
     remove = 'sudo rm -f "/etc/apt/sources.list.d/$1.list"'
     write = 'sudo tee "/etc/apt/sources.list.d/$1.sources"'
