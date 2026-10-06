@@ -223,6 +223,20 @@ class VM:
             "keys": [{"type": "qcode", "data": k} for k in combo]}})
         time.sleep(pause)
 
+    QCODES = {" ": "spc", "-": "minus", ".": "dot", "/": "slash", ",": "comma",
+              "=": "equal", ";": "semicolon", "'": "apostrophe", "@": ("shift", "2"),
+              "_": ("shift", "minus"), ":": ("shift", "semicolon"), "!": ("shift", "1")}
+
+    def type(self, text, pause=0.08):
+        """Type ASCII text with real key presses (US layout): works where no
+        Wayland client can inject keys, like the greeter or the lock screen."""
+        for c in text:
+            key = self.QCODES.get(c, c.lower())
+            combo = list(key) if isinstance(key, tuple) else [key]
+            if c.isalpha() and c.isupper():
+                combo = ["shift"] + combo
+            self.keys(*combo, pause=pause)
+
     # --- evidence ---------------------------------------------------------------
 
     def shot(self, label):

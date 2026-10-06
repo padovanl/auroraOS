@@ -12,6 +12,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from aurora import activities, apps
 from aurora.files.icons import icon_for
 from aurora.files.history import History, trashed_uri
+from aurora.files import volumes
 from aurora.files.operations import Job, unique_destination
 from aurora.i18n import _, ngettext
 
@@ -189,6 +190,11 @@ class Sidebar(Gtk.ListBox):
         # Other computers and NAS boxes on the network, and any other server.
         self._add("network-workgroup-symbolic", _("Network"), Gio.File.new_for_uri("network:///"))
         self._add("list-add-symbolic", _("Connect to Server…"))
+        # A disk mounted or removed rebuilds the list: keep the open place selected.
+        window = self.get_root()
+        current = getattr(window, "current", None) if isinstance(window, FilesWindow) else None
+        if current is not None:
+            self.select_file(current)
 
     def _on_row(self, _box, row):
         if row.file is None and row.volume is None:
@@ -199,16 +205,48 @@ class Sidebar(Gtk.ListBox):
         if row.file is not None:
             self.emit("open", row.file)
         elif row.volume is not None:
+            device = row.volume.get_identifier(Gio.VOLUME_IDENTIFIER_KIND_UNIX_DEVICE) or ""
+            if device and volumes.filesystem_type(device) in volumes.WINDOWS_TYPES:
+                self._mount_windows(row.volume, device)
+                return
+
             def mounted(vol, res):
                 try:
                     vol.mount_finish(res)
                 except GLib.Error as err:
-                    print(f"aurora-files: mount failed: {err.message}")
+                    self._mount_failed(vol, err)
                     return
                 if vol.get_mount():
                     self.emit("open", vol.get_mount().get_root())
             row.volume.mount(Gio.MountMountFlags.NONE, Gtk.MountOperation.new(self.get_root()),
                              None, mounted)
+
+    def _toast(self, message, timeout=3):
+        window = self.get_root()
+        if isinstance(window, FilesWindow):
+            window.toast(message, timeout=timeout)
+        else:
+            print(message)
+
+    def _mount_failed(self, vol, err):
+        """Say why a disk didn't open (nothing when the password prompt was closed)."""
+        print(f"aurora-files: mounting {vol.get_name()} failed: {err.message}")
+        if not volumes.is_cancelled(err):
+            self._toast(_("Couldn't open {name}: {error}").format(name=vol.get_name(),
+                                                                 error=err.message))
+
+    def _mount_windows(self, vol, device):
+        """Windows' partition: opened read-only when Windows left it in use
+        (Fast Startup, hibernation, a pending disk check), with one password."""
+        def mounted(path, err, read_only):
+            if path is None:
+                self._mount_failed(vol, err)
+                return
+            if read_only:
+                self._toast(_("{name} is read-only: Windows wasn't fully shut down").format(
+                    name=vol.get_name()), timeout=8)
+            self.emit("open", Gio.File.new_for_path(path))
+        volumes.mount_windows(device, mounted)
 
     def select_file(self, gfile):
         i = 0
@@ -1183,8 +1221,8 @@ class FilesWindow(Adw.ApplicationWindow):
 
     # ------------------------------------------------------ operations
 
-    def toast(self, msg):
-        self.toast_overlay.add_toast(Adw.Toast(title=msg, timeout=3))
+    def toast(self, msg, timeout=3):
+        self.toast_overlay.add_toast(Adw.Toast(title=msg, timeout=timeout))
 
     def batch_rename(self):
         paths = [file.get_path() for file in self.selected_files()]

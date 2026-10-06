@@ -347,6 +347,12 @@ class SystemNotifications:
     def _on_mount_added(self, _monitor, mount):
         if mount.is_shadowed() or not mount.can_unmount():
             return
+        # Only drives that come and go (USB sticks, SD cards): an internal
+        # partition (Windows' C:) or a network share opened from Files is
+        # not "connected", and has nothing to eject.
+        drive = mount.get_drive()
+        if drive is None or not (drive.is_removable() or drive.is_media_removable()):
+            return
         root = mount.get_root()
         s = settings.get()
         action = s.get_string("removable-media-action") if s is not None else "notify"

@@ -42,6 +42,8 @@
   <dd>Put <code>sudo</code> before the command; it asks your password (or your finger).</dd>
   <dt>Can I keep Windows?</dt>
   <dd>Yes: <em>Install alongside</em> in the installer; the boot menu then lets you choose at every start.</dd>
+  <dt>Why is the Windows drive read-only?</dt>
+  <dd>Windows didn't shut down completely, so Linux must not write to its drive: <strong>Fast Startup</strong> (on by default in Windows 10 and 11) and hibernation leave it in use, and so does the disk check Windows runs once after Aurora is installed next to it. Files then opens it read-only and says so; your files are all there to copy. To change files on it, start Windows and choose <em>Restart</em> (not Shut down) back into Aurora, or turn Fast Startup off in Windows (Control Panel → Power Options → Choose what the power buttons do). Opening it asks for your password once.</dd>
   <dt>Why does the time differ from Windows after switching?</dt>
   <dd>Windows keeps the hardware clock in local time, Linux in UTC. Run <code>timedatectl set-local-rtc 1</code> in Aurora, or set Windows to UTC.</dd>
   <dt>How do I change the language later?</dt>
