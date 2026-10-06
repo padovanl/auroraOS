@@ -96,6 +96,7 @@ def test_trash_undo_redo_uses_gio_and_refreshes_uri(tmp_path, monkeypatch):
     monkeypatch.setattr(Gio.File, "new_for_uri", lambda uri: FakeFile(uri))
     monkeypatch.setattr(Gio.File, "new_for_path", lambda path: FakeFile(path))
     monkeypatch.setattr(module.os.path, "lexists", lambda path: bool(restored) if path == original else False)
+    monkeypatch.setattr(module, "signature", lambda path: ((path, "unchanged"),))
     monkeypatch.setattr(module, "trashed_uri", lambda path: "trash:///new-note.txt")
 
     entry = Entry("trash", [(original, "trash:///note.txt")])
@@ -104,3 +105,23 @@ def test_trash_undo_redo_uses_gio_and_refreshes_uri(tmp_path, monkeypatch):
     entry.redo()
     assert trashed == [original]
     assert entry.pairs == [(original, "trash:///new-note.txt")]
+
+
+def test_modified_restored_trash_item_cannot_be_redone(tmp_path, monkeypatch):
+    from gi.repository import Gio
+
+    original = tmp_path / "note.txt"
+    original.write_text("edited after restore")
+    entry = Entry("trash", [(str(original), "trash:///note.txt")])
+    entry.snapshots = (((str(original), "before edit"),),)
+    called = []
+
+    class FakeFile:
+        def trash(self, _cancel):
+            called.append(True)
+
+    monkeypatch.setattr(Gio.File, "new_for_path", lambda _path: FakeFile())
+    with pytest.raises(OSError, match="Changed since restore"):
+        entry.redo()
+    assert not called
+    assert original.read_text() == "edited after restore"

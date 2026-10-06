@@ -112,9 +112,10 @@ test-shortcuts:
 test-shortcut-edges:
 	python3 tests/interact/shortcut_edges.py $(ISO) --out work/shortcut-edge-test
 
-# Drives Files' documented shortcuts, including chained undo/redo operations.
+# Drives Files' documented shortcuts, then stresses focus and asynchronous edges.
 test-files-shortcuts:
 	python3 tests/interact/files_shortcuts.py $(ISO) --out work/files-shortcut-test
+	python3 tests/interact/files_shortcut_edges.py $(ISO) --out work/files-shortcut-edge-test
 
 # Installs the ISO onto an empty virtual disk with the real installer (driven by
 # key presses), then boots the installed system and checks it (~20 min each).

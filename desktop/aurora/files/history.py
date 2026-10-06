@@ -85,6 +85,7 @@ class Entry:
             for original, uri in reversed(self.pairs):
                 Gio.File.new_for_uri(uri).move(
                     Gio.File.new_for_path(original), Gio.FileCopyFlags.NONE, None, None)
+            self.snapshots = [signature(original) for original, _uri in self.pairs]
             return
         if self.kind in ("copy", "create-file", "create-folder"):
             for (_src, dst), before in zip(self.pairs, self.snapshots):
@@ -103,9 +104,12 @@ class Entry:
         if self.kind == "trash":
             from gi.repository import Gio
 
-            for original, _uri in self.pairs:
+            for index, (original, _uri) in enumerate(self.pairs):
                 if not os.path.lexists(original):
                     raise FileNotFoundError(original)
+                if len(self.snapshots) != len(self.pairs) or \
+                        signature(original) != self.snapshots[index]:
+                    raise OSError(f"Changed since restore: {original}")
             updated = []
             for original, _uri in self.pairs:
                 Gio.File.new_for_path(original).trash(None)

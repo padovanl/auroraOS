@@ -228,6 +228,7 @@ class FilesWindow(Adw.ApplicationWindow):
         self.show_hidden = False
         self.search_text = ""
         self.jobs = []
+        self._job_queue = []
         self.history = History()
         self._history_busy = False
         self.tabs = []
@@ -272,6 +273,9 @@ class FilesWindow(Adw.ApplicationWindow):
         self.pathbar = Gtk.Box(css_classes=["linked"])
         self.path_entry = Gtk.Entry(hexpand=True)
         self.path_entry.connect("activate", self._on_path_entry)
+        path_keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        path_keys.connect("key-pressed", self._on_path_key)
+        self.path_entry.add_controller(path_keys)
         self.path_stack = Gtk.Stack(hhomogeneous=False)
         path_scroller = Gtk.ScrolledWindow(child=self.pathbar, vscrollbar_policy=Gtk.PolicyType.NEVER,
                                            hscrollbar_policy=Gtk.PolicyType.EXTERNAL)
@@ -683,9 +687,11 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def _update_history_actions(self):
         self._action("undo").set_enabled(bool(self.history.undo_stack) and
-                                          not self._history_busy and not self.jobs)
+                                          not self._history_busy and not self.jobs and
+                                          not self._job_queue)
         self._action("redo").set_enabled(bool(self.history.redo_stack) and
-                                          not self._history_busy and not self.jobs)
+                                          not self._history_busy and not self.jobs and
+                                          not self._job_queue)
 
     def _record_history(self, kind, pairs):
         try:
@@ -701,7 +707,7 @@ class FilesWindow(Adw.ApplicationWindow):
         self._apply_history("redo")
 
     def _apply_history(self, direction):
-        if self._history_busy or self.jobs:
+        if self._history_busy or self.jobs or self._job_queue:
             return
         stack = self.history.undo_stack if direction == "undo" else self.history.redo_stack
         if not stack:
@@ -823,6 +829,14 @@ class FilesWindow(Adw.ApplicationWindow):
         gfile = Gio.File.new_for_commandline_arg(text)
         self.open_location(gfile)
         self.path_stack.set_visible_child_name("crumbs")
+
+    def _on_path_key(self, _ctrl, keyval, _code, _state):
+        if keyval != Gdk.KEY_Escape:
+            return False
+        self.path_stack.set_visible_child_name("crumbs")
+        view = self.list if self.view_stack.get_visible_child_name() == "list" else self.grid
+        view.grab_focus()
+        return True
 
     def go_back(self):
         if self.back_stack:
@@ -1345,6 +1359,17 @@ class FilesWindow(Adw.ApplicationWindow):
     def _run_job(self, kind, paths, target):
         if not paths:
             return
+        # Destination names are chosen by Job's worker. Starting two workers
+        # at once lets both choose the same free name before either creates it.
+        # Queue requests so rapid duplicate/paste gestures remain distinct and
+        # their undo history has a deterministic order.
+        if self.jobs:
+            self._job_queue.append((kind, list(paths), target))
+            self._update_history_actions()
+            return
+        self._start_job(kind, paths, target)
+
+    def _start_job(self, kind, paths, target):
         self._retry_args = None
         self.retry_job_button.set_visible(False)
         self.cancel_job_button.set_visible(True)
@@ -1363,14 +1388,17 @@ class FilesWindow(Adw.ApplicationWindow):
             if job.history_entry is not None:
                 self.history.push(job.history_entry)
             self._update_history_actions()
-            self.reload()
+            # Gtk.DirectoryList is monitored: let its incremental update keep
+            # the current selection instead of replacing the entire model.
+            # A forced reload made a second Ctrl+D lose its source when a tiny
+            # first copy completed between the two key presses.
             completed = {source for source, _dest in job.changes}
             remaining = [path for path in paths if path not in completed and os.path.lexists(path)]
             self._retry_args = (kind, remaining, target) if error and remaining and \
                 error != _("Cancelled") else None
             self.retry_job_button.set_visible(self._retry_args is not None)
             self.cancel_job_button.set_visible(bool(self.jobs))
-            if not self.jobs and self._retry_args is None:
+            if not self.jobs and self._retry_args is None and not self._job_queue:
                 self.progress_revealer.set_reveal_child(False)
             if error:
                 self.toast(error)
@@ -1378,6 +1406,8 @@ class FilesWindow(Adw.ApplicationWindow):
                               self.progress.get_fraction(),
                               status="cancelled" if error == _("Cancelled") else
                               "failed" if error else "finished", error=error)
+            if not self.jobs and self._retry_args is None and self._job_queue:
+                self._start_job(*self._job_queue.pop(0))
         job.connect("finished", finished)
         self.jobs.append(job)
         self._update_history_actions()
@@ -1388,11 +1418,18 @@ class FilesWindow(Adw.ApplicationWindow):
             self._run_job(*self._retry_args)
 
     def trash_selected(self):
+        if self._history_busy:
+            return
         if self.in_trash():
             self.delete_selected()
             return
         files = self.selected_files()
         pending = {"count": len(files), "pairs": []}
+        if files:
+            # Do not let an immediate Ctrl+Z consume the previous history
+            # entry while the asynchronous trash callbacks are still pending.
+            self._history_busy = True
+            self._update_history_actions()
         for f in files:
             f.trash_async(GLib.PRIORITY_DEFAULT, None, self._trash_done, pending)
         if files:
@@ -1409,8 +1446,12 @@ class FilesWindow(Adw.ApplicationWindow):
             self.toast(err.message)
         finally:
             pending["count"] -= 1
-            if pending["count"] == 0 and pending["pairs"]:
-                self._record_history("trash", pending["pairs"])
+            if pending["count"] == 0:
+                self._history_busy = False
+                if pending["pairs"]:
+                    self._record_history("trash", pending["pairs"])
+                else:
+                    self._update_history_actions()
 
     def delete_selected(self):
         files = self.selected_files()
