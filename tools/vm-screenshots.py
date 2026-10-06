@@ -48,6 +48,11 @@ STEPS = [
     # No screen blanking while the screenshots are taken.
     (None, "gsettings set org.aurora.desktop idle-dim-minutes 0; pkill -x swayidle; "
            "wlopm --on '*'", 1),
+    # The desktop starts without widgets; the showcase puts three on it.
+    (None, "gsettings set org.aurora.desktop desktop-widget-list "
+           "'[{\"kind\": \"clock\", \"x\": 0.86, \"y\": 0.06}, "
+           "{\"kind\": \"calendar\", \"x\": 0.86, \"y\": 0.3}, "
+           "{\"kind\": \"weather\", \"x\": 0.86, \"y\": 0.54}]'", 2),
     (None, "pkill -f [a]urora-welcome; mkdir -p ~/Desktop; "
            "printf 'Welcome to Aurora' > ~/Desktop/Welcome.txt", 2),
     (None, launch("org.aurora.Files.desktop"), 6),
