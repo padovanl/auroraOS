@@ -13,7 +13,8 @@ PRESETS = {
     "aurora": {
         "title": N_("Aurora"), "subtitle": N_("Menu bar on top, floating dock"),
         "icon": "preferences-desktop-apps-symbolic",
-        "values": {"panel-position": "top", "clock-position": "right", "panel-opacity": 0.78,
+        "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "right",
+                   "panel-opacity": 0.78,
                    "dock-position": "bottom", "dock-style": "floating", "dock-icon-size": 48,
                    "dock-magnification": True, "dock-autohide": False,
                    "window-buttons": "left", "window-button-style": "traffic",
@@ -22,7 +23,8 @@ PRESETS = {
     "classic": {
         "title": N_("Classic"), "subtitle": N_("Full-width taskbar at the bottom"),
         "icon": "view-dual-symbolic",
-        "values": {"panel-position": "top", "clock-position": "right", "panel-opacity": 0.95,
+        "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "right",
+                   "panel-opacity": 0.95,
                    "dock-position": "bottom", "dock-style": "panel", "dock-icon-size": 36,
                    "dock-magnification": False, "dock-autohide": False,
                    "window-buttons": "right", "window-button-style": "symbolic",
@@ -31,7 +33,8 @@ PRESETS = {
     "studio": {
         "title": N_("Studio"), "subtitle": N_("Dock on the left, clock in the middle"),
         "icon": "sidebar-show-symbolic",
-        "values": {"panel-position": "top", "clock-position": "center", "panel-opacity": 0.95,
+        "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "center",
+                   "panel-opacity": 0.95,
                    "dock-position": "left", "dock-style": "panel", "dock-icon-size": 42,
                    "dock-magnification": False, "dock-autohide": False,
                    "window-buttons": "right", "window-button-style": "symbolic",
@@ -40,7 +43,8 @@ PRESETS = {
     "minimal": {
         "title": N_("Minimal"), "subtitle": N_("Dock hides until you need it"),
         "icon": "focus-windows-symbolic",
-        "values": {"panel-position": "top", "clock-position": "center", "panel-opacity": 0.5,
+        "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "center",
+                   "panel-opacity": 0.5,
                    "dock-position": "bottom", "dock-style": "floating", "dock-icon-size": 44,
                    "dock-magnification": True, "dock-autohide": True,
                    "window-buttons": "left", "window-button-style": "traffic",
@@ -146,6 +150,8 @@ class Desktop(Page):
         layouts.add(flow)
 
         bar = self.group(_("Top Bar"))
+        self._combo(bar, _("Style"), "panel-style",
+                    [("floating", _("Floating")), ("bar", _("Edge to edge"))])
         self._combo(bar, _("Position"), "panel-position",
                     [("top", _("Top")), ("bottom", _("Bottom"))])
         self._combo(bar, _("Clock"), "clock-position",

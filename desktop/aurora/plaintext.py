@@ -28,3 +28,9 @@ def _plain_init(original):
 for _cls in (Adw.PreferencesRow, Adw.Toast):
     if not getattr(_cls.__init__, "_aurora_plain", False):
         _cls.__init__ = _plain_init(_cls.__init__)
+
+
+# Every Aurora app imports this module first: its surface colors come with it.
+from aurora import surfaces  # noqa: E402
+
+surfaces.install()

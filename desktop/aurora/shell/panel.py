@@ -384,6 +384,7 @@ class AuroraMenu(Gtk.MenuButton):
 
 class Panel(LayerWindow):
     HEIGHT = 30
+    FLOAT_MARGIN = 10       # room around the floating islands
 
     def __init__(self, shell, monitor):
         s = settings.get()
@@ -393,13 +394,19 @@ class Panel(LayerWindow):
                          exclusive=True, keyboard=Keyboard.ON_DEMAND)
         self.add_css_class("aurora-panel")
         self.add_css_class(f"panel-{edge}")
+        # Bar (the default): one strip edge to edge. Floating (Settings →
+        # Desktop & Dock → Top Bar → Style): islands of frosted glass held off
+        # the screen's edge.
+        floating = s is not None and s.get_string("panel-style") == "floating"
+        self.add_css_class("panel-floating" if floating else "panel-bar-style")
+        height = self.HEIGHT + (self.FLOAT_MARGIN if floating else 0)
         self.shell = shell
-        self.set_default_size(-1, self.HEIGHT)
+        self.set_default_size(-1, height)
 
         bar = Gtk.CenterBox(css_classes=["panel-bar"])
-        bar.set_size_request(-1, self.HEIGHT)
+        bar.set_size_request(-1, height)
 
-        left = Gtk.Box(spacing=2)
+        left = Gtk.Box(spacing=2, css_classes=["panel-island"], valign=Gtk.Align.CENTER)
         left.append(AuroraMenu(shell))
         # Every open window gets one stable switcher button, including minimized ones.
         self.windows = Gtk.Box(spacing=2, css_classes=["panel-windows"])
@@ -411,7 +418,7 @@ class Panel(LayerWindow):
         left.append(self.window_scroll)
         bar.set_start_widget(left)
 
-        right = Gtk.Box(spacing=2)
+        right = Gtk.Box(spacing=2, css_classes=["panel-island"], valign=Gtk.Align.CENTER)
         right.append(Tray())
         # Aurora Assistant, one click away (it explains how to turn AI on if it's off).
         assistant = Gtk.Button(icon_name="aurora-assistant-symbolic",
@@ -437,8 +444,10 @@ class Panel(LayerWindow):
         self.status = StatusArea(shell)
         right.append(self.status)
         clock = self.clock = Clock(shell)
-        if s and s.get_string("clock-position") == "center":
-            bar.set_center_widget(clock)
+        if s is not None and s.get_string("clock-position") == "center":
+            island = Gtk.Box(css_classes=["panel-island"], valign=Gtk.Align.CENTER)
+            island.append(clock)
+            bar.set_center_widget(island)
         else:
             right.append(clock)
         # Windows' "Show desktop" sliver at the far end of the bar.

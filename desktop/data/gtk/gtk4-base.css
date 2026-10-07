@@ -1,12 +1,19 @@
-/* Aurora tweaks for every GTK 4 app: softer, rounder windows. */
+/* Aurora tweaks for every GTK 4 app: softer, rounder windows. The surfaces'
+   colors are in gtk4-palette-dark.css / -light.css (aurora/look.py imports
+   the one for the current style). */
 
 window.csd,
 window.csd > .titlebar {
-  border-radius: 12px;
+  border-radius: 14px;
+}
+
+/* A hairline edge, so a window stands out from one behind it. */
+window.csd {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 18px 48px rgba(0, 0, 0, 0.35);
 }
 
 popover > contents {
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 popover.menu > contents {
@@ -17,10 +24,23 @@ popover.menu button.model {
   min-height: 32px;
   padding: 5px 12px;
   margin: 2px 0;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 popover.menu button.model:hover,
 popover.menu button.model:focus {
   background-color: alpha(@accent_bg_color, 0.25);
 }
+
+/* Softer controls: rounder buttons and entries, pill-shaped main actions. */
+button:not(.circular):not(.flat):not(.image-button) { border-radius: 10px; }
+button.suggested-action, button.destructive-action { border-radius: 999px; padding-left: 18px; padding-right: 18px; }
+entry, spinbutton { border-radius: 10px; }
+.boxed-list, list.boxed-list, .card { border-radius: 14px; }
+
+/* The selected place in sidebars: the accent, softly. */
+.navigation-sidebar > row:selected,
+.navigation-sidebar > row:selected:hover {
+  background-color: alpha(@accent_bg_color, 0.22);
+}
+.navigation-sidebar > row { border-radius: 10px; }

@@ -158,7 +158,7 @@ class Shell(Adw.Application):
 
         s = settings.get()
         if s:
-            for key in ("panel-position", "clock-position"):
+            for key in ("panel-position", "clock-position", "panel-style"):
                 s.connect(f"changed::{key}", lambda *a: self._later(self.panels.rebuild))
             for key in ("dock-position", "dock-style", "dock-icon-size", "dock-magnification",
                         "dock-autohide", "dock-show-trash"):
@@ -248,7 +248,9 @@ class Shell(Adw.Application):
     def _update_dynamic_css(self):
         s = settings.get()
         opacity = s.get_double("panel-opacity") if s else 0.78
-        css = f".aurora-panel .panel-bar {{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}"
+        css = (f".aurora-panel.panel-bar-style .panel-bar, "
+               f".aurora-panel.panel-floating .panel-island "
+               f"{{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}")
         if not hasattr(self, "_dyn_css"):
             self._dyn_css = Gtk.CssProvider()
             Gtk.StyleContext.add_provider_for_display(
