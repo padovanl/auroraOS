@@ -47,7 +47,7 @@ change partitions or install next to another system.</p></div>
     The file system is <strong>btrfs</strong> by default, which gives automatic system snapshots and rollback from the boot menu (see <a href="snapshots.html">Snapshots and recovery</a>). ext4 and xfs are available without snapshots. The partition legend shows each partition's name and size.</li>
   <li><strong>Users.</strong> Your full name, user name, password (twice) and the computer's name. Choose <strong>Log in automatically</strong> to skip the login screen, or leave it off to see it at every start.</li>
   <li><strong>Summary.</strong> Review every choice. <strong>Install</strong> starts writing to the disk; until then nothing has changed.</li>
-  <li><strong>Installing.</strong> A slideshow runs while files are copied, with a progress bar.</li>
+  <li><strong>Installing.</strong> A slideshow runs while files are copied, with a progress bar. Once it starts writing to the disk it can't be cancelled (stopping halfway through resizing another system's partition could damage it), so Back, Next and Cancel go away until it finishes.</li>
   <li><strong>Finish.</strong> Tick <em>Restart now</em> and click <strong>Done</strong>. Remove the USB stick when the computer restarts.</li>
 </ol>
 
