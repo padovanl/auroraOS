@@ -51,3 +51,22 @@ def test_shell_helpers_end_with_the_shell(monkeypatch):
         "setpriv", "--pdeathsig", "TERM", "--", "wl-paste", "--watch", "x"]
     monkeypatch.setattr(shutil, "which", lambda name: None)
     assert apps.tied(["wlsunset"]) == ["wlsunset"]
+
+
+def test_downloads_cleanup_keeps_folders_with_recent_files(tmp_path):
+    import os
+    import time
+    from aurora import housekeeping
+    old = time.time() - 90 * 86400
+    project = tmp_path / "project"
+    (project / "src").mkdir(parents=True)
+    (project / "src" / "today.txt").write_text("edited now")
+    stale = tmp_path / "stale"
+    (stale / "deep").mkdir(parents=True)
+    (stale / "deep" / "old.txt").write_text("x")
+    single = tmp_path / "old.pdf"
+    single.write_text("x")
+    for p in (project, stale, stale / "deep", stale / "deep" / "old.txt", single):
+        os.utime(p, (old, old))
+    found = sorted(os.path.basename(p) for p in housekeeping.old_files(str(tmp_path), 30))
+    assert found == ["old.pdf", "stale"]

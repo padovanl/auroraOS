@@ -91,8 +91,27 @@ def empty_trash(older_than_days=None, trash=None, now=None):
     return gone
 
 
+def newest_change(path, limit=20000):
+    """The latest modification time in a folder's whole tree: a folder's own
+    time only changes when entries are added or removed directly in it, not
+    when a file deeper inside is edited."""
+    newest = os.lstat(path).st_mtime
+    seen = 0
+    for root, dirs, files in os.walk(path):
+        for name in dirs + files:
+            seen += 1
+            if seen > limit:        # huge tree: treat it as recent, keep it
+                return float("inf")
+            try:
+                newest = max(newest, os.lstat(os.path.join(root, name)).st_mtime)
+            except OSError:
+                continue
+    return newest
+
+
 def old_files(folder, days, now=None):
-    """Files and folders directly in `folder` not changed for `days` days."""
+    """Files and folders directly in `folder` not changed for `days` days
+    (a folder counts as changed when anything inside it was)."""
     now = now or time.time()
     out = []
     try:
@@ -102,8 +121,12 @@ def old_files(folder, days, now=None):
                     st = entry.stat(follow_symlinks=False)
                 except OSError:
                     continue
-                if now - st.st_mtime > days * 86400 and not entry.name.startswith("."):
-                    out.append(entry.path)
+                if entry.name.startswith(".") or now - st.st_mtime <= days * 86400:
+                    continue
+                if entry.is_dir(follow_symlinks=False) and \
+                        now - newest_change(entry.path) <= days * 86400:
+                    continue
+                out.append(entry.path)
     except OSError:
         pass
     return out
