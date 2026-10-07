@@ -98,7 +98,7 @@ msgid "Conversations"
 msgstr "Беседы"
 
 #: aurora/assistant.py:264 aurora/files/window.py:1304
-#: aurora/files/window.py:1730 aurora/settingsapp/health.py:301
+#: aurora/files/window.py:1734 aurora/settingsapp/health.py:301
 #: aurora/settingsapp/system.py:144 aurora/settingsapp/system.py:186
 msgid "Close"
 msgstr "Закрыть"
@@ -440,9 +440,9 @@ msgstr "Сохранить положения открытых окон для �
 
 #: aurora/devhub/app.py:313 aurora/files/create.py:26
 #: aurora/files/window.py:1266 aurora/files/window.py:1351
-#: aurora/files/window.py:1531 aurora/files/window.py:1568
-#: aurora/files/window.py:1615 aurora/files/window.py:1667
-#: aurora/files/window.py:1747 aurora/files/window.py:1780
+#: aurora/files/window.py:1535 aurora/files/window.py:1572
+#: aurora/files/window.py:1619 aurora/files/window.py:1671
+#: aurora/files/window.py:1751 aurora/files/window.py:1784
 #: aurora/settingsapp/desktop.py:96 aurora/settingsapp/health.py:275
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:473 aurora/settingsapp/system.py:547
@@ -1020,7 +1020,7 @@ msgid "Files"
 msgstr "Файлы"
 
 #: aurora/files/create.py:10 aurora/files/window.py:344
-#: aurora/files/window.py:1828
+#: aurora/files/window.py:1832
 msgid "New Folder"
 msgstr "Новая папка"
 
@@ -1037,7 +1037,7 @@ msgstr "Имя"
 msgid "File name"
 msgstr "Имя файла"
 
-#: aurora/files/create.py:20 aurora/files/window.py:1828
+#: aurora/files/create.py:20 aurora/files/window.py:1832
 msgid "Untitled Folder"
 msgstr "Новая папка"
 
@@ -1045,7 +1045,7 @@ msgstr "Новая папка"
 msgid "Untitled.txt"
 msgstr "Без названия.txt"
 
-#: aurora/files/create.py:28 aurora/files/window.py:1828
+#: aurora/files/create.py:28 aurora/files/window.py:1832
 msgid "Create"
 msgstr "Создать"
 
@@ -1084,19 +1084,27 @@ msgid "Phone"
 msgstr "Телефон"
 
 #: aurora/files/operations.py:65
-msgid "Moving {n} item(s)"
-msgstr "Перемещение объектов: {n}"
+#, python-brace-format
+msgid "Moving {n} item"
+msgid_plural "Moving {n} items"
+msgstr[0] "Перемещение {n} элемента"
+msgstr[1] "Перемещение {n} элементов"
+msgstr[2] "Перемещение {n} элементов"
 
 #: aurora/files/operations.py:66
-msgid "Copying {n} item(s)"
-msgstr "Копирование объектов: {n}"
+#, python-brace-format
+msgid "Copying {n} item"
+msgid_plural "Copying {n} items"
+msgstr[0] "Копирование {n} элемента"
+msgstr[1] "Копирование {n} элементов"
+msgstr[2] "Копирование {n} элементов"
 
-#: aurora/files/operations.py:118
+#: aurora/files/operations.py:118 aurora/files/window.py:1468
 msgid "Cannot copy a folder into itself"
 msgstr "Нельзя скопировать папку саму в себя"
 
-#: aurora/files/operations.py:148 aurora/files/window.py:1466
-#: aurora/files/window.py:1475 aurora/shell/panel.py:216
+#: aurora/files/operations.py:148 aurora/files/window.py:1468
+#: aurora/files/window.py:1477 aurora/shell/panel.py:216
 msgid "Cancelled"
 msgstr "Отменено"
 
@@ -1258,7 +1266,7 @@ msgid "Folder is Empty"
 msgstr "Папка пуста"
 
 #: aurora/files/window.py:432 aurora/files/window.py:1209
-#: aurora/files/window.py:1569 aurora/shell/dock.py:327
+#: aurora/files/window.py:1573 aurora/shell/dock.py:327
 #: aurora/shell/search.py:439
 msgid "Empty Trash"
 msgstr "Очистить корзину"
@@ -1335,7 +1343,7 @@ msgstr "Сжать…"
 msgid "Resize Images…"
 msgstr "Изменить размер изображений…"
 
-#: aurora/files/window.py:1197 aurora/files/window.py:1705
+#: aurora/files/window.py:1197 aurora/files/window.py:1709
 msgid "What's Using This?"
 msgstr "Что это использует?"
 
@@ -1396,7 +1404,7 @@ msgstr "Найти"
 msgid "Replace with"
 msgstr "Заменить на"
 
-#: aurora/files/window.py:1267 aurora/files/window.py:1814
+#: aurora/files/window.py:1267 aurora/files/window.py:1818
 #: aurora/shell/desktopicons.py:181 aurora/shell/desktopicons.py:185
 msgid "Rename"
 msgstr "Переименовать"
@@ -1439,68 +1447,84 @@ msgid "Provider: {name}. Review the text before sending."
 msgstr "Поставщик: {name}. Проверьте текст перед отправкой."
 
 #: aurora/files/window.py:1394
-msgid "{n} item(s) cut"
-msgstr "Вырезано объектов: {n}"
+#, python-brace-format
+msgid "{n} item cut"
+msgid_plural "{n} items cut"
+msgstr[0] "{n} элемент вырезан"
+msgstr[1] "{n} элемента вырезано"
+msgstr[2] "{n} элементов вырезано"
 
-#: aurora/files/window.py:1394
-msgid "{n} item(s) copied"
-msgstr "Скопировано объектов: {n}"
+#: aurora/files/window.py:1395
+#, python-brace-format
+msgid "{n} item copied"
+msgid_plural "{n} items copied"
+msgstr[0] "{n} элемент скопирован"
+msgstr[1] "{n} элемента скопировано"
+msgstr[2] "{n} элементов скопировано"
 
-#: aurora/files/window.py:1504
-msgid "{n} item(s) moved to the Trash"
-msgstr "В корзину перемещено объектов: {n}"
+#: aurora/files/window.py:1506
+#, python-brace-format
+msgid "{n} item moved to the Trash"
+msgid_plural "{n} items moved to the Trash"
+msgstr[0] "{n} элемент перемещён в корзину"
+msgstr[1] "{n} элемента перемещено в корзину"
+msgstr[2] "{n} элементов перемещено в корзину"
 
-#: aurora/files/window.py:1529
-msgid "Permanently Delete {n} Item(s)?"
-msgstr "Удалить навсегда объекты ({n})?"
+#: aurora/files/window.py:1532
+#, python-brace-format
+msgid "Permanently Delete {n} Item?"
+msgid_plural "Permanently Delete {n} Items?"
+msgstr[0] "Удалить {n} элемент навсегда?"
+msgstr[1] "Удалить {n} элемента навсегда?"
+msgstr[2] "Удалить {n} элементов навсегда?"
 
-#: aurora/files/window.py:1530
+#: aurora/files/window.py:1534
 msgid "Deleted items cannot be restored."
 msgstr "Удалённые объекты нельзя восстановить."
 
-#: aurora/files/window.py:1532 aurora/settingsapp/ai.py:336
+#: aurora/files/window.py:1536 aurora/settingsapp/ai.py:336
 #: aurora/shell/morewidgets.py:160
 msgid "Delete"
 msgstr "Удалить"
 
-#: aurora/files/window.py:1566
+#: aurora/files/window.py:1570
 msgid "Empty Trash?"
 msgstr "Очистить корзину?"
 
-#: aurora/files/window.py:1567
+#: aurora/files/window.py:1571
 msgid "All items in the Trash will be permanently deleted."
 msgstr "Все объекты в корзине будут удалены навсегда."
 
-#: aurora/files/window.py:1597 aurora/settingsapp/network.py:132
+#: aurora/files/window.py:1601 aurora/settingsapp/network.py:132
 #: aurora/settingsapp/network.py:139
 msgid "That didn't work"
 msgstr "Не получилось"
 
-#: aurora/files/window.py:1607 aurora/files/window.py:1616
+#: aurora/files/window.py:1611 aurora/files/window.py:1620
 msgid "Compress"
 msgstr "Сжать"
 
-#: aurora/files/window.py:1608
+#: aurora/files/window.py:1612
 msgid "{n} items into one archive"
 msgstr "Элементов в один архив: {n}"
 
-#: aurora/files/window.py:1626
+#: aurora/files/window.py:1630
 msgid "Compressing…"
 msgstr "Сжатие…"
 
-#: aurora/files/window.py:1628
+#: aurora/files/window.py:1632
 msgid "{name} is ready"
 msgstr "{name} готов"
 
-#: aurora/files/window.py:1638
+#: aurora/files/window.py:1642
 msgid "Extracting…"
 msgstr "Распаковка…"
 
-#: aurora/files/window.py:1639
+#: aurora/files/window.py:1643
 msgid "Extracted"
 msgstr "Распаковано"
 
-#: aurora/files/window.py:1646
+#: aurora/files/window.py:1650
 #, python-brace-format
 msgid "{n} path copied"
 msgid_plural "{n} paths copied"
@@ -1508,11 +1532,11 @@ msgstr[0] "Скопирован {n} путь"
 msgstr[1] "Скопировано {n} пути"
 msgstr[2] "Скопировано {n} путей"
 
-#: aurora/files/window.py:1656
+#: aurora/files/window.py:1660
 msgid "Resize Images"
 msgstr "Изменить размер изображений"
 
-#: aurora/files/window.py:1657
+#: aurora/files/window.py:1661
 #, python-brace-format
 msgid "{n} picture"
 msgid_plural "{n} pictures"
@@ -1520,19 +1544,19 @@ msgstr[0] "{n} изображение"
 msgstr[1] "{n} изображения"
 msgstr[2] "{n} изображений"
 
-#: aurora/files/window.py:1662
+#: aurora/files/window.py:1666
 msgid "Keep the format"
 msgstr "Сохранить формат"
 
-#: aurora/files/window.py:1663
+#: aurora/files/window.py:1667
 msgid "Resize the originals instead of making copies"
 msgstr "Изменять оригиналы вместо копий"
 
-#: aurora/files/window.py:1668
+#: aurora/files/window.py:1672
 msgid "Resize"
 msgstr "Изменить"
 
-#: aurora/files/window.py:1689
+#: aurora/files/window.py:1693
 #, python-brace-format
 msgid "{n} picture resized"
 msgid_plural "{n} pictures resized"
@@ -1540,44 +1564,44 @@ msgstr[0] "Изменено изображений: {n}"
 msgstr[1] "Изменено изображений: {n}"
 msgstr[2] "Изменено изображений: {n}"
 
-#: aurora/files/window.py:1690
+#: aurora/files/window.py:1694
 msgid "{n} failed"
 msgstr "Ошибок: {n}"
 
-#: aurora/files/window.py:1707
+#: aurora/files/window.py:1711
 msgid "No program of yours has it open."
 msgstr "Ни одна ваша программа его не открыла."
 
-#: aurora/files/window.py:1708
+#: aurora/files/window.py:1712
 msgid "OK"
 msgstr "ОК"
 
-#: aurora/files/window.py:1711
+#: aurora/files/window.py:1715
 msgid "These programs have it open. Close them in the program, or end them here (unsaved work in them is lost)."
 msgstr "Эти программы его открыли. Закройте их сами или завершите здесь (несохранённое пропадёт)."
 
-#: aurora/files/window.py:1718 aurora/taskmanager.py:147
+#: aurora/files/window.py:1722 aurora/taskmanager.py:147
 #: aurora/taskmanager.py:358
 msgid "End Task"
 msgstr "Снять задачу"
 
-#: aurora/files/window.py:1723
+#: aurora/files/window.py:1727
 msgid "Ended"
 msgstr "Завершено"
 
-#: aurora/files/window.py:1731
+#: aurora/files/window.py:1735
 msgid "End All"
 msgstr "Завершить все"
 
-#: aurora/files/window.py:1742
+#: aurora/files/window.py:1746
 msgid "Connect to Server"
 msgstr "Подключиться к серверу"
 
-#: aurora/files/window.py:1743
+#: aurora/files/window.py:1747
 msgid "For example smb://192.168.1.10/Shared for a Windows or NAS shared folder, or sftp://user@server"
 msgstr "Например smb://192.168.1.10/Shared для общей папки Windows или NAS, или sftp://user@server"
 
-#: aurora/files/window.py:1748 aurora/settingsapp/devices.py:115
+#: aurora/files/window.py:1752 aurora/settingsapp/devices.py:115
 #: aurora/shell/quicksettings.py:459
 msgid "Connect"
 msgstr "Подключить"

@@ -8,7 +8,7 @@ from gi.repository import GLib, GObject
 
 from aurora import activities
 from aurora.files.history import Entry
-from aurora.i18n import _
+from aurora.i18n import _, ngettext
 
 
 def unique_destination(folder, name):
@@ -62,8 +62,8 @@ class Job(GObject.Object):
     def label(self):
         n = len(self.sources)
         if self.kind == "move":
-            return _("Moving {n} item(s)").format(n=n)
-        return _("Copying {n} item(s)").format(n=n)
+            return ngettext("Moving {n} item", "Moving {n} items", n).format(n=n)
+        return ngettext("Copying {n} item", "Copying {n} items", n).format(n=n)
 
     def start(self):
         threading.Thread(target=self._run, daemon=True).start()

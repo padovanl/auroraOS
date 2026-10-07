@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 02:07+0200\n"
+"POT-Creation-Date: 2026-10-07 02:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,7 +132,7 @@ msgid "Conversations"
 msgstr ""
 
 #: aurora/assistant.py:264 aurora/files/window.py:1304
-#: aurora/files/window.py:1730 aurora/settingsapp/health.py:301
+#: aurora/files/window.py:1734 aurora/settingsapp/health.py:301
 #: aurora/settingsapp/system.py:144 aurora/settingsapp/system.py:186
 #, no-python-format
 msgid "Close"
@@ -554,9 +554,9 @@ msgstr ""
 
 #: aurora/devhub/app.py:313 aurora/files/create.py:26
 #: aurora/files/window.py:1266 aurora/files/window.py:1351
-#: aurora/files/window.py:1531 aurora/files/window.py:1568
-#: aurora/files/window.py:1615 aurora/files/window.py:1667
-#: aurora/files/window.py:1747 aurora/files/window.py:1780
+#: aurora/files/window.py:1535 aurora/files/window.py:1572
+#: aurora/files/window.py:1619 aurora/files/window.py:1671
+#: aurora/files/window.py:1751 aurora/files/window.py:1784
 #: aurora/settingsapp/desktop.py:96 aurora/settingsapp/health.py:275
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:473 aurora/settingsapp/system.py:547
@@ -1154,7 +1154,7 @@ msgid "Files"
 msgstr ""
 
 #: aurora/files/create.py:10 aurora/files/window.py:344
-#: aurora/files/window.py:1828
+#: aurora/files/window.py:1832
 #, no-python-format
 msgid "New Folder"
 msgstr ""
@@ -1175,7 +1175,7 @@ msgstr ""
 msgid "File name"
 msgstr ""
 
-#: aurora/files/create.py:20 aurora/files/window.py:1828
+#: aurora/files/create.py:20 aurora/files/window.py:1832
 #, no-python-format
 msgid "Untitled Folder"
 msgstr ""
@@ -1185,7 +1185,7 @@ msgstr ""
 msgid "Untitled.txt"
 msgstr ""
 
-#: aurora/files/create.py:28 aurora/files/window.py:1828
+#: aurora/files/create.py:28 aurora/files/window.py:1832
 #, no-python-format
 msgid "Create"
 msgstr ""
@@ -1227,22 +1227,26 @@ msgid "Phone"
 msgstr ""
 
 #: aurora/files/operations.py:65
-#, no-python-format, python-brace-format
-msgid "Moving {n} item(s)"
-msgstr ""
+#, python-brace-format
+msgid "Moving {n} item"
+msgid_plural "Moving {n} items"
+msgstr[0] ""
+msgstr[1] ""
 
 #: aurora/files/operations.py:66
-#, no-python-format, python-brace-format
-msgid "Copying {n} item(s)"
-msgstr ""
+#, python-brace-format
+msgid "Copying {n} item"
+msgid_plural "Copying {n} items"
+msgstr[0] ""
+msgstr[1] ""
 
-#: aurora/files/operations.py:118
+#: aurora/files/operations.py:118 aurora/files/window.py:1468
 #, no-python-format
 msgid "Cannot copy a folder into itself"
 msgstr ""
 
-#: aurora/files/operations.py:148 aurora/files/window.py:1466
-#: aurora/files/window.py:1475 aurora/shell/panel.py:216
+#: aurora/files/operations.py:148 aurora/files/window.py:1468
+#: aurora/files/window.py:1477 aurora/shell/panel.py:216
 #, no-python-format
 msgid "Cancelled"
 msgstr ""
@@ -1440,7 +1444,7 @@ msgid "Folder is Empty"
 msgstr ""
 
 #: aurora/files/window.py:432 aurora/files/window.py:1209
-#: aurora/files/window.py:1569 aurora/shell/dock.py:327
+#: aurora/files/window.py:1573 aurora/shell/dock.py:327
 #: aurora/shell/search.py:439
 #, no-python-format
 msgid "Empty Trash"
@@ -1536,7 +1540,7 @@ msgstr ""
 msgid "Resize Images…"
 msgstr ""
 
-#: aurora/files/window.py:1197 aurora/files/window.py:1705
+#: aurora/files/window.py:1197 aurora/files/window.py:1709
 #, no-python-format
 msgid "What's Using This?"
 msgstr ""
@@ -1612,7 +1616,7 @@ msgstr ""
 msgid "Replace with"
 msgstr ""
 
-#: aurora/files/window.py:1267 aurora/files/window.py:1814
+#: aurora/files/window.py:1267 aurora/files/window.py:1818
 #: aurora/shell/desktopicons.py:181 aurora/shell/desktopicons.py:185
 #, no-python-format
 msgid "Rename"
@@ -1665,174 +1669,182 @@ msgid "Provider: {name}. Review the text before sending."
 msgstr ""
 
 #: aurora/files/window.py:1394
-#, no-python-format, python-brace-format
-msgid "{n} item(s) cut"
-msgstr ""
+#, python-brace-format
+msgid "{n} item cut"
+msgid_plural "{n} items cut"
+msgstr[0] ""
+msgstr[1] ""
 
-#: aurora/files/window.py:1394
-#, no-python-format, python-brace-format
-msgid "{n} item(s) copied"
-msgstr ""
+#: aurora/files/window.py:1395
+#, python-brace-format
+msgid "{n} item copied"
+msgid_plural "{n} items copied"
+msgstr[0] ""
+msgstr[1] ""
 
-#: aurora/files/window.py:1504
-#, no-python-format, python-brace-format
-msgid "{n} item(s) moved to the Trash"
-msgstr ""
+#: aurora/files/window.py:1506
+#, python-brace-format
+msgid "{n} item moved to the Trash"
+msgid_plural "{n} items moved to the Trash"
+msgstr[0] ""
+msgstr[1] ""
 
-#: aurora/files/window.py:1529
-#, no-python-format, python-brace-format
-msgid "Permanently Delete {n} Item(s)?"
-msgstr ""
+#: aurora/files/window.py:1532
+#, python-brace-format
+msgid "Permanently Delete {n} Item?"
+msgid_plural "Permanently Delete {n} Items?"
+msgstr[0] ""
+msgstr[1] ""
 
-#: aurora/files/window.py:1530
+#: aurora/files/window.py:1534
 #, no-python-format
 msgid "Deleted items cannot be restored."
 msgstr ""
 
-#: aurora/files/window.py:1532 aurora/settingsapp/ai.py:336
+#: aurora/files/window.py:1536 aurora/settingsapp/ai.py:336
 #: aurora/shell/morewidgets.py:160
 #, no-python-format
 msgid "Delete"
 msgstr ""
 
-#: aurora/files/window.py:1566
+#: aurora/files/window.py:1570
 #, no-python-format
 msgid "Empty Trash?"
 msgstr ""
 
-#: aurora/files/window.py:1567
+#: aurora/files/window.py:1571
 #, no-python-format
 msgid "All items in the Trash will be permanently deleted."
 msgstr ""
 
-#: aurora/files/window.py:1597 aurora/settingsapp/network.py:132
+#: aurora/files/window.py:1601 aurora/settingsapp/network.py:132
 #: aurora/settingsapp/network.py:139
 #, no-python-format
 msgid "That didn't work"
 msgstr ""
 
-#: aurora/files/window.py:1607 aurora/files/window.py:1616
+#: aurora/files/window.py:1611 aurora/files/window.py:1620
 #, no-python-format
 msgid "Compress"
 msgstr ""
 
-#: aurora/files/window.py:1608
+#: aurora/files/window.py:1612
 #, no-python-format, python-brace-format
 msgid "{n} items into one archive"
 msgstr ""
 
-#: aurora/files/window.py:1626
+#: aurora/files/window.py:1630
 #, no-python-format
 msgid "Compressing…"
 msgstr ""
 
-#: aurora/files/window.py:1628
+#: aurora/files/window.py:1632
 #, no-python-format, python-brace-format
 msgid "{name} is ready"
 msgstr ""
 
-#: aurora/files/window.py:1638
+#: aurora/files/window.py:1642
 #, no-python-format
 msgid "Extracting…"
 msgstr ""
 
-#: aurora/files/window.py:1639
+#: aurora/files/window.py:1643
 #, no-python-format
 msgid "Extracted"
 msgstr ""
 
-#: aurora/files/window.py:1646
+#: aurora/files/window.py:1650
 #, python-brace-format
 msgid "{n} path copied"
 msgid_plural "{n} paths copied"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1656
+#: aurora/files/window.py:1660
 #, no-python-format
 msgid "Resize Images"
 msgstr ""
 
-#: aurora/files/window.py:1657
+#: aurora/files/window.py:1661
 #, python-brace-format
 msgid "{n} picture"
 msgid_plural "{n} pictures"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1662
+#: aurora/files/window.py:1666
 #, no-python-format
 msgid "Keep the format"
 msgstr ""
 
-#: aurora/files/window.py:1663
+#: aurora/files/window.py:1667
 #, no-python-format
 msgid "Resize the originals instead of making copies"
 msgstr ""
 
-#: aurora/files/window.py:1668
+#: aurora/files/window.py:1672
 #, no-python-format
 msgid "Resize"
 msgstr ""
 
-#: aurora/files/window.py:1689
+#: aurora/files/window.py:1693
 #, python-brace-format
 msgid "{n} picture resized"
 msgid_plural "{n} pictures resized"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/files/window.py:1690
+#: aurora/files/window.py:1694
 #, no-python-format, python-brace-format
 msgid "{n} failed"
 msgstr ""
 
-#: aurora/files/window.py:1707
+#: aurora/files/window.py:1711
 #, no-python-format
 msgid "No program of yours has it open."
 msgstr ""
 
-#: aurora/files/window.py:1708
+#: aurora/files/window.py:1712
 #, no-python-format
 msgid "OK"
 msgstr ""
 
-#: aurora/files/window.py:1711
+#: aurora/files/window.py:1715
 #, no-python-format
 msgid ""
 "These programs have it open. Close them in the program, or end them here "
 "(unsaved work in them is lost)."
 msgstr ""
 
-#: aurora/files/window.py:1718 aurora/taskmanager.py:147
+#: aurora/files/window.py:1722 aurora/taskmanager.py:147
 #: aurora/taskmanager.py:358
 #, no-python-format
 msgid "End Task"
 msgstr ""
 
-#: aurora/files/window.py:1723
+#: aurora/files/window.py:1727
 #, no-python-format
 msgid "Ended"
 msgstr ""
 
-#: aurora/files/window.py:1731
+#: aurora/files/window.py:1735
 #, no-python-format
 msgid "End All"
 msgstr ""
 
-#: aurora/files/window.py:1742
+#: aurora/files/window.py:1746
 #, no-python-format
 msgid "Connect to Server"
 msgstr ""
 
-#: aurora/files/window.py:1743
+#: aurora/files/window.py:1747
 #, no-python-format
 msgid ""
 "For example smb://192.168.1.10/Shared for a Windows or NAS shared folder, or "
 "sftp://user@server"
 msgstr ""
 
-#: aurora/files/window.py:1748 aurora/settingsapp/devices.py:115
+#: aurora/files/window.py:1752 aurora/settingsapp/devices.py:115
 #: aurora/shell/quicksettings.py:459
 #, no-python-format
 msgid "Connect"

@@ -1391,8 +1391,8 @@ class FilesWindow(Adw.ApplicationWindow):
         filelist = Gdk.FileList.new_from_list(files)
         self.get_clipboard().set(filelist)
         n = len(files)
-        self.toast((_("{n} item(s) cut") if mode == "move" else _("{n} item(s) copied"))
-                   .format(n=n))
+        self.toast((ngettext("{n} item cut", "{n} items cut", n) if mode == "move" else
+                    ngettext("{n} item copied", "{n} items copied", n)).format(n=n))
 
     def paste(self):
         target = self.current.get_path()
@@ -1462,8 +1462,10 @@ class FilesWindow(Adw.ApplicationWindow):
             # first copy completed between the two key presses.
             completed = {source for source, _dest in job.changes}
             remaining = [path for path in paths if path not in completed and os.path.lexists(path)]
+            # Retry only what can go differently a second time (a full disk, a
+            # drive unplugged), not a cancel or a folder pasted into itself.
             self._retry_args = (kind, remaining, target) if error and remaining and \
-                error != _("Cancelled") else None
+                error not in (_("Cancelled"), _("Cannot copy a folder into itself")) else None
             self.retry_job_button.set_visible(self._retry_args is not None)
             self.cancel_job_button.set_visible(bool(self.jobs))
             if not self.jobs and self._retry_args is None and not self._job_queue:
@@ -1501,7 +1503,8 @@ class FilesWindow(Adw.ApplicationWindow):
         for f in files:
             f.trash_async(GLib.PRIORITY_DEFAULT, None, self._trash_done, pending)
         if files:
-            self.toast(_("{n} item(s) moved to the Trash").format(n=len(files)))
+            self.toast(ngettext("{n} item moved to the Trash", "{n} items moved to the Trash",
+                                len(files)).format(n=len(files)))
 
     def _trash_done(self, f, res, pending):
         try:
@@ -1526,7 +1529,8 @@ class FilesWindow(Adw.ApplicationWindow):
         if not files:
             return
         dialog = Adw.AlertDialog(
-            heading=_("Permanently Delete {n} Item(s)?").format(n=len(files)),
+            heading=ngettext("Permanently Delete {n} Item?", "Permanently Delete {n} Items?",
+                             len(files)).format(n=len(files)),
             body=_("Deleted items cannot be restored."))
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("delete", _("Delete"))
