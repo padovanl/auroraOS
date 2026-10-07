@@ -87,7 +87,7 @@ aurora-wayfire-config                             # regenerate the Aurora sessio
   <dt>Why is the Windows drive read-only?</dt>
   <dd>Windows didn't shut down completely, so Linux must not write to its drive: <strong>Fast Startup</strong> (on by default in Windows 10 and 11) and hibernation leave it in use, and so does the disk check Windows runs once after Aurora is installed next to it. Files then opens it read-only and says so; your files are all there to copy. To change files on it, start Windows and choose <em>Restart</em> (not Shut down) back into Aurora, or turn Fast Startup off in Windows (Control Panel → Power Options → Choose what the power buttons do). Opening it asks for your password once.</dd>
   <dt>Why does the time differ from Windows after switching?</dt>
-  <dd>Windows keeps the hardware clock in local time, Linux in UTC. Run <code>timedatectl set-local-rtc 1</code> in Aurora, or set Windows to UTC.</dd>
+  <dd>Windows keeps the hardware clock in local time, Linux in UTC. When the installer finds Windows it sets Aurora to local time too, so both agree. If Windows was added later, run <code>sudo timedatectl set-local-rtc 1</code> in Aurora.</dd>
   <dt>How do I change the language later?</dt>
   <dd>Settings → Language &amp; Region, then log out and in.</dd>
   <dt>Is my data sent anywhere?</dt>

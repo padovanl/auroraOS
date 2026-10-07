@@ -5,6 +5,7 @@
   automatically", greetd's initial_session logs them straight in at boot
   (logging out still shows the greeter, like Ubuntu).
 - Removes live-session-only launchers from the installed system.
+- Next to Windows, keeps the hardware clock in local time, as Windows does.
 - On btrfs: sets up Timeshift in btrfs mode, the "Fresh install" snapshot at
   first boot, snapshots before package changes and the "Aurora OS snapshots"
   boot menu (grub-btrfs). ext4 and xfs installs skip all of this.
@@ -83,6 +84,25 @@ def setup_snapshots(root):
                              f"({config['backup_device_uuid']})")
 
 
+def windows_present():
+    """Whether Windows is on one of the disks (os-prober, from the live system)."""
+    # "/dev/nvme0n1p1@/efi/Microsoft/Boot/bootmgfw.efi:Windows Boot Manager:Windows:efi"
+    return any(line.split(":")[2:3] == ["Windows"] for line in _out(["os-prober"]).splitlines())
+
+
+def keep_windows_clock(root):
+    """Next to Windows, the hardware clock stays in local time, as Windows
+    keeps it: otherwise Windows shows the wrong time after every start of
+    Aurora (an hour or two off). As Ubuntu's installer does."""
+    if not windows_present():
+        return
+    # After Calamares' hwclock module (settings.conf), which set it to UTC.
+    if libcalamares.utils.target_env_call(["hwclock", "--systohc", "--localtime"]) != 0:
+        with open(os.path.join(root, "etc/adjtime"), "w") as f:
+            f.write("0.0 0 0.0\n0\nLOCAL\n")
+    libcalamares.utils.debug("aurora-finalize: Windows found, hardware clock in local time")
+
+
 def pretty_name():
     return "Configuring Aurora OS"
 
@@ -101,6 +121,7 @@ def run():
     libcalamares.utils.debug(f"aurora-finalize: greetd autologin={'yes' if user else 'no'}")
 
     setup_snapshots(root)
+    keep_windows_clock(root)
 
     for rel in LIVE_ONLY:
         p = os.path.join(root, rel)
