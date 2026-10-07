@@ -32,6 +32,38 @@ def admin(*args, stdin=None):
     return res.returncode == 0, res.stderr.strip()
 
 
+USERNAME_RE = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
+
+
+def suggest_username(full_name):
+    """"Lùca Pàdovan" → "luca": the first name in plain lowercase letters."""
+    import unicodedata
+    first = (full_name.split() or [""])[0]
+    plain = unicodedata.normalize("NFKD", first).encode("ascii", "ignore").decode()
+    base = re.sub(r"[^a-z0-9]", "", plain.lower())
+    if base and base[0].isdigit():
+        base = "u" + base
+    return base[:32]
+
+
+def username_problem(name):
+    """Why a username can't be used, or None."""
+    import pwd
+    if not USERNAME_RE.match(name or ""):
+        return _("Lowercase letters, digits, - and _, starting with a letter")
+    try:
+        pwd.getpwnam(name)
+        return _("{user} already exists").format(user=name)
+    except KeyError:
+        return None
+
+
+def clean_full_name(name):
+    """The full name as the account's comment: commas and colons separate its
+    fields ("Rossi, Mario" was cut at the comma, a colon made adding fail)."""
+    return " ".join(name.replace(",", " ").replace(":", " ").split())
+
+
 def service_active(name):
     return run(["systemctl", "is-active", name]).strip() == "active"
 
@@ -613,20 +645,33 @@ class Users(Page):
         is_adm = Adw.SwitchRow(title=_("Administrator"))
 
         def suggest(*_a):
-            base = re.sub(r"[^a-z0-9]", "", full.get_text().split(" ")[0].lower())
-            user.set_text(base)
+            user.set_text(suggest_username(full.get_text()))
+
+        def check(*_a):
+            name = user.get_text()
+            dialog.set_response_enabled("add", bool(password.get_text()) and
+                                        username_problem(name) is None)
+            problem = username_problem(name) if name else None
+            user.set_title(problem or _("Username"))
+            if problem:
+                user.add_css_class("error")
+            else:
+                user.remove_css_class("error")
         full.connect("changed", suggest)
+        user.connect("changed", check)
+        password.connect("changed", check)
         for r in (full, user, password, is_adm):
             box.append(r)
         dialog.set_extra_child(box)
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("add", _("Add"))
         dialog.set_response_appearance("add", Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_response_enabled("add", False)
 
         def response(_d, resp):
             if resp != "add":
                 return
-            ok, err = admin("add-user", user.get_text(), full.get_text(),
+            ok, err = admin("add-user", user.get_text(), clean_full_name(full.get_text()),
                             "yes" if is_adm.get_active() else "no",
                             stdin=password.get_text() + "\n")
             toast(self, _("User added") if ok else (err or _("Could not add user")))

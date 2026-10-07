@@ -81,6 +81,8 @@ EOF
     add-user)
         user="${1:-}"; name="${2:-}"; admin="${3:-no}"
         valid_user "$user" || exit 2
+        # The comment's own separators would split or break the account entry.
+        name=$(printf '%s' "$name" | tr ',:\n' '   ')
         # Password arrives on stdin, never on the command line.
         IFS= read -r password && [ -n "$password" ] || exit 2
         groups=""
@@ -101,7 +103,15 @@ EOF
         user="${1:-}"
         valid_user "$user" || exit 2
         [ "$(id -u "$user")" -ge 1000 ] || exit 2
-        userdel --remove "$user" ;;
+        userdel --remove "$user"
+        # Logging in automatically as someone who no longer exists would leave
+        # the computer at a login screen that can't start: drop it.
+        conf=/etc/greetd/config.toml
+        if [ -f "$conf" ] && awk -v u="$user" '/^\[initial_session\]/{s=1; next} /^\[/{s=0}
+                s && $1 == "user" && $3 == "\"" u "\"" {found=1} END{exit !found}' "$conf"; then
+            awk 'BEGIN{skip=0} /^\[initial_session\]/{skip=1; next} /^\[/{skip=0} !skip' \
+                "$conf" > "$conf.new" && mv "$conf.new" "$conf"
+        fi ;;
     power-key|lid)
         # What the power button and closing the lid do (systemd-logind).
         case "${1:-}" in suspend|poweroff|hibernate|ignore|lock) ;; *) exit 2 ;; esac
