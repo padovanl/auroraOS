@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import subprocess
+import threading
 
 from gi.repository import Gio, GLib
 
@@ -235,7 +236,15 @@ class SystemNotifications:
             300, lambda: (subprocess.Popen(["systemctl", "reboot"]), False)[1])
 
     def _check_updates(self):
-        n = count_updates()
+        # apt takes a few seconds: in a thread, or the whole desktop froze
+        # (input, animations) at every check.
+        def work():
+            n = count_updates()
+            GLib.idle_add(lambda: (self._updates_counted(n), False)[1])
+        threading.Thread(target=work, daemon=True).start()
+        return GLib.SOURCE_REMOVE
+
+    def _updates_counted(self, n):
         if n and n != self._notified_updates:
             self._notified_updates = n
             self.notify(_("Software updates available"),
