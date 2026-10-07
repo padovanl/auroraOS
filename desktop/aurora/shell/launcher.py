@@ -173,7 +173,7 @@ class Launcher(LayerWindow):
         root.set_size_request(760, -1)
         self.root = root
 
-        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"),
+        self.entry = Gtk.SearchEntry(placeholder_text=_("Search apps, files and settings, or type ? to ask Aurora"),
                                      css_classes=["launcher-search"], hexpand=True)
         self.entry.connect("search-changed", self._on_search)
         self.entry.connect("activate", self._on_activate)
@@ -184,13 +184,10 @@ class Launcher(LayerWindow):
         self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
                                vexpand=True, vhomogeneous=False, interpolate_size=True)
 
-        self.grid = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
-                                max_children_per_line=7, min_children_per_line=3,
-                                row_spacing=12, column_spacing=12, valign=Gtk.Align.START,
-                                activate_on_single_click=True)
-        self.grid.connect("child-activated", self._on_tile)
-        self.grid.set_sort_func(lambda a, b: (a.name > b.name) - (a.name < b.name))
-        self.stack.add_named(Gtk.ScrolledWindow(child=self.grid,
+        # Launchpad: the apps used most, then a section per kind of app.
+        self.sections = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                                valign=Gtk.Align.START, css_classes=["launcher-sections"])
+        self.stack.add_named(Gtk.ScrolledWindow(child=self.sections,
                                                 hscrollbar_policy=Gtk.PolicyType.NEVER),
                              "grid")
 
@@ -225,10 +222,32 @@ class Launcher(LayerWindow):
 
     # --- content ---
 
+    def _flow(self, members):
+        flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
+                           max_children_per_line=7, min_children_per_line=3,
+                           row_spacing=8, column_spacing=12, valign=Gtk.Align.START,
+                           activate_on_single_click=True)
+        flow.connect("child-activated", self._on_tile)
+        for app in members:
+            flow.append(AppTile(app, self.shell))
+        return flow
+
     def _populate(self):
-        self.grid.remove_all()
-        for app in apps.all_apps():
-            self.grid.append(AppTile(app, self.shell))
+        from aurora.shell import appgroups
+        while (child := self.sections.get_first_child()) is not None:
+            self.sections.remove(child)
+        everything = apps.all_apps()
+        groups = [(_("Frequently Used"), appgroups.frequent(everything))]
+        groups += [(_(title), members) for title, members in appgroups.group(everything).items()]
+        self.grid = None
+        for title, members in groups:
+            if not members:
+                continue
+            self.sections.append(Gtk.Label(label=title, xalign=0,
+                                           css_classes=["launcher-section-title"]))
+            flow = self._flow(members)
+            self.grid = self.grid or flow       # the first, for keyboard focus
+            self.sections.append(flow)
 
     def _on_search(self, entry):
         text = entry.get_text()
@@ -297,7 +316,7 @@ class Launcher(LayerWindow):
                 self.results.select_row(nxt)
                 nxt.grab_focus() if not self.entry.has_focus() else None
             return True
-        if keyval == Gdk.KEY_Down and self.entry.has_focus():
+        if keyval == Gdk.KEY_Down and self.entry.has_focus() and self.grid is not None:
             first = self.grid.get_child_at_index(0)
             if first:
                 first.grab_focus()
@@ -341,6 +360,8 @@ class Launcher(LayerWindow):
         self.root.set_size_request(680 if spotlight else 900, -1)
         self.stack.set_vexpand(not spotlight)
         self.entry.set_text("")
+        if not spotlight:
+            self._populate()        # "Frequently Used" follows what you use
         self.stack.set_visible_child_name("empty" if spotlight else "grid")
         self.present()
         self.entry.grab_focus()
