@@ -9,7 +9,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 from aurora import apps, settings
 from aurora.files.icons import icon_for
 from aurora.files.operations import Job
-from aurora.i18n import _
+from aurora.i18n import _, ngettext
 
 MAX_ITEMS = 40
 
@@ -54,10 +54,12 @@ class DesktopIcon(Gtk.Button):
     """A file on the desktop. App launchers (.desktop files) show the app's name and
     icon and start the app; everything else opens with its default app."""
 
-    def __init__(self, gfile, info=None, app=None, selection_key=None):
+    def __init__(self, gfile, info=None, app=None, selection_key=None, more=0):
         super().__init__(css_classes=["flat", "desktop-icon"])
         self.gfile = gfile
         self.app = app
+        # more > 0: the last spot, "N more…", opening the Desktop folder in Files.
+        self.more = more
         # Live-only launchers (notably Install Aurora OS) are real desktop
         # icons even though they do not come from ~/Desktop and therefore have
         # no GFile.  Give every icon a stable key so those launchers can still
@@ -67,7 +69,10 @@ class DesktopIcon(Gtk.Button):
             self.app = Gio.DesktopAppInfo.new_from_filename(gfile.get_path() or "")
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         img = Gtk.Image(pixel_size=56)
-        if self.app is not None:
+        if more:
+            name = ngettext("{n} more…", "{n} more…", more).format(n=more)
+            img.set_from_icon_name("folder-open")
+        elif self.app is not None:
             name = self.app.get_display_name()
             if self.app.get_icon():
                 img.set_from_gicon(self.app.get_icon())
@@ -94,7 +99,9 @@ class DesktopIcon(Gtk.Button):
                                  propagation_phase=Gtk.PropagationPhase.CAPTURE)
         right.connect("pressed", self._on_right_click)
         self.add_controller(right)
-        if self.gfile is not None:
+        if more:
+            self.set_tooltip_text(_("Open the Desktop folder to see everything on it"))
+        if self.gfile is not None and not more:
             drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
             drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
             drag.connect("prepare", self._drag_files)
@@ -142,7 +149,7 @@ class DesktopIcon(Gtk.Button):
             open_file(self.gfile)
 
     def _on_right_click(self, gesture, _n, x, y):
-        if self.gfile is not None:
+        if self.gfile is not None and not self.more:
             self.show_menu(x, y)
             gesture.set_state(Gtk.EventSequenceState.CLAIMED)
 
@@ -312,7 +319,7 @@ class DesktopIcons(Gtk.Fixed):
 
     def selected_files(self):
         return [icon.gfile for name, icon in self._icons.items()
-                if name in self._selected and icon.gfile is not None]
+                if name in self._selected and icon.gfile is not None and not icon.more]
 
     def select_rect(self, x1, y1, x2, y2, original=()):
         left, right = sorted((x1, x2))
@@ -340,9 +347,10 @@ class DesktopIcons(Gtk.Fixed):
         self._last_size = (0, 0)
         self.add_tick_callback(self._watch_size)
         self._monitor = None
+        self._reload_source = 0
         try:
             self._monitor = self._dir.monitor_directory(Gio.FileMonitorFlags.WATCH_MOVES, None)
-            self._monitor.connect("changed", lambda *a: GLib.timeout_add(200, self.reload))
+            self._monitor.connect("changed", lambda *a: self._reload_soon())
         except GLib.Error:
             pass
         s = settings.get()
@@ -353,6 +361,17 @@ class DesktopIcons(Gtk.Fixed):
                 s.connect(f"changed::{key}", lambda *a: self._fit_margins())
         self._fit_margins()
         self.reload()
+
+    def _reload_soon(self):
+        """One reload for a burst of changes: 300 files unpacked on the desktop
+        rebuilt it 300 times, leaving it empty for seconds."""
+        if self._reload_source:
+            GLib.source_remove(self._reload_source)
+
+        def run():
+            self._reload_source = 0
+            return self.reload()
+        self._reload_source = GLib.timeout_add(250, run)
 
     def _fit_margins(self):
         """Reposition saved icons when panel or dock layout changes."""
@@ -430,9 +449,15 @@ class DesktopIcons(Gtk.Fixed):
         if installer is not None:
             key = "__aurora_installer__"
             add_icon(DesktopIcon(None, app=installer, selection_key=key), key)
-        for info in infos[:MAX_ITEMS]:
+        # More than fit: the last spot says how many more, and opens the folder,
+        # so nothing saved on the desktop goes missing without a word.
+        fits = MAX_ITEMS if len(infos) <= MAX_ITEMS else MAX_ITEMS - 1
+        for info in infos[:fits]:
             icon = DesktopIcon(self._dir.get_child(info.get_name()), info)
             add_icon(icon, info.get_name())
+        if len(infos) > fits:
+            add_icon(DesktopIcon(self._dir, more=len(infos) - fits,
+                                 selection_key="__aurora_more__"), "__aurora_more__")
         self._selected.intersection_update(self._icons)
         self._sync_selection()
         self.set_visible(shown > 0)
