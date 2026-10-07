@@ -844,7 +844,7 @@ class Shell(Adw.Application):
         if want and self._vnc is None and shutil.which("wayvnc"):
             from aurora import screenshare
             try:
-                self._vnc = subprocess.Popen(screenshare.command())
+                self._vnc = subprocess.Popen(apps.tied(screenshare.command()))
             except (OSError, subprocess.SubprocessError) as err:
                 # A broken key/config or an executable that disappeared must
                 # not make the desktop restart forever at every shell launch.
@@ -861,11 +861,11 @@ class Shell(Adw.Application):
         want = s is None or s.get_boolean("clipboard-history")
         if want and self._clip_watch is None and shutil.which("wl-paste"):
             try:
-                self._clip_watch = subprocess.Popen(
-                    ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"])
-                self._image_clip_watch = subprocess.Popen(
+                self._clip_watch = subprocess.Popen(apps.tied(
+                    ["wl-paste", "--type", "text", "--watch", "aurora-clipboard", "store"]))
+                self._image_clip_watch = subprocess.Popen(apps.tied(
                     ["wl-paste", "--type", "image/png", "--watch",
-                     "aurora-clipboard", "store-image"])
+                     "aurora-clipboard", "store-image"]))
             except OSError as err:
                 print(f"aurora: clipboard history could not start ({err})")
                 if self._clip_watch is not None:

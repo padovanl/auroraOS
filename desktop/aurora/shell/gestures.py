@@ -15,6 +15,8 @@ import shutil
 import subprocess
 import threading
 
+from aurora import apps
+
 from gi.repository import GLib
 
 SWIPE_DISTANCE = 120      # accumulated libinput units before a swipe counts
@@ -86,7 +88,8 @@ class Gestures:
         if self.proc is not None or not shutil.which("libinput"):
             return
         try:
-            self.proc = subprocess.Popen(["libinput", "debug-events"], stdout=subprocess.PIPE,
+            self.proc = subprocess.Popen(apps.tied(["libinput", "debug-events"]),
+                                         stdout=subprocess.PIPE,
                                          stderr=subprocess.DEVNULL, text=True)
         except OSError:
             return

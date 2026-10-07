@@ -758,7 +758,7 @@ class Recorder(GObject.Object):
             monitor = _run(["pactl", "get-default-sink"]).strip()
             cmd += [f"--audio={monitor}.monitor"] if monitor else ["--audio"]
         try:
-            self.proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL,
+            self.proc = subprocess.Popen(apps.tied(cmd), stdout=subprocess.DEVNULL,
                                          stderr=subprocess.DEVNULL)
         except OSError:
             self.proc = None

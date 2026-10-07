@@ -1639,7 +1639,7 @@ coming back.
 | Hot corners never fired. | The compositor gives no pointer input to a fully transparent surface. | The corners are 1% opaque: invisible, but they receive the pointer. |
 | A top-bar menu opened by shortcut ignored Esc and kept the keyboard. | The menu opened before the bar had keyboard focus, and the bar kept it afterwards. | The bar takes the keyboard first, then opens the menu, and gives it back when it closes. |
 | Files' context menu never appeared. | `translate_coordinates()` returns two values in the PyGObject Debian ships, not three. | The call accepts both forms. |
-| Text containing "&" vanished in Settings ("Date & Time"). | Adwaita reads row titles as markup. | Rows show plain text; group titles are escaped. |
+| Text containing "&" vanished in Settings ("Date & Time"), and names like "Tom & Jerry" in Files', Task Manager's and every app's rows and toasts. | Adwaita reads row and toast titles as markup. | Every Aurora app imports `aurora.plaintext`: rows and toasts show plain text, group titles are escaped. |
 | The dock stayed magnified, or animated forever under a still pointer. | Resizing icons makes GTK report the pointer again at the same place, which restarted the animation. | Motion at an unchanged position is ignored; magnification is recomputed after the dock rebuilds. |
 | The dock's right-click menu listed "Terminal" three times. | Renaming apps at build time also renamed their actions (New Window, Preferences…). | Only the `[Desktop Entry]` group is renamed; an image check guards it. |
 | Every installed machine had the same SSH host keys. | `openssh-server` generated them at build time. | The image ships without keys; sshd creates them on each machine. |
@@ -1656,6 +1656,14 @@ coming back.
 | The installer's checkboxes were flat squares with no tick. | The image has no Qt SVG image plugin, so the SVG marks weren't drawn. | The marks are PNGs rendered at build time. |
 | The live system warned “Disk almost full”. | Its root is an overlay in RAM with about 2 GB free. | The warning skips file systems in memory (overlay, tmpfs); a unit test checks it. |
 | The weather under the calendar disappeared in the live system. | Its time zone is UTC, which has no city to take the location from. | It asks to choose a city in Weather instead of hiding. |
+| An encrypted install stopped at the `grub>` prompt after the passphrase. | Calamares made LUKS2, whose default key derivation (argon2id) GRUB 2.12 can't open; it reads `/boot` from the encrypted root. | LUKS1, which GRUB opens; one passphrase at boot, the initramfs then uses a key inside the volume. |
+| Installed next to Windows, every GRUB update put Aurora first in the firmware's boot order again, from a second copy. | GRUB's package scripts install to `\EFI\<distributor>` (`aurora`) with a new boot entry each time, besides the installer's `\EFI\debian`. | Only Aurora's helper installs: the stray copy and its entries are removed, and Windows' `\EFI\BOOT` is left to it. |
+| "Erase disk" was ready-picked even next to Windows. | One fixed initial choice for every computer. | The installer looks at the disks first: Erase disk only when they're all empty, Install alongside next to another system. |
+| Opening a pipe (FIFO) froze Files for good. | `Gtk.FileLauncher` opens the file to read it, which waits for a writer forever. | Pipes and devices say there's nothing to open; Quick Look, checksums and the AI index skip them too. |
+| Typing `factorial(99999999)` in Spotlight froze the whole desktop. | The calculator runs in the shell at every key, with no bound on the size of results. | Results are size-checked before computing (about 1,200 digits at most) and big ones read in scientific notation. |
+| After the shell restarted, every copy appeared twice in the clipboard history. | Its helpers (clipboard watchers, night light, gestures, screen sharing, recording) outlived it and were started again. | They're started with `setpriv --pdeathsig`: they end with the shell. |
+| Recovery mode only said "the root account is locked". | Aurora has no root password (administrators use sudo). | Rescue and emergency mode open a root shell, as on Ubuntu. |
+| A custom shortcut with `#` in its command (a link's #anchor) ran cut short in the Aurora session. | Wayfire's config reader treats an unescaped `#` as a comment. | The command is written with `\#`, checked against wf-config itself. |
 
 ### Website
 - **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub

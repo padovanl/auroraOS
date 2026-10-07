@@ -100,3 +100,13 @@ def special_file(path):
     except (OSError, TypeError, ValueError):
         return False
     return stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode) or stat.S_ISCHR(mode) or stat.S_ISBLK(mode)
+
+
+def tied(argv):
+    """argv, made to end when the process that starts it does (the shell):
+    after a crash and restart, its helpers didn't, and ran twice (every copy
+    stored twice in the clipboard history, two night lights)."""
+    import shutil
+    if shutil.which("setpriv"):
+        return ["setpriv", "--pdeathsig", "TERM", "--", *argv]
+    return list(argv)

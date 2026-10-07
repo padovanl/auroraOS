@@ -41,3 +41,13 @@ def test_files_sort_naturally():
     from aurora.files.window import sort_key
     names = ["f10.txt", "f2.txt", "f1.txt", "F3.txt", "f100.txt"]
     assert sorted(names, key=sort_key) == ["f1.txt", "f2.txt", "F3.txt", "f10.txt", "f100.txt"]
+
+
+def test_shell_helpers_end_with_the_shell(monkeypatch):
+    import shutil
+    from aurora import apps
+    monkeypatch.setattr(shutil, "which", lambda name: "/usr/bin/" + name)
+    assert apps.tied(["wl-paste", "--watch", "x"]) == [
+        "setpriv", "--pdeathsig", "TERM", "--", "wl-paste", "--watch", "x"]
+    monkeypatch.setattr(shutil, "which", lambda name: None)
+    assert apps.tied(["wlsunset"]) == ["wlsunset"]

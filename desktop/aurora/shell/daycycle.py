@@ -17,7 +17,7 @@ import time
 
 from gi.repository import GLib, GObject
 
-from aurora import settings, sun, wallpapers
+from aurora import apps, settings, sun, wallpapers
 
 BACKGROUNDS = wallpapers.BACKGROUNDS
 DEFAULT_WALLPAPER = wallpapers.default_picture()
@@ -248,7 +248,7 @@ class DayCycle(GObject.Object):
         if args is not None and shutil.which("wlsunset"):
             # Line-buffered, or its log only arrives when it exits.
             line_buffered = ["stdbuf", "-oL", "-eL"] if shutil.which("stdbuf") else []
-            self._night_light = subprocess.Popen(line_buffered + ["wlsunset"] + args,
+            self._night_light = subprocess.Popen(apps.tied(line_buffered + ["wlsunset"] + args),
                                                  stdout=subprocess.PIPE,
                                                  stderr=subprocess.STDOUT, text=True)
             self._watch_night_light(self._night_light)
