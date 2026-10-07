@@ -27,48 +27,50 @@ def _signal_icon(strength):
 
 
 class Toggle(Gtk.Box):
-    """A tile as on Android: an icon in a round badge, a title and a subtitle,
-    filled with the accent color while on. Tiles with details have a chevron
-    at their end that opens them."""
+    """A quick setting as on Windows 11: a compact pill with the icon, lit with
+    Aurora's gradient while on, and its name underneath. A pill with details
+    is split, the right part (a chevron) opens them. Where there's something
+    to say (the Wi-Fi network, the power mode) the name below says it."""
 
     def __init__(self, icon, label, on_toggled, on_expand=None):
-        super().__init__(css_classes=["qs-tile"], hexpand=True)
-        inner = Gtk.Box(spacing=10)
-        badge = Gtk.Box(css_classes=["qs-tile-badge"], valign=Gtk.Align.CENTER)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True,
+                         css_classes=["qs-quick"])
+        self.title = label
+        pill = Gtk.Box(css_classes=["qs-tile"], hexpand=True)
         self.image = Gtk.Image(icon_name=icon)
-        badge.append(self.image)
-        inner.append(badge)
-        text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
-        text.append(Gtk.Label(label=label, xalign=0, ellipsize=Pango.EllipsizeMode.END,
-                              css_classes=["qs-toggle-title"]))
-        self.subtitle = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
-                                  css_classes=["qs-toggle-subtitle"])
-        text.append(self.subtitle)
-        inner.append(text)
-        self.button = Gtk.ToggleButton(child=inner, hexpand=True, css_classes=["qs-toggle"])
+        self.button = Gtk.ToggleButton(child=self.image, hexpand=True, css_classes=["qs-toggle"],
+                                       tooltip_text=label)
         self._handler = self.button.connect("toggled", lambda b: on_toggled(b.get_active()))
-        self.append(self.button)
+        pill.append(self.button)
         self.arrow = None
         if on_expand:
+            pill.add_css_class("split")
             self.arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["qs-expand"],
                                     tooltip_text=_("More"))
             self.arrow.connect("clicked", lambda *_: on_expand())
-            self.append(self.arrow)
+            pill.append(self.arrow)
+        self.pill = pill
+        self.append(pill)
+        self.subtitle = Gtk.Label(label=label, ellipsize=Pango.EllipsizeMode.END,
+                                  max_width_chars=12, justify=Gtk.Justification.CENTER,
+                                  css_classes=["qs-toggle-title"])
+        self.append(self.subtitle)
 
     def set_state(self, active, subtitle=None, icon=None):
         self.button.handler_block(self._handler)
         self.button.set_active(active)
         self.button.handler_unblock(self._handler)
-        (self.add_css_class if active else self.remove_css_class)("active")
-        # Android always shows a second line: the state when there's nothing else.
-        self.subtitle.set_label(subtitle or (_("On") if active else _("Off")))
+        (self.pill.add_css_class if active else self.pill.remove_css_class)("active")
+        # The name, or what's more useful than "On" (the network, the mode).
+        self.subtitle.set_label(subtitle or self.title)
+        self.set_tooltip_text(f"{self.title} · {subtitle}" if subtitle else self.title)
         if icon:
             self.image.set_from_icon_name(icon)
 
 
 class Slider(Gtk.Box):
-    """A thick pill slider, as on Android: the filled part carries the icon
-    (click it to mute), an optional chevron at the end opens the devices."""
+    """A slim slider in a glass pill: the icon on the left (click it to mute),
+    the level in percent, an optional chevron at the end for the devices."""
 
     def __init__(self, icon, on_change, on_icon=None, on_expand=None):
         super().__init__(spacing=8, css_classes=["qs-slider"])
@@ -78,15 +80,18 @@ class Slider(Gtk.Box):
         self.scale.add_css_class("qs-pill-scale")
         self._handler = self.scale.connect("value-changed", lambda s: on_change(s.get_value()))
         self.icon = Gtk.Button(icon_name=icon, css_classes=["flat", "circular", "qs-slider-icon"],
-                               halign=Gtk.Align.START, valign=Gtk.Align.CENTER,
-                               margin_start=6)
+                               valign=Gtk.Align.CENTER)
         if on_icon:
             self.icon.connect("clicked", lambda *_: on_icon())
         else:
             self.icon.set_can_target(False)
-        pill = Gtk.Overlay(child=self.scale, hexpand=True)
-        pill.add_overlay(self.icon)
-        self.append(pill)
+        self.percent = Gtk.Label(css_classes=["qs-slider-value", "numeric"], width_chars=4,
+                                 xalign=1)
+        self.scale.connect("value-changed",
+                           lambda sc: self.percent.set_label(f"{round(sc.get_value() * 100)}%"))
+        self.append(self.icon)
+        self.append(self.scale)
+        self.append(self.percent)
         if on_expand:
             arrow = Gtk.Button(icon_name="go-next-symbolic",
                                css_classes=["circular", "qs-slider-more"],
@@ -98,6 +103,7 @@ class Slider(Gtk.Box):
         self.scale.handler_block(self._handler)
         self.scale.set_value(value)
         self.scale.handler_unblock(self._handler)
+        self.percent.set_label(f"{round(self.scale.get_value() * 100)}%")
         if icon:
             self.icon.set_icon_name(icon)
 
@@ -196,7 +202,7 @@ class QuickSettings(Gtk.Popover):
         self.t_power = Toggle("power-profile-balanced-symbolic", _("Power Mode"),
                               lambda v: self._show_detail("power"),
                               lambda: self._show_detail("power"))
-        self.t_night = Toggle("night-light-symbolic", _("Night Light"),
+        self.t_night = Toggle("daytime-sunset-symbolic", _("Night Light"),
                               lambda v: s and s.set_boolean("night-light", v))
         self.t_dark = Toggle("weather-clear-night-symbolic", _("Dark Style"), self._set_dark)
         self.t_dnd = Toggle("notifications-disabled-symbolic", _("Do Not Disturb"),
@@ -211,7 +217,7 @@ class QuickSettings(Gtk.Popover):
                                 self._set_hotspot, lambda: self._show_detail("hotspot"))
         self.t_osk = Toggle("input-keyboard-symbolic", _("Screen Keyboard"),
                             self._set_screen_keyboard)
-        self.grid = Gtk.Grid(column_spacing=10, row_spacing=10, column_homogeneous=True)
+        self.grid = Gtk.Grid(column_spacing=12, row_spacing=12, column_homogeneous=True)
         box.append(self.grid)
 
         # --- detail area ---
@@ -553,7 +559,7 @@ class QuickSettings(Gtk.Popover):
         while (c := self.grid.get_first_child()) is not None:
             self.grid.remove(c)
         for i, t in enumerate(toggles):
-            self.grid.attach(t, i % 2, i // 2, 1, 1)
+            self.grid.attach(t, i % 3, i // 3, 1, 1)
 
         if self._detail and self.detail_revealer.get_reveal_child():
             self._fill_detail(self._detail)
