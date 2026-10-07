@@ -552,7 +552,10 @@ class QuickSettings(Gtk.Popover):
             cur = sh.power_profiles.current
             self.t_power.set_state(cur != "balanced", PROFILE_LABELS[cur], PROFILE_ICONS[cur])
             toggles.append(self.t_power)
-        self.t_night.set_state(s is not None and s.get_boolean("night-light"))
+        from aurora.shell.daycycle import night_light_unsupported
+        night = s is not None and s.get_boolean("night-light")
+        self.t_night.set_state(night, _("Not supported here")
+                               if night and night_light_unsupported() else None)
         self.t_dark.set_state(Adw.StyleManager.get_default().get_dark())
         self.t_dnd.set_state(s is not None and s.get_boolean("do-not-disturb"))
         self.t_awake.set_state(sh.keep_awake.active,
