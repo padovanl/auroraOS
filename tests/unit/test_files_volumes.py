@@ -70,3 +70,24 @@ def test_downloads_cleanup_keeps_folders_with_recent_files(tmp_path):
         os.utime(p, (old, old))
     found = sorted(os.path.basename(p) for p in housekeeping.old_files(str(tmp_path), 30))
     assert found == ["old.pdf", "stale"]
+
+
+def test_slideshow_folder_scan_is_bounded_and_cached(tmp_path, monkeypatch):
+    import gi
+    gi.require_version("Gtk", "4.0")
+    from aurora.shell import daycycle
+
+    class S:
+        def get_string(self, key):
+            return str(tmp_path) if key == "wallpaper-slideshow-folder" else ""
+
+        def get_boolean(self, key):
+            return False
+    monkeypatch.setattr(daycycle.settings, "get", lambda: S())
+    daycycle._SLIDES_CACHE.clear()
+    (tmp_path / "a.png").write_bytes(b"x")
+    (tmp_path / ".hidden").mkdir()
+    (tmp_path / ".hidden" / "b.png").write_bytes(b"x")
+    assert daycycle.DayCycle._slides() == [str(tmp_path / "a.png")]
+    (tmp_path / "c.png").write_bytes(b"x")
+    assert daycycle.DayCycle._slides() == [str(tmp_path / "a.png")]   # cached

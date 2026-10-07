@@ -35,6 +35,9 @@ def cache_link():
     return os.path.join(base, "aurora", "wallpaper")
 
 
+_SLIDES_CACHE = {}
+
+
 def unsupported_marker():
     return os.path.join(GLib.get_user_runtime_dir(), "aurora-night-light-unsupported")
 
@@ -120,14 +123,25 @@ class DayCycle(GObject.Object):
         the included gallery; shuffled in a stable order when asked."""
         s = settings.get()
         folder = (s.get_string("wallpaper-slideshow-folder") if s else "") or BACKGROUNDS
-        found = []
-        for root, _dirs, names in os.walk(folder):
-            found += [os.path.join(root, name) for name in names
-                      if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
-                      and not name.startswith("aurora-dynamic-")]  # the same as a series
-            if len(found) > 5000:
-                break
-        found.sort()
+        # Looked up at most every 10 minutes, and never more than 20,000
+        # entries: this runs in the shell, and a big folder (all of Home) made
+        # the desktop stall at every wallpaper check.
+        cached = _SLIDES_CACHE.get(folder)
+        if cached is not None and time.monotonic() - cached[0] < 600:
+            found = list(cached[1])
+        else:
+            found, seen = [], 0
+            for root, dirs, names in os.walk(folder):
+                dirs[:] = [d for d in dirs if not d.startswith(".")]
+                seen += len(names) + len(dirs)
+                found += [os.path.join(root, name) for name in names
+                          if name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
+                          and not name.startswith("aurora-dynamic-")]  # the same as a series
+                if len(found) > 5000 or seen > 20000:
+                    break
+            found.sort()
+            _SLIDES_CACHE.clear()
+            _SLIDES_CACHE[folder] = (time.monotonic(), list(found))
         if s is not None and s.get_boolean("wallpaper-slideshow-shuffle"):
             import random
             random.Random(len(found)).shuffle(found)
