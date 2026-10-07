@@ -9,6 +9,7 @@ layout presets, and saves a PNG after each step.
 """
 
 import argparse
+import base64
 import importlib.util
 import os
 import subprocess
@@ -43,7 +44,8 @@ CLEAN = ("aurora-shell quick-settings hide; "
          "pkill -f '[a]urora-files|[a]urora-settings|[a]urora-devhub|[a]urora-gamehub|"
          "[p]tyxis|[g]nome-text-editor|[a]urora-quicklook|[a]urora-assistant'; sleep 1")
 
-# (screenshot name or None, shell command run in the session, seconds to wait)
+# (screenshot name or None, shell command run in the session or "@click X,Y",
+#  seconds to wait)
 STEPS = [
     # No screen blanking while the screenshots are taken.
     (None, "gsettings set org.aurora.desktop idle-dim-minutes 0; pkill -x swayidle; "
@@ -104,17 +106,24 @@ STEPS = [
     # Aurora AI's screens: the Assistant, asking from Spotlight, Writing Tools on a
     # selection (the AI is off by default; the screens don't need a model).
     (None, CLEAN + "; gsettings set org.aurora.desktop ai-enabled true; "
-           "gsettings set org.aurora.desktop ai-writing-tools true", 1),
+           "gsettings set org.aurora.desktop ai-writing-tools true; "
+           # A stand-in model (screenshot-data/fake-llm.py), pushed before the steps.
+           "setsid -f python3 /tmp/fake-llm.py >/dev/null 2>&1 </dev/null; sleep 1; "
+           "gsettings set org.aurora.desktop ai-provider openai; "
+           "gsettings set org.aurora.desktop ai-openai-url http://127.0.0.1:47699/v1; "
+           "gsettings set org.aurora.desktop ai-openai-model aurora-demo", 1),
     (None, "aurora-shell search '? how do I free disk space'", 3),
     ("spotlight-ask", None, 0),
     (None, "aurora-shell launcher spotlight", 1),
     (None, launch("org.aurora.Files.desktop"), 5),
-    (None, "aurora-shell assistant", 6),
+    (None, "setsid -f aurora-assistant --ask 'How do I free disk space?' "
+           ">/dev/null 2>&1 </dev/null", 8),
     ("assistant", None, 0),
     (None, CLEAN, 1),
     (None, launch("org.gnome.TextEditor.desktop"), 4),
     (None, "wl-copy --primary 'Their going to the meeting tomorrow, we should prepare "
-           "the slides.'; aurora-shell writing", 5),
+           "the slides.' >/dev/null 2>&1; aurora-shell writing", 5),
+    (None, "@click 1527,567", 4),      # Proofread (the window opens by the parked pointer)
     ("writing-tools", None, 0),
     (None, CLEAN, 1),
     (None, launch("org.aurora.Files.desktop"), 6),
@@ -152,6 +161,30 @@ def park_pointer(qmp_path, x=1700, y=620):
                 pass
 
 
+def click(qmp_path, x, y):
+    """A left click at screen coordinates (1920x1080), through the USB tablet."""
+    import json
+    import socket
+    with socket.socket(socket.AF_UNIX) as sock:
+        sock.connect(qmp_path)
+        f = sock.makefile("rw")
+        f.readline()
+        cmds = [{"execute": "qmp_capabilities"},
+                {"execute": "input-send-event", "arguments": {"events": [
+                    {"type": "abs", "data": {"axis": "x", "value": x * 32767 // 1920}},
+                    {"type": "abs", "data": {"axis": "y", "value": y * 32767 // 1080}}]}}]
+        for down in (True, False):
+            cmds.append({"execute": "input-send-event", "arguments": {"events": [
+                {"type": "btn", "data": {"down": down, "button": "left"}}]}})
+        for cmd in cmds:
+            f.write(json.dumps(cmd) + "\n")
+            f.flush()
+            while "return" not in (reply := json.loads(f.readline())) and "error" not in reply:
+                pass
+            # Let the compositor see the pointer arrive before the press.
+            time.sleep(0.4)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("iso")
@@ -185,9 +218,15 @@ def main():
         agent.run("for i in $(seq 180); do test -f /run/user/1000/aurora-shell.ready && exit 0; sleep 1; done",
                   timeout=100)
         time.sleep(8)
+        with open(os.path.join(HERE, "screenshot-data", "fake-llm.py"), "rb") as f:
+            payload = base64.b64encode(f.read()).decode()
+        agent.run(f"echo {payload} | base64 -d > /tmp/fake-llm.py", timeout=30)
         park_pointer(qmp)
         for name, command, wait in STEPS:
-            if command:
+            if command and command.startswith("@click "):
+                x, y = (int(v) for v in command[7:].split(","))
+                click(qmp, x, y)
+            elif command:
                 code, out = agent.run(f"{U} sh -c {sh_quote(command)}", timeout=60)
                 if code != 0:
                     print(f"step failed ({code}): {command}\n{out}")
