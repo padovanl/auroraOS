@@ -80,24 +80,61 @@ _FUNCS["round"] = round
 _CONSTS = {"pi": math.pi, "e": math.e, "tau": math.tau}
 
 
+# The calculator runs in the shell as you type, at every key: nothing it
+# computes may take long (factorial(99999999) or 999^999^999 froze the
+# desktop). Whole numbers stay under MAX_BITS (about 1200 digits).
+MAX_BITS = 4000
+MAX_FACTORIAL = 450
+
+
+def _checked(value):
+    if isinstance(value, int) and value.bit_length() > MAX_BITS:
+        raise OverflowError("too large")
+    if isinstance(value, float) and not math.isfinite(value):
+        raise OverflowError("not finite")
+    return value
+
+
 def _eval(node):
     if isinstance(node, ast.Expression):
         return _eval(node.body)
-    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
-        return node.value
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) \
+            and not isinstance(node.value, bool):
+        return _checked(node.value)
     if isinstance(node, ast.BinOp) and type(node.op) in _OPS:
         left, right = _eval(node.left), _eval(node.right)
-        if isinstance(node.op, ast.Pow) and abs(right) > 1000:
-            raise ValueError("exponent too large")
-        return _OPS[type(node.op)](left, right)
+        if isinstance(node.op, ast.Pow):
+            if abs(right) > 1000:
+                raise ValueError("exponent too large")
+            # Estimate the size first: computing it could take seconds.
+            if abs(left) > 1 and right > 0 and right * math.log2(abs(left)) > MAX_BITS:
+                raise OverflowError("too large")
+        if isinstance(node.op, ast.Mult) and isinstance(left, int) and isinstance(right, int) \
+                and left.bit_length() + right.bit_length() > MAX_BITS + 1:
+            raise OverflowError("too large")
+        return _checked(_OPS[type(node.op)](left, right))
     if isinstance(node, ast.UnaryOp) and type(node.op) in _OPS:
         return _OPS[type(node.op)](_eval(node.operand))
     if isinstance(node, ast.Name) and node.id in _CONSTS:
         return _CONSTS[node.id]
     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) \
             and node.func.id in _FUNCS and not node.keywords:
-        return _FUNCS[node.func.id](*[_eval(a) for a in node.args])
+        args = [_eval(a) for a in node.args]
+        if node.func.id == "factorial" and args and abs(args[0]) > MAX_FACTORIAL:
+            raise OverflowError("too large")
+        return _checked(_FUNCS[node.func.id](*args))
     raise ValueError("unsupported expression")
+
+
+def format_number(value):
+    """Up to 15 digits as they are; beyond, scientific notation (1.94207916858e+953)."""
+    if isinstance(value, int) and abs(value) >= 10 ** 15:
+        exponent = int(math.log10(abs(value)))
+        mantissa = value / 10 ** exponent
+        if abs(mantissa) >= 10:     # log10 rounded up at an exact power of ten
+            exponent, mantissa = exponent + 1, mantissa / 10
+        return f"{mantissa:.12g}e+{exponent}"
+    return str(value)
 
 
 def calculate(expr):
@@ -110,7 +147,8 @@ def calculate(expr):
         return None
     try:
         value = _eval(ast.parse(expr, mode="eval"))
-    except (SyntaxError, ValueError, TypeError, ZeroDivisionError, OverflowError):
+    except (SyntaxError, ValueError, TypeError, ZeroDivisionError, OverflowError,
+            RecursionError, MemoryError):
         return None
     if isinstance(value, float):
         if value.is_integer() and abs(value) < 1e15:
@@ -125,10 +163,12 @@ def search_calculator(query):
     if value is None:
         return []
 
-    def copy():
-        Gdk.Display.get_default().get_clipboard().set(str(value))
+    text = format_number(value)
 
-    return [Result(f"= {value}", _("Press Enter to copy the result"),
+    def copy():
+        Gdk.Display.get_default().get_clipboard().set(text)
+
+    return [Result(f"= {text}", _("Press Enter to copy the result"),
                    "accessories-calculator-symbolic", copy, 200)]
 
 
