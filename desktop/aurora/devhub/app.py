@@ -18,6 +18,8 @@ gi.require_version("Adw", "1")
 gi.require_version("Vte", "3.91")
 from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk, Pango, Vte  # noqa: E402
 
+from aurora import plaintext  # noqa: E402,F401  (rows and toasts: plain text)
+
 from aurora import VERSION, activities, projectworkspaces  # noqa: E402
 from aurora.devhub.recipes import CATEGORIES, RECIPES  # noqa: E402
 from aurora.i18n import N_, _  # noqa: E402

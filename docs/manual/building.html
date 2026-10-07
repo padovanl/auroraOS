@@ -69,6 +69,10 @@ make iso          # out/aurora-os-VERSION-amd64.iso and its .sha256</code></pre>
 session with the tools in <span class="path">desktop/dev/</span>. In a running VM,
 <code>tests/interact/serve.py</code> and <code>do.py</code> push the checkout's code and drive the
 desktop.</p>
+<p>Every app with a libadwaita window imports <code>aurora.plaintext</code> first: rows
+(<code>Adw.ActionRow</code>, <code>ComboRow</code>, <code>SwitchRow</code>…) and toasts then show
+their title and subtitle as plain text, so names with <code>&amp;</code> or <code>&lt;</code> appear
+as they are. Pass <code>use_markup=True</code> to a row that needs markup.</p>
     <footer class="meta"><a href="https://github.com/padovanl/auroraOS/edit/main/docs/_manual/12-developers.html">Edit this page</a> · Aurora OS <span data-release-version>latest</span> · GPL-3.0-or-later</footer>
       <nav class="pager"><a class="prev" href="glossary.html"><span>Previous</span>Glossary</a><a class="next" href="testing.html"><span>Next</span>Testing</a></nav>
     </article>

@@ -8,6 +8,8 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, Gtk  # noqa: E402
 
+from aurora import plaintext  # noqa: E402,F401  (rows and toasts: plain text)
+
 from aurora import VERSION  # noqa: E402
 from aurora.files.window import FilesWindow  # noqa: E402
 from aurora.i18n import _  # noqa: E402

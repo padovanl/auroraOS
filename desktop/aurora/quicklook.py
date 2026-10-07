@@ -16,6 +16,8 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango  # noqa: E402
 
+from aurora import plaintext  # noqa: E402,F401  (rows and toasts: plain text)
+
 from aurora.i18n import _, ngettext  # noqa: E402
 
 TEXT_LIMIT = 512 * 1024       # bytes of a text file shown in the preview

@@ -72,12 +72,9 @@ class ScreenTime(Page):
         ranked = screentime.top(usage)
         for app_id, seconds in ranked[:15]:
             info = apps.find_app(app_id)
-            # Adw.ActionRow parses subtitle strings as Pango markup even when
-            # use-markup is disabled on some libadwaita versions.  Durations
-            # such as "< 1 min" therefore need escaping at the boundary.
+            # Plain text ("< 1 min"): aurora.plaintext turns Adw's markup off.
             row = Adw.ActionRow(title=info.get_display_name() if info else app_id,
-                                subtitle=GLib.markup_escape_text(
-                                    screentime.duration(seconds)))
+                                subtitle=screentime.duration(seconds))
             icon = Gtk.Image(pixel_size=32)
             if info is not None and info.get_icon() is not None:
                 icon.set_from_gicon(info.get_icon())

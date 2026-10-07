@@ -1716,9 +1716,9 @@ class FilesWindow(Adw.ApplicationWindow):
                           "them here (unsaved work in them is lost)."))
         rows = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
         for pid, name, what in found:
-            row = Adw.ActionRow(title=GLib.markup_escape_text(name),
-                                subtitle=GLib.markup_escape_text(
-                                    f"PID {pid} · " + ", ".join(os.path.basename(w) for w in what[:3])))
+            row = Adw.ActionRow(title=name,
+                                subtitle=f"PID {pid} · " + ", ".join(
+                                    os.path.basename(w) for w in what[:3]))
             end = Gtk.Button(label=_("End Task"), valign=Gtk.Align.CENTER,
                              css_classes=["flat"])
 

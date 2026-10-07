@@ -21,6 +21,8 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango  # noqa: E402
 
+from aurora import plaintext  # noqa: E402,F401  (rows and toasts: plain text)
+
 from aurora import procinfo  # noqa: E402
 from aurora.i18n import _  # noqa: E402
 
@@ -546,8 +548,8 @@ class Startup(Adw.PreferencesPage):
             self.group.remove(row)
         self._rows = []
         for entry in procinfo.startup_entries(USER_AUTOSTART, SYSTEM_AUTOSTART):
-            row = Adw.SwitchRow(title=GLib.markup_escape_text(entry["name"]),
-                                subtitle=GLib.markup_escape_text(entry["exec"]),
+            row = Adw.SwitchRow(title=entry["name"],
+                                subtitle=entry["exec"],
                                 active=entry["enabled"])
             icon = Gtk.Image(icon_name=entry["icon"] or "application-x-executable",
                              pixel_size=32)
@@ -605,8 +607,8 @@ class Services(Gtk.Box):
         for svc in self.services:
             if q and q not in (svc["name"] + svc["description"]).lower():
                 continue
-            row = Adw.ActionRow(title=GLib.markup_escape_text(svc["description"] or svc["name"]),
-                                subtitle=GLib.markup_escape_text(
+            row = Adw.ActionRow(title=svc["description"] or svc["name"],
+                                subtitle=(
                                     f"{svc['name']} · {svc['sub']}"
                                     + ("  · " + _("yours") if svc["user"] else "")))
             running = svc["active"] == "active"
