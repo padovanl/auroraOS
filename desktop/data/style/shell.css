@@ -82,17 +82,13 @@ menubutton.panel-button > button:checked {
   border-radius: 28px;
   padding: 0;
 }
-/* Control Center: frosted glass with a faint aurora glow at the top and a
-   bright hairline edge. */
+/* Control Center: dark frosted glass, a hairline edge. */
 .aurora-quicksettings > contents {
   padding: 4px;
-  border-radius: 30px;
-  background-color: alpha(@window_bg_color, 0.86);
-  background-image:
-    radial-gradient(circle at 15% 0%, alpha(@accent_bg_color, 0.30), transparent 55%),
-    radial-gradient(circle at 100% 10%, alpha(#ff6f91, 0.16), transparent 50%);
-  border: 1px solid alpha(white, 0.12);
-  box-shadow: 0 24px 60px alpha(black, 0.45), inset 0 1px 0 alpha(white, 0.10);
+  border-radius: 26px;
+  background-color: alpha(@window_bg_color, 0.82);
+  border: 1px solid alpha(white, 0.10);
+  box-shadow: 0 20px 50px alpha(black, 0.40), inset 0 1px 0 alpha(white, 0.06);
 }
 
 /* The Aurora menu (logo, top left). */
@@ -116,82 +112,72 @@ button.aurora-menu-power-item:hover { background-color: alpha(currentColor, 0.06
 button.aurora-menu-power-item:hover .aurora-menu-round-icon { background-color: @accent_bg_color; color: @accent_fg_color; }
 .aurora-menu-power-label { font-size: 0.8em; opacity: 0.8; }
 
-/* Control Center, after Android's quick settings: a header with the time,
-   slim sliders with a white knob, glass tiles that light up with Aurora's
-   gradient (from your accent color to rose) and a soft glow when on. */
-.qs-header { padding: 6px 8px 2px; }
-.qs-time { font-size: 2.6em; font-weight: 700; letter-spacing: -0.03em; }
-.qs-date { font-size: 0.92em; opacity: 0.65; font-weight: 600; margin-top: -2px; }
+/* Control Center, after macOS': controls grouped in quiet frosted cards;
+   colour only where something is on (a round icon filled with the accent). */
+.qs-header { padding: 4px 8px 0; }
+.qs-time { font-size: 2.3em; font-weight: 700; letter-spacing: -0.03em; }
+.qs-date { font-size: 0.9em; opacity: 0.6; font-weight: 600; }
 .qs-battery {
-  padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: 0.9em;
+  padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 0.88em;
   background-color: alpha(currentColor, 0.08);
-  border: 1px solid alpha(currentColor, 0.10);
 }
 
-.qs-slider {
-  padding: 4px 6px 4px 4px; border-radius: 999px;
-  background-color: alpha(currentColor, 0.05);
+.qs-module {
+  padding: 10px;
+  border-radius: 18px;
+  background-color: alpha(currentColor, 0.055);
   border: 1px solid alpha(currentColor, 0.07);
 }
-.qs-slider scale.qs-pill-scale { padding: 0 6px; margin: 0; }
+.qs-module-title {
+  font-size: 0.75em; font-weight: 700; letter-spacing: 0.06em;
+  opacity: 0.5; margin: 0 4px 2px;
+}
+
+.qs-slider scale.qs-pill-scale { padding: 0 4px; margin: 0; }
 .qs-slider scale.qs-pill-scale trough {
-  min-height: 10px; border-radius: 999px;
-  background-color: alpha(currentColor, 0.12);
+  min-height: 6px; border-radius: 999px;
+  background-color: alpha(currentColor, 0.14);
 }
 .qs-slider scale.qs-pill-scale highlight {
-  min-height: 10px; border-radius: 999px;
-  background-image: linear-gradient(90deg, @accent_bg_color,
-                                    mix(@accent_bg_color, #ff6f91, 0.6));
-  box-shadow: 0 0 12px alpha(@accent_bg_color, 0.55);
+  min-height: 6px; border-radius: 999px;
+  background-image: none; background-color: @accent_bg_color;
 }
 .qs-slider scale.qs-pill-scale slider {
-  min-width: 22px; min-height: 22px; margin: -6px 0; padding: 0;
+  min-width: 18px; min-height: 18px; margin: -7px 0; padding: 0;
   border-radius: 999px; background-color: white;
-  box-shadow: 0 2px 8px alpha(black, 0.35); border: none; outline: none;
+  box-shadow: 0 1px 4px alpha(black, 0.4); border: none; outline: none;
 }
 .qs-slider button.qs-slider-icon {
-  min-width: 38px; min-height: 38px; padding: 0; color: inherit;
-  background-color: alpha(currentColor, 0.08);
+  min-width: 32px; min-height: 32px; padding: 0; color: inherit; background: transparent;
 }
-.qs-slider button.qs-slider-icon:hover { background-color: alpha(currentColor, 0.16); }
-.qs-slider-value { font-size: 0.85em; font-weight: 700; opacity: 0.7; }
+.qs-slider button.qs-slider-icon:hover { background-color: alpha(currentColor, 0.10); }
+.qs-slider-value { font-size: 0.8em; font-weight: 600; opacity: 0.55; }
 .qs-slider button.qs-slider-more {
-  min-width: 38px; min-height: 38px; background: transparent; opacity: 0.75;
+  min-width: 30px; min-height: 30px; background: transparent; opacity: 0.6;
 }
 .qs-slider button.qs-slider-more:hover { background-color: alpha(currentColor, 0.10); opacity: 1; }
 
-.qs-tile {
-  border-radius: 14px;
-  background-color: alpha(currentColor, 0.07);
-  border: 1px solid alpha(currentColor, 0.09);
-  transition: background-color 200ms ease, box-shadow 200ms ease;
-}
-.qs-tile:hover { background-color: alpha(currentColor, 0.13); }
-.qs-tile.active {
-  color: white;
-  border-color: alpha(white, 0.22);
-  background-image: linear-gradient(135deg, @accent_bg_color,
-                                    mix(@accent_bg_color, #ff6f91, 0.6));
-  box-shadow: 0 6px 16px alpha(@accent_bg_color, 0.40), inset 0 1px 0 alpha(white, 0.25);
-}
-.qs-tile.active:hover {
-  background-image: linear-gradient(135deg, mix(@accent_bg_color, white, 0.10),
-                                    mix(mix(@accent_bg_color, #ff6f91, 0.6), white, 0.10));
-}
+.qs-tile { border-radius: 12px; }
+.qs-tile:hover { background-color: alpha(currentColor, 0.06); }
 .qs-tile button.qs-toggle {
-  background: none; box-shadow: none; border-radius: 14px;
-  min-height: 44px; padding: 0; color: inherit;
+  background: none; box-shadow: none; border-radius: 12px;
+  padding: 5px 6px; min-height: 0; color: inherit;
 }
-.qs-tile.split button.qs-toggle { border-radius: 14px 0 0 14px; }
+.qs-tile-badge {
+  min-width: 34px; min-height: 34px; border-radius: 999px;
+  background-color: alpha(currentColor, 0.12);
+  transition: background-color 180ms ease;
+}
+.qs-tile-badge image { -gtk-icon-size: 16px; }
+.qs-tile.active .qs-tile-badge { background-color: @accent_bg_color; color: @accent_fg_color; }
 .qs-tile button.qs-expand {
   background: none; box-shadow: none; color: inherit;
-  border-radius: 0 14px 14px 0; padding: 0 8px; min-width: 0;
-  border-left: 1px solid alpha(currentColor, 0.14);
+  min-width: 24px; min-height: 24px; padding: 0; border-radius: 999px; opacity: 0.5;
 }
-.qs-tile button.qs-expand image { -gtk-icon-size: 12px; opacity: 0.8; }
-.qs-tile button.qs-expand:hover { background-color: alpha(currentColor, 0.12); }
-.qs-tile button.qs-toggle image { -gtk-icon-size: 20px; }
-.qs-toggle-title { font-weight: 600; font-size: 0.82em; opacity: 0.85; }
+.qs-tile button.qs-expand image { -gtk-icon-size: 12px; }
+.qs-tile button.qs-expand:hover { background-color: alpha(currentColor, 0.10); opacity: 1; }
+.qs-toggle-title { font-weight: 600; font-size: 0.88em; }
+.qs-toggle-subtitle { font-size: 0.76em; opacity: 0.55; }
 
 .qs-detail {
   background-color: alpha(currentColor, 0.05);
@@ -208,22 +194,17 @@ button.aurora-menu-power-item:hover .aurora-menu-round-icon { background-color: 
   background-image: linear-gradient(120deg, alpha(@accent_bg_color, 0.38), alpha(#ff6f91, 0.14));
 }
 
-.qs-footer {
-  padding: 10px 4px 0;
-  border-top: 1px solid alpha(currentColor, 0.08);
-}
-.qs-footer-label { font-size: 0.88em; opacity: 0.7; }
+.qs-footer { padding: 2px 4px 0; }
+.qs-footer-label { font-size: 0.85em; opacity: 0.6; }
 button.qs-round {
-  min-width: 40px; min-height: 40px;
+  min-width: 36px; min-height: 36px;
   background-color: alpha(currentColor, 0.07);
-  border: 1px solid alpha(currentColor, 0.08);
 }
-button.qs-round:hover { background-color: alpha(currentColor, 0.15); }
+button.qs-round:hover { background-color: alpha(currentColor, 0.14); }
 button.qs-power, .qs-power > button {
-  color: white; border-color: alpha(white, 0.2);
-  background-image: linear-gradient(135deg, @accent_bg_color, mix(@accent_bg_color, #ff6f91, 0.6));
-  box-shadow: 0 4px 14px alpha(@accent_bg_color, 0.45);
+  background-color: alpha(currentColor, 0.07); color: inherit;
 }
+button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; color: white; }
 
 .panel-recording { color: #ff4d6a; }
 

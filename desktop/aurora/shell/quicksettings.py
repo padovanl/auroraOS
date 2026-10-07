@@ -27,45 +27,54 @@ def _signal_icon(strength):
 
 
 class Toggle(Gtk.Box):
-    """A quick setting as on Windows 11: a compact pill with the icon, lit with
-    Aurora's gradient while on, and its name underneath. A pill with details
-    is split, the right part (a chevron) opens them. Where there's something
-    to say (the Wi-Fi network, the power mode) the name below says it."""
+    """A quick setting as in macOS' Control Center: a round icon, filled with the
+    accent color while on, with its name and state beside it; the whole row
+    switches it. A setting with details has a small chevron that opens them."""
 
     def __init__(self, icon, label, on_toggled, on_expand=None):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True,
-                         css_classes=["qs-quick"])
+        super().__init__(css_classes=["qs-tile"], hexpand=True)
         self.title = label
-        pill = Gtk.Box(css_classes=["qs-tile"], hexpand=True)
-        self.image = Gtk.Image(icon_name=icon)
-        self.button = Gtk.ToggleButton(child=self.image, hexpand=True, css_classes=["qs-toggle"],
-                                       tooltip_text=label)
+        inner = Gtk.Box(spacing=10, halign=Gtk.Align.START)
+        badge = Gtk.Box(css_classes=["qs-tile-badge"], valign=Gtk.Align.CENTER)
+        self.image = Gtk.Image(icon_name=icon, hexpand=True, halign=Gtk.Align.CENTER,
+                               valign=Gtk.Align.CENTER, vexpand=True)
+        badge.append(self.image)
+        inner.append(badge)
+        text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
+        text.append(Gtk.Label(label=label, xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                              css_classes=["qs-toggle-title"]))
+        self.subtitle = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                                  css_classes=["qs-toggle-subtitle"])
+        text.append(self.subtitle)
+        inner.append(text)
+        self.button = Gtk.ToggleButton(child=inner, hexpand=True, css_classes=["qs-toggle"])
         self._handler = self.button.connect("toggled", lambda b: on_toggled(b.get_active()))
-        pill.append(self.button)
+        self.append(self.button)
         self.arrow = None
         if on_expand:
-            pill.add_css_class("split")
             self.arrow = Gtk.Button(icon_name="go-next-symbolic", css_classes=["qs-expand"],
-                                    tooltip_text=_("More"))
+                                    valign=Gtk.Align.CENTER, tooltip_text=_("More"))
             self.arrow.connect("clicked", lambda *_: on_expand())
-            pill.append(self.arrow)
-        self.pill = pill
-        self.append(pill)
-        self.subtitle = Gtk.Label(label=label, ellipsize=Pango.EllipsizeMode.END,
-                                  max_width_chars=12, justify=Gtk.Justification.CENTER,
-                                  css_classes=["qs-toggle-title"])
-        self.append(self.subtitle)
+            self.append(self.arrow)
 
     def set_state(self, active, subtitle=None, icon=None):
         self.button.handler_block(self._handler)
         self.button.set_active(active)
         self.button.handler_unblock(self._handler)
-        (self.pill.add_css_class if active else self.pill.remove_css_class)("active")
-        # The name, or what's more useful than "On" (the network, the mode).
-        self.subtitle.set_label(subtitle or self.title)
-        self.set_tooltip_text(f"{self.title} · {subtitle}" if subtitle else self.title)
+        (self.add_css_class if active else self.remove_css_class)("active")
+        self.subtitle.set_label(subtitle or (_("On") if active else _("Off")))
         if icon:
             self.image.set_from_icon_name(icon)
+
+
+def module(title=None):
+    """A frosted card that groups related controls (macOS-style)."""
+    card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4, css_classes=["qs-module"])
+    if title:
+        card.append(Gtk.Label(label=title, xalign=0, css_classes=["qs-module-title"]))
+    grid = Gtk.Grid(column_spacing=4, row_spacing=2, column_homogeneous=True)
+    card.append(grid)
+    return card, grid
 
 
 class Slider(Gtk.Box):
@@ -187,8 +196,11 @@ class QuickSettings(Gtk.Popover):
         self.mic = Slider("audio-input-microphone-symbolic", shell.microphone.set_volume,
                           shell.microphone.toggle_mute, lambda: self._show_detail("input"))
         self.brightness = Slider("display-brightness-symbolic", shell.brightness.set_level)
+        sliders = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                          css_classes=["qs-module", "qs-sliders"])
         for w in (self.volume, self.mic, self.brightness):
-            box.append(w)
+            sliders.append(w)
+        box.append(sliders)
 
         # --- toggles ---
         s = settings.get()
@@ -217,8 +229,11 @@ class QuickSettings(Gtk.Popover):
                                 self._set_hotspot, lambda: self._show_detail("hotspot"))
         self.t_osk = Toggle("input-keyboard-symbolic", _("Screen Keyboard"),
                             self._set_screen_keyboard)
-        self.grid = Gtk.Grid(column_spacing=12, row_spacing=12, column_homogeneous=True)
-        box.append(self.grid)
+        self.modules = []
+        for title in (_("Connections"), _("Modes"), _("Screen")):
+            card, grid = module(title)
+            self.modules.append((card, grid))
+            box.append(card)
 
         # --- detail area ---
         self.detail_stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
@@ -513,7 +528,7 @@ class QuickSettings(Gtk.Popover):
         self.brightness.set_value(sh.brightness.level)
         self.brightness.set_visible(sh.brightness.available)
 
-        # Toggles that apply to this machine, laid out two per row.
+        # Toggles that apply to this machine, in three cards, two per row.
         net = sh.network
         toggles = []
         if net.wifi_device() is not None:
@@ -556,10 +571,18 @@ class QuickSettings(Gtk.Popover):
             self.t_rec.set_state(sh.recorder.recording,
                                  _("Recording…") if sh.recorder.recording else None)
             toggles.append(self.t_rec)
-        while (c := self.grid.get_first_child()) is not None:
-            self.grid.remove(c)
-        for i, t in enumerate(toggles):
-            self.grid.attach(t, i % 3, i // 3, 1, 1)
+        groups = (
+            [self.t_wifi, self.t_wired, self.t_bt, self.t_air, self.t_hotspot],
+            [self.t_dnd, self.t_awake, self.t_power],
+            [self.t_dark, self.t_night, self.t_osk, self.t_rec],
+        )
+        for (card, grid), members in zip(self.modules, groups):
+            while (c := grid.get_first_child()) is not None:
+                grid.remove(c)
+            shown = [t for t in members if t in toggles]
+            for i, t in enumerate(shown):
+                grid.attach(t, i % 2, i // 2, 1, 1)
+            card.set_visible(bool(shown))
 
         if self._detail and self.detail_revealer.get_reveal_child():
             self._fill_detail(self._detail)
