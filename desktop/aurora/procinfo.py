@@ -154,7 +154,11 @@ def display_name(p):
     args = p.cmdline.split()
     base = os.path.basename(args[0]) if args else ""
     if (p.name in INTERPRETERS or base.split(".")[0] in INTERPRETERS) and len(args) > 1:
-        for arg in args[1:]:
+        for i, arg in enumerate(args[1:], 1):
+            if arg == "-m" and i + 1 < len(args):     # python3 -m http.server
+                return args[i + 1]
+            if arg in ("-c", "-e"):     # code follows ("sh -c 'while …'"), not a name
+                return p.name
             if not arg.startswith("-"):
                 return os.path.basename(arg)
     if len(p.name) >= 15 and base.startswith(p.name):
@@ -162,21 +166,46 @@ def display_name(p):
     return p.name
 
 
-def group(procs, uid=None, windows=None):
+def window_owner_matcher(open_apps):
+    """For compositors that don't say which process owns a window (labwc):
+    open_apps is [(desktop id, executable name)] of the apps with a window.
+    A process belongs to one if it was started from that app's .desktop file or
+    runs its executable. Returns {pid-independent key: desktop id} lookups."""
+    by_desktop = {d: d for d, _exe in open_apps if d}
+    by_exe = {exe: d for d, exe in open_apps if exe}
+
+    def owner(p):
+        if p.app in by_desktop:
+            return p.app
+        for name in (display_name(p), os.path.basename(p.exe or ""), p.name):
+            if name in by_exe:
+                return by_exe[name]
+        return None
+    return owner
+
+
+def group(procs, uid=None, windows=None, open_apps=None):
     """{"apps": {app id: [processes]}, "background": [...], "system": [...]}.
 
     Apps are what has a window, as in Windows' Task Manager: `windows` maps a
     window's process id to its app id; the process's children join it. Without
-    windows (no compositor to ask), processes started from an app's .desktop
-    file count as that app."""
+    window process ids, `open_apps` (see window_owner_matcher) tells the apps
+    with a window; without either, processes started from an app's .desktop
+    file count as that app (agents started at login too)."""
     uid = os.getuid() if uid is None else uid
     apps, background, system = {}, [], []
+    match = window_owner_matcher(open_apps) if windows is None and open_apps is not None \
+        else None
 
     def owner(p, seen=0):
         while p is not None and seen < 64:
             if windows is not None:
                 if p.pid in windows:
                     return windows[p.pid]
+            elif match is not None:
+                found = match(p)
+                if found:
+                    return found
             elif p.app:
                 return p.app
             p = procs.get(p.ppid)

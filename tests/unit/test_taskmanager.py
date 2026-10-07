@@ -24,6 +24,7 @@ def test_app_is_found_from_environment_or_cgroup():
 def _proc(pid, ppid, uid, app=None):
     x = p.Process(pid)
     x.ppid, x.uid, x.app = ppid, uid, app
+    x.name, x.cmdline, x.exe = f"p{pid}", f"p{pid}", ""
     return x
 
 
@@ -75,3 +76,25 @@ def test_readable_process_names():
     assert p.display_name(x) == "aurora-taskmanager"
     x.name, x.cmdline = "wayfire", "wayfire -c x"
     assert p.display_name(x) == "wayfire"
+
+
+def test_code_after_dash_c_is_not_a_name():
+    x = p.Process(1)
+    x.name, x.cmdline = "sh", "sh -c while :; do :; done"
+    assert p.display_name(x) == "sh"
+    x.name, x.cmdline = "python3", "python3 -m http.server 8000"
+    assert p.display_name(x) == "http.server"
+
+
+def test_apps_from_open_windows_without_window_pids():
+    # labwc: no process ids for windows, only which apps have one.
+    procs = {10: _proc(10, 1, 1000, "kdeconnect.desktop"), 20: _proc(20, 1, 1000),
+             21: _proc(21, 20, 1000), 30: _proc(30, 1, 1000, "org.gnome.Calculator.desktop")}
+    procs[20].name, procs[20].cmdline, procs[20].exe = "aurora-taskmana", \
+        "/usr/bin/python3 /usr/bin/aurora-taskmanager", "/usr/bin/python3.13"
+    g = p.group(procs, uid=1000, open_apps=[("org.aurora.TaskManager.desktop",
+                                               "aurora-taskmanager"),
+                                              ("org.gnome.Calculator.desktop", "gnome-calculator")])
+    assert sorted(x.pid for x in g["apps"]["org.aurora.TaskManager.desktop"]) == [20, 21]
+    assert [x.pid for x in g["apps"]["org.gnome.Calculator.desktop"]] == [30]
+    assert [x.pid for x in g["background"]] == [10]     # an agent with no window

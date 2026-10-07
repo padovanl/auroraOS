@@ -67,6 +67,34 @@ def aurora_accent():
     return rgba
 
 
+def open_apps():
+    """[(desktop id, executable)] of the apps with an open window, from the
+    shell (labwc doesn't say which process owns a window), or None."""
+    import json
+    import shutil
+    import subprocess
+    from aurora import apps
+    try:
+        out = subprocess.run(["aurora-shell", "windows"], capture_output=True, text=True,
+                             timeout=3).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    found = []
+    for line in out.splitlines():
+        try:
+            app_id = json.loads(line).get("app_id") or ""
+        except ValueError:
+            continue
+        info = apps.find_app(app_id)
+        if info is not None:
+            exe = os.path.basename(shutil.which(info.get_executable() or "") or
+                                   info.get_executable() or "")
+            found.append((info.get_id(), exe))
+        else:
+            found.append(("", app_id))
+    return found
+
+
 def window_pids():
     """{process id: app id} of the open windows (Wayfire), or None elsewhere."""
     from aurora import wayfirelayout
@@ -222,7 +250,9 @@ class Processes(Gtk.Box):
 
         def work():
             procs = self.sampler.sample(INTERVAL_S)
-            GLib.idle_add(self._show, procs, window_pids())
+            windows = window_pids()
+            GLib.idle_add(self._show, procs, windows,
+                          open_apps() if windows is None else None)
         threading.Thread(target=work, daemon=True).start()
 
     def _row(self, key, kind):
@@ -236,9 +266,9 @@ class Processes(Gtk.Box):
         return {"name": row.name.lower(), "cpu": row.cpu, "mem": row.mem,
                 "disk": row.disk}[self.sort_key]
 
-    def _show(self, procs, windows):
+    def _show(self, procs, windows, open_apps=None):
         self._last = None
-        groups = procinfo.group(procs, windows=windows)
+        groups = procinfo.group(procs, windows=windows, open_apps=open_apps)
         ordered = []
 
         def fill(row, members):
