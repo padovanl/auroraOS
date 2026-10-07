@@ -55,6 +55,8 @@ def folders():
 def extract(path):
     """The text of a document, or '' if it can't be read."""
     ext = os.path.splitext(path)[1].lower()
+    if not os.path.isfile(path):    # a pipe named notes.txt would block the indexer
+        return ""
     try:
         if ext in TEXT_EXT:
             with open(path, "rb") as f:

@@ -1,6 +1,7 @@
 """Aurora Files main window."""
 
 import os
+import functools
 import hashlib
 import subprocess
 import shutil
@@ -65,6 +66,13 @@ def modified(info):
 
 def user_dir(kind):
     return GLib.get_user_special_dir(kind)
+
+
+@functools.lru_cache(maxsize=65536)
+def sort_key(name):
+    """Names in the order people expect, as in Windows: f2 before f10, in the
+    language's alphabetical order."""
+    return GLib.utf8_collate_key_for_filename(name.casefold(), -1)
 
 
 class Sidebar(Gtk.ListBox):
@@ -249,13 +257,22 @@ class Sidebar(Gtk.ListBox):
         volumes.mount_windows(device, mounted)
 
     def select_file(self, gfile):
+        """Highlight the place that holds gfile (Desktop for ~/Desktop/weird),
+        the closest one when several do (Desktop rather than Home)."""
+        best, depth = None, -1
         i = 0
         while (row := self.get_row_at_index(i)) is not None:
-            if row.file is not None and row.file.equal(gfile):
-                self.select_row(row)
-                return
             i += 1
-        self.unselect_all()
+            f = row.file
+            if f is None or not (f.equal(gfile) or gfile.has_prefix(f)):
+                continue
+            here = len((f.get_path() or f.get_uri()).rstrip("/").split("/"))
+            if here > depth:
+                best, depth = row, here
+        if best is not None:
+            self.select_row(best)
+        else:
+            self.unselect_all()
 
 
 class FilesWindow(Adw.ApplicationWindow):
@@ -935,7 +952,7 @@ class FilesWindow(Adw.ApplicationWindow):
         da, db = is_dir(a), is_dir(b)
         if da != db:
             return -1 if da else 1
-        na, nb = a.get_display_name().casefold(), b.get_display_name().casefold()
+        na, nb = sort_key(a.get_display_name()), sort_key(b.get_display_name())
         return (na > nb) - (na < nb)
 
     def _on_search(self, entry):
@@ -1036,6 +1053,16 @@ class FilesWindow(Adw.ApplicationWindow):
                 self.launch(file_of(info))
 
     def launch(self, gfile, ask=False):
+        path = gfile.get_path()
+        if path and os.path.islink(path) and not os.path.exists(path):
+            self.toast(_("{name} points to {target}, which isn't there any more").format(
+                name=gfile.get_basename(), target=os.readlink(path)))
+            return
+        if apps.special_file(path):
+            # Gtk.FileLauncher opens it to read, and Files would hang.
+            self.toast(_("{name} is a pipe or a device: there is nothing to open").format(
+                name=gfile.get_basename()))
+            return
         launcher = Gtk.FileLauncher(file=gfile, always_ask=ask)
 
         def done(l, res):
@@ -1280,6 +1307,9 @@ class FilesWindow(Adw.ApplicationWindow):
         def work():
             lines = []
             for path in paths:
+                if apps.special_file(path):     # a pipe would never end
+                    lines.append(f"{os.path.basename(path)}: " + _("not a regular file"))
+                    continue
                 try:
                     digest = hashlib.sha256()
                     with open(path, "rb") as stream:

@@ -112,7 +112,11 @@ class QuickLook(Adw.Window):
         self.show_file()
 
     def _open(self):
+        from aurora import apps
         gfile = self.files[self.index]
+        if apps.special_file(gfile.get_path()):    # FileLauncher would hang reading it
+            self.close()
+            return
         launcher = Gtk.FileLauncher(file=gfile)
         launcher.launch(self.get_transient_for() or self, None, None)
         self.close()
@@ -203,6 +207,9 @@ class QuickLook(Adw.Window):
         return Gtk.ScrolledWindow(child=pages, hscrollbar_policy=Gtk.PolicyType.AUTOMATIC)
 
     def _text(self, gfile, name, ct):
+        from aurora import apps
+        if apps.special_file(gfile.get_path()):    # reading a pipe never ends
+            raise ValueError("special file")
         ok, data, _etag = gfile.load_contents(None)
         text = bytes(data[:TEXT_LIMIT]).decode("utf-8", errors="replace")
         if "\0" in text:

@@ -78,7 +78,7 @@ msgid "Attachments require the local AI model"
 msgstr "附件需要本地 AI 模型"
 
 #: aurora/assistant.py:132 aurora/assistant.py:888 aurora/assistant.py:1003
-#: aurora/files/window.py:1172 aurora/shell/desktopicons.py:169
+#: aurora/files/window.py:1199 aurora/shell/desktopicons.py:169
 #: aurora/shell/morewidgets.py:499 aurora/shell/pinshot.py:120
 msgid "Copy"
 msgstr "复制"
@@ -97,8 +97,8 @@ msgstr "新对话"
 msgid "Conversations"
 msgstr "对话"
 
-#: aurora/assistant.py:264 aurora/files/window.py:1277
-#: aurora/files/window.py:1700 aurora/settingsapp/health.py:301
+#: aurora/assistant.py:264 aurora/files/window.py:1304
+#: aurora/files/window.py:1730 aurora/settingsapp/health.py:301
 #: aurora/settingsapp/system.py:144 aurora/settingsapp/system.py:186
 msgid "Close"
 msgstr "关闭"
@@ -180,8 +180,8 @@ msgstr "附加文件或照片"
 msgid "Stop generating"
 msgstr "停止生成"
 
-#: aurora/assistant.py:456 aurora/files/window.py:133
-#: aurora/files/window.py:1152 aurora/quicklook.py:141 aurora/shell/app.py:752
+#: aurora/assistant.py:456 aurora/files/window.py:141
+#: aurora/files/window.py:1179 aurora/quicklook.py:145 aurora/shell/app.py:752
 #: aurora/shell/desktopicons.py:164 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:366
@@ -439,10 +439,10 @@ msgid "Save positions of currently open windows for this workspace"
 msgstr "保存此工作区中已打开窗口的位置"
 
 #: aurora/devhub/app.py:313 aurora/files/create.py:26
-#: aurora/files/window.py:1239 aurora/files/window.py:1321
-#: aurora/files/window.py:1501 aurora/files/window.py:1538
-#: aurora/files/window.py:1585 aurora/files/window.py:1637
-#: aurora/files/window.py:1717 aurora/files/window.py:1750
+#: aurora/files/window.py:1266 aurora/files/window.py:1351
+#: aurora/files/window.py:1531 aurora/files/window.py:1568
+#: aurora/files/window.py:1615 aurora/files/window.py:1667
+#: aurora/files/window.py:1747 aurora/files/window.py:1780
 #: aurora/settingsapp/desktop.py:96 aurora/settingsapp/health.py:275
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:473 aurora/settingsapp/system.py:547
@@ -1012,15 +1012,15 @@ msgstr "基于 WireGuard、连接你所有设备的私有网络。"
 msgid "SSH that survives sleep and changing networks."
 msgstr "在睡眠和网络切换后仍能保持连接的 SSH。"
 
-#: aurora/files/app.py:76 aurora/files/window.py:297 aurora/files/window.py:448
-#: aurora/files/window.py:449 aurora/settingsapp/ai.py:165
+#: aurora/files/app.py:76 aurora/files/window.py:314 aurora/files/window.py:465
+#: aurora/files/window.py:466 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
 #: data/applications/org.aurora.Files.desktop:3
 msgid "Files"
 msgstr "文件"
 
-#: aurora/files/create.py:10 aurora/files/window.py:327
-#: aurora/files/window.py:1798
+#: aurora/files/create.py:10 aurora/files/window.py:344
+#: aurora/files/window.py:1828
 msgid "New Folder"
 msgstr "新建文件夹"
 
@@ -1029,7 +1029,7 @@ msgid "New File"
 msgstr "新建文件"
 
 #: aurora/files/create.py:19 aurora/files/properties.py:65
-#: aurora/files/window.py:379 aurora/taskmanager.py:111
+#: aurora/files/window.py:396 aurora/taskmanager.py:111
 msgid "Name"
 msgstr "名称"
 
@@ -1037,7 +1037,7 @@ msgstr "名称"
 msgid "File name"
 msgstr "文件名"
 
-#: aurora/files/create.py:20 aurora/files/window.py:1798
+#: aurora/files/create.py:20 aurora/files/window.py:1828
 msgid "Untitled Folder"
 msgstr "新建文件夹"
 
@@ -1045,7 +1045,7 @@ msgstr "新建文件夹"
 msgid "Untitled.txt"
 msgstr "未命名.txt"
 
-#: aurora/files/create.py:28 aurora/files/window.py:1798
+#: aurora/files/create.py:28 aurora/files/window.py:1828
 msgid "Create"
 msgstr "创建"
 
@@ -1095,13 +1095,13 @@ msgstr "正在复制 {n} 个项目"
 msgid "Cannot copy a folder into itself"
 msgstr "不能将文件夹复制到其自身中"
 
-#: aurora/files/operations.py:148 aurora/files/window.py:1436
-#: aurora/files/window.py:1445 aurora/shell/panel.py:216
+#: aurora/files/operations.py:148 aurora/files/window.py:1466
+#: aurora/files/window.py:1475 aurora/shell/panel.py:216
 msgid "Cancelled"
 msgstr "已取消"
 
-#: aurora/files/properties.py:28 aurora/files/window.py:144
-#: aurora/files/window.py:1180 aurora/files/window.py:1189
+#: aurora/files/properties.py:28 aurora/files/window.py:152
+#: aurora/files/window.py:1207 aurora/files/window.py:1216
 #: aurora/shell/desktopicons.py:173
 msgid "Properties"
 msgstr "属性"
@@ -1115,7 +1115,7 @@ msgid "Total size"
 msgstr "总大小"
 
 #: aurora/files/properties.py:44 aurora/files/properties.py:71
-#: aurora/files/window.py:1276
+#: aurora/files/window.py:1303
 msgid "Calculating…"
 msgstr "正在计算…"
 
@@ -1135,11 +1135,11 @@ msgstr "位置"
 msgid "Contents"
 msgstr "内容"
 
-#: aurora/files/properties.py:74 aurora/files/window.py:379
+#: aurora/files/properties.py:74 aurora/files/window.py:396
 msgid "Size"
 msgstr "大小"
 
-#: aurora/files/properties.py:77 aurora/files/window.py:380
+#: aurora/files/properties.py:77 aurora/files/window.py:397
 msgid "Modified"
 msgstr "修改时间"
 
@@ -1155,411 +1155,423 @@ msgstr "权限"
 msgid "{size} · {n} items"
 msgstr "{size} · {n} 个项目"
 
-#: aurora/files/window.py:135 aurora/files/window.py:340
-#: aurora/files/window.py:366
+#: aurora/files/window.py:143 aurora/files/window.py:357
+#: aurora/files/window.py:383
 msgid "New Tab"
 msgstr "新建标签页"
 
-#: aurora/files/window.py:136 aurora/files/window.py:341
+#: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:554
 #: data/applications/org.aurora.Files.desktop:16
 msgid "New Window"
 msgstr "新建窗口"
 
-#: aurora/files/window.py:140 aurora/files/window.py:329
-#: aurora/files/window.py:1188 aurora/shell/launcher.py:143
+#: aurora/files/window.py:148 aurora/files/window.py:346
+#: aurora/files/window.py:1215 aurora/shell/launcher.py:143
 msgid "Open in Terminal"
 msgstr "在终端中打开"
 
-#: aurora/files/window.py:142 aurora/files/window.py:1173
+#: aurora/files/window.py:150 aurora/files/window.py:1200
 #: aurora/shell/launcher.py:139
 msgid "Copy Path"
 msgstr "复制路径"
 
-#: aurora/files/window.py:147 aurora/shell/sysnotify.py:366
+#: aurora/files/window.py:155 aurora/shell/sysnotify.py:366
 msgid "Eject"
 msgstr "弹出"
 
-#: aurora/files/window.py:163 aurora/files/window.py:820
+#: aurora/files/window.py:171 aurora/files/window.py:837
 #: aurora/settingsapp/health.py:40
 msgid "Home"
 msgstr "主文件夹"
 
-#: aurora/files/window.py:175 aurora/files/window.py:812
+#: aurora/files/window.py:183 aurora/files/window.py:829
 #: aurora/settingsapp/storage.py:26 aurora/settingsapp/system.py:98
 #: aurora/shell/dock.py:305
 msgid "Trash"
 msgstr "废纸篓"
 
-#: aurora/files/window.py:189 aurora/files/window.py:822
+#: aurora/files/window.py:197 aurora/files/window.py:839
 msgid "Computer"
 msgstr "计算机"
 
-#: aurora/files/window.py:191 aurora/files/window.py:814
+#: aurora/files/window.py:199 aurora/files/window.py:831
 #: aurora/settingsapp/network.py:35 aurora/shell/search.py:405
 #: aurora/shell/widgets.py:56 aurora/shell/widgets.py:873
 #: aurora/taskmanager.py:450
 msgid "Network"
 msgstr "网络"
 
-#: aurora/files/window.py:192
+#: aurora/files/window.py:200
 msgid "Connect to Server…"
 msgstr "连接到服务器…"
 
-#: aurora/files/window.py:235
+#: aurora/files/window.py:243
 msgid "Couldn't open {name}: {error}"
 msgstr "无法打开 {name}：{error}"
 
-#: aurora/files/window.py:246
+#: aurora/files/window.py:254
 msgid "{name} is read-only: Windows wasn't fully shut down"
 msgstr "{name} 为只读：Windows 未完全关机"
 
-#: aurora/files/window.py:303 aurora/welcome.py:48
+#: aurora/files/window.py:320 aurora/welcome.py:48
 msgid "Back"
 msgstr "后退"
 
-#: aurora/files/window.py:305
+#: aurora/files/window.py:322
 msgid "Forward"
 msgstr "前进"
 
-#: aurora/files/window.py:328 aurora/files/window.py:1185
+#: aurora/files/window.py:345 aurora/files/window.py:1212
 #: aurora/shell/wallpaper.py:193
 msgid "New File…"
 msgstr "新建文件…"
 
-#: aurora/files/window.py:332
+#: aurora/files/window.py:349
 msgid "Undo"
 msgstr "撤销"
 
-#: aurora/files/window.py:333
+#: aurora/files/window.py:350
 msgid "Redo"
 msgstr "重做"
 
-#: aurora/files/window.py:336
+#: aurora/files/window.py:353
 msgid "Show Hidden Files"
 msgstr "显示隐藏文件"
 
-#: aurora/files/window.py:337
+#: aurora/files/window.py:354
 msgid "List View"
 msgstr "列表视图"
 
-#: aurora/files/window.py:342
+#: aurora/files/window.py:359
 msgid "About Files"
 msgstr "关于“文件”"
 
-#: aurora/files/window.py:347 aurora/settingsapp/devices.py:42
+#: aurora/files/window.py:364 aurora/settingsapp/devices.py:42
 #: aurora/shell/panel.py:426
 msgid "Search"
 msgstr "搜索"
 
-#: aurora/files/window.py:388 aurora/files/window.py:996
+#: aurora/files/window.py:405 aurora/files/window.py:1013
 msgid "Folder is Empty"
 msgstr "文件夹为空"
 
-#: aurora/files/window.py:415 aurora/files/window.py:1182
-#: aurora/files/window.py:1539 aurora/shell/dock.py:327
+#: aurora/files/window.py:432 aurora/files/window.py:1209
+#: aurora/files/window.py:1569 aurora/shell/dock.py:327
 #: aurora/shell/search.py:439
 msgid "Empty Trash"
 msgstr "清空废纸篓"
 
-#: aurora/files/window.py:416
+#: aurora/files/window.py:433
 msgid "Items in the Trash are deleted permanently when emptied"
 msgstr "清空废纸篓会永久删除其中的项目"
 
-#: aurora/files/window.py:423 aurora/shell/panel.py:230
+#: aurora/files/window.py:440 aurora/shell/panel.py:230
 msgid "Cancel transfer"
 msgstr "取消传输"
 
-#: aurora/files/window.py:427
+#: aurora/files/window.py:444
 msgid "Retry"
 msgstr "重试"
 
-#: aurora/files/window.py:471
+#: aurora/files/window.py:488
 msgid "Close Tab"
 msgstr "关闭标签页"
 
-#: aurora/files/window.py:994
+#: aurora/files/window.py:1011
 msgid "No Results Found"
 msgstr "无结果"
 
-#: aurora/files/window.py:995
+#: aurora/files/window.py:1012
 msgid "Trash is Empty"
 msgstr "废纸篓为空"
 
-#: aurora/files/window.py:1149
+#: aurora/files/window.py:1058
+msgid "{name} points to {target}, which isn't there any more"
+msgstr "{name} 指向的 {target} 已不存在"
+
+#: aurora/files/window.py:1063
+msgid "{name} is a pipe or a device: there is nothing to open"
+msgstr "{name} 是管道或设备：没有可打开的内容"
+
+#: aurora/files/window.py:1176
 msgid "Restore"
 msgstr "恢复"
 
-#: aurora/files/window.py:1150
+#: aurora/files/window.py:1177
 msgid "Delete Permanently"
 msgstr "永久删除"
 
-#: aurora/files/window.py:1152
+#: aurora/files/window.py:1179
 msgid "Open With…"
 msgstr "打开方式…"
 
-#: aurora/files/window.py:1153 data/applications/org.aurora.QuickLook.desktop:3
+#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:3
 msgid "Quick Look"
 msgstr "快速查看"
 
-#: aurora/files/window.py:1155
+#: aurora/files/window.py:1182
 msgid "Send to Nearby Device…"
 msgstr "发送到附近设备…"
 
-#: aurora/files/window.py:1158
+#: aurora/files/window.py:1185
 msgid "Summarize with Aurora"
 msgstr "用 Aurora 总结"
 
-#: aurora/files/window.py:1159
+#: aurora/files/window.py:1186
 msgid "Ask Aurora About This File…"
 msgstr "向 Aurora 询问此文件…"
 
-#: aurora/files/window.py:1165
+#: aurora/files/window.py:1192
 msgid "Extract Here"
 msgstr "解压到此处"
 
-#: aurora/files/window.py:1166
+#: aurora/files/window.py:1193
 msgid "Compress…"
 msgstr "压缩…"
 
-#: aurora/files/window.py:1169
+#: aurora/files/window.py:1196
 msgid "Resize Images…"
 msgstr "调整图片大小…"
 
-#: aurora/files/window.py:1170 aurora/files/window.py:1675
+#: aurora/files/window.py:1197 aurora/files/window.py:1705
 msgid "What's Using This?"
 msgstr "谁在使用它？"
 
-#: aurora/files/window.py:1172
+#: aurora/files/window.py:1199
 msgid "Cut"
 msgstr "剪切"
 
-#: aurora/files/window.py:1174
+#: aurora/files/window.py:1201
 msgid "Duplicate"
 msgstr "创建副本"
 
-#: aurora/files/window.py:1174 aurora/shell/desktopicons.py:171
+#: aurora/files/window.py:1201 aurora/shell/desktopicons.py:171
 msgid "Rename…"
 msgstr "重命名…"
 
-#: aurora/files/window.py:1176 aurora/files/window.py:1231
+#: aurora/files/window.py:1203 aurora/files/window.py:1258
 msgid "Rename Multiple…"
 msgstr "批量重命名…"
 
-#: aurora/files/window.py:1177
+#: aurora/files/window.py:1204
 msgid "Compare Folders"
 msgstr "比较文件夹"
 
-#: aurora/files/window.py:1178 aurora/files/window.py:1276
+#: aurora/files/window.py:1205 aurora/files/window.py:1303
 msgid "SHA-256 Checksums"
 msgstr "SHA-256 校验和"
 
-#: aurora/files/window.py:1179 aurora/settingsapp/storage.py:288
+#: aurora/files/window.py:1206 aurora/settingsapp/storage.py:288
 #: aurora/shell/desktopicons.py:172
 msgid "Move to Trash"
 msgstr "移到废纸篓"
 
-#: aurora/files/window.py:1184 aurora/shell/wallpaper.py:194
+#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:194
 msgid "New Folder…"
 msgstr "新建文件夹…"
 
-#: aurora/files/window.py:1186
+#: aurora/files/window.py:1213
 msgid "Paste"
 msgstr "粘贴"
 
-#: aurora/files/window.py:1187
+#: aurora/files/window.py:1214
 msgid "Select All"
 msgstr "全选"
 
-#: aurora/files/window.py:1192 aurora/files/window.py:1315
+#: aurora/files/window.py:1219 aurora/files/window.py:1345
 msgid "Summarize Git Changes…"
 msgstr "总结 Git 更改…"
 
-#: aurora/files/window.py:1232
+#: aurora/files/window.py:1259
 msgid "Replace text in the selected names. No file is overwritten."
 msgstr "替换所选名称中的文本。不会覆盖任何文件。"
 
-#: aurora/files/window.py:1234
+#: aurora/files/window.py:1261
 msgid "Find"
 msgstr "查找"
 
-#: aurora/files/window.py:1235
+#: aurora/files/window.py:1262
 msgid "Replace with"
 msgstr "替换为"
 
-#: aurora/files/window.py:1240 aurora/files/window.py:1784
+#: aurora/files/window.py:1267 aurora/files/window.py:1814
 #: aurora/shell/desktopicons.py:181 aurora/shell/desktopicons.py:185
 msgid "Rename"
 msgstr "重命名"
 
-#: aurora/files/window.py:1247
+#: aurora/files/window.py:1274
 msgid "Enter text to find"
 msgstr "输入要查找的文本"
 
-#: aurora/files/window.py:1255
+#: aurora/files/window.py:1282
 msgid "A destination name already exists"
 msgstr "目标名称已存在"
 
-#: aurora/files/window.py:1306
+#: aurora/files/window.py:1311
+msgid "not a regular file"
+msgstr "不是普通文件"
+
+#: aurora/files/window.py:1336
 msgid "Select exactly two folders"
 msgstr "请正好选择两个文件夹"
 
-#: aurora/files/window.py:1316
+#: aurora/files/window.py:1346
 msgid "Review the changes before sending them to Aurora AI."
 msgstr "发送给 Aurora AI 之前请检查更改。"
 
-#: aurora/files/window.py:1318 aurora/settingsapp/system.py:179
+#: aurora/files/window.py:1348 aurora/settingsapp/system.py:179
 #: aurora/shell/widgets.py:519
 msgid "Loading…"
 msgstr "正在加载…"
 
-#: aurora/files/window.py:1322 aurora/shell/app.py:756
+#: aurora/files/window.py:1352 aurora/shell/app.py:756
 msgid "Ask Aurora"
 msgstr "问问 Aurora"
 
-#: aurora/files/window.py:1349
+#: aurora/files/window.py:1379
 msgid "No Git changes found"
 msgstr "未找到 Git 更改"
 
-#: aurora/files/window.py:1351
+#: aurora/files/window.py:1381
 msgid "Provider: {name}. Review the text before sending."
 msgstr "提供方：{name}。发送前请检查文本。"
 
-#: aurora/files/window.py:1364
+#: aurora/files/window.py:1394
 msgid "{n} item(s) cut"
 msgstr "已剪切 {n} 个项目"
 
-#: aurora/files/window.py:1364
+#: aurora/files/window.py:1394
 msgid "{n} item(s) copied"
 msgstr "已复制 {n} 个项目"
 
-#: aurora/files/window.py:1474
+#: aurora/files/window.py:1504
 msgid "{n} item(s) moved to the Trash"
 msgstr "已将 {n} 个项目移到废纸篓"
 
-#: aurora/files/window.py:1499
+#: aurora/files/window.py:1529
 msgid "Permanently Delete {n} Item(s)?"
 msgstr "要永久删除 {n} 个项目吗？"
 
-#: aurora/files/window.py:1500
+#: aurora/files/window.py:1530
 msgid "Deleted items cannot be restored."
 msgstr "删除的项目无法恢复。"
 
-#: aurora/files/window.py:1502 aurora/settingsapp/ai.py:336
+#: aurora/files/window.py:1532 aurora/settingsapp/ai.py:336
 #: aurora/shell/morewidgets.py:160
 msgid "Delete"
 msgstr "删除"
 
-#: aurora/files/window.py:1536
+#: aurora/files/window.py:1566
 msgid "Empty Trash?"
 msgstr "要清空废纸篓吗？"
 
-#: aurora/files/window.py:1537
+#: aurora/files/window.py:1567
 msgid "All items in the Trash will be permanently deleted."
 msgstr "废纸篓中的所有项目都将被永久删除。"
 
-#: aurora/files/window.py:1567 aurora/settingsapp/network.py:132
+#: aurora/files/window.py:1597 aurora/settingsapp/network.py:132
 #: aurora/settingsapp/network.py:139
 msgid "That didn't work"
 msgstr "操作失败"
 
-#: aurora/files/window.py:1577 aurora/files/window.py:1586
+#: aurora/files/window.py:1607 aurora/files/window.py:1616
 msgid "Compress"
 msgstr "压缩"
 
-#: aurora/files/window.py:1578
+#: aurora/files/window.py:1608
 msgid "{n} items into one archive"
 msgstr "将 {n} 项压缩成一个归档"
 
-#: aurora/files/window.py:1596
+#: aurora/files/window.py:1626
 msgid "Compressing…"
 msgstr "正在压缩…"
 
-#: aurora/files/window.py:1598
+#: aurora/files/window.py:1628
 msgid "{name} is ready"
 msgstr "{name} 已就绪"
 
-#: aurora/files/window.py:1608
+#: aurora/files/window.py:1638
 msgid "Extracting…"
 msgstr "正在解压…"
 
-#: aurora/files/window.py:1609
+#: aurora/files/window.py:1639
 msgid "Extracted"
 msgstr "已解压"
 
-#: aurora/files/window.py:1616
+#: aurora/files/window.py:1646
 #, python-brace-format
 msgid "{n} path copied"
 msgid_plural "{n} paths copied"
 msgstr[0] "已复制 {n} 个路径"
 
-#: aurora/files/window.py:1626
+#: aurora/files/window.py:1656
 msgid "Resize Images"
 msgstr "调整图片大小"
 
-#: aurora/files/window.py:1627
+#: aurora/files/window.py:1657
 #, python-brace-format
 msgid "{n} picture"
 msgid_plural "{n} pictures"
 msgstr[0] "{n} 张图片"
 
-#: aurora/files/window.py:1632
+#: aurora/files/window.py:1662
 msgid "Keep the format"
 msgstr "保持格式"
 
-#: aurora/files/window.py:1633
+#: aurora/files/window.py:1663
 msgid "Resize the originals instead of making copies"
 msgstr "直接调整原图，而不是创建副本"
 
-#: aurora/files/window.py:1638
+#: aurora/files/window.py:1668
 msgid "Resize"
 msgstr "调整"
 
-#: aurora/files/window.py:1659
+#: aurora/files/window.py:1689
 #, python-brace-format
 msgid "{n} picture resized"
 msgid_plural "{n} pictures resized"
 msgstr[0] "已调整 {n} 张图片"
 
-#: aurora/files/window.py:1660
+#: aurora/files/window.py:1690
 msgid "{n} failed"
 msgstr "{n} 个失败"
 
-#: aurora/files/window.py:1677
+#: aurora/files/window.py:1707
 msgid "No program of yours has it open."
 msgstr "你的程序都没有打开它。"
 
-#: aurora/files/window.py:1678
+#: aurora/files/window.py:1708
 msgid "OK"
 msgstr "确定"
 
-#: aurora/files/window.py:1681
+#: aurora/files/window.py:1711
 msgid "These programs have it open. Close them in the program, or end them here (unsaved work in them is lost)."
 msgstr "这些程序打开了它。请在程序中关闭，或在此结束（未保存的内容会丢失）。"
 
-#: aurora/files/window.py:1688 aurora/taskmanager.py:147
+#: aurora/files/window.py:1718 aurora/taskmanager.py:147
 #: aurora/taskmanager.py:358
 msgid "End Task"
 msgstr "结束任务"
 
-#: aurora/files/window.py:1693
+#: aurora/files/window.py:1723
 msgid "Ended"
 msgstr "已结束"
 
-#: aurora/files/window.py:1701
+#: aurora/files/window.py:1731
 msgid "End All"
 msgstr "全部结束"
 
-#: aurora/files/window.py:1712
+#: aurora/files/window.py:1742
 msgid "Connect to Server"
 msgstr "连接到服务器"
 
-#: aurora/files/window.py:1713
+#: aurora/files/window.py:1743
 msgid "For example smb://192.168.1.10/Shared for a Windows or NAS shared folder, or sftp://user@server"
 msgstr "例如 Windows 或 NAS 共享文件夹 smb://192.168.1.10/Shared，或 sftp://user@server"
 
-#: aurora/files/window.py:1718 aurora/settingsapp/devices.py:115
+#: aurora/files/window.py:1748 aurora/settingsapp/devices.py:115
 #: aurora/shell/quicksettings.py:459
 msgid "Connect"
 msgstr "连接"
@@ -1620,25 +1632,25 @@ msgstr "上一个"
 msgid "Next"
 msgstr "下一个"
 
-#: aurora/quicklook.py:131
+#: aurora/quicklook.py:135
 msgid "Can’t Preview"
 msgstr "无法预览"
 
-#: aurora/quicklook.py:140
+#: aurora/quicklook.py:144
 msgid "Open with {app}"
 msgstr "用 {app} 打开"
 
-#: aurora/quicklook.py:201
+#: aurora/quicklook.py:205
 msgid "{n} more pages"
 msgstr "还有 {n} 页"
 
-#: aurora/quicklook.py:244
+#: aurora/quicklook.py:251
 #, python-brace-format
 msgid "{n} item"
 msgid_plural "{n} items"
 msgstr[0] "{n} 个项目"
 
-#: aurora/quicklook.py:266
+#: aurora/quicklook.py:273
 msgid "Modified {date}"
 msgstr "修改于 {date}"
 

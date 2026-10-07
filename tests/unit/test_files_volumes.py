@@ -18,3 +18,26 @@ def test_closing_the_password_prompt_is_not_an_error():
     other = GLib.Error.new_literal(Gio.io_error_quark(), "wrong fs type", Gio.IOErrorEnum.FAILED)
     assert volumes.is_cancelled(handled)
     assert not volumes.is_cancelled(other)
+
+
+def test_pipes_and_devices_are_special(tmp_path):
+    import os
+    from aurora import apps
+    pipe = tmp_path / "pipe.txt"
+    os.mkfifo(pipe)
+    regular = tmp_path / "notes.txt"
+    regular.write_text("hi")
+    assert apps.special_file(str(pipe))
+    assert apps.special_file("/dev/null")
+    assert not apps.special_file(str(regular))
+    assert not apps.special_file(str(tmp_path))
+    assert not apps.special_file(str(tmp_path / "missing"))
+    assert not apps.special_file(None)
+    from aurora.ai import index
+    assert index.extract(str(pipe)) == ""         # returns at once, no blocking read
+
+
+def test_files_sort_naturally():
+    from aurora.files.window import sort_key
+    names = ["f10.txt", "f2.txt", "f1.txt", "F3.txt", "f100.txt"]
+    assert sorted(names, key=sort_key) == ["f1.txt", "f2.txt", "F3.txt", "f10.txt", "f100.txt"]

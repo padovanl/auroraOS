@@ -1,5 +1,8 @@
 """Desktop application lookup and launching."""
 
+import os
+import stat
+
 from gi.repository import Gdk, Gio, GLib
 
 _by_wmclass = None
@@ -87,3 +90,13 @@ def spawn(argv):
 
 def spawn_shell(command):
     return spawn(["sh", "-c", command])
+
+
+def special_file(path):
+    """A pipe, socket or device: opening one to read waits until something
+    writes to it, forever for a pipe nobody uses. Nothing to open or preview."""
+    try:
+        mode = os.stat(path).st_mode
+    except (OSError, TypeError, ValueError):
+        return False
+    return stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode) or stat.S_ISCHR(mode) or stat.S_ISBLK(mode)
