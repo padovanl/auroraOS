@@ -87,6 +87,12 @@ def display_outputs(text):
     return outputs
 
 
+def wf_value(text):
+    """A value as Wayfire's config reader keeps it whole: an unescaped # starts
+    a comment there, so "xdg-open https://site/#part" lost its end."""
+    return " ".join(text.splitlines()).replace("#", "\\#")
+
+
 def generate():
     config = configparser.ConfigParser(interpolation=None)
     config.optionxform = str
@@ -162,7 +168,7 @@ def generate():
                 name = f"aurora_{index}"
                 prefix = "release_binding" if keybind.get("onRelease") == "yes" else "binding"
                 config["command"][f"{prefix}_{name}"] = key
-                config["command"][f"command_{name}"] = action.get("command", "")
+                config["command"][f"command_{name}"] = wf_value(action.get("command", ""))
             elif key and action is not None and action.get("name") == "SnapToRegion" \
                     and action.get("region", "").endswith("-third"):
                 # Thirds: no native Wayfire slot, the shell places the window.
