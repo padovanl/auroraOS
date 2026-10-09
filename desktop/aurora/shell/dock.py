@@ -740,6 +740,28 @@ class Dock(LayerWindow):
 
     # --- geometry ---
 
+    def _input_rect(self, bounds, w, h):
+        """Where one drawn part of the dock takes the pointer: its own box, the
+        gap to the screen edge behind it (so the pointer can't slip through),
+        and the room a magnified icon grows into."""
+        x, y = bounds.get_x(), bounds.get_y()
+        bw, bh = bounds.get_width(), bounds.get_height()
+        if self.position == "bottom":
+            rect = (x, y, bw, h - y)
+        elif self.position == "left":
+            rect = (0, y, x + bw, bh)
+        else:
+            rect = (x, y, w - x, bh)
+        if self.magnify:
+            grow = int(self.icon_size * (MAX_SCALE - 1))
+            if self.position == "bottom":
+                rect = (rect[0], max(0, rect[1] - grow), rect[2], rect[3] + grow)
+            elif self.position == "left":
+                rect = (rect[0], rect[1], rect[2] + grow, rect[3])
+            else:
+                rect = (max(0, rect[0] - grow), rect[1], rect[2] + grow, rect[3])
+        return rect
+
     def _update_geometry(self):
         """Exclusive zone for the resting bar; input only where the dock is drawn."""
         margin = EDGE_MARGIN if self.floating else 0
@@ -753,32 +775,32 @@ class Dock(LayerWindow):
         w, h = self.get_width(), self.get_height()
         if self._hidden or not self.revealer.get_child_revealed():
             if self.position == "bottom":
-                rect = (0, h - HOT_EDGE, w, HOT_EDGE)
+                rects = [(0, h - HOT_EDGE, w, HOT_EDGE)]
             elif self.position == "left":
-                rect = (0, 0, HOT_EDGE, h)
+                rects = [(0, 0, HOT_EDGE, h)]
             else:
-                rect = (w - HOT_EDGE, 0, HOT_EDGE, h)
+                rects = [(w - HOT_EDGE, 0, HOT_EDGE, h)]
         else:
-            ok, b = self.body.compute_bounds(self)
-            if not ok:
-                return GLib.SOURCE_REMOVE
-            x, y, bw, bh = b.get_x(), b.get_y(), b.get_width(), b.get_height()
-            # Include the gap to the screen edge so the pointer can't slip through.
-            if self.position == "bottom":
-                rect = (x, y, bw, h - y)
-            elif self.position == "left":
-                rect = (0, y, x + bw, bh)
-            else:
-                rect = (x, y, w - x, bh)
-            if self.magnify:
-                grow = int(self.icon_size * (MAX_SCALE - 1))
-                if self.position == "bottom":
-                    rect = (rect[0], max(0, rect[1] - grow), rect[2], rect[3] + grow)
-                elif self.position == "left":
-                    rect = (rect[0], rect[1], rect[2] + grow, rect[3])
-                else:
-                    rect = (max(0, rect[0] - grow), rect[1], rect[2] + grow, rect[3])
-        region = cairo.Region(cairo.RectangleInt(*[int(v) for v in rect]))
+            # One rectangle per island, so the gaps between the pills are not
+            # the dock: a click there reaches the window or the desktop under
+            # it. Any other style is one rectangle, the whole dock.
+            parts = []
+            if self.islands:
+                child = self.box.get_first_child()
+                while child is not None:
+                    ok, b = child.compute_bounds(self)
+                    if ok and b.get_width() > 0:
+                        parts.append(b)
+                    child = child.get_next_sibling()
+            if not parts:
+                ok, b = self.body.compute_bounds(self)
+                if not ok:
+                    return GLib.SOURCE_REMOVE
+                parts = [b]
+            rects = [self._input_rect(b, w, h) for b in parts]
+        region = cairo.Region()
+        for rect in rects:
+            region.union(cairo.RectangleInt(*[int(v) for v in rect]))
         surface.set_input_region(region)
         self.publish()
         return GLib.SOURCE_REMOVE
