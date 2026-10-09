@@ -187,7 +187,6 @@ class Shell(Adw.Application):
             from aurora import look
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
-            iface.connect("changed::color-scheme", lambda *a: self._sync_style())
             iface.connect("changed::accent-color", lambda *a: self._load_css())
             look.apply()
         # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
@@ -295,10 +294,16 @@ class Shell(Adw.Application):
 
     @staticmethod
     def _sync_style():
-        iface = settings.interface()
-        dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
-        Adw.StyleManager.get_default().set_color_scheme(
-            Adw.ColorScheme.FORCE_DARK if dark else Adw.ColorScheme.FORCE_LIGHT)
+        """The shell's own surfaces are dark whatever style the apps follow.
+
+        Everything the shell draws by hand — the top bar, the dock, Spotlight,
+        notifications — is dark glass on the wallpaper. What it draws with
+        libadwaita (the Control Center, the Aurora menu, the calendar) used to
+        follow the light style with the apps, so choosing Light hung a white
+        panel off a black top bar. The style the user chose still reaches
+        everything that should follow it, from the setting itself (look.is_dark).
+        """
+        Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.FORCE_DARK)
 
     @staticmethod
     def _enable_terminal_opacity():
