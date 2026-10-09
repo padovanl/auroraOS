@@ -192,6 +192,7 @@ class Desktop(Page):
         self._scale(win, _("Gaps around snapped windows"), "window-gaps", 0, 24, 1)
 
         desk = self.group(_("Desktop"))
+        self._scale(desk, _("Rounded screen corners"), "screen-corner-radius", 0, 24, 1)
         self._switch(desk, _("Show files from the Desktop folder"), "desktop-icons")
         self._combo(desk, _("Icon position"), "desktop-icons-position",
                     [("left", _("Top left")), ("right", _("Top right"))])

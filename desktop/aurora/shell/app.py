@@ -150,11 +150,13 @@ class Shell(Adw.Application):
         self.docks = PerMonitor(lambda m: Dock(self, m))
         self._startup_cursor_source = 0
         from aurora.shell.hotcorners import HotCorners
+        from aurora.shell.screencorners import ScreenCorners
         from aurora.shell.overview import Overview
         self.overview = Overview(self)
         from aurora.shell.snap import SnapOverlay
         self.snap = SnapOverlay(self)
         self.hotcorners = PerMonitor(lambda m: HotCorners(self, m))
+        self.screencorners = PerMonitor(lambda m: ScreenCorners(self, m))
 
         s = settings.get()
         if s:
@@ -167,6 +169,8 @@ class Shell(Adw.Application):
             for corner in ("top-left", "top-right", "bottom-left", "bottom-right"):
                 s.connect(f"changed::hot-corner-{corner}",
                           lambda *a: self._later(self.hotcorners.rebuild))
+            s.connect("changed::screen-corner-radius",
+                      lambda *a: self._later(self._reshape_screen))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -244,12 +248,24 @@ class Shell(Adw.Application):
         pending[key] = fn
         GLib.timeout_add(150, run)
 
+    def _reshape_screen(self):
+        self._update_dynamic_css()
+        self.screencorners.rebuild()
+
     def _update_dynamic_css(self):
         s = settings.get()
         opacity = s.get_double("panel-opacity") if s else 0.78
         css = (f".aurora-panel.panel-bar-style .panel-bar, "
                f".aurora-panel.panel-floating .panel-island "
                f"{{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}")
+        # The rounded screen corners: black outside a quarter circle, one
+        # surface per corner, so the radius has to reach the stylesheet.
+        r = s.get_int("screen-corner-radius") if s else 0
+        if r > 0:
+            for corner, at in (("top-left", "100% 100%"), ("top-right", "0% 100%"),
+                               ("bottom-left", "100% 0%"), ("bottom-right", "0% 0%")):
+                css += (f"\n.screen-corner-{corner} {{ background-image: radial-gradient("
+                        f"circle at {at}, transparent {r - 1}px, #000000 {r}px); }}")
         if not hasattr(self, "_dyn_css"):
             self._dyn_css = Gtk.CssProvider()
             Gtk.StyleContext.add_provider_for_display(
