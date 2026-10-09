@@ -85,7 +85,7 @@ msgstr "コピー"
 
 #: aurora/assistant.py:221 aurora/assistant.py:254 aurora/assistant.py:288
 #: aurora/settingsapp/inputs.py:26
-#: data/applications/org.aurora.Assistant.desktop:3
+#: data/applications/org.aurora.Assistant.desktop:2
 msgid "Aurora Assistant"
 msgstr "Aurora アシスタント"
 
@@ -366,7 +366,7 @@ msgid "Install"
 msgstr "インストール"
 
 #: aurora/devhub/app.py:181 aurora/shell/panel.py:306
-#: data/applications/org.aurora.DevHub.desktop:3
+#: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
@@ -516,7 +516,7 @@ msgstr "フレームレート、温度、負荷をゲーム画面に重ねて表
 msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
 msgstr "コンテナ内の Android。アプリは Dock に表示されます。約 1 GB 必要です。"
 
-#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:3
+#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:2
 msgid "Game Hub"
 msgstr "Game Hub"
 
@@ -1015,7 +1015,7 @@ msgstr "スリープやネットワークの切り替えにも耐える SSH。"
 #: aurora/files/app.py:78 aurora/files/window.py:314 aurora/files/window.py:465
 #: aurora/files/window.py:466 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
-#: data/applications/org.aurora.Files.desktop:3
+#: data/applications/org.aurora.Files.desktop:2
 msgid "Files"
 msgstr "ファイル"
 
@@ -1167,7 +1167,7 @@ msgstr "新しいタブ"
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:563
-#: data/applications/org.aurora.Files.desktop:16
+#: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "新規ウインドウ"
 
@@ -1311,7 +1311,7 @@ msgstr "完全に削除"
 msgid "Open With…"
 msgstr "このアプリで開く…"
 
-#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:3
+#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:2
 msgid "Quick Look"
 msgstr "クイックルック"
 
@@ -1780,6 +1780,10 @@ msgstr "このコンピューターのモデル"
 #: aurora/settingsapp/ai.py:98
 msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "大きいモデルほど良い回答をしますが、より多くのメモリーが必要です。このコンピューターは {ram:.0f} GB です。"
+
+#: aurora/settingsapp/ai.py:103
+msgid "needs {n} GB of memory"
+msgstr "{n} GB のメモリーが必要"
 
 #: aurora/settingsapp/ai.py:108
 msgid "Cloud Provider"
@@ -2556,7 +2560,7 @@ msgstr "速度、左利き用、ジェスチャーは「マウスとタッチパ
 #: aurora/settingsapp/desktop.py:204 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
-#: data/applications/org.aurora.Settings.desktop:3
+#: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "設定"
 
@@ -3606,7 +3610,7 @@ msgstr "新しいターミナルウインドウ"
 
 #: aurora/settingsapp/inputs.py:47 aurora/shell/panel.py:308
 #: aurora/shell/search.py:481 aurora/taskmanager.py:690
-#: data/applications/org.aurora.TaskManager.desktop:3
+#: data/applications/org.aurora.TaskManager.desktop:2
 msgid "Task Manager"
 msgstr "タスク マネージャー"
 
@@ -5093,6 +5097,31 @@ msgstr "タイムゾーン"
 msgid "24-hour clock"
 msgstr "24 時間表示"
 
+#: aurora/shell/appgroups.py:11
+msgid "Internet"
+msgstr "インターネット"
+
+#: aurora/shell/appgroups.py:12
+msgid "Office"
+msgstr "オフィス"
+
+#: aurora/shell/appgroups.py:14
+msgid "Photos, Music & Video"
+msgstr "写真・音楽・ビデオ"
+
+#: aurora/shell/appgroups.py:16 aurora/shell/devwidgets.py:469
+#: aurora/shell/widgets.py:72
+msgid "Games"
+msgstr "ゲーム"
+
+#: aurora/shell/appgroups.py:17
+msgid "Development"
+msgstr "開発"
+
+#: aurora/shell/appgroups.py:19
+msgid "Utilities"
+msgstr "ユーティリティ"
+
 #: aurora/shell/app.py:88
 msgid "Opening App Center…"
 msgstr "アプリセンターを開いています…"
@@ -5316,10 +5345,6 @@ msgstr "このグラフィックドライバーは統計を提供しません"
 msgid "{used} of {total}"
 msgstr "{used} / {total}"
 
-#: aurora/shell/devwidgets.py:469 aurora/shell/widgets.py:72
-msgid "Games"
-msgstr "ゲーム"
-
 #: aurora/shell/devwidgets.py:472
 msgid "Open Game Hub"
 msgstr "Game Hub を開く"
@@ -5334,6 +5359,7 @@ msgid "Window"
 msgstr "ウインドウ"
 
 #: aurora/shell/dock.py:202 aurora/shell/overview.py:61
+#: aurora/shell/panel.py:556
 msgid "Minimized"
 msgstr "最小化"
 
@@ -5370,8 +5396,12 @@ msgid "Ask Aurora about this file"
 msgstr "このファイルについて Aurora に質問"
 
 #: aurora/shell/launcher.py:176
-msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
-msgstr "アプリ、ファイル、プロジェクト、計算、10 km in mi、:emoji、clip:、? で Aurora に質問"
+msgid "Search apps, files and settings, or type ? to ask Aurora"
+msgstr "アプリ、ファイル、設定を検索、? で Aurora に質問"
+
+#: aurora/shell/launcher.py:240
+msgid "Frequently Used"
+msgstr "よく使うアプリ"
 
 #: aurora/shell/lockkeys.py:32
 msgid "Caps Lock On"
@@ -5811,7 +5841,7 @@ msgid "Sound Settings"
 msgstr "サウンド設定"
 
 #: aurora/shell/quicksettings.py:289
-#: data/applications/aurora-screenshot.desktop:3
+#: data/applications/aurora-screenshot.desktop:2
 msgid "Screenshot"
 msgstr "スクリーンショット"
 
@@ -6643,7 +6673,7 @@ msgstr "スクリーンショット / 範囲"
 msgid "Lock the screen"
 msgstr "画面をロック"
 
-#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:3
+#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:2
 msgid "Welcome"
 msgstr "ようこそ"
 
@@ -6679,62 +6709,62 @@ msgstr "準備完了"
 msgid "Press the Super key to find apps, files and settings."
 msgstr "Super キーを押すと、アプリ、ファイル、設定を検索できます。"
 
-#: data/applications/aurora-installer.desktop:3
+#: data/applications/aurora-installer.desktop:2
 msgid "Install Aurora OS"
 msgstr "Aurora OS をインストール"
 
-#: data/applications/aurora-installer.desktop:4
+#: data/applications/aurora-installer.desktop:3
 msgid "Install Aurora OS on this computer"
 msgstr "このコンピューターに Aurora OS をインストール"
 
-#: data/applications/aurora-screenshot.desktop:4
+#: data/applications/aurora-screenshot.desktop:3
 msgid "Capture the whole screen or an area (Print / Shift+Print)"
 msgstr "画面全体または範囲をキャプチャ（Print / Shift+Print）"
 
-#: data/applications/aurora-screenshot.desktop:14
+#: data/applications/aurora-screenshot.desktop:13
 msgid "Capture the Whole Screen"
 msgstr "画面全体をキャプチャ"
 
-#: data/applications/org.aurora.Assistant.desktop:4
+#: data/applications/org.aurora.Assistant.desktop:3
 msgid "Ask questions, summarize, rewrite and translate with AI that runs on your computer"
 msgstr "このコンピューターで動く AI で質問、要約、書き直し、翻訳"
 
-#: data/applications/org.aurora.DevHub.desktop:4
+#: data/applications/org.aurora.DevHub.desktop:3
 msgid "Install editors, languages and developer tools in one click"
 msgstr "エディター、言語、開発ツールをワンクリックでインストール"
 
-#: data/applications/org.aurora.Files.desktop:4
+#: data/applications/org.aurora.Files.desktop:3
 msgid "Browse and organize your files"
 msgstr "ファイルを閲覧・整理"
 
-#: data/applications/org.aurora.GameHub.desktop:4
+#: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "Steam・Epic・GOG のゲーム、Bottles で Windows アプリ、Waydroid で Android アプリ"
 
-#: data/applications/org.aurora.QuickLook.desktop:4
+#: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"
 msgstr "開かずにファイルをプレビュー"
 
-#: data/applications/org.aurora.Settings.desktop:4
+#: data/applications/org.aurora.Settings.desktop:3
 msgid "Configure your Aurora system"
 msgstr "Aurora システムを設定"
 
-#: data/applications/org.aurora.TaskManager.desktop:4
+#: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "実行中のものを確認し、タスクを終了し、パフォーマンスを監視"
 
-#: data/applications/org.aurora.Welcome.desktop:4
+#: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"
 msgstr "Aurora OS を始めよう"
 
-#: data/applications/portop.desktop:3
+#: data/applications/portop.desktop:2
 msgid "Portop"
 msgstr "Portop"
 
-#: data/applications/portop.desktop:4
+#: data/applications/portop.desktop:3
 msgid "Port Monitor"
 msgstr "ポートモニター"
 
-#: data/applications/portop.desktop:5
+#: data/applications/portop.desktop:4
 msgid "See what is using your network ports and stop it with one key"
 msgstr "ネットワークポートを使っているものを確認し、キー 1 つで停止"

@@ -85,7 +85,7 @@ msgstr "Copier"
 
 #: aurora/assistant.py:221 aurora/assistant.py:254 aurora/assistant.py:288
 #: aurora/settingsapp/inputs.py:26
-#: data/applications/org.aurora.Assistant.desktop:3
+#: data/applications/org.aurora.Assistant.desktop:2
 msgid "Aurora Assistant"
 msgstr "Assistant Aurora"
 
@@ -366,7 +366,7 @@ msgid "Install"
 msgstr "Installer"
 
 #: aurora/devhub/app.py:181 aurora/shell/panel.py:306
-#: data/applications/org.aurora.DevHub.desktop:3
+#: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
@@ -516,7 +516,7 @@ msgstr "Images par seconde, températures et charge par-dessus vos jeux."
 msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
 msgstr "Android dans un conteneur, avec ses applications dans votre dock. Nécessite environ 1 Go."
 
-#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:3
+#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:2
 msgid "Game Hub"
 msgstr "Game Hub"
 
@@ -1015,7 +1015,7 @@ msgstr "Un SSH qui survit à la veille et aux changements de réseau."
 #: aurora/files/app.py:78 aurora/files/window.py:314 aurora/files/window.py:465
 #: aurora/files/window.py:466 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
-#: data/applications/org.aurora.Files.desktop:3
+#: data/applications/org.aurora.Files.desktop:2
 msgid "Files"
 msgstr "Fichiers"
 
@@ -1169,7 +1169,7 @@ msgstr "Nouvel onglet"
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:563
-#: data/applications/org.aurora.Files.desktop:16
+#: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "Nouvelle fenêtre"
 
@@ -1313,7 +1313,7 @@ msgstr "Supprimer définitivement"
 msgid "Open With…"
 msgstr "Ouvrir avec…"
 
-#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:3
+#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:2
 msgid "Quick Look"
 msgstr "Coup d'œil"
 
@@ -1790,6 +1790,10 @@ msgstr "Modèle sur cet ordinateur"
 #: aurora/settingsapp/ai.py:98
 msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "Les modèles plus grands répondent mieux mais demandent plus de mémoire. Cet ordinateur a {ram:.0f} Go."
+
+#: aurora/settingsapp/ai.py:103
+msgid "needs {n} GB of memory"
+msgstr "nécessite {n} Go de mémoire"
 
 #: aurora/settingsapp/ai.py:108
 msgid "Cloud Provider"
@@ -2566,7 +2570,7 @@ msgstr "La vitesse, l’usage pour gaucher et les gestes sont dans Souris et pav
 #: aurora/settingsapp/desktop.py:204 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
-#: data/applications/org.aurora.Settings.desktop:3
+#: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -3620,7 +3624,7 @@ msgstr "Nouvelle fenêtre de terminal"
 
 #: aurora/settingsapp/inputs.py:47 aurora/shell/panel.py:308
 #: aurora/shell/search.py:481 aurora/taskmanager.py:690
-#: data/applications/org.aurora.TaskManager.desktop:3
+#: data/applications/org.aurora.TaskManager.desktop:2
 msgid "Task Manager"
 msgstr "Gestionnaire des tâches"
 
@@ -5108,6 +5112,31 @@ msgstr "Fuseau horaire"
 msgid "24-hour clock"
 msgstr "Horloge 24 heures"
 
+#: aurora/shell/appgroups.py:11
+msgid "Internet"
+msgstr "Internet"
+
+#: aurora/shell/appgroups.py:12
+msgid "Office"
+msgstr "Bureautique"
+
+#: aurora/shell/appgroups.py:14
+msgid "Photos, Music & Video"
+msgstr "Photos, musique et vidéo"
+
+#: aurora/shell/appgroups.py:16 aurora/shell/devwidgets.py:469
+#: aurora/shell/widgets.py:72
+msgid "Games"
+msgstr "Jeux"
+
+#: aurora/shell/appgroups.py:17
+msgid "Development"
+msgstr "Développement"
+
+#: aurora/shell/appgroups.py:19
+msgid "Utilities"
+msgstr "Utilitaires"
+
 #: aurora/shell/app.py:88
 msgid "Opening App Center…"
 msgstr "Ouverture du Centre d’applications…"
@@ -5334,10 +5363,6 @@ msgstr "Aucune statistique de ce pilote graphique"
 msgid "{used} of {total}"
 msgstr "{used} sur {total}"
 
-#: aurora/shell/devwidgets.py:469 aurora/shell/widgets.py:72
-msgid "Games"
-msgstr "Jeux"
-
 #: aurora/shell/devwidgets.py:472
 msgid "Open Game Hub"
 msgstr "Ouvrir Game Hub"
@@ -5352,6 +5377,7 @@ msgid "Window"
 msgstr "Fenêtre"
 
 #: aurora/shell/dock.py:202 aurora/shell/overview.py:61
+#: aurora/shell/panel.py:556
 msgid "Minimized"
 msgstr "Réduite"
 
@@ -5388,8 +5414,12 @@ msgid "Ask Aurora about this file"
 msgstr "Interroger Aurora sur ce fichier"
 
 #: aurora/shell/launcher.py:176
-msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
-msgstr "Recherchez applications, fichiers, projets, calculs, 10 km in mi, :emoji, clip:, ? demander à Aurora"
+msgid "Search apps, files and settings, or type ? to ask Aurora"
+msgstr "Recherchez applications, fichiers et paramètres, ou tapez ? pour demander à Aurora"
+
+#: aurora/shell/launcher.py:240
+msgid "Frequently Used"
+msgstr "Fréquemment utilisées"
 
 #: aurora/shell/lockkeys.py:32
 msgid "Caps Lock On"
@@ -5836,7 +5866,7 @@ msgid "Sound Settings"
 msgstr "Paramètres du son"
 
 #: aurora/shell/quicksettings.py:289
-#: data/applications/aurora-screenshot.desktop:3
+#: data/applications/aurora-screenshot.desktop:2
 msgid "Screenshot"
 msgstr "Capture d'écran"
 
@@ -6669,7 +6699,7 @@ msgstr "Capture de l'écran / d'une zone"
 msgid "Lock the screen"
 msgstr "Verrouiller l'écran"
 
-#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:3
+#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:2
 msgid "Welcome"
 msgstr "Bienvenue"
 
@@ -6705,62 +6735,62 @@ msgstr "Tout est prêt"
 msgid "Press the Super key to find apps, files and settings."
 msgstr "Appuyez sur la touche Super pour trouver applications, fichiers et paramètres."
 
-#: data/applications/aurora-installer.desktop:3
+#: data/applications/aurora-installer.desktop:2
 msgid "Install Aurora OS"
 msgstr "Installer Aurora OS"
 
-#: data/applications/aurora-installer.desktop:4
+#: data/applications/aurora-installer.desktop:3
 msgid "Install Aurora OS on this computer"
 msgstr "Installer Aurora OS sur cet ordinateur"
 
-#: data/applications/aurora-screenshot.desktop:4
+#: data/applications/aurora-screenshot.desktop:3
 msgid "Capture the whole screen or an area (Print / Shift+Print)"
 msgstr "Capturer tout l'écran ou une zone (Impr / Maj+Impr)"
 
-#: data/applications/aurora-screenshot.desktop:14
+#: data/applications/aurora-screenshot.desktop:13
 msgid "Capture the Whole Screen"
 msgstr "Capturer tout l'écran"
 
-#: data/applications/org.aurora.Assistant.desktop:4
+#: data/applications/org.aurora.Assistant.desktop:3
 msgid "Ask questions, summarize, rewrite and translate with AI that runs on your computer"
 msgstr "Posez des questions, résumez, réécrivez et traduisez avec une IA qui tourne sur votre ordinateur"
 
-#: data/applications/org.aurora.DevHub.desktop:4
+#: data/applications/org.aurora.DevHub.desktop:3
 msgid "Install editors, languages and developer tools in one click"
 msgstr "Installez éditeurs, langages et outils de développement en un clic"
 
-#: data/applications/org.aurora.Files.desktop:4
+#: data/applications/org.aurora.Files.desktop:3
 msgid "Browse and organize your files"
 msgstr "Parcourez et organisez vos fichiers"
 
-#: data/applications/org.aurora.GameHub.desktop:4
+#: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "Jeux Steam, Epic et GOG, applis Windows avec Bottles, applis Android avec Waydroid"
 
-#: data/applications/org.aurora.QuickLook.desktop:4
+#: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"
 msgstr "Prévisualisez les fichiers sans les ouvrir"
 
-#: data/applications/org.aurora.Settings.desktop:4
+#: data/applications/org.aurora.Settings.desktop:3
 msgid "Configure your Aurora system"
 msgstr "Configurez votre système Aurora"
 
-#: data/applications/org.aurora.TaskManager.desktop:4
+#: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "Voyez ce qui tourne, arrêtez des tâches et suivez les performances"
 
-#: data/applications/org.aurora.Welcome.desktop:4
+#: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"
 msgstr "Prendre en main Aurora OS"
 
-#: data/applications/portop.desktop:3
+#: data/applications/portop.desktop:2
 msgid "Portop"
 msgstr "Portop"
 
-#: data/applications/portop.desktop:4
+#: data/applications/portop.desktop:3
 msgid "Port Monitor"
 msgstr "Moniteur de ports"
 
-#: data/applications/portop.desktop:5
+#: data/applications/portop.desktop:4
 msgid "See what is using your network ports and stop it with one key"
 msgstr "Voyez ce qui utilise vos ports réseau et arrêtez-le d'une touche"

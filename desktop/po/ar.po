@@ -85,7 +85,7 @@ msgstr "نسخ"
 
 #: aurora/assistant.py:221 aurora/assistant.py:254 aurora/assistant.py:288
 #: aurora/settingsapp/inputs.py:26
-#: data/applications/org.aurora.Assistant.desktop:3
+#: data/applications/org.aurora.Assistant.desktop:2
 msgid "Aurora Assistant"
 msgstr "مساعد Aurora"
 
@@ -366,7 +366,7 @@ msgid "Install"
 msgstr "تثبيت"
 
 #: aurora/devhub/app.py:181 aurora/shell/panel.py:306
-#: data/applications/org.aurora.DevHub.desktop:3
+#: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
@@ -516,7 +516,7 @@ msgstr "معدل الإطارات ودرجات الحرارة والحمل فو�
 msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
 msgstr "Android داخل حاوية، مع تطبيقاته في شريط التطبيقات. يحتاج نحو 1 GB."
 
-#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:3
+#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:2
 msgid "Game Hub"
 msgstr "Game Hub"
 
@@ -1015,7 +1015,7 @@ msgstr "SSH يصمد أمام السكون وتغيّر الشبكة."
 #: aurora/files/app.py:78 aurora/files/window.py:314 aurora/files/window.py:465
 #: aurora/files/window.py:466 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
-#: data/applications/org.aurora.Files.desktop:3
+#: data/applications/org.aurora.Files.desktop:2
 msgid "Files"
 msgstr "الملفات"
 
@@ -1177,7 +1177,7 @@ msgstr "علامة تبويب جديدة"
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:563
-#: data/applications/org.aurora.Files.desktop:16
+#: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "نافذة جديدة"
 
@@ -1321,7 +1321,7 @@ msgstr "حذف نهائي"
 msgid "Open With…"
 msgstr "فتح باستخدام…"
 
-#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:3
+#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:2
 msgid "Quick Look"
 msgstr "نظرة سريعة"
 
@@ -1830,6 +1830,10 @@ msgstr "النموذج على هذا الحاسوب"
 #: aurora/settingsapp/ai.py:98
 msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "النماذج الأكبر تجيب أفضل لكنها تحتاج ذاكرة أكثر. في هذا الحاسوب {ram:.0f} GB."
+
+#: aurora/settingsapp/ai.py:103
+msgid "needs {n} GB of memory"
+msgstr "يحتاج {n} GB من الذاكرة"
 
 #: aurora/settingsapp/ai.py:108
 msgid "Cloud Provider"
@@ -2606,7 +2610,7 @@ msgstr "السرعة ووضع اليد اليسرى والإيماءات في ا
 #: aurora/settingsapp/desktop.py:204 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
-#: data/applications/org.aurora.Settings.desktop:3
+#: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "الإعدادات"
 
@@ -3676,7 +3680,7 @@ msgstr "نافذة طرفية جديدة"
 
 #: aurora/settingsapp/inputs.py:47 aurora/shell/panel.py:308
 #: aurora/shell/search.py:481 aurora/taskmanager.py:690
-#: data/applications/org.aurora.TaskManager.desktop:3
+#: data/applications/org.aurora.TaskManager.desktop:2
 msgid "Task Manager"
 msgstr "إدارة المهام"
 
@@ -5168,6 +5172,31 @@ msgstr "المنطقة الزمنية"
 msgid "24-hour clock"
 msgstr "نظام 24 ساعة"
 
+#: aurora/shell/appgroups.py:11
+msgid "Internet"
+msgstr "الإنترنت"
+
+#: aurora/shell/appgroups.py:12
+msgid "Office"
+msgstr "المكتب"
+
+#: aurora/shell/appgroups.py:14
+msgid "Photos, Music & Video"
+msgstr "الصور والموسيقى والفيديو"
+
+#: aurora/shell/appgroups.py:16 aurora/shell/devwidgets.py:469
+#: aurora/shell/widgets.py:72
+msgid "Games"
+msgstr "الألعاب"
+
+#: aurora/shell/appgroups.py:17
+msgid "Development"
+msgstr "التطوير"
+
+#: aurora/shell/appgroups.py:19
+msgid "Utilities"
+msgstr "الأدوات"
+
 #: aurora/shell/app.py:88
 msgid "Opening App Center…"
 msgstr "جارٍ فتح مركز التطبيقات…"
@@ -5406,10 +5435,6 @@ msgstr "لا إحصاءات من برنامج تشغيل الرسوميات هذ
 msgid "{used} of {total}"
 msgstr "{used} من {total}"
 
-#: aurora/shell/devwidgets.py:469 aurora/shell/widgets.py:72
-msgid "Games"
-msgstr "الألعاب"
-
 #: aurora/shell/devwidgets.py:472
 msgid "Open Game Hub"
 msgstr "فتح Game Hub"
@@ -5424,6 +5449,7 @@ msgid "Window"
 msgstr "نافذة"
 
 #: aurora/shell/dock.py:202 aurora/shell/overview.py:61
+#: aurora/shell/panel.py:556
 msgid "Minimized"
 msgstr "مُصغّرة"
 
@@ -5460,8 +5486,12 @@ msgid "Ask Aurora about this file"
 msgstr "اسأل Aurora عن هذا الملف"
 
 #: aurora/shell/launcher.py:176
-msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
-msgstr "ابحث عن التطبيقات والملفات والمشاريع والحسابات و10 km in mi و:emoji وclip: و? اسأل Aurora"
+msgid "Search apps, files and settings, or type ? to ask Aurora"
+msgstr "ابحث عن التطبيقات والملفات والإعدادات، أو اكتب ? لسؤال Aurora"
+
+#: aurora/shell/launcher.py:240
+msgid "Frequently Used"
+msgstr "الأكثر استخدامًا"
 
 #: aurora/shell/lockkeys.py:32
 msgid "Caps Lock On"
@@ -5936,7 +5966,7 @@ msgid "Sound Settings"
 msgstr "إعدادات الصوت"
 
 #: aurora/shell/quicksettings.py:289
-#: data/applications/aurora-screenshot.desktop:3
+#: data/applications/aurora-screenshot.desktop:2
 msgid "Screenshot"
 msgstr "لقطة شاشة"
 
@@ -6773,7 +6803,7 @@ msgstr "لقطة شاشة / منطقة"
 msgid "Lock the screen"
 msgstr "قفل الشاشة"
 
-#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:3
+#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:2
 msgid "Welcome"
 msgstr "مرحبًا"
 
@@ -6809,62 +6839,62 @@ msgstr "كل شيء جاهز"
 msgid "Press the Super key to find apps, files and settings."
 msgstr "اضغط مفتاح Super للعثور على التطبيقات والملفات والإعدادات."
 
-#: data/applications/aurora-installer.desktop:3
+#: data/applications/aurora-installer.desktop:2
 msgid "Install Aurora OS"
 msgstr "تثبيت Aurora OS"
 
-#: data/applications/aurora-installer.desktop:4
+#: data/applications/aurora-installer.desktop:3
 msgid "Install Aurora OS on this computer"
 msgstr "ثبّت Aurora OS على هذا الحاسوب"
 
-#: data/applications/aurora-screenshot.desktop:4
+#: data/applications/aurora-screenshot.desktop:3
 msgid "Capture the whole screen or an area (Print / Shift+Print)"
 msgstr "التقط الشاشة كاملة أو جزءًا منها (Print / Shift+Print)"
 
-#: data/applications/aurora-screenshot.desktop:14
+#: data/applications/aurora-screenshot.desktop:13
 msgid "Capture the Whole Screen"
 msgstr "التقاط الشاشة كاملة"
 
-#: data/applications/org.aurora.Assistant.desktop:4
+#: data/applications/org.aurora.Assistant.desktop:3
 msgid "Ask questions, summarize, rewrite and translate with AI that runs on your computer"
 msgstr "اسأل ولخّص وأعد الصياغة وترجم بذكاء اصطناعي يعمل على حاسوبك"
 
-#: data/applications/org.aurora.DevHub.desktop:4
+#: data/applications/org.aurora.DevHub.desktop:3
 msgid "Install editors, languages and developer tools in one click"
 msgstr "ثبّت المحررات واللغات وأدوات التطوير بنقرة واحدة"
 
-#: data/applications/org.aurora.Files.desktop:4
+#: data/applications/org.aurora.Files.desktop:3
 msgid "Browse and organize your files"
 msgstr "تصفّح ملفاتك ونظّمها"
 
-#: data/applications/org.aurora.GameHub.desktop:4
+#: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "ألعاب Steam وEpic وGOG، وتطبيقات Windows عبر Bottles، وتطبيقات Android عبر Waydroid"
 
-#: data/applications/org.aurora.QuickLook.desktop:4
+#: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"
 msgstr "عاين الملفات دون فتحها"
 
-#: data/applications/org.aurora.Settings.desktop:4
+#: data/applications/org.aurora.Settings.desktop:3
 msgid "Configure your Aurora system"
 msgstr "اضبط نظام Aurora"
 
-#: data/applications/org.aurora.TaskManager.desktop:4
+#: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "اعرف ما يعمل، وأنهِ المهام، وراقب أداء الحاسوب"
 
-#: data/applications/org.aurora.Welcome.desktop:4
+#: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"
 msgstr "ابدأ مع Aurora OS"
 
-#: data/applications/portop.desktop:3
+#: data/applications/portop.desktop:2
 msgid "Portop"
 msgstr "Portop"
 
-#: data/applications/portop.desktop:4
+#: data/applications/portop.desktop:3
 msgid "Port Monitor"
 msgstr "مراقب المنافذ"
 
-#: data/applications/portop.desktop:5
+#: data/applications/portop.desktop:4
 msgid "See what is using your network ports and stop it with one key"
 msgstr "اعرف ما يستخدم منافذ الشبكة وأوقفه بمفتاح واحد"

@@ -85,7 +85,7 @@ msgstr "कॉपी करें"
 
 #: aurora/assistant.py:221 aurora/assistant.py:254 aurora/assistant.py:288
 #: aurora/settingsapp/inputs.py:26
-#: data/applications/org.aurora.Assistant.desktop:3
+#: data/applications/org.aurora.Assistant.desktop:2
 msgid "Aurora Assistant"
 msgstr "Aurora सहायक"
 
@@ -366,7 +366,7 @@ msgid "Install"
 msgstr "स्थापित करें"
 
 #: aurora/devhub/app.py:181 aurora/shell/panel.py:306
-#: data/applications/org.aurora.DevHub.desktop:3
+#: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
@@ -516,7 +516,7 @@ msgstr "आपके गेम के ऊपर फ़्रेम दर, त�
 msgid "Android in a container, with its apps in your dock. Needs about 1 GB."
 msgstr "कंटेनर में Android, इसके ऐप्स डॉक में। लगभग 1 GB चाहिए।"
 
-#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:3
+#: aurora/devhub/games.py:70 data/applications/org.aurora.GameHub.desktop:2
 msgid "Game Hub"
 msgstr "Game Hub"
 
@@ -1015,7 +1015,7 @@ msgstr "SSH जो स्लीप और नेटवर्क बदलने 
 #: aurora/files/app.py:78 aurora/files/window.py:314 aurora/files/window.py:465
 #: aurora/files/window.py:466 aurora/settingsapp/ai.py:165
 #: aurora/settingsapp/applications.py:15 aurora/settingsapp/inputs.py:46
-#: data/applications/org.aurora.Files.desktop:3
+#: data/applications/org.aurora.Files.desktop:2
 msgid "Files"
 msgstr "फ़ाइलें"
 
@@ -1169,7 +1169,7 @@ msgstr "नया टैब"
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:257 aurora/shell/dock.py:260
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:563
-#: data/applications/org.aurora.Files.desktop:16
+#: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "नई विंडो"
 
@@ -1313,7 +1313,7 @@ msgstr "स्थायी रूप से हटाएँ"
 msgid "Open With…"
 msgstr "इससे खोलें…"
 
-#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:3
+#: aurora/files/window.py:1180 data/applications/org.aurora.QuickLook.desktop:2
 msgid "Quick Look"
 msgstr "क्विक लुक"
 
@@ -1790,6 +1790,10 @@ msgstr "इस कंप्यूटर पर मॉडल"
 #: aurora/settingsapp/ai.py:98
 msgid "Bigger models answer better but need more memory. This computer has {ram:.0f} GB."
 msgstr "बड़े मॉडल बेहतर उत्तर देते हैं पर ज़्यादा मेमोरी लेते हैं। इस कंप्यूटर में {ram:.0f} GB है।"
+
+#: aurora/settingsapp/ai.py:103
+msgid "needs {n} GB of memory"
+msgstr "{n} GB मेमोरी चाहिए"
 
 #: aurora/settingsapp/ai.py:108
 msgid "Cloud Provider"
@@ -2566,7 +2570,7 @@ msgstr "गति, बाएँ हाथ का उपयोग और इश�
 #: aurora/settingsapp/desktop.py:204 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
-#: data/applications/org.aurora.Settings.desktop:3
+#: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "सेटिंग्स"
 
@@ -3620,7 +3624,7 @@ msgstr "नई टर्मिनल विंडो"
 
 #: aurora/settingsapp/inputs.py:47 aurora/shell/panel.py:308
 #: aurora/shell/search.py:481 aurora/taskmanager.py:690
-#: data/applications/org.aurora.TaskManager.desktop:3
+#: data/applications/org.aurora.TaskManager.desktop:2
 msgid "Task Manager"
 msgstr "टास्क मैनेजर"
 
@@ -5108,6 +5112,31 @@ msgstr "समय क्षेत्र"
 msgid "24-hour clock"
 msgstr "24-घंटे का समय"
 
+#: aurora/shell/appgroups.py:11
+msgid "Internet"
+msgstr "इंटरनेट"
+
+#: aurora/shell/appgroups.py:12
+msgid "Office"
+msgstr "ऑफ़िस"
+
+#: aurora/shell/appgroups.py:14
+msgid "Photos, Music & Video"
+msgstr "फ़ोटो, संगीत और वीडियो"
+
+#: aurora/shell/appgroups.py:16 aurora/shell/devwidgets.py:469
+#: aurora/shell/widgets.py:72
+msgid "Games"
+msgstr "गेम"
+
+#: aurora/shell/appgroups.py:17
+msgid "Development"
+msgstr "डेवलपमेंट"
+
+#: aurora/shell/appgroups.py:19
+msgid "Utilities"
+msgstr "यूटिलिटीज़"
+
 #: aurora/shell/app.py:88
 msgid "Opening App Center…"
 msgstr "ऐप सेंटर खुल रहा है…"
@@ -5334,10 +5363,6 @@ msgstr "इस ग्राफ़िक्स ड्राइवर से आ�
 msgid "{used} of {total}"
 msgstr "{total} में से {used}"
 
-#: aurora/shell/devwidgets.py:469 aurora/shell/widgets.py:72
-msgid "Games"
-msgstr "गेम"
-
 #: aurora/shell/devwidgets.py:472
 msgid "Open Game Hub"
 msgstr "Game Hub खोलें"
@@ -5352,6 +5377,7 @@ msgid "Window"
 msgstr "विंडो"
 
 #: aurora/shell/dock.py:202 aurora/shell/overview.py:61
+#: aurora/shell/panel.py:556
 msgid "Minimized"
 msgstr "छोटा किया गया"
 
@@ -5388,8 +5414,12 @@ msgid "Ask Aurora about this file"
 msgstr "इस फ़ाइल के बारे में Aurora से पूछें"
 
 #: aurora/shell/launcher.py:176
-msgid "Search apps, files, projects, math, 10 km in mi, :emoji, clip:, ? ask Aurora"
-msgstr "ऐप्स, फ़ाइलें, प्रोजेक्ट, गणना, 10 km in mi, :emoji, clip:, ? Aurora से पूछें"
+msgid "Search apps, files and settings, or type ? to ask Aurora"
+msgstr "ऐप्स, फ़ाइलें और सेटिंग्स खोजें, या Aurora से पूछने के लिए ? लिखें"
+
+#: aurora/shell/launcher.py:240
+msgid "Frequently Used"
+msgstr "अक्सर उपयोग किए गए"
 
 #: aurora/shell/lockkeys.py:32
 msgid "Caps Lock On"
@@ -5836,7 +5866,7 @@ msgid "Sound Settings"
 msgstr "ध्वनि सेटिंग्स"
 
 #: aurora/shell/quicksettings.py:289
-#: data/applications/aurora-screenshot.desktop:3
+#: data/applications/aurora-screenshot.desktop:2
 msgid "Screenshot"
 msgstr "स्क्रीनशॉट"
 
@@ -6669,7 +6699,7 @@ msgstr "स्क्रीनशॉट / क्षेत्र"
 msgid "Lock the screen"
 msgstr "स्क्रीन लॉक करें"
 
-#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:3
+#: aurora/welcome.py:41 data/applications/org.aurora.Welcome.desktop:2
 msgid "Welcome"
 msgstr "स्वागत है"
 
@@ -6705,62 +6735,62 @@ msgstr "सब तैयार है"
 msgid "Press the Super key to find apps, files and settings."
 msgstr "ऐप्स, फ़ाइलें और सेटिंग्स खोजने के लिए Super कुंजी दबाएँ।"
 
-#: data/applications/aurora-installer.desktop:3
+#: data/applications/aurora-installer.desktop:2
 msgid "Install Aurora OS"
 msgstr "Aurora OS इंस्टॉल करें"
 
-#: data/applications/aurora-installer.desktop:4
+#: data/applications/aurora-installer.desktop:3
 msgid "Install Aurora OS on this computer"
 msgstr "इस कंप्यूटर पर Aurora OS इंस्टॉल करें"
 
-#: data/applications/aurora-screenshot.desktop:4
+#: data/applications/aurora-screenshot.desktop:3
 msgid "Capture the whole screen or an area (Print / Shift+Print)"
 msgstr "पूरी स्क्रीन या एक हिस्सा कैप्चर करें (Print / Shift+Print)"
 
-#: data/applications/aurora-screenshot.desktop:14
+#: data/applications/aurora-screenshot.desktop:13
 msgid "Capture the Whole Screen"
 msgstr "पूरी स्क्रीन कैप्चर करें"
 
-#: data/applications/org.aurora.Assistant.desktop:4
+#: data/applications/org.aurora.Assistant.desktop:3
 msgid "Ask questions, summarize, rewrite and translate with AI that runs on your computer"
 msgstr "अपने कंप्यूटर पर चलने वाले AI से सवाल पूछें, सारांश बनाएँ, दोबारा लिखें और अनुवाद करें"
 
-#: data/applications/org.aurora.DevHub.desktop:4
+#: data/applications/org.aurora.DevHub.desktop:3
 msgid "Install editors, languages and developer tools in one click"
 msgstr "एक क्लिक में एडिटर, भाषाएँ और डेवलपर टूल इंस्टॉल करें"
 
-#: data/applications/org.aurora.Files.desktop:4
+#: data/applications/org.aurora.Files.desktop:3
 msgid "Browse and organize your files"
 msgstr "अपनी फ़ाइलें ब्राउज़ और व्यवस्थित करें"
 
-#: data/applications/org.aurora.GameHub.desktop:4
+#: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "Steam, Epic और GOG गेम, Bottles से Windows ऐप, Waydroid से Android ऐप"
 
-#: data/applications/org.aurora.QuickLook.desktop:4
+#: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"
 msgstr "फ़ाइलें खोले बिना देखें"
 
-#: data/applications/org.aurora.Settings.desktop:4
+#: data/applications/org.aurora.Settings.desktop:3
 msgid "Configure your Aurora system"
 msgstr "अपना Aurora सिस्टम कॉन्फ़िगर करें"
 
-#: data/applications/org.aurora.TaskManager.desktop:4
+#: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "देखें क्या चल रहा है, टास्क बंद करें और कंप्यूटर का प्रदर्शन देखें"
 
-#: data/applications/org.aurora.Welcome.desktop:4
+#: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"
 msgstr "Aurora OS के साथ शुरुआत करें"
 
-#: data/applications/portop.desktop:3
+#: data/applications/portop.desktop:2
 msgid "Portop"
 msgstr "Portop"
 
-#: data/applications/portop.desktop:4
+#: data/applications/portop.desktop:3
 msgid "Port Monitor"
 msgstr "पोर्ट मॉनिटर"
 
-#: data/applications/portop.desktop:5
+#: data/applications/portop.desktop:4
 msgid "See what is using your network ports and stop it with one key"
 msgstr "देखें कौन आपके नेटवर्क पोर्ट इस्तेमाल कर रहा है और एक कुंजी से रोकें"
