@@ -99,9 +99,13 @@ def apply_gtk(s):
         if version == "4" and s.get_boolean("window-animations"):
             imports.append(data_path("gtk", "gtk4-animations.css"))
         # Corner radius from Settings, for the windows apps draw themselves
-        # (libadwaita's variable; GTK 3's decoration and title bar).
+        # (libadwaita's variable; GTK 3's decoration and title bar). The rule
+        # comes after the imports on purpose: gtk4-base.css rounds every window
+        # by itself, and the setting has to win over it.
         radius = s.get_int("window-corner-radius")
-        rules = (f":root {{ --window-radius: {radius}px; }}\n" if version == "4" else
+        rules = (f":root {{ --window-radius: {radius}px; }}\n"
+                 f"window.csd, window.csd > .titlebar {{ border-radius: {radius}px; }}\n"
+                 if version == "4" else
                  f"decoration, window.csd, window.csd > .titlebar {{ "
                  f"border-top-left-radius: {radius}px; border-top-right-radius: {radius}px; }}\n")
         _write_gtk_css(version, [i for i in imports if os.path.exists(i) or "gtk-accent" in i],

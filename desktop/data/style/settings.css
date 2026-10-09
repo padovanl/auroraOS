@@ -8,6 +8,15 @@
 .user-profile-card button {
   margin-top: 8px;
 }
+/* The layout preset you're on: the accent with a ring around the card, as a
+   chosen background has, instead of a card filled solid with the accent. */
+button.layout-card:checked {
+  background-color: alpha(@accent_bg_color, 0.20);
+  box-shadow: inset 0 0 0 2px @accent_bg_color;
+  color: inherit;
+}
+button.layout-card:checked:hover { background-color: alpha(@accent_bg_color, 0.28); }
+
 .background-preview {
   border-radius: 16px;
   box-shadow: 0 6px 22px alpha(#000000, 0.16);
