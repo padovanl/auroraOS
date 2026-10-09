@@ -121,8 +121,10 @@ class Clock(Gtk.MenuButton):
         cal_box.append(self._calendar)
         self._weather = WeatherWidget()
         cal_box.append(self._weather)
-        events = Gtk.Button(label=_("Open Calendar"), css_classes=["flat"],
-                            halign=Gtk.Align.START)
+        # A button, shaped like Clear at the foot of the notifications, not a
+        # line of text hanging under the weather.
+        events = Gtk.Button(label=_("Open Calendar"), css_classes=["flat", "pill"],
+                            halign=Gtk.Align.START, margin_top=2)
         events.connect("clicked", lambda *_: (pop.popdown(), apps.spawn(["gnome-calendar"])))
         cal_box.append(events)
         box.append(cal_box)
@@ -316,7 +318,8 @@ class AuroraMenu(Gtk.MenuButton):
         super().__init__(css_classes=["flat", "panel-button", "panel-logo"],
                          tooltip_text=_("Aurora Menu"))
         self.shell = shell
-        self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16))
+        self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16,
+                                 css_classes=["panel-logo-icon"]))
         pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.set_size_request(300, -1)

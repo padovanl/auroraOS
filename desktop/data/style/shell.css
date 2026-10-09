@@ -83,7 +83,10 @@ menubutton.panel-button > button:checked {
   box-shadow: inset 0 1px alpha(#ffffff, 0.10);
 }
 
-.panel-logo image {
+/* The logo itself, by name. A popover is a child of its menu button in the
+   style tree, so ".panel-logo image" also painted every icon of the Aurora
+   menu amber, with the logo's rose glow around each. */
+.panel-logo-icon {
   color: @aurora_amber;
   -gtk-icon-shadow: 0 0 6px alpha(@aurora_rose, 0.6);
 }
