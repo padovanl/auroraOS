@@ -126,6 +126,9 @@ class Overview(LayerWindow):
         self.flow.remove_all()
         windows = sorted(self.shell.toplevels.toplevels,
                          key=lambda t: getattr(t, "serial", 0), reverse=True)
+        # As many columns as there are windows (up to five): a row kept five
+        # columns wide held two cards against the left of the screen.
+        self.flow.set_max_children_per_line(max(1, min(5, len(windows))))
         for t in windows:
             self.flow.append(WindowCard(self, t))
         self.empty.set_visible(not windows)

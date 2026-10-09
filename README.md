@@ -130,9 +130,10 @@ learning was the point. — *Luca Padovan*
 | | |
 |---|---|
 | **Menu bar** | Aurora menu (who you are and the computer's name; About, Settings, App Center, Dev Hub, System Health, Force Quit with their shortcuts; Lock; Sleep, Restart, Shut Down and Log Out as round buttons), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, an optional **system monitor** (processor and memory at a glance; its popover adds temperature, download and upload speed, free disk space; Settings → Desktop & Dock → Top Bar), status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
-| **Dock** | Pinned and running apps with one dot per open window (up to three), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, floating or full-width. |
+| **Dock** | Pinned and running apps with one mark per open window (up to three; the window you're in is a short bar in the accent color), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, and three styles: one floating shelf, islands of glass (Launchpad, the apps and the Trash each on their own pill, like the top bar's floating style) or a full-width taskbar. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`), system actions (`restart`, `lock`, `empty trash`, `task manager`…), the time anywhere (`time in Tokyo`), paths (`~/Doc…`, `/etc`), web addresses (`github.com`) and the web. |
-| **Launchpad** | Full-screen grid of every app. |
+| **Rounded screen corners** | The display is shaped like modern hardware: four small surfaces round the corners of every monitor, without taking a single click. 0 to 24 px in Settings → Desktop & Dock. |
+| **Launchpad** | Full-screen grid of every app, in sections: Frequently Used (what Screen Time counted over the last week), then Internet, Office, Photos, Music & Video, Games, Development and Utilities, each alphabetical. Type to search instead. |
 | **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
 | **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
@@ -582,6 +583,15 @@ make run-uefi     # boot it in a QEMU window (UEFI)
 ```
 The first build downloads about 1.5 GB of packages and takes 20 to 40 minutes. Later builds
 reuse the root filesystem and the apt cache and take a few minutes.
+
+**On Windows with WSL 2**, keep the build's own directories on the Linux filesystem:
+
+```sh
+make iso WORKVOL=/var/tmp/aurora-work OUTDIR=/var/tmp/aurora-out
+```
+
+With a checkout under `/mnt/c`, `work/` lands on DrvFs, which has no Unix ownership, and
+`debootstrap` stops in stage 10 with "Tried to extract package, but tar failed".
 
 ### What happens during a build
 `make iso` builds the `aurora-os-builder` image from `build/Dockerfile`, then runs
@@ -1440,6 +1450,26 @@ set up a feature, and every place it appears has its own switch.
   arrows to expand or restore) instead of hiding it until hover as on a Mac, softer until
   the pointer is over them. The same design is drawn for labwc's fallback borders, GTK 4
   and GTK 3 apps; Wayfire prefers client-side decorations.
+- **The desktop stays dark, the apps follow you:** the top bar, the dock, Spotlight,
+  Launchpad, the Control Center and notifications are one dark glass over the wallpaper in
+  both styles, as GNOME's shell is. Light and Dark change the apps and the desktop widgets
+  (which have a light card of their own). Before, everything the shell drew by hand was dark
+  but the parts it drew with libadwaita were not, so choosing Light hung a white Control
+  Center off a black top bar.
+- **The accent can come from the wallpaper** (Settings → Appearance → Style → *Color from
+  the background*): `aurora/accent.py` reads the picture on screen at 64×64, gathers its
+  pixels into 18 hue buckets weighted by saturation, and takes the heaviest one; the color
+  is then pulled into a range that still carries white text (yellows and greens are brought
+  down further than blues), so no picture can produce an accent you can't read. It follows
+  the dynamic background through the day — blue at noon, rose at dusk — and a picture with
+  no real color leaves the chosen accent in place.
+- **Glass without a blur:** nothing blurs what is behind a surface — that needs the GPU, and
+  Aurora runs on software rendering in virtual machines. So the shell's glass is graded by
+  what can end up underneath: the top bar and the dock own their strip of screen and keep
+  their frosted look, while the surfaces a window can sit behind — Spotlight, the Control
+  Center, notifications, the on-screen indicators — are only just see-through, or the window
+  under them reads straight through their text. The Control Center used to show the desktop's
+  clock and calendar widgets through its own cards.
 - **Animations:** Wayfire's `animate` plugin handles application windows, including
   minimize and restore. GTK and Files retain their own content transitions
   (`gtk4-animations.css`). The Window animations switch controls both layers.

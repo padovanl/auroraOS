@@ -3,7 +3,9 @@
 @define-color aurora_violet #a970ff;
 @define-color aurora_rose #ff6f91;
 @define-color aurora_amber #ffa45c;
-@define-color shell_bg rgba(20, 16, 30, 0.86);
+/* Surfaces that windows can sit behind (notifications, the on-screen
+   indicators) are only just see-through: nothing blurs what's under them. */
+@define-color shell_bg rgba(20, 16, 30, 0.94);
 @define-color shell_fg #f2eefa;
 @define-color shell_border rgba(255, 255, 255, 0.08);
 @define-color shell_hover rgba(255, 255, 255, 0.09);
@@ -60,7 +62,7 @@ menubutton.panel-button > button {
   min-height: 22px;
   padding: 1px 9px;
   margin: 3px 0;
-  border-radius: 7px;
+  border-radius: 9px;
   color: @shell_fg;
   background: none;
   box-shadow: none;
@@ -81,7 +83,10 @@ menubutton.panel-button > button:checked {
   box-shadow: inset 0 1px alpha(#ffffff, 0.10);
 }
 
-.panel-logo image {
+/* The logo itself, by name. A popover is a child of its menu button in the
+   style tree, so ".panel-logo image" also painted every icon of the Aurora
+   menu amber, with the logo's rose glow around each. */
+.panel-logo-icon {
   color: @aurora_amber;
   -gtk-icon-shadow: 0 0 6px alpha(@aurora_rose, 0.6);
 }
@@ -108,11 +113,13 @@ menubutton.panel-button > button:checked {
   border-radius: 28px;
   padding: 0;
 }
-/* Control Center: dark frosted glass, a hairline edge. */
+/* Control Center: dark frosted glass, a hairline edge. Barely see-through:
+   with no blur behind it, the clock and calendar widgets on the desktop were
+   legible straight through its cards. */
 .aurora-quicksettings > contents {
   padding: 4px;
   border-radius: 26px;
-  background-color: alpha(@window_bg_color, 0.82);
+  background-color: alpha(@window_bg_color, 0.94);
   border: 1px solid alpha(white, 0.10);
   box-shadow: 0 20px 50px alpha(black, 0.40), inset 0 1px 0 alpha(white, 0.06);
 }
@@ -237,19 +244,35 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 /* ---- Dock ---- */
 
+/* The same glass as the top bar's islands, a touch more see-through: the dock
+   sits on the wallpaper, and nothing but the wallpaper goes under it. */
 .aurora-dock .dock-box {
-  background-color: rgba(34, 28, 48, 0.62);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(22, 18, 34, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.aurora-dock.dock-floating .dock-box { border-radius: 22px; }
+.aurora-dock.dock-floating .dock-box { border-radius: 26px; }
 .aurora-dock.dock-panel .dock-box { border-radius: 0; box-shadow: none; }
 .aurora-dock.dock-panel.dock-bottom .dock-box { border-width: 1px 0 0 0; }
 .aurora-dock.dock-panel.dock-left .dock-box { border-width: 0 1px 0 0; }
 .aurora-dock.dock-panel.dock-right .dock-box { border-width: 0 0 0 1px; }
 
+/* Islands (Settings → Desktop & Dock → Dock → Style): the shelf is gone and
+   Launchpad, the apps and the Trash each sit on their own pill of frosted
+   glass, as the top bar's floating style does with its three groups. */
+.aurora-dock.dock-islands .dock-box {
+  background: none; border: none; box-shadow: none;
+}
+.aurora-dock.dock-islands .dock-island {
+  background-color: rgba(22, 18, 34, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .dock-row { margin: 6px; }
+.dock-islands-row { margin: 0; }
 
 .dock-item {
   padding: 4px 5px 1px 5px;
@@ -263,18 +286,28 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .dock-item:hover { background: none; }
 .dock-item.dock-drop-target { background-color: alpha(@aurora_violet, 0.28); border-radius: 12px; }
 .aurora-dock.dock-panel .dock-item:hover { background-color: @shell_hover; }
+/* Magnification turned off: nothing moves under the pointer, so the icon it
+   rests on is lit instead (a floating dock had no hover mark at all). */
+.aurora-dock.dock-still .dock-item:hover { background-color: @shell_hover; }
 .dock-item.launching image { opacity: 0.55; }
 .dock-launchpad image { color: @shell_fg; }
 
+/* One mark per open window: a dot, and a short bar in the accent color for
+   the window you're in. */
 .dock-dot {
-  min-width: 6px;
-  min-height: 6px;
+  min-width: 5px;
+  min-height: 5px;
   border-radius: 999px;
-  background-color: alpha(@shell_fg, 0.85);
-  box-shadow: 0 0 6px alpha(@shell_fg, 0.35);
+  background-color: alpha(@shell_fg, 0.55);
+  transition: min-width 140ms ease-out, min-height 140ms ease-out;
 }
 
-.dock-dot.active { background-color: @aurora_amber; }
+.dock-dot.active {
+  background-color: @aurora_violet;
+  box-shadow: 0 0 8px alpha(@aurora_violet, 0.55);
+}
+.dock-bottom .dock-dot.active { min-width: 15px; }
+.dock-left .dock-dot.active, .dock-right .dock-dot.active { min-height: 15px; }
 /* The windows of an app, shown while resting on its icon. */
 .dock-peek > contents { padding: 8px; border-radius: 16px; }
 .dock-peek-card { padding: 10px 12px; border-radius: 12px; }
@@ -292,26 +325,43 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 /* ---- Launcher: Spotlight and Launchpad ---- */
 
+/* Section titles, as quiet as the Control Center's. */
+.launcher-section-title {
+  font-size: 0.78em; font-weight: 700; letter-spacing: 0.06em;
+  opacity: 0.5; margin: 14px 18px 2px;
+}
+.launcher-sections > .launcher-section-title:first-child { margin-top: 0; }
+
 .aurora-launcher.mode-grid .launcher-backdrop {
   background-image: radial-gradient(circle at 50% 30%, rgba(46, 30, 72, 0.94), rgba(10, 6, 18, 0.97));
 }
 .aurora-launcher.mode-spotlight .launcher-backdrop { background-color: rgba(0, 0, 0, 0.18); }
 
+/* Spotlight: a bright edge and a soft highlight, like the Control Center, but
+   nearly opaque. Nothing blurs what's behind a surface here (that needs the
+   GPU, and Aurora runs on software rendering in virtual machines), so a
+   see-through panel lets the window under it read right through its results. */
 .aurora-launcher.mode-spotlight .launcher-root {
-  background-color: rgba(30, 25, 42, 0.985);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 18px;
-  padding: 10px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  background-color: rgba(30, 25, 42, 0.97);
+  border: 1px solid alpha(white, 0.12);
+  border-radius: 22px;
+  padding: 8px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 alpha(white, 0.07);
 }
 
 .launcher-search {
   min-height: 46px;
   font-size: 15pt;
-  border-radius: 12px;
+  border-radius: 999px;
   padding: 0 14px;
   background-color: transparent;
   color: @shell_fg;
+  box-shadow: none;
+}
+/* The field is the only thing there and always has the keyboard: a focus ring
+   around it was permanent decoration. */
+.aurora-launcher .launcher-search:focus-within {
+  outline: none;
   box-shadow: none;
 }
 
@@ -338,12 +388,15 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 }
 
 .launcher-result {
-  border-radius: 10px;
-  margin: 1px 0;
+  border-radius: 14px;
+  margin: 1px 2px;
 }
 
+/* The row you'd open: the accent, softly, with its own edge — not a solid
+   block of colour from side to side. */
 .launcher-result:selected {
-  background-color: alpha(@aurora_violet, 0.55);
+  background-color: alpha(@aurora_violet, 0.30);
+  box-shadow: inset 0 0 0 1px alpha(@aurora_violet, 0.45);
 }
 
 .result-title { font-weight: 600; font-size: 11pt; }
@@ -352,10 +405,10 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 .notification {
   background-color: @shell_bg;
-  border: 1px solid @shell_border;
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  border: 1px solid alpha(white, 0.10);
+  border-radius: 20px;
+  padding: 13px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 alpha(white, 0.06);
   color: @shell_fg;
 }
 
@@ -376,12 +429,18 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   padding: 12px 20px;
 }
 
-.aurora-osd levelbar block.filled {
-  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+.aurora-osd levelbar block {
+  min-height: 6px;
   border-radius: 999px;
 }
 
-.aurora-osd levelbar block.empty { border-radius: 999px; }
+.aurora-osd levelbar block.filled {
+  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+}
+
+/* The rest of the way: a track, as in the Control Center's sliders. At zero
+   (or muted) the indicator was an empty outline with nothing to read. */
+.aurora-osd levelbar block.empty { background-color: alpha(@shell_fg, 0.18); }
 
 /* ---- Desktop icons ---- */
 
@@ -499,23 +558,33 @@ window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-hei
 /* ---- Aurora Assistant button in the top bar ---- */
 .panel-assistant image { color: #d9b8ff; }
 .panel-assistant:hover image { color: #ffffff; }
+/* Right-click menus from the shell (desktop icons, the dock, Launchpad): the
+   same surface and rounding as the rest of the shell, in the accent on hover,
+   instead of a grey of their own. */
 popover.aurora-context-menu contents {
   padding: 6px;
-  border-radius: 10px;
-  background: #292b30;
-  color: #d6d8dd;
-  border: 1px solid #454850;
-  box-shadow: 0 10px 28px alpha(#000000, 0.4);
+  border-radius: 16px;
+  background-color: @shell_bg;
+  color: @shell_fg;
+  border: 1px solid alpha(white, 0.10);
+  box-shadow: 0 16px 40px alpha(black, 0.45), inset 0 1px 0 alpha(white, 0.06);
 }
-popover.aurora-context-menu separator { background: #41444b; margin: 6px 10px; min-height: 1px; }
-popover.aurora-context-menu button.model { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
+popover.aurora-context-menu separator {
+  background-color: alpha(@shell_fg, 0.14); margin: 6px 10px; min-height: 1px;
+}
+popover.aurora-context-menu button.model,
+popover.aurora-context-menu button.context-action {
+  margin: 2px 0; min-height: 32px; padding: 5px 12px;
+  border-radius: 10px; color: @shell_fg; font-weight: 500;
+}
 popover.aurora-context-menu button.model:hover,
-popover.aurora-context-menu button.model:focus-visible { background-color: #414650; color: #ffffff; }
-popover.aurora-context-menu button.model:disabled { color: #868b94; }
-popover.aurora-context-menu button.context-action { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
+popover.aurora-context-menu button.model:focus-visible,
 popover.aurora-context-menu button.context-action:hover,
-popover.aurora-context-menu button.context-action:focus-visible { background-color: #414650; color: #ffffff; }
-popover.aurora-context-menu button.context-action:disabled { color: #868b94; }
+popover.aurora-context-menu button.context-action:focus-visible {
+  background-color: alpha(@aurora_violet, 0.30); color: #ffffff;
+}
+popover.aurora-context-menu button.model:disabled,
+popover.aurora-context-menu button.context-action:disabled { color: alpha(@shell_fg, 0.45); }
 
 /* ---- Keyboard shortcuts overlay (Super+/) ---- */
 window.aurora-shortcuts { background: rgba(8, 6, 14, 0.55); }
@@ -565,10 +634,15 @@ window.aurora-shortcuts { background: rgba(8, 6, 14, 0.55); }
   background-color: alpha(@accent_bg_color, 0.12);
 }
 
+/* The same small label as the Control Center's and Launchpad's titles, in the
+   accent color — lightened on the dark card, where the accent alone sank into
+   the wallpaper showing through it. */
 .desktop-widget .widget-title {
-  font-size: 0.78em; font-weight: 800; letter-spacing: 0.08em;
-  color: @accent_bg_color;
+  font-size: 0.78em; font-weight: 700; letter-spacing: 0.06em;
+  color: mix(@accent_bg_color, #ffffff, 0.45);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
 }
+.desktop-widget.light .widget-title { color: @accent_bg_color; text-shadow: none; }
 .desktop-widget .widget-caption { font-size: 0.86em; opacity: 0.72; }
 .desktop-widget .widget-big { font-size: 2.3em; font-weight: 300; }
 .desktop-widget .widget-time { font-size: 1.5em; font-weight: 600; }

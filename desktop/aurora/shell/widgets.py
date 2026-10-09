@@ -23,8 +23,7 @@ import uuid
 import gi
 
 gi.require_version("Gtk", "4.0")
-gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, GLib, Gtk, Pango  # noqa: E402
+from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
 
 from aurora import apps, settings  # noqa: E402
 from aurora.i18n import N_, _  # noqa: E402
@@ -1067,11 +1066,10 @@ class WidgetLayer:
         for prop in ("geometry", "scale-factor", "scale"):
             if monitor.find_property(prop) is not None:
                 monitor.connect(f"notify::{prop}", lambda *_: self._relayout_soon())
-        style = Adw.StyleManager.get_default()
-        style.connect("notify::dark", lambda *_: self._restyle())
         iface = settings.interface()
         if iface is not None:
-            iface.connect("changed::accent-color", lambda *_: self._restyle())
+            for key in ("accent-color", "color-scheme"):
+                iface.connect(f"changed::{key}", lambda *_: self._restyle())
         if self.s is not None:
             self.s.connect("changed::desktop-widgets", lambda *_: self.reload())
             self.s.connect("changed::desktop-widget-list", lambda *_: self._external_change())
@@ -1522,7 +1520,10 @@ class WidgetLayer:
 
     # style and schedules
     def _restyle(self):
-        light = not Adw.StyleManager.get_default().get_dark()
+        # The style the user chose, not the one the shell draws itself with
+        # (which is always dark).
+        from aurora import look
+        light = not look.is_dark()
         for widget in self.widgets:
             (widget.card.add_css_class if light else widget.card.remove_css_class)("light")
             widget.restyle()

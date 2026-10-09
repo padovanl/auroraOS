@@ -342,7 +342,10 @@ class Dock(LayerWindow):
         self.position = cfg["position"] if cfg["position"] in ("bottom", "left", "right") \
             else "bottom"
         self.vertical = self.position in ("left", "right")
-        self.floating = cfg["style"] == "floating"
+        # Islands are the floating dock split in three pills of glass, so they
+        # share all of its geometry: held off the edge, centered, magnifying.
+        self.islands = cfg["style"] == "islands"
+        self.floating = self.islands or cfg["style"] == "floating"
         self.icon_size = cfg["size"]
         self.magnify = cfg["magnify"] and self.floating
         self.autohide = cfg["autohide"]
@@ -355,6 +358,11 @@ class Dock(LayerWindow):
                          anchors=(self.position,) + across, monitor=monitor, exclusive=False)
         self.add_css_class("aurora-dock")
         self.add_css_class("dock-floating" if self.floating else "dock-panel")
+        if self.islands:
+            self.add_css_class("dock-islands")
+        if not self.magnify:
+            # Nothing grows under the pointer: the icon it rests on is lit instead.
+            self.add_css_class("dock-still")
         self.add_css_class(f"dock-{self.position}")
         self.shell = shell
         self._primary = monitor == shell.get_primary_monitor()
@@ -369,7 +377,10 @@ class Dock(LayerWindow):
         # The shelf (background) keeps its resting size; the icon row sits on
         # top of it and may grow past it while magnified.
         orient = Gtk.Orientation.VERTICAL if self.vertical else Gtk.Orientation.HORIZONTAL
-        self.box = Gtk.Box(orientation=orient, spacing=4, css_classes=["dock-row"])
+        # One row of icons on the shelf, or (islands) a row of pills, each with
+        # its own row of icons: the gap between the pills replaces the shelf.
+        self.box = Gtk.Box(orientation=orient, spacing=10 if self.islands else 4,
+                           css_classes=["dock-islands-row" if self.islands else "dock-row"])
         self.bar_thickness = self.icon_size + BAR_PADDING
         self.shelf = Gtk.Box(css_classes=["dock-box"])
         self.body = Gtk.Overlay(child=self.shelf)
@@ -500,6 +511,28 @@ class Dock(LayerWindow):
         return Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL if self.vertical
                              else Gtk.Orientation.VERTICAL, css_classes=["dock-separator"])
 
+    def _island(self):
+        """One pill of frosted glass holding its own row of icons.
+
+        Built like the dock itself: the glass keeps the resting thickness while
+        the icons on it may grow past it under the pointer."""
+        orient = Gtk.Orientation.VERTICAL if self.vertical else Gtk.Orientation.HORIZONTAL
+        row = Gtk.Box(orientation=orient, spacing=4, css_classes=["dock-row"])
+        glass = Gtk.Box(css_classes=["dock-island"])
+        if self.vertical:
+            edge = Gtk.Align.START if self.position == "left" else Gtk.Align.END
+            glass.set_size_request(self.bar_thickness, -1)
+            glass.set_halign(edge)
+            row.set_halign(edge)
+        else:
+            glass.set_size_request(-1, self.bar_thickness)
+            glass.set_valign(Gtk.Align.END)
+            row.set_valign(Gtk.Align.END)
+        island = Gtk.Overlay(child=glass)
+        island.add_overlay(row)
+        island.set_measure_overlay(row, True)
+        return island, row
+
     def rebuild(self):
         order, entries = [], {}
         for fav in self.favorites():
@@ -516,9 +549,21 @@ class Dock(LayerWindow):
                 order.append(key)
             entries[key][2].append(t)
 
+        # An item kept for the new dock leaves its row by name: rows nested in
+        # an island are thrown away with it, and a kept item would still point
+        # at one.
+        for item in self._items.values():
+            parent = item.get_parent()
+            if parent is not None:
+                parent.remove(item)
         while (c := self.box.get_first_child()) is not None:
             self.box.remove(c)
         old, self._items = self._items, {}
+
+        # Launchpad, the apps and the Trash: one island of glass each in the
+        # islands style, otherwise the three of them in one row on the shelf.
+        parts = [self._island() if self.islands else (None, self.box) for _ in range(3)]
+        first, middle, last = (row for _glass, row in parts)
 
         launchpad = old.get("launchpad") or DockItem(self, "launchpad",
                                                      icon="view-app-grid-symbolic",
@@ -527,24 +572,29 @@ class Dock(LayerWindow):
             launchpad.add_css_class("dock-launchpad")
             launchpad.connect("clicked", lambda *_: self.shell.launcher.toggle("grid"))
         self._items["launchpad"] = launchpad
-        self.box.append(launchpad)
+        first.append(launchpad)
 
         for i, key in enumerate(order):
             if i == pinned_count and pinned_count:
-                self.box.append(self._separator())
+                middle.append(self._separator())
             app, pinned, windows = entries[key]
             item = old.get(key)
             if item is None or item.pinned != pinned or isinstance(item, TrashItem):
                 item = DockItem(self, key, app, pinned)
             item.set_windows(sorted(windows, key=lambda w: w.serial, reverse=True))
             self._items[key] = item
-            self.box.append(item)
+            middle.append(item)
 
         if self.show_trash:
-            self.box.append(self._separator())
+            if not self.islands:        # the gap between islands separates them
+                last.append(self._separator())
             trash = old.get("trash") or TrashItem(self)
             self._items["trash"] = trash
-            self.box.append(trash)
+            last.append(trash)
+
+        for island, row in parts:
+            if island is not None and row.get_first_child() is not None:
+                self.box.append(island)
         # The dock changed under the pointer: magnify from where the pointer is
         # now, or not at all (the leave event may never come).
         GLib.idle_add(self._refresh_magnification)
@@ -690,6 +740,28 @@ class Dock(LayerWindow):
 
     # --- geometry ---
 
+    def _input_rect(self, bounds, w, h):
+        """Where one drawn part of the dock takes the pointer: its own box, the
+        gap to the screen edge behind it (so the pointer can't slip through),
+        and the room a magnified icon grows into."""
+        x, y = bounds.get_x(), bounds.get_y()
+        bw, bh = bounds.get_width(), bounds.get_height()
+        if self.position == "bottom":
+            rect = (x, y, bw, h - y)
+        elif self.position == "left":
+            rect = (0, y, x + bw, bh)
+        else:
+            rect = (x, y, w - x, bh)
+        if self.magnify:
+            grow = int(self.icon_size * (MAX_SCALE - 1))
+            if self.position == "bottom":
+                rect = (rect[0], max(0, rect[1] - grow), rect[2], rect[3] + grow)
+            elif self.position == "left":
+                rect = (rect[0], rect[1], rect[2] + grow, rect[3])
+            else:
+                rect = (max(0, rect[0] - grow), rect[1], rect[2] + grow, rect[3])
+        return rect
+
     def _update_geometry(self):
         """Exclusive zone for the resting bar; input only where the dock is drawn."""
         margin = EDGE_MARGIN if self.floating else 0
@@ -703,32 +775,32 @@ class Dock(LayerWindow):
         w, h = self.get_width(), self.get_height()
         if self._hidden or not self.revealer.get_child_revealed():
             if self.position == "bottom":
-                rect = (0, h - HOT_EDGE, w, HOT_EDGE)
+                rects = [(0, h - HOT_EDGE, w, HOT_EDGE)]
             elif self.position == "left":
-                rect = (0, 0, HOT_EDGE, h)
+                rects = [(0, 0, HOT_EDGE, h)]
             else:
-                rect = (w - HOT_EDGE, 0, HOT_EDGE, h)
+                rects = [(w - HOT_EDGE, 0, HOT_EDGE, h)]
         else:
-            ok, b = self.body.compute_bounds(self)
-            if not ok:
-                return GLib.SOURCE_REMOVE
-            x, y, bw, bh = b.get_x(), b.get_y(), b.get_width(), b.get_height()
-            # Include the gap to the screen edge so the pointer can't slip through.
-            if self.position == "bottom":
-                rect = (x, y, bw, h - y)
-            elif self.position == "left":
-                rect = (0, y, x + bw, bh)
-            else:
-                rect = (x, y, w - x, bh)
-            if self.magnify:
-                grow = int(self.icon_size * (MAX_SCALE - 1))
-                if self.position == "bottom":
-                    rect = (rect[0], max(0, rect[1] - grow), rect[2], rect[3] + grow)
-                elif self.position == "left":
-                    rect = (rect[0], rect[1], rect[2] + grow, rect[3])
-                else:
-                    rect = (max(0, rect[0] - grow), rect[1], rect[2] + grow, rect[3])
-        region = cairo.Region(cairo.RectangleInt(*[int(v) for v in rect]))
+            # One rectangle per island, so the gaps between the pills are not
+            # the dock: a click there reaches the window or the desktop under
+            # it. Any other style is one rectangle, the whole dock.
+            parts = []
+            if self.islands:
+                child = self.box.get_first_child()
+                while child is not None:
+                    ok, b = child.compute_bounds(self)
+                    if ok and b.get_width() > 0:
+                        parts.append(b)
+                    child = child.get_next_sibling()
+            if not parts:
+                ok, b = self.body.compute_bounds(self)
+                if not ok:
+                    return GLib.SOURCE_REMOVE
+                parts = [b]
+            rects = [self._input_rect(b, w, h) for b in parts]
+        region = cairo.Region()
+        for rect in rects:
+            region.union(cairo.RectangleInt(*[int(v) for v in rect]))
         surface.set_input_region(region)
         self.publish()
         return GLib.SOURCE_REMOVE

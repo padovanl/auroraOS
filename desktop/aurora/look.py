@@ -50,6 +50,19 @@ ACCENT_HEX = {
 }
 
 
+def accent_hex():
+    """The accent color as a hex: the one chosen in Settings, or the one taken
+    from the background picture when Appearance asks for that."""
+    s, iface = settings.get(), settings.interface()
+    if s is not None and s.get_boolean("accent-from-wallpaper"):
+        from aurora import accent
+        found = accent.current()
+        if found:
+            return found
+    name = iface.get_string("accent-color") if iface is not None else "purple"
+    return ACCENT_HEX.get(name, ACCENT_HEX["purple"])
+
+
 def is_dark():
     iface = settings.interface()
     return iface is None or iface.get_string("color-scheme") == "prefer-dark"
@@ -78,8 +91,7 @@ def sync_gtk_theme():
         wanted = variants[family][1 if is_dark() else 0]
         if icons != wanted:
             iface.set_string("icon-theme", wanted)
-    accent = ("#000000" if high_contrast else
-              ACCENT_HEX.get(iface.get_string("accent-color"), ACCENT_HEX["purple"]))
+    accent = "#000000" if high_contrast else accent_hex()
     path = os.path.expanduser("~/.config/aurora/gtk-accent.css")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
@@ -99,9 +111,13 @@ def apply_gtk(s):
         if version == "4" and s.get_boolean("window-animations"):
             imports.append(data_path("gtk", "gtk4-animations.css"))
         # Corner radius from Settings, for the windows apps draw themselves
-        # (libadwaita's variable; GTK 3's decoration and title bar).
+        # (libadwaita's variable; GTK 3's decoration and title bar). The rule
+        # comes after the imports on purpose: gtk4-base.css rounds every window
+        # by itself, and the setting has to win over it.
         radius = s.get_int("window-corner-radius")
-        rules = (f":root {{ --window-radius: {radius}px; }}\n" if version == "4" else
+        rules = (f":root {{ --window-radius: {radius}px; }}\n"
+                 f"window.csd, window.csd > .titlebar {{ border-radius: {radius}px; }}\n"
+                 if version == "4" else
                  f"decoration, window.csd, window.csd > .titlebar {{ "
                  f"border-top-left-radius: {radius}px; border-top-right-radius: {radius}px; }}\n")
         _write_gtk_css(version, [i for i in imports if os.path.exists(i) or "gtk-accent" in i],

@@ -7,7 +7,7 @@ screen recording (with detail lists where it makes sense); media controls;
 battery, screenshot, settings, lock and the power menu.
 """
 
-from gi.repository import Adw, Gdk, GLib, Gtk, Pango
+from gi.repository import Gdk, GLib, Gtk, Pango
 
 from aurora import settings
 from aurora.i18n import _
@@ -307,8 +307,6 @@ class QuickSettings(Gtk.Popover):
             svc.connect("changed", lambda *a: self.get_visible() and self.refresh())
         if iface is not None:
             iface.connect("changed::color-scheme", lambda *a: self.get_visible() and self.refresh())
-        Adw.StyleManager.get_default().connect(
-            "notify::dark", lambda *a: self.get_visible() and self.refresh())
         self.connect("show", lambda *_: self._on_show())
 
     # --- actions ---
@@ -556,7 +554,8 @@ class QuickSettings(Gtk.Popover):
         night = s is not None and s.get_boolean("night-light")
         self.t_night.set_state(night, _("Not supported here")
                                if night and night_light_unsupported() else None)
-        self.t_dark.set_state(Adw.StyleManager.get_default().get_dark())
+        from aurora import look
+        self.t_dark.set_state(look.is_dark())
         self.t_dnd.set_state(s is not None and s.get_boolean("do-not-disturb"))
         self.t_awake.set_state(sh.keep_awake.active,
                                _("Screen stays on") if sh.keep_awake.active else None)

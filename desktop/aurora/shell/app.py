@@ -129,6 +129,8 @@ class Shell(Adw.Application):
         self.sysnotify = SystemNotifications(self)
         self._night_light_warned = False
         self.daycycle.connect("night-light-unsupported", self._on_night_light_unsupported)
+        # With the accent taken from the background, it follows the picture.
+        self.daycycle.connect("wallpaper-changed", lambda *a: self._later(self._accent_changed))
         GLib.idle_add(self._notify_compositor_fallback)
         from aurora.shell.keepawake import KeepAwake
         self.keep_awake = KeepAwake()
@@ -150,11 +152,13 @@ class Shell(Adw.Application):
         self.docks = PerMonitor(lambda m: Dock(self, m))
         self._startup_cursor_source = 0
         from aurora.shell.hotcorners import HotCorners
+        from aurora.shell.screencorners import ScreenCorners
         from aurora.shell.overview import Overview
         self.overview = Overview(self)
         from aurora.shell.snap import SnapOverlay
         self.snap = SnapOverlay(self)
         self.hotcorners = PerMonitor(lambda m: HotCorners(self, m))
+        self.screencorners = PerMonitor(lambda m: ScreenCorners(self, m))
 
         s = settings.get()
         if s:
@@ -167,6 +171,10 @@ class Shell(Adw.Application):
             for corner in ("top-left", "top-right", "bottom-left", "bottom-right"):
                 s.connect(f"changed::hot-corner-{corner}",
                           lambda *a: self._later(self.hotcorners.rebuild))
+            s.connect("changed::screen-corner-radius",
+                      lambda *a: self._later(self._reshape_screen))
+            s.connect("changed::accent-from-wallpaper",
+                      lambda *a: self._later(self._accent_switched))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -187,7 +195,6 @@ class Shell(Adw.Application):
             from aurora import look
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
-            iface.connect("changed::color-scheme", lambda *a: self._sync_style())
             iface.connect("changed::accent-color", lambda *a: self._load_css())
             look.apply()
         # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
@@ -245,12 +252,40 @@ class Shell(Adw.Application):
         pending[key] = fn
         GLib.timeout_add(150, run)
 
+    def _accent_switched(self):
+        """Settings → Appearance turned the wallpaper accent on or off: the
+        chosen accent comes back when it goes off, so this one always applies."""
+        from aurora import look
+        look.apply()
+        self._load_css()
+
+    def _accent_changed(self):
+        """A new background, or a different way of choosing the accent."""
+        s = settings.get()
+        if s is None or not s.get_boolean("accent-from-wallpaper"):
+            return
+        from aurora import look
+        look.apply()
+        self._load_css()
+
+    def _reshape_screen(self):
+        self._update_dynamic_css()
+        self.screencorners.rebuild()
+
     def _update_dynamic_css(self):
         s = settings.get()
         opacity = s.get_double("panel-opacity") if s else 0.78
         css = (f".aurora-panel.panel-bar-style .panel-bar, "
                f".aurora-panel.panel-floating .panel-island "
                f"{{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}")
+        # The rounded screen corners: black outside a quarter circle, one
+        # surface per corner, so the radius has to reach the stylesheet.
+        r = s.get_int("screen-corner-radius") if s else 0
+        if r > 0:
+            for corner, at in (("top-left", "100% 100%"), ("top-right", "0% 100%"),
+                               ("bottom-left", "100% 0%"), ("bottom-right", "0% 0%")):
+                css += (f"\n.screen-corner-{corner} {{ background-image: radial-gradient("
+                        f"circle at {at}, transparent {r - 1}px, #000000 {r}px); }}")
         if not hasattr(self, "_dyn_css"):
             self._dyn_css = Gtk.CssProvider()
             Gtk.StyleContext.add_provider_for_display(
@@ -279,10 +314,8 @@ class Shell(Adw.Application):
     def _load_css(self):
         path = data_path("style", "shell.css")
         if os.path.exists(path):
-            from aurora.look import ACCENT_HEX
-            iface = settings.interface()
-            accent = (ACCENT_HEX.get(iface.get_string("accent-color"), "#a970ff")
-                      if iface else "#a970ff")
+            from aurora import look
+            accent = look.accent_hex()
             with open(path, encoding="utf-8") as f:
                 css = f.read().replace("@define-color aurora_violet #a970ff;",
                                        f"@define-color aurora_violet {accent};")
@@ -295,10 +328,16 @@ class Shell(Adw.Application):
 
     @staticmethod
     def _sync_style():
-        iface = settings.interface()
-        dark = iface is not None and iface.get_string("color-scheme") == "prefer-dark"
-        Adw.StyleManager.get_default().set_color_scheme(
-            Adw.ColorScheme.FORCE_DARK if dark else Adw.ColorScheme.FORCE_LIGHT)
+        """The shell's own surfaces are dark whatever style the apps follow.
+
+        Everything the shell draws by hand — the top bar, the dock, Spotlight,
+        notifications — is dark glass on the wallpaper. What it draws with
+        libadwaita (the Control Center, the Aurora menu, the calendar) used to
+        follow the light style with the apps, so choosing Light hung a white
+        panel off a black top bar. The style the user chose still reaches
+        everything that should follow it, from the setting itself (look.is_dark).
+        """
+        Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.FORCE_DARK)
 
     @staticmethod
     def _enable_terminal_opacity():

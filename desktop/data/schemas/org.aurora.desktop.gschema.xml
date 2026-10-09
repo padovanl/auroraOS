@@ -144,6 +144,12 @@
       <default>[]</default>
       <summary>Background pictures chosen lately, newest first</summary>
     </key>
+    <key name="accent-from-wallpaper" type="b">
+      <default>false</default>
+      <summary>Take the accent color from the background picture</summary>
+      <description>The most vivid color of the picture on screen becomes the accent,
+      instead of one of the nine fixed ones; it follows the background through the day.</description>
+    </key>
     <key name="color-scheme-auto" type="b">
       <default>false</default>
       <summary>Switch between light and dark style at sunrise and sunset</summary>
@@ -244,9 +250,11 @@
       <summary>Dock position</summary>
     </key>
     <key name="dock-style" type="s">
-      <choices><choice value="floating"/><choice value="panel"/></choices>
+      <choices><choice value="floating"/><choice value="islands"/><choice value="panel"/></choices>
       <default>'floating'</default>
-      <summary>Floating dock, or a full-width taskbar</summary>
+      <summary>One floating shelf, islands of frosted glass, or a full-width taskbar</summary>
+      <description>Islands split the dock the way the top bar's floating style splits it:
+      Launchpad, the apps and the Trash each get their own pill of glass.</description>
     </key>
     <key name="dock-icon-size" type="i">
       <range min="24" max="80"/>
@@ -277,8 +285,15 @@
     </key>
     <key name="window-corner-radius" type="i">
       <range min="0" max="18"/>
-      <default>12</default>
+      <default>14</default>
       <summary>Window corner radius</summary>
+    </key>
+    <key name="screen-corner-radius" type="i">
+      <range min="0" max="24"/>
+      <default>14</default>
+      <summary>Rounded corners of the screen itself, in pixels (0: square)</summary>
+      <description>Four small surfaces paint the corners of every monitor black outside
+      a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
     </key>
     <key name="window-gaps" type="i">
       <range min="0" max="24"/>

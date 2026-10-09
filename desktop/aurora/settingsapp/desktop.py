@@ -176,7 +176,8 @@ class Desktop(Page):
                     [("bottom", _("Bottom")), ("left", _("Left")), ("right", _("Right")),
                      ("hidden", _("Hidden"))])
         self._combo(dock, _("Style"), "dock-style",
-                    [("floating", _("Floating")), ("panel", _("Full-width panel"))])
+                    [("floating", _("Floating")), ("islands", _("Islands")),
+                     ("panel", _("Full-width panel"))])
         self._scale(dock, _("Icon size"), "dock-icon-size", 24, 80, 2)
         self._switch(dock, _("Magnify icons on hover"), "dock-magnification")
         self._switch(dock, _("Automatically hide"), "dock-autohide")
@@ -191,6 +192,7 @@ class Desktop(Page):
         self._scale(win, _("Gaps around snapped windows"), "window-gaps", 0, 24, 1)
 
         desk = self.group(_("Desktop"))
+        self._scale(desk, _("Rounded screen corners"), "screen-corner-radius", 0, 24, 1)
         self._switch(desk, _("Show files from the Desktop folder"), "desktop-icons")
         self._combo(desk, _("Icon position"), "desktop-icons-position",
                     [("left", _("Top left")), ("right", _("Top right"))])
@@ -251,6 +253,10 @@ class Desktop(Page):
         scale.set_draw_value(True)
         scale.set_value_pos(Gtk.PositionType.LEFT)
         scale.set_digits(2 if double else 0)
+        # With its unit: the opacity read "0.78", the sizes a bare number.
+        if hasattr(scale, "set_format_value_func"):
+            scale.set_format_value_func(
+                (lambda _s, v: f"{v * 100:.0f}%") if double else (lambda _s, v: f"{int(v)} px"))
 
         def changed(sc):
             if double:

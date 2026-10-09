@@ -4,7 +4,7 @@ import os
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
-from aurora import settings
+from aurora import look, settings
 from aurora.i18n import N_, _
 from aurora.settingsapp.util import Page, combo_row, switch_row
 
@@ -91,6 +91,19 @@ class Appearance(Page):
         accent_row.add_suffix(accent_box)
         style.add(accent_row)
         self._install_swatch_css()
+
+        # The accent taken from the picture on screen, Material You style: it
+        # follows the background through the day. The nine fixed colors above
+        # are greyed out while it is on, since they no longer decide anything.
+        if aurora is not None:
+            from_wall = switch_row(
+                _("Color from the background"),
+                aurora.get_boolean("accent-from-wallpaper"),
+                subtitle=_("The most vivid color of your background becomes the accent"),
+                on_change=lambda v: (aurora.set_boolean("accent-from-wallpaper", v),
+                                     accent_row.set_sensitive(not v), look.apply())[0])
+            accent_row.set_sensitive(not aurora.get_boolean("accent-from-wallpaper"))
+            style.add(from_wall)
 
         icons = installed_themes("icons") or [("Adwaita", "Adwaita")]
         icon_ids = [t[0] for t in icons]
