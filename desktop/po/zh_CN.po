@@ -181,7 +181,7 @@ msgid "Stop generating"
 msgstr "停止生成"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:777
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:795
 #: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "写作工具"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:627
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:645
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -447,7 +447,7 @@ msgstr "保存此工作区中已打开窗口的位置"
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:505 aurora/settingsapp/system.py:579
 #: aurora/settingsapp/system.py:666 aurora/settingsapp/system.py:685
-#: aurora/shell/app.py:529 aurora/shell/desktopicons.py:191
+#: aurora/shell/app.py:547 aurora/shell/desktopicons.py:191
 msgid "Cancel"
 msgstr "取消"
 
@@ -1061,7 +1061,7 @@ msgstr "小"
 msgid "Medium (1366 px)"
 msgstr "中 (1366 px)"
 
-#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:152
+#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:165
 #: aurora/settingsapp/applications.py:187
 msgid "Medium"
 msgstr "中等"
@@ -1430,7 +1430,7 @@ msgstr "发送给 Aurora AI 之前请检查更改。"
 msgid "Loading…"
 msgstr "正在加载…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:781
+#: aurora/files/window.py:1352 aurora/shell/app.py:799
 msgid "Ask Aurora"
 msgstr "问问 Aurora"
 
@@ -2102,171 +2102,179 @@ msgstr "“自动”会在日落时切换为深色，日出时切回浅色"
 msgid "Accent color"
 msgstr "强调色"
 
-#: aurora/settingsapp/appearance.py:98
+#: aurora/settingsapp/appearance.py:100
+msgid "Color from the background"
+msgstr "取自背景的颜色"
+
+#: aurora/settingsapp/appearance.py:102
+msgid "The most vivid color of your background becomes the accent"
+msgstr "以背景中最鲜艳的颜色作为强调色"
+
+#: aurora/settingsapp/appearance.py:111
 msgid "Icons"
 msgstr "图标"
 
-#: aurora/settingsapp/appearance.py:106
+#: aurora/settingsapp/appearance.py:119
 msgid "Pointer"
 msgstr "光标"
 
-#: aurora/settingsapp/appearance.py:112 aurora/settingsapp/applications.py:232
+#: aurora/settingsapp/appearance.py:125 aurora/settingsapp/applications.py:232
 msgid "Pointer size"
 msgstr "光标大小"
 
-#: aurora/settingsapp/appearance.py:116
+#: aurora/settingsapp/appearance.py:129
 msgid "Animations"
 msgstr "动画"
 
-#: aurora/settingsapp/appearance.py:124
+#: aurora/settingsapp/appearance.py:137
 msgid "Window animations"
 msgstr "窗口动画"
 
-#: aurora/settingsapp/appearance.py:126
+#: aurora/settingsapp/appearance.py:139
 msgid "Windows fade in as they open; files and folders float in as a folder opens"
 msgstr "窗口打开时淡入；打开文件夹时文件和文件夹依次浮现"
 
-#: aurora/settingsapp/appearance.py:129
+#: aurora/settingsapp/appearance.py:142
 msgid "Fonts"
 msgstr "字体"
 
-#: aurora/settingsapp/appearance.py:131
+#: aurora/settingsapp/appearance.py:144
 msgid "Interface"
 msgstr "界面"
 
-#: aurora/settingsapp/appearance.py:131 aurora/settingsapp/storage.py:19
+#: aurora/settingsapp/appearance.py:144 aurora/settingsapp/storage.py:19
 #: aurora/shell/morewidgets.py:406
 msgid "Documents"
 msgstr "文档"
 
-#: aurora/settingsapp/appearance.py:132
+#: aurora/settingsapp/appearance.py:145
 msgid "Monospace"
 msgstr "等宽"
 
-#: aurora/settingsapp/appearance.py:134
+#: aurora/settingsapp/appearance.py:147
 msgid "Scaling"
 msgstr "缩放"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:159
 msgid "Anti-aliasing"
 msgstr "抗锯齿"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:159
 msgid "Standard (grayscale)"
 msgstr "标准（灰度）"
 
-#: aurora/settingsapp/appearance.py:147
+#: aurora/settingsapp/appearance.py:160
 msgid "Subpixel (for LCD screens)"
 msgstr "次像素（适用于 LCD 屏幕）"
 
-#: aurora/settingsapp/appearance.py:147 aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:160 aurora/settingsapp/appearance.py:165
 #: aurora/settingsapp/inputs.py:198
 msgid "None"
 msgstr "无"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Hinting"
 msgstr "微调"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Slight"
 msgstr "轻微"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Full"
 msgstr "完全"
 
-#: aurora/settingsapp/appearance.py:158 aurora/settingsapp/appearance.py:159
+#: aurora/settingsapp/appearance.py:171 aurora/settingsapp/appearance.py:172
 #: aurora/shell/quicksettings.py:217
 msgid "Night Light"
 msgstr "夜灯"
 
-#: aurora/settingsapp/appearance.py:158
+#: aurora/settingsapp/appearance.py:171
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "暖色调在夜间更护眼。"
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:177
 msgid "Not available on this screen"
 msgstr "此屏幕不可用"
 
-#: aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:178
 msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
 msgstr "显卡驱动不允许更改颜色（虚拟机中很常见）。"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Schedule"
 msgstr "计划"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Sunset to Sunrise"
 msgstr "日落到日出"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Manual"
 msgstr "手动"
 
-#: aurora/settingsapp/appearance.py:171
+#: aurora/settingsapp/appearance.py:184
 msgid "All the Time"
 msgstr "始终"
 
-#: aurora/settingsapp/appearance.py:173
+#: aurora/settingsapp/appearance.py:186
 msgid "Sunset and sunrise follow your time zone"
 msgstr "日落和日出时间根据你的时区计算"
 
-#: aurora/settingsapp/appearance.py:176 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "从"
 
-#: aurora/settingsapp/appearance.py:176 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "到"
 
-#: aurora/settingsapp/appearance.py:183
+#: aurora/settingsapp/appearance.py:196
 msgid "Color temperature"
 msgstr "色温"
 
-#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/inputs.py:360
+#: aurora/settingsapp/appearance.py:212 aurora/settingsapp/inputs.py:360
 #: aurora/shell/panel.py:349 aurora/shell/search.py:470
 msgid "Lock Screen"
 msgstr "锁定屏幕"
 
-#: aurora/settingsapp/appearance.py:201 aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/appearance.py:214 aurora/settingsapp/backgrounds.py:26
 msgid "Picture"
 msgstr "图片"
 
-#: aurora/settingsapp/appearance.py:211 aurora/settingsapp/backgrounds.py:166
+#: aurora/settingsapp/appearance.py:224 aurora/settingsapp/backgrounds.py:166
 msgid "Background"
 msgstr "背景"
 
-#: aurora/settingsapp/appearance.py:211
+#: aurora/settingsapp/appearance.py:224
 msgid "Same as the desktop"
 msgstr "与桌面相同"
 
-#: aurora/settingsapp/appearance.py:212
+#: aurora/settingsapp/appearance.py:225
 msgid "The desktop's, blurred"
 msgstr "桌面背景（模糊）"
 
-#: aurora/settingsapp/appearance.py:212
+#: aurora/settingsapp/appearance.py:225
 msgid "A picture"
 msgstr "图片"
 
-#: aurora/settingsapp/appearance.py:216
+#: aurora/settingsapp/appearance.py:229
 msgid "Show my name and picture"
 msgstr "显示我的名字和头像"
 
-#: aurora/settingsapp/appearance.py:219
+#: aurora/settingsapp/appearance.py:232
 msgid "Off: only the time, the date and the password field"
 msgstr "关闭：只显示时间、日期和密码框"
 
-#: aurora/settingsapp/appearance.py:225
+#: aurora/settingsapp/appearance.py:238
 msgid "Choose…"
 msgstr "选择…"
 
-#: aurora/settingsapp/appearance.py:228
+#: aurora/settingsapp/appearance.py:241
 msgid "Lock Screen Picture"
 msgstr "锁屏图片"
 
-#: aurora/settingsapp/appearance.py:229 aurora/settingsapp/backgrounds.py:397
+#: aurora/settingsapp/appearance.py:242 aurora/settingsapp/backgrounds.py:397
 #: aurora/settingsapp/system.py:553
 msgid "Images"
 msgstr "图片"
@@ -5134,140 +5142,140 @@ msgstr "实用工具"
 msgid "Opening App Center…"
 msgstr "正在打开应用中心…"
 
-#: aurora/shell/app.py:214
+#: aurora/shell/app.py:218
 msgid "Night Light can't change this screen's colors"
 msgstr "夜灯无法更改此屏幕的颜色"
 
-#: aurora/shell/app.py:215
+#: aurora/shell/app.py:219
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "显卡驱动不允许。这在虚拟机中很常见；在电脑上，请在 设置 → 更新 → 附加驱动 中安装显卡驱动。"
 
-#: aurora/shell/app.py:228
+#: aurora/shell/app.py:232
 msgid "Graphics fallback started"
 msgstr "已启动备用图形模式"
 
-#: aurora/shell/app.py:229
+#: aurora/shell/app.py:233
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire 无法启动。Aurora 已改为打开安全桌面。选择此通知查看启动报告。"
 
-#: aurora/shell/app.py:231
+#: aurora/shell/app.py:235
 msgid "Open System Health"
 msgstr "打开系统健康"
 
-#: aurora/shell/app.py:432
+#: aurora/shell/app.py:450
 msgid "Writing tools are off"
 msgstr "写作工具已关闭"
 
-#: aurora/shell/app.py:524
+#: aurora/shell/app.py:542
 msgid "Restart didn't happen"
 msgstr "没有重启"
 
-#: aurora/shell/app.py:524
+#: aurora/shell/app.py:542
 msgid "Shut down didn't happen"
 msgstr "没有关机"
 
-#: aurora/shell/app.py:525
+#: aurora/shell/app.py:543
 msgid "Sleep didn't happen"
 msgstr "没有进入睡眠"
 
-#: aurora/shell/app.py:526
+#: aurora/shell/app.py:544
 msgid "Restart Anyway"
 msgstr "仍然重启"
 
-#: aurora/shell/app.py:526
+#: aurora/shell/app.py:544
 msgid "Shut Down Anyway"
 msgstr "仍然关机"
 
-#: aurora/shell/app.py:527
+#: aurora/shell/app.py:545
 msgid "Sleep Anyway"
 msgstr "仍然睡眠"
 
-#: aurora/shell/app.py:624
+#: aurora/shell/app.py:642
 msgid "Always on Top"
 msgstr "始终置顶"
 
-#: aurora/shell/app.py:624
+#: aurora/shell/app.py:642
 msgid "Always on Top Off"
 msgstr "已取消置顶"
 
-#: aurora/shell/app.py:628
+#: aurora/shell/app.py:646
 msgid "Set it up in Settings → AI."
 msgstr "在“设置 → AI”中配置。"
 
-#: aurora/shell/app.py:634
+#: aurora/shell/app.py:652
 msgid "Dictation is off"
 msgstr "语音输入已关闭"
 
-#: aurora/shell/app.py:641
+#: aurora/shell/app.py:659
 msgid "Dictation isn't installed yet"
 msgstr "语音输入尚未安装"
 
-#: aurora/shell/app.py:645
+#: aurora/shell/app.py:663
 msgid "Listening… press Super+H to stop"
 msgstr "正在聆听… 按 Super+H 停止"
 
-#: aurora/shell/app.py:647
+#: aurora/shell/app.py:665
 msgid "Writing it down…"
 msgstr "正在转写…"
 
-#: aurora/shell/app.py:661
+#: aurora/shell/app.py:679
 msgid "Nothing was heard"
 msgstr "什么也没听到"
 
-#: aurora/shell/app.py:670
+#: aurora/shell/app.py:688
 msgid "Read aloud is off"
 msgstr "朗读已关闭"
 
-#: aurora/shell/app.py:677
+#: aurora/shell/app.py:695
 msgid "Select some text first"
 msgstr "请先选中一些文本"
 
-#: aurora/shell/app.py:751
+#: aurora/shell/app.py:769
 msgid "Screenshot captured"
 msgstr "已截图"
 
-#: aurora/shell/app.py:752
+#: aurora/shell/app.py:770
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "已保存到 {path} 并复制到剪贴板。"
 
-#: aurora/shell/app.py:777
+#: aurora/shell/app.py:795
 msgid "Pin to Screen"
 msgstr "固定到屏幕"
 
-#: aurora/shell/app.py:777
+#: aurora/shell/app.py:795
 msgid "Annotate"
 msgstr "标注"
 
-#: aurora/shell/app.py:778
+#: aurora/shell/app.py:796
 msgid "Copy Text"
 msgstr "复制文本"
 
-#: aurora/shell/app.py:846 aurora/shell/app.py:853
+#: aurora/shell/app.py:864 aurora/shell/app.py:871
 msgid "Text Recognition"
 msgstr "文字识别"
 
-#: aurora/shell/app.py:846
+#: aurora/shell/app.py:864
 msgid "No text found"
 msgstr "未找到文字"
 
-#: aurora/shell/app.py:847
+#: aurora/shell/app.py:865
 msgid "Try a larger or sharper area."
 msgstr "请尝试更大或更清晰的区域。"
 
-#: aurora/shell/app.py:853
+#: aurora/shell/app.py:871
 msgid "Text copied"
 msgstr "文本已复制"
 
-#: aurora/shell/app.py:908 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:926 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "屏幕录制"
 
-#: aurora/shell/app.py:908
+#: aurora/shell/app.py:926
 msgid "Screen recording saved"
 msgstr "屏幕录制已保存"
 
-#: aurora/shell/app.py:909
+#: aurora/shell/app.py:927
 msgid "Saved to {path}."
 msgstr "已保存到 {path}。"
 

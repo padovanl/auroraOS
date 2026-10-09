@@ -1457,6 +1457,13 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **The accent can come from the wallpaper** (Settings → Appearance → Style → *Color from
+  the background*): `aurora/accent.py` reads the picture on screen at 64×64, gathers its
+  pixels into 18 hue buckets weighted by saturation, and takes the heaviest one; the color
+  is then pulled into a range that still carries white text (yellows and greens are brought
+  down further than blues), so no picture can produce an accent you can't read. It follows
+  the dynamic background through the day — blue at noon, rose at dusk — and a picture with
+  no real color leaves the chosen accent in place.
 - **Glass without a blur:** nothing blurs what is behind a surface — that needs the GPU, and
   Aurora runs on software rendering in virtual machines. So the shell's glass is graded by
   what can end up underneath: the top bar and the dock own their strip of screen and keep

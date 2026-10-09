@@ -129,6 +129,8 @@ class Shell(Adw.Application):
         self.sysnotify = SystemNotifications(self)
         self._night_light_warned = False
         self.daycycle.connect("night-light-unsupported", self._on_night_light_unsupported)
+        # With the accent taken from the background, it follows the picture.
+        self.daycycle.connect("wallpaper-changed", lambda *a: self._later(self._accent_changed))
         GLib.idle_add(self._notify_compositor_fallback)
         from aurora.shell.keepawake import KeepAwake
         self.keep_awake = KeepAwake()
@@ -171,6 +173,8 @@ class Shell(Adw.Application):
                           lambda *a: self._later(self.hotcorners.rebuild))
             s.connect("changed::screen-corner-radius",
                       lambda *a: self._later(self._reshape_screen))
+            s.connect("changed::accent-from-wallpaper",
+                      lambda *a: self._later(self._accent_switched))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -248,6 +252,22 @@ class Shell(Adw.Application):
         pending[key] = fn
         GLib.timeout_add(150, run)
 
+    def _accent_switched(self):
+        """Settings → Appearance turned the wallpaper accent on or off: the
+        chosen accent comes back when it goes off, so this one always applies."""
+        from aurora import look
+        look.apply()
+        self._load_css()
+
+    def _accent_changed(self):
+        """A new background, or a different way of choosing the accent."""
+        s = settings.get()
+        if s is None or not s.get_boolean("accent-from-wallpaper"):
+            return
+        from aurora import look
+        look.apply()
+        self._load_css()
+
     def _reshape_screen(self):
         self._update_dynamic_css()
         self.screencorners.rebuild()
@@ -294,10 +314,8 @@ class Shell(Adw.Application):
     def _load_css(self):
         path = data_path("style", "shell.css")
         if os.path.exists(path):
-            from aurora.look import ACCENT_HEX
-            iface = settings.interface()
-            accent = (ACCENT_HEX.get(iface.get_string("accent-color"), "#a970ff")
-                      if iface else "#a970ff")
+            from aurora import look
+            accent = look.accent_hex()
             with open(path, encoding="utf-8") as f:
                 css = f.read().replace("@define-color aurora_violet #a970ff;",
                                        f"@define-color aurora_violet {accent};")

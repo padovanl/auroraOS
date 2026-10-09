@@ -181,7 +181,7 @@ msgid "Stop generating"
 msgstr "Interrompi la generazione"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:777
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:795
 #: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:326
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "Strumenti di scrittura"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:627
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:645
 msgid "Aurora AI"
 msgstr "Aurora IA"
 
@@ -447,7 +447,7 @@ msgstr "Salva la posizione delle finestre aperte per questa area di lavoro"
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:505 aurora/settingsapp/system.py:579
 #: aurora/settingsapp/system.py:666 aurora/settingsapp/system.py:685
-#: aurora/shell/app.py:529 aurora/shell/desktopicons.py:191
+#: aurora/shell/app.py:547 aurora/shell/desktopicons.py:191
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -1061,7 +1061,7 @@ msgstr "Piccola"
 msgid "Medium (1366 px)"
 msgstr "Media (1366 px)"
 
-#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:152
+#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:165
 #: aurora/settingsapp/applications.py:187
 msgid "Medium"
 msgstr "Medio"
@@ -1432,7 +1432,7 @@ msgstr "Controlla le modifiche prima di inviarle ad Aurora AI."
 msgid "Loading…"
 msgstr "Caricamento…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:781
+#: aurora/files/window.py:1352 aurora/shell/app.py:799
 msgid "Ask Aurora"
 msgstr "Chiedi ad Aurora"
 
@@ -2112,171 +2112,179 @@ msgstr "Automatico passa allo scuro al tramonto e torna chiaro all’alba"
 msgid "Accent color"
 msgstr "Colore di accento"
 
-#: aurora/settingsapp/appearance.py:98
+#: aurora/settingsapp/appearance.py:100
+msgid "Color from the background"
+msgstr "Colore dallo sfondo"
+
+#: aurora/settingsapp/appearance.py:102
+msgid "The most vivid color of your background becomes the accent"
+msgstr "Il colore più vivo dello sfondo diventa l'accento"
+
+#: aurora/settingsapp/appearance.py:111
 msgid "Icons"
 msgstr "Icone"
 
-#: aurora/settingsapp/appearance.py:106
+#: aurora/settingsapp/appearance.py:119
 msgid "Pointer"
 msgstr "Puntatore"
 
-#: aurora/settingsapp/appearance.py:112 aurora/settingsapp/applications.py:232
+#: aurora/settingsapp/appearance.py:125 aurora/settingsapp/applications.py:232
 msgid "Pointer size"
 msgstr "Dimensione del puntatore"
 
-#: aurora/settingsapp/appearance.py:116
+#: aurora/settingsapp/appearance.py:129
 msgid "Animations"
 msgstr "Animazioni"
 
-#: aurora/settingsapp/appearance.py:124
+#: aurora/settingsapp/appearance.py:137
 msgid "Window animations"
 msgstr "Animazioni delle finestre"
 
-#: aurora/settingsapp/appearance.py:126
+#: aurora/settingsapp/appearance.py:139
 msgid "Windows fade in as they open; files and folders float in as a folder opens"
 msgstr "Le finestre compaiono in dissolvenza; file e cartelle scorrono dentro quando apri una cartella"
 
-#: aurora/settingsapp/appearance.py:129
+#: aurora/settingsapp/appearance.py:142
 msgid "Fonts"
 msgstr "Caratteri"
 
-#: aurora/settingsapp/appearance.py:131
+#: aurora/settingsapp/appearance.py:144
 msgid "Interface"
 msgstr "Interfaccia"
 
-#: aurora/settingsapp/appearance.py:131 aurora/settingsapp/storage.py:19
+#: aurora/settingsapp/appearance.py:144 aurora/settingsapp/storage.py:19
 #: aurora/shell/morewidgets.py:406
 msgid "Documents"
 msgstr "Documenti"
 
-#: aurora/settingsapp/appearance.py:132
+#: aurora/settingsapp/appearance.py:145
 msgid "Monospace"
 msgstr "A spaziatura fissa"
 
-#: aurora/settingsapp/appearance.py:134
+#: aurora/settingsapp/appearance.py:147
 msgid "Scaling"
 msgstr "Ridimensionamento"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:159
 msgid "Anti-aliasing"
 msgstr "Antialiasing"
 
-#: aurora/settingsapp/appearance.py:146
+#: aurora/settingsapp/appearance.py:159
 msgid "Standard (grayscale)"
 msgstr "Standard (scala di grigi)"
 
-#: aurora/settingsapp/appearance.py:147
+#: aurora/settingsapp/appearance.py:160
 msgid "Subpixel (for LCD screens)"
 msgstr "Subpixel (per schermi LCD)"
 
-#: aurora/settingsapp/appearance.py:147 aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:160 aurora/settingsapp/appearance.py:165
 #: aurora/settingsapp/inputs.py:198
 msgid "None"
 msgstr "Nessuno"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Hinting"
 msgstr "Hinting"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Slight"
 msgstr "Leggero"
 
-#: aurora/settingsapp/appearance.py:152
+#: aurora/settingsapp/appearance.py:165
 msgid "Full"
 msgstr "Completo"
 
-#: aurora/settingsapp/appearance.py:158 aurora/settingsapp/appearance.py:159
+#: aurora/settingsapp/appearance.py:171 aurora/settingsapp/appearance.py:172
 #: aurora/shell/quicksettings.py:217
 msgid "Night Light"
 msgstr "Luce notturna"
 
-#: aurora/settingsapp/appearance.py:158
+#: aurora/settingsapp/appearance.py:171
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "I colori più caldi affaticano meno gli occhi di notte."
 
-#: aurora/settingsapp/appearance.py:164
+#: aurora/settingsapp/appearance.py:177
 msgid "Not available on this screen"
 msgstr "Non disponibile su questo schermo"
 
-#: aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:178
 msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
 msgstr "Il driver grafico non permette di cambiare i colori (normale in una macchina virtuale)."
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Schedule"
 msgstr "Programmazione"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Sunset to Sunrise"
 msgstr "Dal tramonto all’alba"
 
-#: aurora/settingsapp/appearance.py:170
+#: aurora/settingsapp/appearance.py:183
 msgid "Manual"
 msgstr "Manuale"
 
-#: aurora/settingsapp/appearance.py:171
+#: aurora/settingsapp/appearance.py:184
 msgid "All the Time"
 msgstr "Sempre"
 
-#: aurora/settingsapp/appearance.py:173
+#: aurora/settingsapp/appearance.py:186
 msgid "Sunset and sunrise follow your time zone"
 msgstr "Alba e tramonto seguono il tuo fuso orario"
 
-#: aurora/settingsapp/appearance.py:176 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "Dalle"
 
-#: aurora/settingsapp/appearance.py:176 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "Alle"
 
-#: aurora/settingsapp/appearance.py:183
+#: aurora/settingsapp/appearance.py:196
 msgid "Color temperature"
 msgstr "Temperatura colore"
 
-#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/inputs.py:360
+#: aurora/settingsapp/appearance.py:212 aurora/settingsapp/inputs.py:360
 #: aurora/shell/panel.py:349 aurora/shell/search.py:470
 msgid "Lock Screen"
 msgstr "Blocca schermo"
 
-#: aurora/settingsapp/appearance.py:201 aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/appearance.py:214 aurora/settingsapp/backgrounds.py:26
 msgid "Picture"
 msgstr "Immagine"
 
-#: aurora/settingsapp/appearance.py:211 aurora/settingsapp/backgrounds.py:166
+#: aurora/settingsapp/appearance.py:224 aurora/settingsapp/backgrounds.py:166
 msgid "Background"
 msgstr "Sfondo"
 
-#: aurora/settingsapp/appearance.py:211
+#: aurora/settingsapp/appearance.py:224
 msgid "Same as the desktop"
 msgstr "Uguale al desktop"
 
-#: aurora/settingsapp/appearance.py:212
+#: aurora/settingsapp/appearance.py:225
 msgid "The desktop's, blurred"
 msgstr "Quello del desktop, sfocato"
 
-#: aurora/settingsapp/appearance.py:212
+#: aurora/settingsapp/appearance.py:225
 msgid "A picture"
 msgstr "Un'immagine"
 
-#: aurora/settingsapp/appearance.py:216
+#: aurora/settingsapp/appearance.py:229
 msgid "Show my name and picture"
 msgstr "Mostra il mio nome e la mia immagine"
 
-#: aurora/settingsapp/appearance.py:219
+#: aurora/settingsapp/appearance.py:232
 msgid "Off: only the time, the date and the password field"
 msgstr "Disattivato: solo ora, data e campo password"
 
-#: aurora/settingsapp/appearance.py:225
+#: aurora/settingsapp/appearance.py:238
 msgid "Choose…"
 msgstr "Scegli…"
 
-#: aurora/settingsapp/appearance.py:228
+#: aurora/settingsapp/appearance.py:241
 msgid "Lock Screen Picture"
 msgstr "Immagine della schermata di blocco"
 
-#: aurora/settingsapp/appearance.py:229 aurora/settingsapp/backgrounds.py:397
+#: aurora/settingsapp/appearance.py:242 aurora/settingsapp/backgrounds.py:397
 #: aurora/settingsapp/system.py:553
 msgid "Images"
 msgstr "Immagini"
@@ -5149,140 +5157,140 @@ msgstr "Utilità"
 msgid "Opening App Center…"
 msgstr "Apertura di App Center…"
 
-#: aurora/shell/app.py:214
+#: aurora/shell/app.py:218
 msgid "Night Light can't change this screen's colors"
 msgstr "Luce notturna non può cambiare i colori di questo schermo"
 
-#: aurora/shell/app.py:215
+#: aurora/shell/app.py:219
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "Il driver grafico non lo permette. È normale in una macchina virtuale; su un computer, installa il driver grafico da Impostazioni → Aggiornamenti → Driver aggiuntivi."
 
-#: aurora/shell/app.py:228
+#: aurora/shell/app.py:232
 msgid "Graphics fallback started"
 msgstr "Grafica di riserva avviata"
 
-#: aurora/shell/app.py:229
+#: aurora/shell/app.py:233
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire non è riuscito ad avviarsi. Aurora ha aperto il desktop sicuro. Seleziona questa notifica per vedere il rapporto di avvio."
 
-#: aurora/shell/app.py:231
+#: aurora/shell/app.py:235
 msgid "Open System Health"
 msgstr "Apri Salute del sistema"
 
-#: aurora/shell/app.py:432
+#: aurora/shell/app.py:450
 msgid "Writing tools are off"
 msgstr "Gli strumenti di scrittura sono disattivati"
 
-#: aurora/shell/app.py:524
+#: aurora/shell/app.py:542
 msgid "Restart didn't happen"
 msgstr "Il riavvio non è avvenuto"
 
-#: aurora/shell/app.py:524
+#: aurora/shell/app.py:542
 msgid "Shut down didn't happen"
 msgstr "Lo spegnimento non è avvenuto"
 
-#: aurora/shell/app.py:525
+#: aurora/shell/app.py:543
 msgid "Sleep didn't happen"
 msgstr "La sospensione non è avvenuta"
 
-#: aurora/shell/app.py:526
+#: aurora/shell/app.py:544
 msgid "Restart Anyway"
 msgstr "Riavvia comunque"
 
-#: aurora/shell/app.py:526
+#: aurora/shell/app.py:544
 msgid "Shut Down Anyway"
 msgstr "Spegni comunque"
 
-#: aurora/shell/app.py:527
+#: aurora/shell/app.py:545
 msgid "Sleep Anyway"
 msgstr "Sospendi comunque"
 
-#: aurora/shell/app.py:624
+#: aurora/shell/app.py:642
 msgid "Always on Top"
 msgstr "Sempre in primo piano"
 
-#: aurora/shell/app.py:624
+#: aurora/shell/app.py:642
 msgid "Always on Top Off"
 msgstr "Primo piano disattivato"
 
-#: aurora/shell/app.py:628
+#: aurora/shell/app.py:646
 msgid "Set it up in Settings → AI."
 msgstr "Configurala in Impostazioni → IA."
 
-#: aurora/shell/app.py:634
+#: aurora/shell/app.py:652
 msgid "Dictation is off"
 msgstr "La dettatura è disattivata"
 
-#: aurora/shell/app.py:641
+#: aurora/shell/app.py:659
 msgid "Dictation isn't installed yet"
 msgstr "La dettatura non è ancora installata"
 
-#: aurora/shell/app.py:645
+#: aurora/shell/app.py:663
 msgid "Listening… press Super+H to stop"
 msgstr "In ascolto… premi Super+H per fermare"
 
-#: aurora/shell/app.py:647
+#: aurora/shell/app.py:665
 msgid "Writing it down…"
 msgstr "Trascrizione…"
 
-#: aurora/shell/app.py:661
+#: aurora/shell/app.py:679
 msgid "Nothing was heard"
 msgstr "Non è stato sentito nulla"
 
-#: aurora/shell/app.py:670
+#: aurora/shell/app.py:688
 msgid "Read aloud is off"
 msgstr "La lettura ad alta voce è disattivata"
 
-#: aurora/shell/app.py:677
+#: aurora/shell/app.py:695
 msgid "Select some text first"
 msgstr "Prima seleziona del testo"
 
-#: aurora/shell/app.py:751
+#: aurora/shell/app.py:769
 msgid "Screenshot captured"
 msgstr "Screenshot acquisito"
 
-#: aurora/shell/app.py:752
+#: aurora/shell/app.py:770
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "Salvato in {path} e copiato negli appunti."
 
-#: aurora/shell/app.py:777
+#: aurora/shell/app.py:795
 msgid "Pin to Screen"
 msgstr "Fissa sullo schermo"
 
-#: aurora/shell/app.py:777
+#: aurora/shell/app.py:795
 msgid "Annotate"
 msgstr "Annota"
 
-#: aurora/shell/app.py:778
+#: aurora/shell/app.py:796
 msgid "Copy Text"
 msgstr "Copia testo"
 
-#: aurora/shell/app.py:846 aurora/shell/app.py:853
+#: aurora/shell/app.py:864 aurora/shell/app.py:871
 msgid "Text Recognition"
 msgstr "Riconoscimento del testo"
 
-#: aurora/shell/app.py:846
+#: aurora/shell/app.py:864
 msgid "No text found"
 msgstr "Nessun testo trovato"
 
-#: aurora/shell/app.py:847
+#: aurora/shell/app.py:865
 msgid "Try a larger or sharper area."
 msgstr "Prova con un’area più grande o più nitida."
 
-#: aurora/shell/app.py:853
+#: aurora/shell/app.py:871
 msgid "Text copied"
 msgstr "Testo copiato"
 
-#: aurora/shell/app.py:908 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:926 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "Registrazione schermo"
 
-#: aurora/shell/app.py:908
+#: aurora/shell/app.py:926
 msgid "Screen recording saved"
 msgstr "Registrazione dello schermo salvata"
 
-#: aurora/shell/app.py:909
+#: aurora/shell/app.py:927
 msgid "Saved to {path}."
 msgstr "Salvata in {path}."
 
