@@ -243,13 +243,27 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.aurora-dock.dock-floating .dock-box { border-radius: 22px; }
+.aurora-dock.dock-floating .dock-box { border-radius: 26px; }
 .aurora-dock.dock-panel .dock-box { border-radius: 0; box-shadow: none; }
 .aurora-dock.dock-panel.dock-bottom .dock-box { border-width: 1px 0 0 0; }
 .aurora-dock.dock-panel.dock-left .dock-box { border-width: 0 1px 0 0; }
 .aurora-dock.dock-panel.dock-right .dock-box { border-width: 0 0 0 1px; }
 
+/* Islands (Settings → Desktop & Dock → Dock → Style): the shelf is gone and
+   Launchpad, the apps and the Trash each sit on their own pill of frosted
+   glass, as the top bar's floating style does with its three groups. */
+.aurora-dock.dock-islands .dock-box {
+  background: none; border: none; box-shadow: none;
+}
+.aurora-dock.dock-islands .dock-island {
+  background-color: rgba(34, 28, 48, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 .dock-row { margin: 6px; }
+.dock-islands-row { margin: 0; }
 
 .dock-item {
   padding: 4px 5px 1px 5px;
@@ -263,18 +277,28 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .dock-item:hover { background: none; }
 .dock-item.dock-drop-target { background-color: alpha(@aurora_violet, 0.28); border-radius: 12px; }
 .aurora-dock.dock-panel .dock-item:hover { background-color: @shell_hover; }
+/* Magnification turned off: nothing moves under the pointer, so the icon it
+   rests on is lit instead (a floating dock had no hover mark at all). */
+.aurora-dock.dock-still .dock-item:hover { background-color: @shell_hover; }
 .dock-item.launching image { opacity: 0.55; }
 .dock-launchpad image { color: @shell_fg; }
 
+/* One mark per open window: a dot, and a short bar in the accent color for
+   the window you're in. */
 .dock-dot {
-  min-width: 6px;
-  min-height: 6px;
+  min-width: 5px;
+  min-height: 5px;
   border-radius: 999px;
-  background-color: alpha(@shell_fg, 0.85);
-  box-shadow: 0 0 6px alpha(@shell_fg, 0.35);
+  background-color: alpha(@shell_fg, 0.55);
+  transition: min-width 140ms ease-out, min-height 140ms ease-out;
 }
 
-.dock-dot.active { background-color: @aurora_amber; }
+.dock-dot.active {
+  background-color: @aurora_violet;
+  box-shadow: 0 0 8px alpha(@aurora_violet, 0.55);
+}
+.dock-bottom .dock-dot.active { min-width: 15px; }
+.dock-left .dock-dot.active, .dock-right .dock-dot.active { min-height: 15px; }
 /* The windows of an app, shown while resting on its icon. */
 .dock-peek > contents { padding: 8px; border-radius: 16px; }
 .dock-peek-card { padding: 10px 12px; border-radius: 12px; }

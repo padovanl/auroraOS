@@ -176,7 +176,8 @@ class Desktop(Page):
                     [("bottom", _("Bottom")), ("left", _("Left")), ("right", _("Right")),
                      ("hidden", _("Hidden"))])
         self._combo(dock, _("Style"), "dock-style",
-                    [("floating", _("Floating")), ("panel", _("Full-width panel"))])
+                    [("floating", _("Floating")), ("islands", _("Islands")),
+                     ("panel", _("Full-width panel"))])
         self._scale(dock, _("Icon size"), "dock-icon-size", 24, 80, 2)
         self._switch(dock, _("Magnify icons on hover"), "dock-magnification")
         self._switch(dock, _("Automatically hide"), "dock-autohide")
