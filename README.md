@@ -1441,6 +1441,13 @@ set up a feature, and every place it appears has its own switch.
   arrows to expand or restore) instead of hiding it until hover as on a Mac, softer until
   the pointer is over them. The same design is drawn for labwc's fallback borders, GTK 4
   and GTK 3 apps; Wayfire prefers client-side decorations.
+- **Glass without a blur:** nothing blurs what is behind a surface — that needs the GPU, and
+  Aurora runs on software rendering in virtual machines. So the shell's glass is graded by
+  what can end up underneath: the top bar and the dock own their strip of screen and keep
+  their frosted look, while the surfaces a window can sit behind — Spotlight, the Control
+  Center, notifications, the on-screen indicators — are only just see-through, or the window
+  under them reads straight through their text. The Control Center used to show the desktop's
+  clock and calendar widgets through its own cards.
 - **Animations:** Wayfire's `animate` plugin handles application windows, including
   minimize and restore. GTK and Files retain their own content transitions
   (`gtk4-animations.css`). The Window animations switch controls both layers.

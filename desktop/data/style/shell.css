@@ -3,7 +3,9 @@
 @define-color aurora_violet #a970ff;
 @define-color aurora_rose #ff6f91;
 @define-color aurora_amber #ffa45c;
-@define-color shell_bg rgba(20, 16, 30, 0.86);
+/* Surfaces that windows can sit behind (notifications, the on-screen
+   indicators) are only just see-through: nothing blurs what's under them. */
+@define-color shell_bg rgba(20, 16, 30, 0.94);
 @define-color shell_fg #f2eefa;
 @define-color shell_border rgba(255, 255, 255, 0.08);
 @define-color shell_hover rgba(255, 255, 255, 0.09);
@@ -60,7 +62,7 @@ menubutton.panel-button > button {
   min-height: 22px;
   padding: 1px 9px;
   margin: 3px 0;
-  border-radius: 7px;
+  border-radius: 9px;
   color: @shell_fg;
   background: none;
   box-shadow: none;
@@ -108,11 +110,13 @@ menubutton.panel-button > button:checked {
   border-radius: 28px;
   padding: 0;
 }
-/* Control Center: dark frosted glass, a hairline edge. */
+/* Control Center: dark frosted glass, a hairline edge. Barely see-through:
+   with no blur behind it, the clock and calendar widgets on the desktop were
+   legible straight through its cards. */
 .aurora-quicksettings > contents {
   padding: 4px;
   border-radius: 26px;
-  background-color: alpha(@window_bg_color, 0.82);
+  background-color: alpha(@window_bg_color, 0.94);
   border: 1px solid alpha(white, 0.10);
   box-shadow: 0 20px 50px alpha(black, 0.40), inset 0 1px 0 alpha(white, 0.06);
 }
@@ -316,9 +320,10 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 /* ---- Launcher: Spotlight and Launchpad ---- */
 
+/* Section titles, as quiet as the Control Center's. */
 .launcher-section-title {
-  font-size: 0.82em; font-weight: 800; letter-spacing: 0.08em;
-  opacity: 0.6; margin: 14px 18px 2px;
+  font-size: 0.78em; font-weight: 700; letter-spacing: 0.06em;
+  opacity: 0.5; margin: 14px 18px 2px;
 }
 .launcher-sections > .launcher-section-title:first-child { margin-top: 0; }
 
@@ -327,21 +332,31 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 }
 .aurora-launcher.mode-spotlight .launcher-backdrop { background-color: rgba(0, 0, 0, 0.18); }
 
+/* Spotlight: a bright edge and a soft highlight, like the Control Center, but
+   nearly opaque. Nothing blurs what's behind a surface here (that needs the
+   GPU, and Aurora runs on software rendering in virtual machines), so a
+   see-through panel lets the window under it read right through its results. */
 .aurora-launcher.mode-spotlight .launcher-root {
-  background-color: rgba(30, 25, 42, 0.985);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 18px;
-  padding: 10px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  background-color: rgba(30, 25, 42, 0.97);
+  border: 1px solid alpha(white, 0.12);
+  border-radius: 22px;
+  padding: 8px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 alpha(white, 0.07);
 }
 
 .launcher-search {
   min-height: 46px;
   font-size: 15pt;
-  border-radius: 12px;
+  border-radius: 999px;
   padding: 0 14px;
   background-color: transparent;
   color: @shell_fg;
+  box-shadow: none;
+}
+/* The field is the only thing there and always has the keyboard: a focus ring
+   around it was permanent decoration. */
+.aurora-launcher .launcher-search:focus-within {
+  outline: none;
   box-shadow: none;
 }
 
@@ -368,12 +383,15 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 }
 
 .launcher-result {
-  border-radius: 10px;
-  margin: 1px 0;
+  border-radius: 14px;
+  margin: 1px 2px;
 }
 
+/* The row you'd open: the accent, softly, with its own edge — not a solid
+   block of colour from side to side. */
 .launcher-result:selected {
-  background-color: alpha(@aurora_violet, 0.55);
+  background-color: alpha(@aurora_violet, 0.30);
+  box-shadow: inset 0 0 0 1px alpha(@aurora_violet, 0.45);
 }
 
 .result-title { font-weight: 600; font-size: 11pt; }
@@ -382,10 +400,10 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 .notification {
   background-color: @shell_bg;
-  border: 1px solid @shell_border;
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  border: 1px solid alpha(white, 0.10);
+  border-radius: 20px;
+  padding: 13px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 alpha(white, 0.06);
   color: @shell_fg;
 }
 
@@ -406,12 +424,18 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   padding: 12px 20px;
 }
 
-.aurora-osd levelbar block.filled {
-  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+.aurora-osd levelbar block {
+  min-height: 6px;
   border-radius: 999px;
 }
 
-.aurora-osd levelbar block.empty { border-radius: 999px; }
+.aurora-osd levelbar block.filled {
+  background-image: linear-gradient(90deg, @aurora_violet, @aurora_rose);
+}
+
+/* The rest of the way: a track, as in the Control Center's sliders. At zero
+   (or muted) the indicator was an empty outline with nothing to read. */
+.aurora-osd levelbar block.empty { background-color: alpha(@shell_fg, 0.18); }
 
 /* ---- Desktop icons ---- */
 

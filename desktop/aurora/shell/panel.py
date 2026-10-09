@@ -588,8 +588,10 @@ class Panel(LayerWindow):
         self._toggle_menu(self.status)
 
     def close_menus(self):
-        """Close the Control Center and the notification center if open."""
-        for button in (self.status, self.clock):
+        """Close any menu of the bar that is open: the Aurora menu, Activities,
+        the Control Center, the notification center. All four, so none stays on
+        screen under Launchpad or the overview still holding the keyboard."""
+        for button in self._menus:
             if button.get_active():
                 button.popdown()
 
