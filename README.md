@@ -584,6 +584,15 @@ make run-uefi     # boot it in a QEMU window (UEFI)
 The first build downloads about 1.5 GB of packages and takes 20 to 40 minutes. Later builds
 reuse the root filesystem and the apt cache and take a few minutes.
 
+**On Windows with WSL 2**, keep the build's own directories on the Linux filesystem:
+
+```sh
+make iso WORKVOL=/var/tmp/aurora-work OUTDIR=/var/tmp/aurora-out
+```
+
+With a checkout under `/mnt/c`, `work/` lands on DrvFs, which has no Unix ownership, and
+`debootstrap` stops in stage 10 with "Tried to extract package, but tar failed".
+
 ### What happens during a build
 `make iso` builds the `aurora-os-builder` image from `build/Dockerfile`, then runs
 `build/build-inner.sh` in a privileged container. It executes the stages in

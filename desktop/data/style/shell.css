@@ -553,23 +553,33 @@ window.aurora-hotcorner { background: rgba(0, 0, 0, 0.01); min-width: 0; min-hei
 /* ---- Aurora Assistant button in the top bar ---- */
 .panel-assistant image { color: #d9b8ff; }
 .panel-assistant:hover image { color: #ffffff; }
+/* Right-click menus from the shell (desktop icons, the dock, Launchpad): the
+   same surface and rounding as the rest of the shell, in the accent on hover,
+   instead of a grey of their own. */
 popover.aurora-context-menu contents {
   padding: 6px;
-  border-radius: 10px;
-  background: #292b30;
-  color: #d6d8dd;
-  border: 1px solid #454850;
-  box-shadow: 0 10px 28px alpha(#000000, 0.4);
+  border-radius: 16px;
+  background-color: @shell_bg;
+  color: @shell_fg;
+  border: 1px solid alpha(white, 0.10);
+  box-shadow: 0 16px 40px alpha(black, 0.45), inset 0 1px 0 alpha(white, 0.06);
 }
-popover.aurora-context-menu separator { background: #41444b; margin: 6px 10px; min-height: 1px; }
-popover.aurora-context-menu button.model { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
+popover.aurora-context-menu separator {
+  background-color: alpha(@shell_fg, 0.14); margin: 6px 10px; min-height: 1px;
+}
+popover.aurora-context-menu button.model,
+popover.aurora-context-menu button.context-action {
+  margin: 2px 0; min-height: 32px; padding: 5px 12px;
+  border-radius: 10px; color: @shell_fg; font-weight: 500;
+}
 popover.aurora-context-menu button.model:hover,
-popover.aurora-context-menu button.model:focus-visible { background-color: #414650; color: #ffffff; }
-popover.aurora-context-menu button.model:disabled { color: #868b94; }
-popover.aurora-context-menu button.context-action { margin: 2px 0; min-height: 34px; padding: 5px 14px; border-radius: 6px; color: #d6d8dd; font-family: Inter, sans-serif; font-size: 13px; font-weight: 500; }
+popover.aurora-context-menu button.model:focus-visible,
 popover.aurora-context-menu button.context-action:hover,
-popover.aurora-context-menu button.context-action:focus-visible { background-color: #414650; color: #ffffff; }
-popover.aurora-context-menu button.context-action:disabled { color: #868b94; }
+popover.aurora-context-menu button.context-action:focus-visible {
+  background-color: alpha(@aurora_violet, 0.30); color: #ffffff;
+}
+popover.aurora-context-menu button.model:disabled,
+popover.aurora-context-menu button.context-action:disabled { color: alpha(@shell_fg, 0.45); }
 
 /* ---- Keyboard shortcuts overlay (Super+/) ---- */
 window.aurora-shortcuts { background: rgba(8, 6, 14, 0.55); }
