@@ -405,7 +405,7 @@ msgstr "要清空剪贴板历史记录吗？"
 msgid "Everything copied, pinned entries and pictures included, is forgotten. This cannot be undone."
 msgstr "所有复制过的内容，包括已固定的条目和图片，都会被遗忘。此操作无法撤销。"
 
-#: aurora/clipboardapp.py:317 aurora/devhub/app.py:315
+#: aurora/clipboardapp.py:317 aurora/devhub/app.py:458
 #: aurora/files/create.py:26 aurora/files/window.py:1266
 #: aurora/files/window.py:1351 aurora/files/window.py:1535
 #: aurora/files/window.py:1572 aurora/files/window.py:1619
@@ -432,129 +432,145 @@ msgstr "NASA：每日天文图片"
 msgid "Wikimedia Commons: picture of the day"
 msgstr "维基共享资源：每日图片"
 
-#: aurora/devhub/app.py:68 aurora/devhub/app.py:358
+#: aurora/devhub/app.py:125 aurora/devhub/app.py:501
 msgid "Installing {name}"
 msgstr "正在安装 {name}"
 
-#: aurora/devhub/app.py:81
+#: aurora/devhub/app.py:151
+msgid "Your administrator password is needed"
+msgstr "需要你的管理员密码"
+
+#: aurora/devhub/app.py:152 aurora/devhub/app.py:227
 msgid "Downloading and installing…"
 msgstr "正在下载并安装…"
 
-#: aurora/devhub/app.py:85
-msgid "If asked, type your administrator password below. The log stays visible so failures can be diagnosed."
-msgstr "如有提示，请在下方输入管理员密码。日志会一直显示，便于排查失败原因。"
+#: aurora/devhub/app.py:178 aurora/devhub/app.py:203
+msgid "Show Details"
+msgstr "显示细节"
 
-#: aurora/devhub/app.py:124
+#: aurora/devhub/app.py:203
+msgid "Hide Details"
+msgstr "隐藏细节"
+
+#: aurora/devhub/app.py:231
+msgid "Not authorized"
+msgstr "未获授权"
+
+#: aurora/devhub/app.py:256
 msgid "Installation is still running"
 msgstr "安装仍在进行"
 
-#: aurora/devhub/app.py:141 aurora/devhub/app.py:151
+#: aurora/devhub/app.py:273 aurora/devhub/app.py:284 aurora/devhub/app.py:290
 msgid "Installation failed"
 msgstr "安装失败"
 
-#: aurora/devhub/app.py:146 aurora/devhub/app.py:148
+#: aurora/devhub/app.py:279 aurora/devhub/app.py:282
 msgid "{name} installed"
 msgstr "已安装 {name}"
 
-#: aurora/devhub/app.py:150
-msgid "Installation failed — review the log below"
-msgstr "安装失败 — 请查看下方日志"
+#: aurora/devhub/app.py:280
+msgid "You can close this window."
+msgstr "你可以关闭这个窗口了。"
 
-#: aurora/devhub/app.py:174
+#: aurora/devhub/app.py:286
+msgid "The log below says what happened."
+msgstr "下面的日志说明了发生了什么。"
+
+#: aurora/devhub/app.py:317
 msgid "Installed"
 msgstr "已安装"
 
-#: aurora/devhub/app.py:174 aurora/settingsapp/system.py:770
+#: aurora/devhub/app.py:317 aurora/settingsapp/system.py:770
 msgid "Install"
 msgstr "安装"
 
-#: aurora/devhub/app.py:181 aurora/shell/panel.py:308
+#: aurora/devhub/app.py:324 aurora/shell/panel.py:308
 #: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
-#: aurora/devhub/app.py:181
+#: aurora/devhub/app.py:324
 msgid "Search tools"
 msgstr "搜索工具"
 
-#: aurora/devhub/app.py:182
+#: aurora/devhub/app.py:325
 msgid "Your toolbox, one click away"
 msgstr "一键获取你的工具链"
 
-#: aurora/devhub/app.py:183
+#: aurora/devhub/app.py:326
 msgid "Everything installs from its official source, so you always get the latest release. Git, Python, Node.js, Docker, Podman and more are already on your system."
 msgstr "所有工具都从官方来源安装，因此始终是最新版本。Git、Python、Node.js、Docker、Podman 等已预装在系统中。"
 
-#: aurora/devhub/app.py:210
+#: aurora/devhub/app.py:353
 msgid "Project Workspaces"
 msgstr "项目工作区"
 
-#: aurora/devhub/app.py:211
+#: aurora/devhub/app.py:354
 msgid "Open your editor, terminal and Files together for a project."
 msgstr "为项目同时打开编辑器、终端和文件管理器。"
 
-#: aurora/devhub/app.py:213
+#: aurora/devhub/app.py:356
 msgid "Add Project"
 msgstr "添加项目"
 
-#: aurora/devhub/app.py:266 aurora/shell/launcher.py:162
+#: aurora/devhub/app.py:409 aurora/shell/launcher.py:162
 msgid "Open Workspace"
 msgstr "打开工作区"
 
-#: aurora/devhub/app.py:271 aurora/devhub/app.py:299
+#: aurora/devhub/app.py:414 aurora/devhub/app.py:442
 msgid "Configure Workspace"
 msgstr "配置工作区"
 
-#: aurora/devhub/app.py:278
+#: aurora/devhub/app.py:421
 msgid "No projects found"
 msgstr "未找到项目"
 
-#: aurora/devhub/app.py:279
+#: aurora/devhub/app.py:422
 msgid "Add a project folder to begin."
 msgstr "添加项目文件夹以开始。"
 
-#: aurora/devhub/app.py:284
+#: aurora/devhub/app.py:427
 msgid "Choose Project Folder"
 msgstr "选择项目文件夹"
 
-#: aurora/devhub/app.py:303
+#: aurora/devhub/app.py:446
 msgid "Editor"
 msgstr "编辑器"
 
-#: aurora/devhub/app.py:304
+#: aurora/devhub/app.py:447
 msgid "Automatic"
 msgstr "自动"
 
-#: aurora/devhub/app.py:306 aurora/shell/wallpaper.py:195
+#: aurora/devhub/app.py:449 aurora/shell/wallpaper.py:195
 msgid "Open Terminal"
 msgstr "打开终端"
 
-#: aurora/devhub/app.py:307 aurora/shell/wallpaper.py:196 aurora/welcome.py:21
+#: aurora/devhub/app.py:450 aurora/shell/wallpaper.py:196 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "打开“文件”"
 
-#: aurora/devhub/app.py:310
+#: aurora/devhub/app.py:453
 msgid "Save Current Window Layout"
 msgstr "保存当前窗口布局"
 
-#: aurora/devhub/app.py:311
+#: aurora/devhub/app.py:454
 msgid "Save positions of currently open windows for this workspace"
 msgstr "保存此工作区中已打开窗口的位置"
 
-#: aurora/devhub/app.py:316 aurora/settingsapp/desktop.py:102
+#: aurora/devhub/app.py:459 aurora/settingsapp/desktop.py:102
 #: aurora/settingsapp/system.py:480
 msgid "Save"
 msgstr "保存"
 
-#: aurora/devhub/app.py:325
+#: aurora/devhub/app.py:468
 msgid "Saved positions for %d windows."
 msgstr "已保存 %d 个窗口的位置。"
 
-#: aurora/devhub/app.py:327
+#: aurora/devhub/app.py:470
 msgid "Window layout requires the Aurora animated session."
 msgstr "窗口布局需要 Aurora 动画会话。"
 
-#: aurora/devhub/app.py:360
+#: aurora/devhub/app.py:503
 msgid "Installing…"
 msgstr "正在安装…"
 

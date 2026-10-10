@@ -405,7 +405,7 @@ msgstr "إفراغ سجل الحافظة؟"
 msgid "Everything copied, pinned entries and pictures included, is forgotten. This cannot be undone."
 msgstr "سيُنسى كل ما نُسخ، بما في ذلك العناصر المثبّتة والصور. لا يمكن التراجع عن ذلك."
 
-#: aurora/clipboardapp.py:317 aurora/devhub/app.py:315
+#: aurora/clipboardapp.py:317 aurora/devhub/app.py:458
 #: aurora/files/create.py:26 aurora/files/window.py:1266
 #: aurora/files/window.py:1351 aurora/files/window.py:1535
 #: aurora/files/window.py:1572 aurora/files/window.py:1619
@@ -432,129 +432,145 @@ msgstr "ناسا: صورة الفلك لليوم"
 msgid "Wikimedia Commons: picture of the day"
 msgstr "ويكيميديا كومنز: صورة اليوم"
 
-#: aurora/devhub/app.py:68 aurora/devhub/app.py:358
+#: aurora/devhub/app.py:125 aurora/devhub/app.py:501
 msgid "Installing {name}"
 msgstr "جارٍ تثبيت {name}"
 
-#: aurora/devhub/app.py:81
+#: aurora/devhub/app.py:151
+msgid "Your administrator password is needed"
+msgstr "مطلوب كلمة سر المدير"
+
+#: aurora/devhub/app.py:152 aurora/devhub/app.py:227
 msgid "Downloading and installing…"
 msgstr "جارٍ التنزيل والتثبيت…"
 
-#: aurora/devhub/app.py:85
-msgid "If asked, type your administrator password below. The log stays visible so failures can be diagnosed."
-msgstr "إذا طُلب منك، اكتب كلمة مرور المسؤول أدناه. يبقى السجل ظاهرًا لتشخيص الأخطاء."
+#: aurora/devhub/app.py:178 aurora/devhub/app.py:203
+msgid "Show Details"
+msgstr "أظهِر التفاصيل"
 
-#: aurora/devhub/app.py:124
+#: aurora/devhub/app.py:203
+msgid "Hide Details"
+msgstr "أخفِ التفاصيل"
+
+#: aurora/devhub/app.py:231
+msgid "Not authorized"
+msgstr "غير مصرَّح"
+
+#: aurora/devhub/app.py:256
 msgid "Installation is still running"
 msgstr "لا يزال التثبيت جاريًا"
 
-#: aurora/devhub/app.py:141 aurora/devhub/app.py:151
+#: aurora/devhub/app.py:273 aurora/devhub/app.py:284 aurora/devhub/app.py:290
 msgid "Installation failed"
 msgstr "فشل التثبيت"
 
-#: aurora/devhub/app.py:146 aurora/devhub/app.py:148
+#: aurora/devhub/app.py:279 aurora/devhub/app.py:282
 msgid "{name} installed"
 msgstr "تم تثبيت {name}"
 
-#: aurora/devhub/app.py:150
-msgid "Installation failed — review the log below"
-msgstr "فشل التثبيت — راجع السجل أدناه"
+#: aurora/devhub/app.py:280
+msgid "You can close this window."
+msgstr "يمكنك إغلاق هذه النافذة."
 
-#: aurora/devhub/app.py:174
+#: aurora/devhub/app.py:286
+msgid "The log below says what happened."
+msgstr "السجل أدناه يوضّح ما حدث."
+
+#: aurora/devhub/app.py:317
 msgid "Installed"
 msgstr "مثبّت"
 
-#: aurora/devhub/app.py:174 aurora/settingsapp/system.py:770
+#: aurora/devhub/app.py:317 aurora/settingsapp/system.py:770
 msgid "Install"
 msgstr "تثبيت"
 
-#: aurora/devhub/app.py:181 aurora/shell/panel.py:308
+#: aurora/devhub/app.py:324 aurora/shell/panel.py:308
 #: data/applications/org.aurora.DevHub.desktop:2
 msgid "Dev Hub"
 msgstr "Dev Hub"
 
-#: aurora/devhub/app.py:181
+#: aurora/devhub/app.py:324
 msgid "Search tools"
 msgstr "البحث عن أدوات"
 
-#: aurora/devhub/app.py:182
+#: aurora/devhub/app.py:325
 msgid "Your toolbox, one click away"
 msgstr "أدواتك البرمجية بنقرة واحدة"
 
-#: aurora/devhub/app.py:183
+#: aurora/devhub/app.py:326
 msgid "Everything installs from its official source, so you always get the latest release. Git, Python, Node.js, Docker, Podman and more are already on your system."
 msgstr "يُثبَّت كل شيء من مصادره الرسمية، فتحصل دائمًا على أحدث إصدار. Git وPython وNode.js وDocker وPodman وغيرها موجودة في النظام مسبقًا."
 
-#: aurora/devhub/app.py:210
+#: aurora/devhub/app.py:353
 msgid "Project Workspaces"
 msgstr "مساحات عمل المشاريع"
 
-#: aurora/devhub/app.py:211
+#: aurora/devhub/app.py:354
 msgid "Open your editor, terminal and Files together for a project."
 msgstr "افتح المحرر والطرفية والملفات معًا لمشروع واحد."
 
-#: aurora/devhub/app.py:213
+#: aurora/devhub/app.py:356
 msgid "Add Project"
 msgstr "إضافة مشروع"
 
-#: aurora/devhub/app.py:266 aurora/shell/launcher.py:162
+#: aurora/devhub/app.py:409 aurora/shell/launcher.py:162
 msgid "Open Workspace"
 msgstr "فتح مساحة العمل"
 
-#: aurora/devhub/app.py:271 aurora/devhub/app.py:299
+#: aurora/devhub/app.py:414 aurora/devhub/app.py:442
 msgid "Configure Workspace"
 msgstr "إعداد مساحة العمل"
 
-#: aurora/devhub/app.py:278
+#: aurora/devhub/app.py:421
 msgid "No projects found"
 msgstr "لم يتم العثور على مشاريع"
 
-#: aurora/devhub/app.py:279
+#: aurora/devhub/app.py:422
 msgid "Add a project folder to begin."
 msgstr "أضف مجلد مشروع للبدء."
 
-#: aurora/devhub/app.py:284
+#: aurora/devhub/app.py:427
 msgid "Choose Project Folder"
 msgstr "اختيار مجلد المشروع"
 
-#: aurora/devhub/app.py:303
+#: aurora/devhub/app.py:446
 msgid "Editor"
 msgstr "المحرر"
 
-#: aurora/devhub/app.py:304
+#: aurora/devhub/app.py:447
 msgid "Automatic"
 msgstr "تلقائي"
 
-#: aurora/devhub/app.py:306 aurora/shell/wallpaper.py:195
+#: aurora/devhub/app.py:449 aurora/shell/wallpaper.py:195
 msgid "Open Terminal"
 msgstr "فتح الطرفية"
 
-#: aurora/devhub/app.py:307 aurora/shell/wallpaper.py:196 aurora/welcome.py:21
+#: aurora/devhub/app.py:450 aurora/shell/wallpaper.py:196 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "فتح الملفات"
 
-#: aurora/devhub/app.py:310
+#: aurora/devhub/app.py:453
 msgid "Save Current Window Layout"
 msgstr "حفظ ترتيب النوافذ الحالي"
 
-#: aurora/devhub/app.py:311
+#: aurora/devhub/app.py:454
 msgid "Save positions of currently open windows for this workspace"
 msgstr "حفظ مواضع النوافذ المفتوحة لمساحة العمل هذه"
 
-#: aurora/devhub/app.py:316 aurora/settingsapp/desktop.py:102
+#: aurora/devhub/app.py:459 aurora/settingsapp/desktop.py:102
 #: aurora/settingsapp/system.py:480
 msgid "Save"
 msgstr "حفظ"
 
-#: aurora/devhub/app.py:325
+#: aurora/devhub/app.py:468
 msgid "Saved positions for %d windows."
 msgstr "تم حفظ مواضع %d نافذة."
 
-#: aurora/devhub/app.py:327
+#: aurora/devhub/app.py:470
 msgid "Window layout requires the Aurora animated session."
 msgstr "يتطلب ترتيب النوافذ جلسة Aurora المتحركة."
 
-#: aurora/devhub/app.py:360
+#: aurora/devhub/app.py:503
 msgid "Installing…"
 msgstr "جارٍ التثبيت…"
 

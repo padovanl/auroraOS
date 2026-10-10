@@ -1629,8 +1629,11 @@ set up a feature, and every place it appears has its own switch.
 - **Why these and not more:** they are what nearly every developer uses in their first
   hour. Anything heavier or more personal (IDEs, language toolchains, cloud CLIs,
   databases) goes through **Dev Hub**. It installs from the official source, so versions
-  are always current and don't age with Debian's release, and it shows every command in
-  a terminal.
+  are always current and don't age with Debian's release. An install shows the tool's icon, a
+  progress bar and the line its output is on right now; the terminal itself is behind *Show
+  Details* and opens by itself when something fails. A recipe that needs the administrator
+  password asks for it once at the start (`sudo -v`, with the terminal on screen for it), not
+  somewhere in the middle of a wall of text.
 - **One definition per third-party repository.** Two copies of the same apt repository with
   different `Signed-By` key paths make apt refuse *every* update, system updates included
   (`E: Conflicting values set for option Signed-By`). A vendor package's own postinst, an

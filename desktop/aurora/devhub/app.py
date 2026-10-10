@@ -5,6 +5,7 @@ toolchains (recipes.py), Game Hub for games, Windows and Android apps (games.py)
 """
 
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -32,6 +33,14 @@ CSS = """
   border-radius: 20px; padding: 28px; color: white;
 }
 .devhub-hero .title-1 { color: white; }
+/* The log, when it is asked for: Aurora's own dark glass with room to breathe,
+   instead of the toolkit's bare black rectangle. */
+.devhub-terminal {
+  border-radius: 14px;
+  padding: 10px 12px;
+  background-color: #16111f;
+  border: 1px solid alpha(currentColor, 0.12);
+}
 """
 
 
@@ -45,18 +54,66 @@ def is_installed(recipe):
 
 def icon_for(recipe):
     theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
-    return recipe["icon"] if theme.has_icon(recipe["icon"]) else recipe["fallback_icon"]
+    icon = recipe.get("icon") or ""
+    return icon if theme.has_icon(icon) else (recipe.get("fallback_icon") or
+                                              "system-run-symbolic")
 
 
-def install_wrapper(path):
-    """Run and remove a recipe while preserving its exit code."""
+ANSI = re.compile(r"\x1b\[[0-9;?]*[a-zA-Z]|\x1b[()][AB0]|[\r\x07\x08]")
+
+
+def _plain(line):
+    """A terminal line as words: no colours, no cursor moves, no progress bars."""
+    return ANSI.sub("", line).strip()
+
+
+def _rgba(colour):
+    rgba = Gdk.RGBA()
+    rgba.parse(colour)
+    return rgba
+
+
+def needs_password(recipe):
+    """Whether this recipe will reach for sudo at some point."""
+    return "sudo " in recipe.get("script", "")
+
+
+def install_wrapper(path, log=None, ask_password=False):
+    """Run and remove a recipe while preserving its exit code.
+
+    The output is copied to a log the window reads, so it can show the line
+    the recipe is on without the person having to read a terminal. When the
+    recipe uses sudo, the password is asked for once at the start, while the
+    terminal is on screen for it, instead of somewhere in the middle of a wall
+    of text: `sudo -v` leaves the rest of the recipe authorized.
+    """
     quoted_path = shlex.quote(path)
-    return (f"bash {quoted_path}; status=$?; rm -f {quoted_path}; "
+    quoted_log = shlex.quote(log or f"{path}.log")
+    pre = ""
+    if ask_password:
+        pre = ("printf '\\n  \\033[1mYour administrator password is needed to install "
+               "this.\\033[0m\\n\\n'; "
+               f"sudo -v || {{ printf '%s\\n' '{DENIED}' >> {quoted_log}; "
+               f"rm -f {quoted_path}; exit 126; }}; "
+               f"printf '%s\\n' '{AUTHORIZED}' >> {quoted_log}; ")
+    return (pre + f"bash {quoted_path} 2>&1 | tee -a {quoted_log}; "
+            "status=${PIPESTATUS[0]}; "
+            f"rm -f {quoted_path}; "
             "[ $status -ne 0 ] && echo && echo '✖ Installation failed (see above).'; "
             "exit $status")
 
 
 INSTALL_SCRIPT_HEADER = "#!/bin/bash\nset -euo pipefail\n"
+# Lines the wrapper writes into the log for the window, not for the person.
+AUTHORIZED = "::aurora:authorized"
+DENIED = "::aurora:denied"
+MARKERS = (AUTHORIZED, DENIED)
+# A terminal in Aurora's own colours rather than the toolkit's black and grey.
+TERMINAL_BG = (0.082, 0.067, 0.122)
+TERMINAL_FG = (0.925, 0.906, 0.969)
+TERMINAL_PALETTE = ("#16111f", "#ff6f91", "#6fe0b4", "#ffd35c", "#9ec5ff", "#c98bff",
+                    "#46c7c0", "#d8d4e4", "#5a5470", "#ff93ab", "#8ff0cb", "#ffe08a",
+                    "#bcd8ff", "#dcb3ff", "#7fe0db", "#f2eefa")
 
 
 class InstallWindow(Adw.Window):
@@ -66,43 +123,118 @@ class InstallWindow(Adw.Window):
         recipe = card.recipe
         super().__init__(transient_for=parent, modal=True,
                          title=_("Installing {name}").format(name=_(recipe["name"])),
-                         default_width=760, default_height=500)
+                         default_width=620, default_height=320)
         self.parent_window = parent
         self.card = card
         self.recipe = recipe
         self.activity_id = activity_id
         self.recipe_path = path
+        self.log_path = path + ".log"
         self.running = True
+        self.asking = needs_password(recipe)
+        self._log_at = 0
+        self._last_line = ""
 
         view = Adw.ToolbarView()
         view.add_top_bar(Adw.HeaderBar())
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10,
-                      margin_top=12, margin_bottom=12, margin_start=12, margin_end=12)
-        self.status = Gtk.Label(label=_("Downloading and installing…"), xalign=0,
-                                css_classes=["title-4"])
-        box.append(self.status)
-        box.append(Gtk.Label(
-            label=_("If asked, type your administrator password below. The log stays "
-                    "visible so failures can be diagnosed."),
-            xalign=0, wrap=True, css_classes=["dim-label"]))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
+                      margin_top=18, margin_bottom=14, margin_start=18, margin_end=18)
+
+        # The app being installed, as it looks everywhere else in Dev Hub.
+        head = Gtk.Box(spacing=14)
+        icon = Gtk.Image(pixel_size=56, icon_name=icon_for(recipe), valign=Gtk.Align.CENTER)
+        head.append(icon)
+        titles = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2,
+                         valign=Gtk.Align.CENTER, hexpand=True)
+        titles.append(Gtk.Label(label=_(recipe["name"]), xalign=0, css_classes=["title-2"]))
+        self.status = Gtk.Label(
+            label=_("Your administrator password is needed") if self.asking
+            else _("Downloading and installing…"),
+            xalign=0, wrap=True, css_classes=["dim-label"])
+        titles.append(self.status)
+        head.append(titles)
+        box.append(head)
+
         self.progress = Gtk.ProgressBar(show_text=False)
         box.append(self.progress)
+        # The line the recipe is on, in words: enough to follow along without
+        # reading a terminal, which is behind the button below.
+        self.line = Gtk.Label(label="", xalign=0, ellipsize=Pango.EllipsizeMode.END,
+                              max_width_chars=64, css_classes=["caption", "dim-label"])
+        box.append(self.line)
+
         self.terminal = Vte.Terminal(vexpand=True, hexpand=True)
         self.terminal.set_scrollback_lines(5000)
         self.terminal.set_allow_hyperlink(True)
-        frame = Gtk.Frame(child=self.terminal, css_classes=["card"])
-        box.append(frame)
+        self.terminal.set_font(Pango.FontDescription("monospace 10"))
+        self.terminal.set_colors(Gdk.RGBA(*TERMINAL_FG, 1.0), Gdk.RGBA(*TERMINAL_BG, 1.0),
+                                 [_rgba(colour) for colour in TERMINAL_PALETTE])
+        self.terminal.set_cursor_shape(Vte.CursorShape.IBEAM)
+        padded = Gtk.Box(css_classes=["devhub-terminal"], overflow=Gtk.Overflow.HIDDEN)
+        padded.append(self.terminal)
+        self.details = Gtk.Revealer(child=padded, transition_type=
+                                    Gtk.RevealerTransitionType.SLIDE_DOWN,
+                                    reveal_child=self.asking, vexpand=True)
+        self.toggle = Gtk.ToggleButton(label=_("Show Details"), active=self.asking,
+                                       halign=Gtk.Align.START, css_classes=["flat"])
+        self.toggle.connect("toggled", self._toggled)
+        box.append(self.toggle)
+        box.append(self.details)
         view.set_content(box)
         self.set_content(view)
 
+        if self.asking:
+            self.set_default_size(760, 560)
         self.terminal.connect("child-exited", self._finished)
         self.connect("close-request", self._close_requested)
         self._pulse_id = GLib.timeout_add(120, self._pulse)
+        self._log_id = GLib.timeout_add(250, self._read_log)
         self.terminal.spawn_async(
             Vte.PtyFlags.DEFAULT, GLib.get_home_dir(),
-            ["/bin/bash", "-c", install_wrapper(path)], None,
+            ["/bin/bash", "-c", install_wrapper(path, self.log_path, self.asking)], None,
             GLib.SpawnFlags.DEFAULT, None, None, -1, None,
             self._spawned, None)
+        if self.asking:
+            self.terminal.grab_focus()
+
+    def _toggled(self, button):
+        shown = button.get_active()
+        self.details.set_reveal_child(shown)
+        button.set_label(_("Hide Details") if shown else _("Show Details"))
+        # The window itself makes room for the log, and gives it back.
+        self.set_default_size(760 if shown else 620, 560 if shown else 320)
+        if shown:
+            self.terminal.grab_focus()
+
+    def _show_details(self, show):
+        if self.toggle.get_active() != show:
+            self.toggle.set_active(show)       # the handler does the rest
+
+    def _read_log(self):
+        """Follow the recipe's output: the last line in words, and the two
+        markers the wrapper writes for us."""
+        try:
+            with open(self.log_path, encoding="utf-8", errors="replace") as stream:
+                stream.seek(self._log_at)
+                fresh = stream.read()
+                self._log_at = stream.tell()
+        except OSError:
+            return GLib.SOURCE_CONTINUE if self.running else GLib.SOURCE_REMOVE
+        for line in fresh.splitlines():
+            line = _plain(line)
+            if line == AUTHORIZED:
+                self.asking = False
+                self.status.set_label(_("Downloading and installing…"))
+                self._show_details(False)
+                continue
+            if line == DENIED:
+                self.status.set_label(_("Not authorized"))
+                continue
+            if line:
+                self._last_line = line
+        if self._last_line and not self.asking:
+            self.line.set_label(self._last_line[:200])
+        return GLib.SOURCE_CONTINUE if self.running else GLib.SOURCE_REMOVE
 
     def _spawned(self, _terminal, _pid, error, *_data):
         if error is None:
@@ -142,13 +274,24 @@ class InstallWindow(Adw.Window):
         self.card.refresh()
         self.progress.set_fraction(1.0)
         self.progress.add_css_class("success" if success else "error")
+        self._read_log()                      # whatever the last lines were
         if success:
             self.status.set_label(_("{name} installed").format(name=_(self.recipe["name"])))
+            self.line.set_label(_("You can close this window."))
             self.parent_window.toasts.add_toast(Adw.Toast(
                 title=_("{name} installed").format(name=_(self.recipe["name"]))))
         else:
-            self.status.set_label(_("Installation failed — review the log below"))
+            self.status.set_label(_("Installation failed"))
+            self.line.set_label(detail or self._last_line or
+                                _("The log below says what happened."))
+            # A failure is the one time the terminal is worth reading, so it
+            # opens itself instead of waiting to be asked.
+            self._show_details(True)
             self.parent_window.toasts.add_toast(Adw.Toast(title=_("Installation failed")))
+        try:
+            os.remove(self.log_path)
+        except OSError:
+            pass
 
 
 class Card(Gtk.Box):

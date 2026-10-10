@@ -125,9 +125,14 @@ Permissions.</p>
 
 <!-- page: dev-hub | Dev Hub | One-click installers for editors, languages, cloud tools, databases, containers and more, and project workspaces -->
 <p>Dev Hub installs developer tools from their official sources, so they are always current.
-Each install runs in a progress window with an embedded terminal: it shows every command,
-keeps the log visible if something fails, and asks for the administrator password there when
-needed. Installed tools show a check mark.</p>
+Installed tools show a check mark.</p>
+<p>An install opens a window with the tool's own icon and name, a progress bar, and one line
+saying what is happening at this moment — <em>Unpacking code…</em>, <em>Setting up…</em> — taken
+from the install's own output. The terminal it comes from is behind <strong>Show
+Details</strong>, in case you want it; it opens by itself when something fails, which is the one
+time it is worth reading. When a tool needs the administrator password, it is asked for once at
+the start, with the terminal already open for it, instead of somewhere in the middle of a wall
+of text.</p>
 <p>When a tool comes from its own apt repository, Dev Hub keeps one definition of it and one
 signing key, in <span class="path">/etc/apt/keyrings</span>. Any other copy of the same
 repository — left by the vendor's own package, by an earlier attempt, or by a how-to followed
