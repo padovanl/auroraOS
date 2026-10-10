@@ -374,7 +374,15 @@ account's settings, shows the Starfall series at the time of day.</p>
   <li><strong>Accent color</strong>: nine colors, used by buttons, selections, switches, widgets and the Control Center.</li>
   <li><strong>Color from the background</strong>: instead of one of the nine, Aurora takes the most vivid color of the picture on screen and uses it everywhere. The picture is read small and its colors gathered by hue; the one that wins is pulled into a range that still reads under white text, so a washed-out or very dark picture never gives an unusable accent, and a picture with no color at all (a grey photograph) leaves your chosen accent alone. With the dynamic background on it follows the sky: blue through the day, rose at dusk.</li>
   <li>Aurora's own apps (Files, Settings, Task Manager, Dev Hub…) have surfaces with a faint violet tint, in both styles, and switch with the style at once; other apps keep their own colors.</li>
-  <li><strong>Icons</strong>: Aurora (light and dark variants), Papirus, or any installed icon theme.</li>
+  <li><strong>Icon style</strong>: every app icon in Aurora is drawn by the same generator, and this changes how all of them are drawn at once — three of them sit next to the row, so the choice can be seen being made.
+    <dl>
+      <dt>Galaxy</dt><dd>The default: a deep sky with a lit core, two arms of dust and stars. The stars are worked out from the icon's place in the set rather than drawn at random, so an icon looks the same on every computer and in every build.</dd>
+      <dt>Aurora ribbon</dt><dd>A dark plate with an aurora sweeping across its bottom — the mark of the system on every icon.</dd>
+      <dt>Glass</dt><dd>Dark glass with the app's colour lit inside it and a bright rim: the same material as the top bar and the dock.</dd>
+      <dt>Clay</dt><dd>Bright, solid plates with the glyph pressed into them. The plainest to read at small sizes.</dd>
+      <dt>Lightning</dt><dd>An electric discharge crawling in from a corner, branching and thinning. The darkest of the five.</dd>
+    </dl>
+    Each style is a whole icon theme (<span class="path">Aurora</span>, <span class="path">Aurora-Ribbon</span>, <span class="path">Aurora-Glass</span>, <span class="path">Aurora-Clay</span>, <span class="path">Aurora-Bolt</span>, each with a dark twin) and covers every app Aurora draws an icon for, not only its own. Picking a theme by hand — Papirus, or anything else installed — still works and is left alone.</li>
   <li><strong>Pointer</strong> and its size.</li>
   <li><strong>Animations</strong> (all interface animations: menus, the Control Center and the calendar growing in; a notification sliding in from the corner; the volume and brightness indicators rising; a dock icon bouncing while its app starts, and giving under a click; tiles and window cards lifting under the pointer) and <strong>Window animations</strong> (opening, closing, minimizing windows; files floating in when a folder opens; the menus of apps). With them off, everything appears and disappears at once.</li>
 </ul>

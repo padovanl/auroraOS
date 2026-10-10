@@ -83,6 +83,25 @@ class Appearance(Page):
                                 on_change=lambda i: aurora.set_string("interface-density",
                                                                       density[i])))
 
+        if aurora is not None:
+            # Each style is a whole icon theme; the app icons beside the row
+            # are the ones that change, so the choice can be seen being made.
+            styles = list(look.ICON_STYLES)
+            labels = {"galaxy": _("Galaxy"), "ribbon": _("Aurora ribbon"),
+                      "glass": _("Glass"), "clay": _("Clay"), "bolt": _("Lightning")}
+            current_style = aurora.get_string("icon-style")
+            icons_row = Adw.ComboRow(
+                title=_("Icon style"),
+                subtitle=_("How the app icons are drawn, all of them at once"),
+                model=Gtk.StringList.new([labels[name] for name in styles]),
+                selected=styles.index(current_style) if current_style in styles else 0)
+            self._icon_samples = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
+            icons_row.add_prefix(self._icon_samples)
+            self._show_icon_samples(current_style)
+            icons_row.connect("notify::selected", lambda row, _p: self._pick_icon_style(
+                aurora, styles[row.get_selected()]))
+            style.add(icons_row)
+
         accent_row = Adw.ActionRow(title=_("Accent color"))
         accent_box = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
         current = iface.get_string("accent-color") if iface else "purple"
@@ -265,6 +284,35 @@ class Appearance(Page):
                 aurora.set_string("lock-background", "picture")
                 self._sync_lock(aurora)
         dialog.open(self.get_root(), None, done)
+
+    # --- icon style ---
+
+    SAMPLE_ICONS = ("aurora-logo", "org.aurora.Files", "org.aurora.TaskManager")
+
+    def _show_icon_samples(self, style):
+        """Three icons drawn in the style, so the names mean something."""
+        theme = look.ICON_STYLES.get(style, "Aurora")
+        while (child := self._icon_samples.get_first_child()) is not None:
+            self._icon_samples.remove(child)
+        for name in self.SAMPLE_ICONS:
+            path = None
+            for base in ("/usr/share/icons", os.path.join(os.environ.get(
+                    "AURORA_PREFIX", "/usr"), "share", "icons")):
+                candidate = os.path.join(base, theme, "scalable", "apps", name + ".svg")
+                if os.path.exists(candidate):
+                    path = candidate
+                    break
+            image = Gtk.Image(pixel_size=28)
+            if path is not None:
+                image.set_from_file(path)
+            else:
+                image.set_from_icon_name(name)
+            self._icon_samples.append(image)
+
+    def _pick_icon_style(self, aurora, style):
+        aurora.set_string("icon-style", style)
+        self._show_icon_samples(style)
+        look.apply_icon_style()
 
     def _set_scheme(self, index):
         aurora, iface = settings.get(), settings.interface()

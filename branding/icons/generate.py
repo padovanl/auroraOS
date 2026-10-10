@@ -16,26 +16,184 @@ with an embossed emblem, files are pages with a glyph and a colored type label.
 
 import math
 import os
+import shutil
 import sys
 
 # --------------------------------------------------------------------------- apps
 
-def app(c1, c2, glyph):
-    """A rounded-square app icon with a vertical gradient and a glyph."""
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">'
-        '<defs>'
-        f'<linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="{c1}"/>'
-        f'<stop offset="1" stop-color="{c2}"/></linearGradient>'
-        '<linearGradient id="hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" '
-        'stop-opacity=".30"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>'
-        '</defs>'
-        '<rect x="9" y="11" width="110" height="110" rx="27" fill="#000" opacity=".22"/>'
-        '<rect x="8" y="8" width="112" height="112" rx="28" fill="url(#bg)"/>'
-        '<rect x="8" y="8" width="112" height="112" rx="28" fill="url(#hl)"/>'
-        '<rect x="8.5" y="8.5" width="111" height="111" rx="27.5" fill="none" stroke="#fff" '
-        'stroke-opacity=".18"/>'
-        f'{glyph}</svg>\n')
+def _plate(dark, body, defs, glyph, shadow=True, radius=30):
+    """Every style is the same rounded square with the same shadow and rim:
+    only what happens inside it changes."""
+    rim = (f'<rect x="8.75" y="8.75" width="110.5" height="110.5" rx="{radius - 0.75}" '
+           'fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="1.5"/>')
+    drop = (f'<rect x="9" y="12" width="110" height="110" rx="{radius}" fill="#000" '
+            'opacity=".3"/>') if shadow else ""
+    return ('<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" '
+            f'viewBox="0 0 128 128"><defs>{defs}</defs>{drop}'
+            f'<rect x="8" y="8" width="112" height="112" rx="{radius}" fill="{dark}"/>'
+            f'{body}{rim}{glyph}</svg>\n')
+
+
+def _clip(radius=30):
+    return (f'<clipPath id="plate"><rect x="8" y="8" width="112" height="112" '
+            f'rx="{radius}"/></clipPath>')
+
+
+def _rand(seed):
+    """A fixed sequence per icon: the stars and the filaments are drawn the
+    same way on every machine, every build."""
+    state = [seed * 6151 + 2654435761]
+
+    def nxt(n):
+        state[0] = (state[0] * 1103515245 + 12345) % (1 << 31)
+        return (state[0] >> 8) % n
+    return nxt
+
+
+# --- the five styles -------------------------------------------------------
+# Each takes the app's two colours and its glyph, and returns a whole icon.
+
+def style_galaxy(c1, c2, glyph, seed=0, dark="#0a0714"):
+    """A deep sky with a galaxy turning in it: a lit core, two arms of dust and
+    fixed stars, with the middle kept dark so the glyph reads."""
+    rnd = _rand(seed)
+    stars = []
+    for _ in range(26):
+        x, y = 12 + rnd(104), 12 + rnd(104)
+        r = 0.8 + rnd(18) / 10
+        opacity = 0.35 + rnd(55) / 100
+        if math.hypot(x - 64, y - 64) < 34:      # the glyph's room stays clear
+            continue
+        stars.append(f'<circle cx="{x}" cy="{y}" r="{r:.1f}" fill="#fff" '
+                     f'opacity="{opacity:.2f}"/>')
+    defs = (f'<radialGradient id="core" cx="0.72" cy="0.26" r="0.62">'
+            f'<stop offset="0" stop-color="#fff" stop-opacity="0.95"/>'
+            f'<stop offset="0.18" stop-color="{c1}" stop-opacity="0.85"/>'
+            f'<stop offset="0.6" stop-color="{c2}" stop-opacity="0.35"/>'
+            f'<stop offset="1" stop-color="{dark}" stop-opacity="0"/></radialGradient>'
+            f'<radialGradient id="deep" cx="0.3" cy="0.85" r="0.9">'
+            f'<stop offset="0" stop-color="{c2}" stop-opacity="0.35"/>'
+            f'<stop offset="1" stop-color="{dark}" stop-opacity="0"/></radialGradient>'
+            f'<linearGradient id="arm" x1="0" y1="0" x2="1" y2="1">'
+            f'<stop offset="0" stop-color="{c1}" stop-opacity="0"/>'
+            f'<stop offset="0.5" stop-color="{c1}" stop-opacity="0.75"/>'
+            f'<stop offset="1" stop-color="{c2}" stop-opacity="0"/></linearGradient>' + _clip())
+    body = ('<g clip-path="url(#plate)">'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#deep)"/>'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#core)"/>'
+            '<path d="M96 30C70 26 34 44 22 78" fill="none" stroke="url(#arm)" '
+            'stroke-width="11" stroke-linecap="round" opacity=".8"/>'
+            '<path d="M104 46C92 76 56 100 20 102" fill="none" stroke="url(#arm)" '
+            'stroke-width="7" stroke-linecap="round" opacity=".5"/>'
+            + "".join(stars) + '</g>')
+    return _plate(dark, body, defs, glyph)
+
+
+def style_ribbon(c1, c2, glyph, seed=0, dark="#141020"):
+    """One aurora sweeping the bottom of a dark plate: the brand, on every icon."""
+    defs = (f'<linearGradient id="rib" x1="0" y1="1" x2="1" y2="0">'
+            f'<stop offset="0" stop-color="{c1}" stop-opacity="0"/>'
+            f'<stop offset="0.45" stop-color="{c1}"/><stop offset="1" stop-color="{c2}"/>'
+            f'</linearGradient>'
+            f'<radialGradient id="haze" cx="0.25" cy="0.9" r="0.95">'
+            f'<stop offset="0" stop-color="{c1}" stop-opacity="0.45"/>'
+            f'<stop offset="1" stop-color="{c1}" stop-opacity="0"/></radialGradient>' + _clip())
+    body = ('<g clip-path="url(#plate)">'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#haze)"/>'
+            '<path d="M0 124C22 112 36 86 64 78c22-6 44-4 64 4" fill="none" '
+            'stroke="url(#rib)" stroke-width="13" stroke-linecap="round" opacity=".9"/>'
+            '<path d="M0 136C26 122 42 98 70 92c20-4 40-2 58 4" fill="none" '
+            'stroke="url(#rib)" stroke-width="7" stroke-linecap="round" opacity=".45"/>'
+            '</g>')
+    return _plate(dark, body, defs, glyph)
+
+
+def style_glass(c1, c2, glyph, seed=0, dark="#0e0a18"):
+    """A plate of dark glass with the aurora lit inside it and a bright rim:
+    the same material as the shell's own surfaces."""
+    defs = (f'<radialGradient id="glow" cx="0.3" cy="0.15" r="1.1">'
+            f'<stop offset="0" stop-color="{c1}" stop-opacity="0.95"/>'
+            f'<stop offset="0.55" stop-color="{c2}" stop-opacity="0.55"/>'
+            f'<stop offset="1" stop-color="{dark}" stop-opacity="0.9"/></radialGradient>')
+    body = '<rect x="8" y="8" width="112" height="112" rx="30" fill="url(#glow)"/>'
+    return _plate(dark, body, defs, glyph)
+
+
+def style_clay(c1, c2, glyph, seed=0, dark="#2a1550"):
+    """A bright, soft shape with the glyph pressed into it: the plainest to
+    read at 24 px. The glyph's shadow is drawn, not filtered — librsvg drops
+    feDropShadow, and an icon that renders empty on one machine is no icon."""
+    defs = (f'<linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">'
+            f'<stop offset="0" stop-color="{c1}"/><stop offset="1" stop-color="{c2}"/>'
+            f'</linearGradient>'
+            f'<linearGradient id="top" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="#fff" stop-opacity="0.5"/>'
+            f'<stop offset="0.55" stop-color="#fff" stop-opacity="0"/></linearGradient>')
+    shade = glyph.replace('"#ffffff"', f'"{dark}"').replace('"#fff"', f'"{dark}"')
+    body = ('<rect x="8" y="8" width="112" height="112" rx="34" fill="url(#bg)"/>'
+            '<rect x="8" y="8" width="112" height="112" rx="34" fill="url(#top)"/>'
+            f'<g transform="translate(0 3)" opacity=".25">{shade}</g>')
+    return _plate("#00000000", body, defs, glyph, radius=34)
+
+
+def style_bolt(c1, c2, glyph, seed=0, dark="#0d0918"):
+    """An electric discharge, not a lightning-bolt sign: filaments enter from a
+    corner, branch and thin out, each drawn twice — a wide coloured haze and a
+    hair-thin core. They keep off the middle, and none of them is white."""
+    rnd = _rand(seed)
+
+    def filament(x, y, dx, dy, steps, spread, keep_out=34):
+        points = [(x, y)]
+        for _ in range(steps):
+            x += dx + rnd(spread * 2) - spread
+            y += dy + rnd(spread * 2) - spread
+            vx, vy = x - 64, y - 64
+            away = math.hypot(vx, vy) or 1
+            if away < keep_out:
+                x, y = 64 + vx / away * keep_out, 64 + vy / away * keep_out
+            points.append((x, y))
+        return "M" + " L".join(f"{px:.1f} {py:.1f}" for px, py in points)
+
+    runs = [filament(104, 10, -7, 9, 11, 7),
+            filament(118, 40, -11, 7, 9, 8),
+            filament(96, 4, -4, 12, 10, 6)]
+    for _ in range(4):
+        runs.append(filament(20 + rnd(90), 14 + rnd(40), -5 + rnd(10), 9, 4, 6))
+    haze = "".join(f'<path d="{d}" fill="none" stroke="{c1}" stroke-width="{7 - i}" '
+                   f'stroke-linecap="round" stroke-linejoin="round" '
+                   f'opacity="{0.30 - i * 0.04:.2f}"/>' for i, d in enumerate(runs[:3]))
+    core = "".join(f'<path d="{d}" fill="none" stroke="{c1 if i % 2 else c2}" '
+                   f'stroke-width="{3.0 if i < 3 else 1.8}" stroke-linecap="round" '
+                   f'stroke-linejoin="round" opacity="{0.95 if i < 3 else 0.55}"/>'
+                   for i, d in enumerate(runs))
+    defs = (f'<radialGradient id="sky" cx="0.82" cy="0.1" r="1.0">'
+            f'<stop offset="0" stop-color="{c2}" stop-opacity="0.7"/>'
+            f'<stop offset="0.55" stop-color="{c2}" stop-opacity="0.18"/>'
+            f'<stop offset="1" stop-color="{dark}" stop-opacity="0"/></radialGradient>'
+            f'<radialGradient id="hit" cx="0.8" cy="0.08" r="0.3">'
+            f'<stop offset="0" stop-color="{c1}" stop-opacity="0.95"/>'
+            f'<stop offset="1" stop-color="{c1}" stop-opacity="0"/></radialGradient>'
+            f'<radialGradient id="centre" cx="0.46" cy="0.54" r="0.5">'
+            f'<stop offset="0" stop-color="{dark}" stop-opacity="0.8"/>'
+            f'<stop offset="1" stop-color="{dark}" stop-opacity="0"/></radialGradient>' + _clip())
+    body = ('<g clip-path="url(#plate)">'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#sky)"/>'
+            f'{haze}{core}'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#hit)"/>'
+            '<rect x="8" y="8" width="112" height="112" fill="url(#centre)"/>'
+            '</g>')
+    return _plate(dark, body, defs, glyph)
+
+
+# The style the plain "Aurora" theme is drawn in, and the ones beside it.
+STYLES = {"galaxy": style_galaxy, "ribbon": style_ribbon, "glass": style_glass,
+          "clay": style_clay, "bolt": style_bolt}
+DEFAULT_STYLE = "galaxy"
+
+
+def app(c1, c2, glyph, style=None, seed=0):
+    """One app icon, in the chosen style."""
+    return STYLES[style or DEFAULT_STYLE](c1, c2, glyph, seed=seed)
 
 
 W = "#ffffff"
@@ -174,9 +332,48 @@ GLYPHS = {
     + '<circle cx="90" cy="86" r="11" fill="#fff"/>',
     "accounts": fill("M40 88h52a16 16 0 0 0 1-32 22 22 0 0 0-42.6 3.8A14.5 14.5 0 0 0 40 88z")
     + '<circle cx="66" cy="68" r="7" fill="#4a6cf0"/>' + fill("M53 86c0-7 6-11 13-11s13 4 13 11z", "#4a6cf0"),
+    # --- Aurora's own apps -------------------------------------------------
+    "aurora": (stroke("M26 98C40 58 58 32 64 28c6 4 24 30 38 70", 12)
+               + stroke("M44 98c8-22 16-36 20-40 6 4 12 18 20 40", 8, W, 'opacity=".65"')
+               + '<circle cx="64" cy="92" r="6" fill="#fff"/>'),
+    "sparkle": (fill("M60 26C64 48 70 56 92 60C70 64 64 72 60 94C56 72 50 64 28 60"
+                     "C50 56 56 48 60 26Z")
+                + fill("M94 28c1.5 7 4 9.5 11 11-7 1.5-9.5 4-11 11-1.5-7-4-9.5-11-11"
+                       " 7-1.5 9.5-4 11-11z", W, 'opacity=".8"')
+                + '<circle cx="92" cy="92" r="5" fill="#fff" opacity=".6"/>'),
+    "code": (stroke("M50 44 30 64 50 84M78 44 98 64 78 84", 9)
+             + stroke("M71 36 57 92", 8, W, 'opacity=".85"')),
+    "gamepad": (fill("M40 44h48c12 0 20 10 22 24l3 16c2 10-9 16-16 9l-11-11h-44l-11 11"
+                     "c-7 7-18 1-16-9l3-16c2-14 10-24 22-24z")
+                + '<rect x="38" y="58" width="6" height="18" rx="2" fill="#1a1030"/>'
+                + '<rect x="32" y="64" width="18" height="6" rx="2" fill="#1a1030"/>'
+                + '<circle cx="84" cy="60" r="4.5" fill="#1a1030"/>'
+                + '<circle cx="94" cy="70" r="4.5" fill="#1a1030"/>'),
+    "aurora-files": (fill("M26 42a8 8 0 0 1 8-8h20l8 8h32a8 8 0 0 1 8 8v6H26z", W, 'opacity=".5"')
+                     + fill("M26 56a8 8 0 0 1 8-8h60a8 8 0 0 1 8 8v34a8 8 0 0 1-8 8H34"
+                            "a8 8 0 0 1-8-8z")),
+    # A page under a lens: Quick Look.
+    "quicklook": (fill("M32 28h34l18 18v26a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V36a8 8 0 0 1 8-8z",
+                       W, 'opacity=".9"')
+                  + stroke("M38 48h26M38 60h18", 5, "#2a2150")
+                  + '<circle cx="84" cy="82" r="17" fill="none" stroke="#fff" stroke-width="8"/>'
+                  + stroke("M95 93 107 105", 9)),
+    # Lit ports in a rack: portop.
+    "ports": "".join(fill("M28 %da6 6 0 0 1 6-6h60a6 6 0 0 1 6 6v9a6 6 0 0 1-6 6H34"
+                          "a6 6 0 0 1-6-6z" % (36 + 21 * i))
+                     + f'<circle cx="84" cy="{40 + 21 * i}" r="3.5" fill="#2a2150"/>'
+                     + stroke(f"M38 {40 + 21 * i}h26", 4, "#2a2150", 'opacity=".45"')
+                     for i in range(3)),
+    # A watched heartbeat: Task Manager.
+    "heartbeat": (stroke("M24 64h16l8-22 12 44 10-32 7 10h27", 8)
+                  + '<circle cx="104" cy="64" r="5" fill="#fff" opacity=".8"/>'),
     "settings": "",  # filled in below (needs the background color for the hole)
 }
-GLYPHS["settings"] = gear(64, 64, 38, 29, 9, 12, W, "#5b6275")
+GLYPHS["settings"] = ("".join(
+    f'<rect x="56" y="12" width="16" height="22" rx="7" fill="{W}" '
+    f'transform="rotate({angle} 64 64)"/>' for angle in range(0, 360, 60))
+    + f'<circle cx="64" cy="64" r="34" fill="{W}"/>'
+    + '<circle cx="64" cy="64" r="14" fill="#2a2150"/>')
 
 # icon name(s) → (top color, bottom color, glyph)
 APPS = {
@@ -204,7 +401,7 @@ APPS = {
     ("org.gnome.Ptyxis", "utilities-terminal", "org.gnome.Terminal", "org.gnome.Console",
      "terminal"): ("#2f3445", "#161922", "terminal"),
     ("org.gnome.Software", "system-software-install", "software-store"): ("#ffae5c", "#ff5e7a", "store"),
-    ("applets-screenshooter", "org.gnome.Screenshot"): ("#7c8aa6", "#48536b", "screenshot"),
+    ("applets-screenshooter", "org.gnome.Screenshot"): ("#8fb6e8", "#44629e", "screenshot"),
     ("org.gnome.DiskUtility", "gnome-disks", "drive-harddisk-system"): ("#9aa3b5", "#5d6679", "disk"),
     ("org.gnome.baobab", "baobab"): ("#46c7c0", "#1f8a9a", "pie"),
     ("org.gnome.SystemMonitor", "utilities-system-monitor", "gnome-system-monitor"):
@@ -232,8 +429,18 @@ APPS = {
     ("org.aurora.Clipboard", "edit-paste", "clipboard"): ("#b49cff", "#6c4fd8", "clipboard"),
     ("org.aurora.UsbWriter", "media-removable", "drive-removable-media-usb"):
         ("#9ec5ff", "#4a5fd0", "usbstick"),
+    # --- Aurora's own apps -------------------------------------------------
+    ("aurora-logo", "org.aurora.Welcome", "aurora-installer", "io.calamares.calamares"):
+        ("#c49bff", "#6a3bd6", "aurora"),
+    ("aurora-assistant", "org.aurora.Assistant"): ("#ff9ec4", "#7a4bd6", "sparkle"),
+    ("aurora-devhub", "org.aurora.DevHub"): ("#ffa46b", "#e0518f", "code"),
+    ("aurora-gamehub", "org.aurora.GameHub"): ("#a78bff", "#4b2bb5", "gamepad"),
+    ("org.aurora.Files",): ("#9db8ff", "#4a5fd0", "aurora-files"),
+    ("org.aurora.QuickLook",): ("#7fd8ee", "#2f7bb5", "quicklook"),
+    ("org.aurora.TaskManager",): ("#5ce0b8", "#1f8f78", "heartbeat"),
+    ("portop",): ("#ffc46b", "#d8762a", "ports"),
     ("preferences-system", "org.gnome.Settings", "preferences-desktop", "gnome-control-center",
-     "systemsettings"): ("#9aa1b3", "#5b6275", "settings"),
+     "systemsettings"): ("#aab3cc", "#5b6490", "settings"),
 }
 
 # ------------------------------------------------------------------------ folders
@@ -489,16 +696,31 @@ CODE = [
 
 # ---------------------------------------------------------------------- output
 
-INHERITS = {"Aurora": "Papirus,hicolor", "Aurora-Dark": "Papirus-Dark,Papirus,hicolor"}
+# The plain "Aurora" theme is drawn in DEFAULT_STYLE; each other style is a
+# theme of its own that inherits it, so it carries only its app icons and the
+# folders, file types and devices are shared.
+STYLE_THEMES = {name: ("Aurora" if name == DEFAULT_STYLE else f"Aurora-{name.title()}")
+                for name in STYLES}
 CONTEXTS = {"apps": "Applications", "places": "Places", "mimetypes": "MimeTypes",
             "devices": "Devices"}
 
 
-def index_theme(name):
-    dirs = ",".join(f"scalable/{d}" for d in CONTEXTS)
+def inherits(name):
+    if name == "Aurora":
+        return "Papirus,hicolor"
+    if name == "Aurora-Dark":
+        return "Papirus-Dark,Papirus,hicolor"
+    if name.endswith("-Dark"):
+        return f"Aurora-Dark,{name[:-5]},Papirus-Dark,Papirus,hicolor"
+    return f"Aurora,Papirus,hicolor"
+
+
+def index_theme(name, contexts=None):
+    contexts = contexts or CONTEXTS
+    dirs = ",".join(f"scalable/{d}" for d in contexts)
     out = [f"[Icon Theme]\nName={name}\nComment=Aurora OS icons, with Papirus for symbolic icons\n"
-           f"Inherits={INHERITS[name]}\nDirectories={dirs}\n"]
-    for d, ctx in CONTEXTS.items():
+           f"Inherits={inherits(name)}\nDirectories={dirs}\n"]
+    for d, ctx in contexts.items():
         out.append(f"\n[scalable/{d}]\nContext={ctx}\nSize=128\nMinSize=8\nMaxSize=512\nType=Scalable\n")
     return "".join(out)
 
@@ -520,9 +742,11 @@ def write_set(base, context, names, svg):
 
 
 def generate(out):
+    """Write the Aurora theme in the default style, a theme for each other
+    style beside it, and the dark twins that share their artwork."""
     base = os.path.join(out, "Aurora")
-    for names, (c1, c2, glyph) in APPS.items():
-        write_set(base, "apps", list(names), app(c1, c2, GLYPHS[glyph]))
+    for seed, (names, (c1, c2, glyph)) in enumerate(APPS.items()):
+        write_set(base, "apps", list(names), app(c1, c2, GLYPHS[glyph], seed=seed))
     for names, emblem in EMBLEMS.items():
         write_set(base, "places", list(names), folder(emblem))
     write_set(base, "places", ["user-trash", "trash-empty"], trash(False))
@@ -537,14 +761,48 @@ def generate(out):
     with open(os.path.join(base, "index.theme"), "w") as f:
         f.write(index_theme("Aurora"))
 
-    dark = os.path.join(out, "Aurora-Dark")
-    os.makedirs(dark, exist_ok=True)
-    link = os.path.join(dark, "scalable")
-    if os.path.lexists(link):
-        os.remove(link)
-    os.symlink("../Aurora/scalable", link)
-    with open(os.path.join(dark, "index.theme"), "w") as f:
-        f.write(index_theme("Aurora-Dark"))
+    # The other styles: the same apps, drawn another way. Everything else is
+    # inherited from Aurora, so a style weighs what its own icons weigh.
+    apps_only = {"apps": CONTEXTS["apps"]}
+    for style, theme in STYLE_THEMES.items():
+        if theme == "Aurora":
+            continue
+        d = os.path.join(out, theme)
+        for seed, (names, (c1, c2, glyph)) in enumerate(APPS.items()):
+            write_set(d, "apps", list(names), app(c1, c2, GLYPHS[glyph], style=style, seed=seed))
+        with open(os.path.join(d, "index.theme"), "w") as f:
+            f.write(index_theme(theme, apps_only))
+
+    # Dark twins: the same files, a theme name GTK can switch to with the
+    # colour scheme (a symlink, so the artwork is written once).
+    for theme in ["Aurora"] + [t for t in STYLE_THEMES.values() if t != "Aurora"]:
+        dark = os.path.join(out, theme + "-Dark")
+        os.makedirs(dark, exist_ok=True)
+        contexts = CONTEXTS if theme == "Aurora" else apps_only
+        for context in contexts:
+            link = os.path.join(dark, "scalable")
+            os.makedirs(link, exist_ok=True)
+            target = os.path.join(link, context)
+            if os.path.lexists(target):
+                if os.path.islink(target):
+                    os.remove(target)
+                else:
+                    shutil.rmtree(target)
+            os.symlink(os.path.join("..", "..", theme, "scalable", context), target)
+        with open(os.path.join(dark, "index.theme"), "w") as f:
+            f.write(index_theme(theme + "-Dark", contexts))
+
+    # The brand icons also go to hicolor, where anything that is not using an
+    # Aurora theme looks for them.
+    hicolor = os.path.join(out, "hicolor", "scalable", "apps")
+    os.makedirs(hicolor, exist_ok=True)
+    for names, (c1, c2, glyph) in APPS.items():
+        if not names[0].startswith(("aurora-", "org.aurora.")):
+            continue
+        seed = list(APPS).index(names)
+        for name in names:
+            with open(os.path.join(hicolor, name + ".svg"), "w") as f:
+                f.write(app(c1, c2, GLYPHS[glyph], seed=seed))
 
 
 if __name__ == "__main__":

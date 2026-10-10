@@ -1327,6 +1327,22 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   login screen computes the same phase. "Auto" dark style flips the system color scheme
   at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
 
+#### Icons: one generator, five styles
+- **Alternatives:** shipping a drawn icon set, or using Papirus as-is.
+- **Why:** every icon Aurora draws — apps, folders, file types, devices — is written by
+  `branding/icons/generate.py` on a 128 px grid, so the set stays consistent by construction
+  instead of by discipline. The app icons are one plate plus one glyph, which means the plate
+  can be swapped: Settings → Appearance → **Icon style** picks between **Galaxy** (the
+  default: a deep sky with a lit core and stars), **Aurora ribbon**, **Glass**, **Clay** and
+  **Lightning**, and every app icon in the system changes at once. Each style is a whole icon
+  theme with a dark twin; the four beside the default hold only their app icons and inherit
+  Aurora for folders, file types and devices, so a style costs about 230 KB. The stars of a
+  galaxy icon and the filaments of a lightning one are computed from the icon's place in the
+  set, never from a random number, so a given icon is the same picture on every machine and
+  in every build. Aurora's own four marks used to be hand-drawn SVGs on a different plate
+  from everything else; they are generated like the rest now, and also written into `hicolor`
+  for anything not using an Aurora theme.
+
 #### Overview and hot corners
 - **Alternatives:** labwc's built-in window switcher only, a GNOME-style overview with
   live thumbnails.

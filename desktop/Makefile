@@ -45,8 +45,10 @@ install: protocols translations wallpapers sounds
 	install -m 644 data/portals/*.conf $(SHAREDIR)/xdg-desktop-portal/
 	install -d $(SHAREDIR)/glib-2.0/schemas
 	install -m 644 data/schemas/* $(SHAREDIR)/glib-2.0/schemas/
-	install -d $(SHAREDIR)/icons/hicolor/scalable/apps $(SHAREDIR)/icons/hicolor/symbolic/apps
-	install -m 644 data/icons/scalable/apps/* $(SHAREDIR)/icons/hicolor/scalable/apps/
+	# The app icons themselves are generated above, into the Aurora themes and
+	# into hicolor for anything not using one of them; only the symbolic marks
+	# (the window buttons, the panel's logo) are drawn by hand.
+	install -d $(SHAREDIR)/icons/hicolor/symbolic/apps
 	install -m 644 data/icons/symbolic/apps/* $(SHAREDIR)/icons/hicolor/symbolic/apps/
 	install -d $(SHAREDIR)/backgrounds/aurora
 	install -m 644 build/wallpapers/*.png $(SHAREDIR)/backgrounds/aurora/

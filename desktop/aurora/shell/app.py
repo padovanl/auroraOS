@@ -186,6 +186,7 @@ class Shell(Adw.Application):
             # The bar is a different height: it has to be built again.
             s.connect("changed::interface-density",
                       lambda *a: self._later(self._redensify))
+            s.connect("changed::icon-style", lambda *a: self._later(self._restyle_icons))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -286,6 +287,18 @@ class Shell(Adw.Application):
     def _reblur():
         from aurora import look
         look.apply()
+
+    def _restyle_icons(self):
+        """Another icon style: the theme behind every icon on screen changes,
+        and the surfaces that hold icons are built again so they show it at
+        once rather than at the next login."""
+        from aurora import look
+        look.apply_icon_style()
+        gtk_settings = Gtk.Settings.get_default()
+        if gtk_settings is not None:
+            gtk_settings.props.gtk_icon_theme_name = look.icon_theme()
+        self.panels.rebuild()
+        self.docks.rebuild()
 
     def _redensify(self):
         """Comfortable or compact: the stylesheet and the bar's own height."""
