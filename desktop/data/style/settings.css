@@ -61,6 +61,15 @@ button.background-swatch:hover { box-shadow: inset 0 0 0 2px @accent_bg_color; }
 .wallpaper-cell picture { border-radius: 10px; }
 .wallpaper-cell.current picture { box-shadow: 0 0 0 3px @accent_bg_color; }
 
+@keyframes background-drift {
+  0% { transform: scale(1.0); }
+  100% { transform: scale(1.09); }
+}
+.background-preview.wallpaper-drift {
+  animation: background-drift 90s ease-in-out infinite alternate;
+}
+.background-preview.wallpaper-paused { animation-play-state: paused; }
+
 /* Storage */
 .storage-bar { border-radius: 9px; background-color: alpha(@window_fg_color, 0.08); }
 .storage-bar > box:first-child { border-radius: 9px 0 0 9px; }

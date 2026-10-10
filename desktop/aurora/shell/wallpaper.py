@@ -2,7 +2,6 @@
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
-from aurora import settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
@@ -28,16 +27,12 @@ class Wallpaper(LayerWindow):
         overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
         # The aurora moving over the picture, under everything else.
-        from aurora.shell.livingwallpaper import LivingWallpaper, style
-        self.living = LivingWallpaper(app)
+        from aurora.shell.livingwallpaper import LivingWallpaper
+        self.living = LivingWallpaper(app, activity=self._motion_activity)
         overlay.add_overlay(self.living)
         # The slow drift into the picture is a CSS animation on the pictures
         # themselves: GTK does the work, so it costs us nothing to run.
-        self._set_drift(style() == "zoom")
-        s = settings.get()
-        if s is not None:
-            s.connect("changed::wallpaper-animation",
-                      lambda *_a: self._set_drift(style() == "zoom"))
+        self._set_drift(False)
 
         # Files from ~/Desktop, on the primary monitor only.
         self._icons = None
@@ -84,6 +79,13 @@ class Wallpaper(LayerWindow):
     def _set_drift(self, on):
         for picture in self._pictures:
             (picture.add_css_class if on else picture.remove_css_class)("wallpaper-drift")
+
+    def _motion_activity(self, running):
+        from aurora.shell.livingwallpaper import style
+        from aurora import wallpapers
+        self._set_drift(style() == "zoom" and not wallpapers.is_video(self.living.path))
+        for picture in self._pictures:
+            (picture.remove_css_class if running else picture.add_css_class)("wallpaper-paused")
 
     def _on_background_click(self, _gesture, _n, x, y):
         if _gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
@@ -192,8 +194,11 @@ class Wallpaper(LayerWindow):
         self._current = path
         visible = self._stack.get_visible_child()
         target = self._pictures[1] if visible is self._pictures[0] else self._pictures[0]
-        target.set_file(Gio.File.new_for_path(path) if path else None)
+        from aurora import wallpapers
+        poster = wallpapers.poster_path(path)
+        target.set_file(Gio.File.new_for_path(poster) if poster else None)
         self._stack.set_visible_child(target)
+        self.living.set_picture(path)
 
     def _build_menu(self, parent):
         actions = Gio.SimpleActionGroup()

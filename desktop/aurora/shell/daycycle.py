@@ -152,7 +152,7 @@ class DayCycle(GObject.Object):
         self.emit("wallpaper-changed")
 
     def _update_link(self):
-        path, link = self.wallpaper(), cache_link()
+        path, link = wallpapers.poster_path(self.wallpaper()), cache_link()
         if path is None:
             return
         try:

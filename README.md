@@ -1345,22 +1345,26 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   `branding/wallpapers/`; the series go to `aurora-SERIES-PHASE.png` and the single ones to
   `aurora-NAME.png`, and Settings gives each a readable name rather than its file name.
 
-#### A background that moves, and stays a photograph
-- **Alternatives:** a GLSL shader wallpaper, a looping video, a scene drawn from scratch.
-- **Why:** a scene made of lines and gradients looks drawn, whatever is spent on it — that
-  was tried and thrown away — and Aurora renders in software in a virtual machine, where a
-  shader wallpaper is a slide show and a video loop is a fan. So **Movement** (Settings →
-  Appearance → Background) leaves the photograph alone and adds light over it
-  (`shell/livingwallpaper.py`): three curtains of aurora folding across the sky, green at the
-  foot and violet at the crown, fading out at their ends and before they reach the ground.
-  They are *added* (cairo's ADD operator), never painted on top, which is what makes them
-  read as light in the picture rather than as a shape over it, and why the same layer works
-  on a picture it was never made for. Drawn into a surface a quarter of the screen's size and
-  scaled up — cheap, and where the softness comes from — fifteen times a second. **Slow zoom**
-  is a ninety-second drift into the picture, expressed as a CSS animation on the picture, so
-  GTK's renderer does all of it and the shell does none. Neither runs while a window covers
-  the desktop or the machine is in power-saver mode: the cost while you work is zero, which
-  is the only way an animated background is defensible on a laptop.
+#### Animated video wallpapers
+- **What:** Settings → Appearance → Background → **Animated wallpapers** offers the bundled
+  Full HD and 4K clips: auroras, nature, planets, space and abstract loops. Selecting a
+  thumbnail starts the video on the desktop and in the preview. **Browse Videos…**
+  imports a personal MP4, WebM, M4V or MOV; **Play animation** switches playback off to show its static poster.
+- **How:** `shell/livingwallpaper.py` uses GTK's GStreamer media backend for silent,
+  continuous playback. Bundled videos use H.264 at 30 fps, retaining 3840×2160 for available 4K sources and 1920×1080 otherwise. Thumbnails
+  use PNG posters, so the grid opens only the selected video's decoder. The lock
+  screen and wallpaper-derived accent use the poster too.
+- **Power:** playback pauses while a maximized or fullscreen window covers the desktop,
+  or the active power profile is power-saver. Minimized windows allow it to resume.
+  Unmapping a preview or monitor surface closes its decoder and signal subscriptions.
+- **Sources:** the downloaded works and their posters retain their source licenses. `branding/wallpapers/animated/CREDITS.txt` lists authors, source pages,
+  licenses and adaptations, and ships with the artwork package. The importer in
+  `tools/import-wallpaper-videos.py` converts source clips without their audio;
+  clips are slowed with frame blending; excerpts use a short dissolve across the loop boundary.
+  The source catalog keeps the downloaded candidates available for selecting the final collection.
+- **Validation:** `make test-wallpapers` selects all bundled Settings buttons, checks
+  decoding and pause/resume, verifies the lock-screen poster, measures actual changing
+  desktop pixels, and checks that Still stops movement.
 
 #### Icons: one generator, five styles
 - **Alternatives:** shipping a drawn icon set, or using Papirus as-is.

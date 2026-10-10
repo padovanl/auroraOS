@@ -52,6 +52,12 @@ install: protocols translations wallpapers sounds
 	install -m 644 data/icons/symbolic/apps/* $(SHAREDIR)/icons/hicolor/symbolic/apps/
 	install -d $(SHAREDIR)/backgrounds/aurora
 	install -m 644 build/wallpapers/*.png $(SHAREDIR)/backgrounds/aurora/
+	install -m 644 $(BRANDING)/wallpapers/scenes/CREDITS.txt $(SHAREDIR)/backgrounds/aurora/STATIC-CREDITS.txt
+	install -m 644 $(BRANDING)/wallpapers/scenes/sources.json $(SHAREDIR)/backgrounds/aurora/static-sources.json
+	install -d $(SHAREDIR)/backgrounds/aurora/animated
+	install -m 644 $(BRANDING)/wallpapers/animated/*.mp4 $(BRANDING)/wallpapers/animated/*.png \
+		$(BRANDING)/wallpapers/animated/sources.json $(BRANDING)/wallpapers/animated/CREDITS.txt \
+		$(SHAREDIR)/backgrounds/aurora/animated/
 	for phase in dawn day dusk night; do \
 		ln -sf aurora-$(DEFAULT_SERIES)-$$phase.png \
 			$(SHAREDIR)/backgrounds/aurora/aurora-dynamic-$$phase.png; \
@@ -86,7 +92,7 @@ build/wallpapers/.stamp: $(wildcard $(BRANDING)/wallpapers/*/*.png)
 	rm -rf build/wallpapers && mkdir -p build/wallpapers
 	for dir in $(BRANDING)/wallpapers/*/; do \
 		series=$$(basename $$dir); \
-		[ "$$series" = scenes ] && continue; \
+		case "$$series" in scenes|animated) continue ;; esac; \
 		for picture in $$dir*.png; do \
 			cp $$picture build/wallpapers/aurora-$$series-$$(basename $$picture); \
 		done; \

@@ -13,7 +13,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
-	test-newfeatures \
+	test-newfeatures test-wallpapers \
 	test-shortcut-edges test-files-shortcuts \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
@@ -65,6 +65,9 @@ test-unit: dev-image
 test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
+
+test-wallpapers: dev-image
+	desktop/dev/run-headless.sh tests/animated-wallpapers.sh $(CURDIR)/work/wallpaper-tests
 
 # Screenshots for the website/README from the real ISO in QEMU.
 vm-screenshots:

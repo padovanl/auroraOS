@@ -336,13 +336,17 @@
       a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
     </key>
     <key name="wallpaper-animation" type="s">
-      <choices><choice value="off"/><choice value="zoom"/><choice value="aurora"/></choices>
-      <default>'aurora'</default>
+      <choices><choice value="off"/><choice value="auto"/><choice value="zoom"/>
+      <choice value="aurora"/><choice value="stars"/><choice value="clouds"/>
+      <choice value="shimmer"/></choices>
+      <default>'auto'</default>
       <summary>What moves in the background picture</summary>
-      <description>Aurora: curtains of light folding across the sky of the picture,
-      added over it so what is underneath stays a photograph. Zoom: a ninety-second
-      drift into the picture and back, which GTK animates itself. Neither is drawn
-      while a window covers the desktop or the computer is saving power.</description>
+      <description>Auto chooses moving light to suit each included scene: aurora,
+      stars, water reflections, clouds, nebula glow, sun rays or ring glints.
+      Unknown pictures stay still in Auto. Individual effects can also be selected.
+      Zoom is a ninety-second drift into the picture and back. Animation pauses
+      while a maximized or fullscreen window covers the desktop or the computer
+      is saving power. Off leaves the picture still.</description>
     </key>
     <key name="launchpad-layout" type="s">
       <choices><choice value="pages"/><choice value="sections"/></choices>

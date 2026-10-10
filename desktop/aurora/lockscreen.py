@@ -55,11 +55,12 @@ def picture(desktop, mode, own):
 
 def main():
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-    from aurora import settings
+    from aurora import settings, wallpapers
     s = settings.get()
     mode = s.get_string("lock-background") if s is not None else "desktop"
     own = s.get_string("lock-picture") if s is not None else ""
-    print(picture(sys.argv[1] if len(sys.argv) > 1 else "", mode, own))
+    desktop = wallpapers.poster_path(sys.argv[1] if len(sys.argv) > 1 else "")
+    print(picture(desktop, mode, own))
 
 
 if __name__ == "__main__":

@@ -541,11 +541,11 @@ msgstr "Editor"
 msgid "Automatic"
 msgstr "Automatico"
 
-#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:212
+#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:217
 msgid "Open Terminal"
 msgstr "Apri terminale"
 
-#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:213 aurora/welcome.py:21
+#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:218 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "Apri File"
 
@@ -1336,7 +1336,7 @@ msgid "Forward"
 msgstr "Avanti"
 
 #: aurora/files/window.py:345 aurora/files/window.py:1212
-#: aurora/shell/wallpaper.py:210
+#: aurora/shell/wallpaper.py:215
 msgid "New File…"
 msgstr "Nuovo file…"
 
@@ -1480,7 +1480,7 @@ msgstr "Checksum SHA-256"
 msgid "Move to Trash"
 msgstr "Sposta nel cestino"
 
-#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:211
+#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:216
 msgid "New Folder…"
 msgstr "Nuova cartella…"
 
@@ -2565,11 +2565,11 @@ msgstr "Temperatura colore"
 msgid "Lock Screen"
 msgstr "Blocca schermo"
 
-#: aurora/settingsapp/appearance.py:243 aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/appearance.py:243 aurora/settingsapp/backgrounds.py:28
 msgid "Picture"
 msgstr "Immagine"
 
-#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:176
+#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:225
 msgid "Background"
 msgstr "Sfondo"
 
@@ -2601,7 +2601,7 @@ msgstr "Scegli…"
 msgid "Lock Screen Picture"
 msgstr "Immagine della schermata di blocco"
 
-#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:419
+#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:550
 #: aurora/settingsapp/system.py:527
 msgid "Images"
 msgstr "Immagini"
@@ -2901,7 +2901,7 @@ msgstr "Velocità, uso per mancini e gesti sono in Mouse e touchpad."
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
 #: aurora/settingsapp/desktop.py:219 aurora/settingsapp/inputs.py:49
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
-#: aurora/shell/wallpaper.py:217
+#: aurora/shell/wallpaper.py:222
 #: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "Impostazioni"
@@ -2914,187 +2914,231 @@ msgstr "Impossibile caricare questa pagina"
 msgid "Open a specific page"
 msgstr "Apri una pagina specifica"
 
-#: aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/backgrounds.py:28
 msgid "Dynamic (follows the sun)"
 msgstr "Dinamico (segue il sole)"
 
-#: aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/backgrounds.py:28
 msgid "Picture of the day"
 msgstr "Immagine del giorno"
 
-#: aurora/settingsapp/backgrounds.py:27
+#: aurora/settingsapp/backgrounds.py:29
 msgid "Slideshow"
 msgstr "Presentazione"
 
-#: aurora/settingsapp/backgrounds.py:27
+#: aurora/settingsapp/backgrounds.py:29
 msgid "Solid color"
 msgstr "Tinta unita"
 
-#: aurora/settingsapp/backgrounds.py:29
+#: aurora/settingsapp/backgrounds.py:31
+msgid "Automatic (matches the scene)"
+msgstr "Automatico (adatto alla scena)"
+
+#: aurora/settingsapp/backgrounds.py:32
 msgid "Aurora over the sky"
 msgstr "Aurora sopra il cielo"
 
-#: aurora/settingsapp/backgrounds.py:29
+#: aurora/settingsapp/backgrounds.py:32
 msgid "Slow zoom"
 msgstr "Zoom lento"
 
-#: aurora/settingsapp/backgrounds.py:30
+#: aurora/settingsapp/backgrounds.py:33
+msgid "Twinkling stars"
+msgstr "Stelle scintillanti"
+
+#: aurora/settingsapp/backgrounds.py:33
+msgid "Drifting clouds"
+msgstr "Nuvole in movimento"
+
+#: aurora/settingsapp/backgrounds.py:34
+msgid "Water reflections"
+msgstr "Riflessi sull’acqua"
+
+#: aurora/settingsapp/backgrounds.py:34
 msgid "Still"
 msgstr "Ferma"
 
-#: aurora/settingsapp/backgrounds.py:58
+#: aurora/settingsapp/backgrounds.py:105
 msgid "Dawn"
 msgstr "Alba"
 
-#: aurora/settingsapp/backgrounds.py:58
+#: aurora/settingsapp/backgrounds.py:105
 msgid "Day"
 msgstr "Giorno"
 
-#: aurora/settingsapp/backgrounds.py:58
+#: aurora/settingsapp/backgrounds.py:105
 msgid "Dusk"
 msgstr "Tramonto"
 
-#: aurora/settingsapp/backgrounds.py:58
+#: aurora/settingsapp/backgrounds.py:105
 msgid "Night"
 msgstr "Notte"
 
-#: aurora/settingsapp/backgrounds.py:60
-msgid "Northern Lights"
-msgstr "Aurora boreale"
-
-#: aurora/settingsapp/backgrounds.py:60
-msgid "Nebula"
-msgstr "Nebulosa"
-
-#: aurora/settingsapp/backgrounds.py:61
-msgid "Wave"
-msgstr "Onda"
-
-#: aurora/settingsapp/backgrounds.py:61
-msgid "Milky Way"
-msgstr "Via Lattea"
-
-#: aurora/settingsapp/backgrounds.py:62
-msgid "Sunrise"
-msgstr "Alba"
-
-#: aurora/settingsapp/backgrounds.py:62
-msgid "Ringed Planet"
-msgstr "Pianeta con anelli"
-
-#: aurora/settingsapp/backgrounds.py:197
+#: aurora/settingsapp/backgrounds.py:248
 msgid "Personalize your background"
 msgstr "Personalizza lo sfondo"
 
-#: aurora/settingsapp/backgrounds.py:206
+#: aurora/settingsapp/backgrounds.py:251
+msgid "Your own wallpapers"
+msgstr "I tuoi sfondi"
+
+#: aurora/settingsapp/backgrounds.py:252
+msgid "Add a picture or video from your computer"
+msgstr "Aggiungi un’immagine o un video dal tuo computer"
+
+#: aurora/settingsapp/backgrounds.py:253
+msgid "Add Wallpaper…"
+msgstr "Aggiungi sfondo…"
+
+#: aurora/settingsapp/backgrounds.py:263
 msgid "Movement"
 msgstr "Movimento"
 
-#: aurora/settingsapp/backgrounds.py:208
-msgid "Light added over the picture — it stays a photograph. Nothing moves while a window covers the desktop or the computer is saving power."
-msgstr "Luce aggiunta sopra l'immagine: resta una fotografia. Niente si muove mentre una finestra copre il desktop o il computer risparmia energia."
+#: aurora/settingsapp/backgrounds.py:265
+msgid "Automatic plays video wallpapers and animates included scenes. Animation pauses when a window covers the desktop or in power saver."
+msgstr "Automatico riproduce gli sfondi video e anima le scene incluse. L’animazione si interrompe quando una finestra copre il desktop o in risparmio energetico."
 
-#: aurora/settingsapp/backgrounds.py:227
+#: aurora/settingsapp/backgrounds.py:270
+msgid "Play animation"
+msgstr "Riproduci animazione"
+
+#: aurora/settingsapp/backgrounds.py:274
+msgid "Slow, silent movement. Pauses when the desktop is covered or in power saver."
+msgstr "Movimento lento e silenzioso. Si interrompe quando il desktop è coperto o in risparmio energetico."
+
+#: aurora/settingsapp/backgrounds.py:293
+msgid "Animated wallpapers"
+msgstr "Sfondi animati"
+
+#: aurora/settingsapp/backgrounds.py:294
+msgid "{count} video wallpapers — select one to play it in the preview"
+msgstr "{count} sfondi video: selezionane uno per riprodurlo nell’anteprima"
+
+#: aurora/settingsapp/backgrounds.py:297
+msgid "Browse Videos…"
+msgstr "Sfoglia video…"
+
+#: aurora/settingsapp/backgrounds.py:317
 msgid "Series"
 msgstr "Serie"
 
-#: aurora/settingsapp/backgrounds.py:227
+#: aurora/settingsapp/backgrounds.py:317
 msgid "The same landscape at dawn, day, dusk and night"
 msgstr "Lo stesso paesaggio all'alba, di giorno, al tramonto e di notte"
 
-#: aurora/settingsapp/backgrounds.py:238
+#: aurora/settingsapp/backgrounds.py:328
 msgid "Browse Photos…"
 msgstr "Sfoglia foto…"
 
-#: aurora/settingsapp/backgrounds.py:240
+#: aurora/settingsapp/backgrounds.py:330
 msgid "All Wallpapers…"
 msgstr "Tutti gli sfondi…"
 
-#: aurora/settingsapp/backgrounds.py:245
+#: aurora/settingsapp/backgrounds.py:335
 msgid "Recent images"
 msgstr "Immagini recenti"
 
-#: aurora/settingsapp/backgrounds.py:254
+#: aurora/settingsapp/backgrounds.py:344
 msgid "Picture from"
 msgstr "Immagine da"
 
-#: aurora/settingsapp/backgrounds.py:257
+#: aurora/settingsapp/backgrounds.py:347
 msgid "Aurora asks the service for today's picture once a day; nothing else is sent"
 msgstr "Aurora chiede al servizio l'immagine di oggi una volta al giorno; non invia nient'altro"
 
-#: aurora/settingsapp/backgrounds.py:267
+#: aurora/settingsapp/backgrounds.py:357
 msgid "Pictures from"
 msgstr "Immagini da"
 
-#: aurora/settingsapp/backgrounds.py:272
+#: aurora/settingsapp/backgrounds.py:362
 msgid "Change picture every"
 msgstr "Cambia immagine ogni"
 
-#: aurora/settingsapp/backgrounds.py:273 aurora/shell/widgets.py:920
+#: aurora/settingsapp/backgrounds.py:363 aurora/shell/widgets.py:920
 msgid "15 minutes"
 msgstr "15 minuti"
 
-#: aurora/settingsapp/backgrounds.py:273 aurora/settingsapp/screentime.py:17
+#: aurora/settingsapp/backgrounds.py:363 aurora/settingsapp/screentime.py:17
 msgid "1 hour"
 msgstr "1 ora"
 
-#: aurora/settingsapp/backgrounds.py:273
+#: aurora/settingsapp/backgrounds.py:363
 msgid "6 hours"
 msgstr "6 ore"
 
-#: aurora/settingsapp/backgrounds.py:273
+#: aurora/settingsapp/backgrounds.py:363
 msgid "24 hours"
 msgstr "24 ore"
 
-#: aurora/settingsapp/backgrounds.py:277
+#: aurora/settingsapp/backgrounds.py:367
 msgid "Shuffle the picture order"
 msgstr "Ordine casuale delle immagini"
 
-#: aurora/settingsapp/backgrounds.py:296
+#: aurora/settingsapp/backgrounds.py:386
 msgid "Custom Color"
 msgstr "Colore personalizzato"
 
-#: aurora/settingsapp/backgrounds.py:300
+#: aurora/settingsapp/backgrounds.py:390
 msgid "Choose a color"
 msgstr "Scegli un colore"
 
-#: aurora/settingsapp/backgrounds.py:338
+#: aurora/settingsapp/backgrounds.py:451
 msgid "Dawn, day, dusk and night follow the sun where you are"
 msgstr "Alba, giorno, tramonto e notte seguono il sole dove sei"
 
-#: aurora/settingsapp/backgrounds.py:341
+#: aurora/settingsapp/backgrounds.py:454
 msgid "Today's picture is on its way…"
 msgstr "L'immagine di oggi sta arrivando…"
 
-#: aurora/settingsapp/backgrounds.py:342
+#: aurora/settingsapp/backgrounds.py:455
 msgid "A new picture every so often"
 msgstr "Una nuova immagine ogni tanto"
 
-#: aurora/settingsapp/backgrounds.py:343
+#: aurora/settingsapp/backgrounds.py:456
 msgid "A calm, solid color"
 msgstr "Un colore unito e rilassante"
 
-#: aurora/settingsapp/backgrounds.py:357
+#: aurora/settingsapp/backgrounds.py:470
 msgid "Included wallpapers"
 msgstr "Sfondi inclusi"
 
-#: aurora/settingsapp/backgrounds.py:418
+#: aurora/settingsapp/backgrounds.py:548
 msgid "Choose a Background"
 msgstr "Scegli uno sfondo"
 
-#: aurora/settingsapp/backgrounds.py:447
+#: aurora/settingsapp/backgrounds.py:549
+msgid "Pictures and videos"
+msgstr "Immagini e video"
+
+#: aurora/settingsapp/backgrounds.py:550 aurora/settingsapp/storage.py:22
+msgid "Videos"
+msgstr "Video"
+
+#: aurora/settingsapp/backgrounds.py:579
+msgid "Adding wallpaper…"
+msgstr "Aggiunta dello sfondo…"
+
+#: aurora/settingsapp/backgrounds.py:585
+msgid "Could not add wallpaper. Choose a readable picture or video."
+msgstr "Impossibile aggiungere lo sfondo. Scegli un’immagine o un video leggibile."
+
+#: aurora/settingsapp/backgrounds.py:588
+msgid "Wallpaper added"
+msgstr "Sfondo aggiunto"
+
+#: aurora/settingsapp/backgrounds.py:601
 msgid "Pictures for the Slideshow"
 msgstr "Immagini per la presentazione"
 
-#: aurora/settingsapp/backgrounds.py:463
+#: aurora/settingsapp/backgrounds.py:617
 msgid "All Wallpapers"
 msgstr "Tutti gli sfondi"
 
-#: aurora/settingsapp/backgrounds.py:467
+#: aurora/settingsapp/backgrounds.py:621
 msgid "Search wallpapers"
 msgstr "Cerca sfondi"
 
-#: aurora/settingsapp/backgrounds.py:488
+#: aurora/settingsapp/backgrounds.py:642
 msgid "{n} pictures"
 msgstr "{n} immagini"
 
@@ -3277,7 +3321,7 @@ msgstr "Orologio, calendario, meteo, sistema, progetti Git, container, GPU, gioc
 msgid "Show widgets"
 msgstr "Mostra i widget"
 
-#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:214
+#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:219
 #: aurora/shell/widgets.py:1427
 msgid "Edit Widgets…"
 msgstr "Modifica widget…"
@@ -4852,10 +4896,6 @@ msgstr "Bilanciamento"
 #: aurora/shell/widgets.py:1474
 msgid "Pictures"
 msgstr "Immagini"
-
-#: aurora/settingsapp/storage.py:22
-msgid "Videos"
-msgstr "Video"
 
 #: aurora/settingsapp/storage.py:23
 msgid "Downloads"
@@ -6690,11 +6730,11 @@ msgstr "{name} collegato"
 msgid "The drive is ready to use."
 msgstr "L’unità è pronta per l’uso."
 
-#: aurora/shell/wallpaper.py:215
+#: aurora/shell/wallpaper.py:220
 msgid "Change Background…"
 msgstr "Cambia sfondo…"
 
-#: aurora/shell/wallpaper.py:216
+#: aurora/shell/wallpaper.py:221
 msgid "Display Settings"
 msgstr "Impostazioni schermo"
 
@@ -7202,17 +7242,209 @@ msgstr "Fatto: la chiavetta è pronta"
 msgid "Stopping…"
 msgstr "Interruzione…"
 
-#: aurora/wallpapers.py:11
+#: aurora/wallpapers.py:12
 msgid "Starfall"
 msgstr "Pioggia di stelle"
 
-#: aurora/wallpapers.py:11
+#: aurora/wallpapers.py:12
 msgid "Veil"
 msgstr "Velo"
 
-#: aurora/wallpapers.py:11
+#: aurora/wallpapers.py:12
 msgid "Horizon"
 msgstr "Orizzonte"
+
+#: aurora/wallpapers.py:14
+msgid "Northern Lights"
+msgstr "Aurora boreale"
+
+#: aurora/wallpapers.py:14
+msgid "Wave"
+msgstr "Onda"
+
+#: aurora/wallpapers.py:15
+msgid "Nebula"
+msgstr "Nebulosa"
+
+#: aurora/wallpapers.py:15
+msgid "Milky Way"
+msgstr "Via Lattea"
+
+#: aurora/wallpapers.py:16
+msgid "Sunrise"
+msgstr "Alba"
+
+#: aurora/wallpapers.py:16
+msgid "Ringed Planet"
+msgstr "Pianeta con anelli"
+
+#: aurora/wallpapers.py:18
+msgid "Violet Sculpture"
+msgstr ""
+
+#: aurora/wallpapers.py:19
+msgid "Folded Ribbons"
+msgstr ""
+
+#: aurora/wallpapers.py:20
+msgid "Floating Geometry"
+msgstr ""
+
+#: aurora/wallpapers.py:21
+msgid "Metallic Orbit"
+msgstr ""
+
+#: aurora/wallpapers.py:22
+msgid "Indigo Silk"
+msgstr ""
+
+#: aurora/wallpapers.py:23
+msgid "Blue World"
+msgstr ""
+
+#: aurora/wallpapers.py:24
+msgid "Amber Planet"
+msgstr ""
+
+#: aurora/wallpapers.py:25
+msgid "Red Horizon"
+msgstr ""
+
+#: aurora/wallpapers.py:26
+msgid "Earth at Dusk"
+msgstr ""
+
+#: aurora/wallpapers.py:27
+msgid "Eclipse World"
+msgstr ""
+
+#: aurora/wallpapers.py:28
+msgid "Alpine Reflection"
+msgstr ""
+
+#: aurora/wallpapers.py:29
+msgid "Alpine Valley"
+msgstr ""
+
+#: aurora/wallpapers.py:30
+msgid "Golden Forest"
+msgstr ""
+
+#: aurora/wallpapers.py:31
+msgid "Turquoise Depths"
+msgstr ""
+
+#: aurora/wallpapers.py:32
+msgid "Fern Canopy"
+msgstr ""
+
+#: aurora/wallpapers.py:36
+msgid "Fjord Lights"
+msgstr "Luci sul fiordo"
+
+#: aurora/wallpapers.py:37
+msgid "Crystal Bloom"
+msgstr "Fioritura di cristalli"
+
+#: aurora/wallpapers.py:38
+msgid "Atmosphere"
+msgstr "Atmosfera"
+
+#: aurora/wallpapers.py:39
+msgid "Smooth Waves"
+msgstr "Onde morbide"
+
+#: aurora/wallpapers.py:40
+msgid "Crystal Flow"
+msgstr "Flusso di cristalli"
+
+#: aurora/wallpapers.py:41
+msgid "Infinite Flight"
+msgstr "Volo infinito"
+
+#: aurora/wallpapers.py:42
+msgid "Nordic Aurora"
+msgstr ""
+
+#: aurora/wallpapers.py:43
+msgid "Trappist Dawn"
+msgstr ""
+
+#: aurora/wallpapers.py:44
+msgid "Triton Horizon"
+msgstr ""
+
+#: aurora/wallpapers.py:45
+msgid "Alpine Mist"
+msgstr ""
+
+#: aurora/wallpapers.py:46
+msgid "Amber Water"
+msgstr ""
+
+#: aurora/wallpapers.py:47
+msgid "Emerald Leaves"
+msgstr ""
+
+#: aurora/wallpapers.py:48
+msgid "Meadow Sky"
+msgstr ""
+
+#: aurora/wallpapers.py:49
+msgid "Winter River"
+msgstr ""
+
+#: aurora/wallpapers.py:50
+msgid "Blue Hour"
+msgstr ""
+
+#: aurora/wallpapers.py:51
+msgid "Mirror Lake"
+msgstr ""
+
+#: aurora/wallpapers.py:52
+msgid "Golden Birch"
+msgstr ""
+
+#: aurora/wallpapers.py:53
+msgid "Summer Bloom"
+msgstr ""
+
+#: aurora/wallpapers.py:54
+msgid "Forest Stream"
+msgstr ""
+
+#: aurora/wallpapers.py:55
+msgid "Unyielding Itachi's Sharingan"
+msgstr ""
+
+#: aurora/wallpapers.py:56
+msgid "Madara in Japanese Village"
+msgstr ""
+
+#: aurora/wallpapers.py:57
+msgid "Rain Drops on Window"
+msgstr ""
+
+#: aurora/wallpapers.py:58
+msgid "Full Moon (Elden Ring)"
+msgstr ""
+
+#: aurora/wallpapers.py:59
+msgid "Mist Over the Pines"
+msgstr ""
+
+#: aurora/wallpapers.py:60
+msgid "Azure Clouds"
+msgstr ""
+
+#: aurora/wallpapers.py:61
+msgid "Singularity Cosmic Vortex"
+msgstr "Singolarità — vortice cosmico"
+
+#: aurora/wallpapers.py:62
+msgid "Cat and Bee"
+msgstr "Gatto e ape"
 
 #: aurora/weather.py:24
 msgid "Clear sky"
