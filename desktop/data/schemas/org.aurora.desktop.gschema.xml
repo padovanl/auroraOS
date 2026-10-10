@@ -144,6 +144,19 @@
       <default>[]</default>
       <summary>Background pictures chosen lately, newest first</summary>
     </key>
+    <key name="reduce-transparency" type="b">
+      <default>false</default>
+      <summary>Make the desktop's glass solid</summary>
+      <description>The top bar, the dock, Spotlight, Launchpad, the Control Center,
+      notifications and the desktop widgets stop letting the wallpaper through, for
+      legibility (Settings → Accessibility → Seeing).</description>
+    </key>
+    <key name="chrome-tint" type="b">
+      <default>false</default>
+      <summary>Tint the top bar and the dock with the accent color</summary>
+      <description>Their dark glass takes the accent instead of being neutral; with the
+      accent itself taken from the background, the chrome follows the picture behind it.</description>
+    </key>
     <key name="accent-from-wallpaper" type="b">
       <default>false</default>
       <summary>Take the accent color from the background picture</summary>
@@ -265,9 +278,21 @@
       <default>true</default>
       <summary>Magnify dock icons under the pointer</summary>
     </key>
-    <key name="dock-autohide" type="b">
-      <default>false</default>
-      <summary>Hide the dock until the pointer reaches the screen edge</summary>
+    <key name="dock-hide" type="s">
+      <choices><choice value="never"/><choice value="windows"/><choice value="always"/></choices>
+      <default>'windows'</default>
+      <summary>When the dock gets out of the way</summary>
+      <description>never: it always keeps its strip of screen, and windows stop above it.
+      windows: it slides away while a window is using the whole screen, and comes back when
+      the pointer reaches the edge — so a maximized window has the whole screen and no band
+      of empty desktop is left around the dock. always: it stays hidden until the pointer
+      reaches the edge.</description>
+    </key>
+    <key name="dock-running-apps" type="b">
+      <default>true</default>
+      <summary>Show apps that are open but not pinned to the dock</summary>
+      <description>Off: the dock holds only what you pinned, and the top bar's window
+      buttons are the only list of what is open.</description>
     </key>
     <key name="dock-show-trash" type="b">
       <default>true</default>

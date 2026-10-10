@@ -20,6 +20,10 @@ for s in "${stages[@]}"; do
     script=$(ls "$SRC"/build/stages/"$s"*.sh 2>/dev/null | head -1)
     [ -n "$script" ] || die "unknown stage: $s"
     log "=== stage $(basename "$script" .sh) ==="
-    [ -d "$ROOTFS/proc" ] && mount_chroot
+    # An interrupted bootstrap can leave proc/ behind. Stage 10 removes that
+    # incomplete tree, so only mount a successfully bootstrapped rootfs.
+    if [ -f "$ROOTFS/.aurora-bootstrapped" ]; then
+        mount_chroot
+    fi
     bash "$script"
 done

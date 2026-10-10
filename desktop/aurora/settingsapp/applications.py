@@ -235,6 +235,13 @@ class Accessibility(Page):
                                                                    POINTER_SIZES[i][0])))
             seeing.add(switch_row(_("Reduce animation"), not iface.get_boolean("enable-animations"),
                                   lambda v: self._reduce_motion(v, iface)))
+        aurora = settings.get()
+        if aurora:
+            seeing.add(switch_row(_("Reduce transparency"),
+                                  aurora.get_boolean("reduce-transparency"),
+                                  lambda v: aurora.set_boolean("reduce-transparency", v),
+                                  subtitle=_("The desktop's glass becomes solid")))
+        if iface:
             seeing.add(switch_row(_("Always show scrollbars"),
                                   not iface.get_boolean("overlay-scrolling"),
                                   lambda v: iface.set_boolean("overlay-scrolling", not v)))

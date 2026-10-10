@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/aurora-boot.gif" width="220" alt="Aurora OS boot animation">
+<img src="docs/aurora-boot.png" width="180" alt="Aurora OS boot animation">
 
 # Aurora OS
 
@@ -130,7 +130,7 @@ learning was the point. — *Luca Padovan*
 | | |
 |---|---|
 | **Menu bar** | Aurora menu (who you are and the computer's name; About, Settings, App Center, Dev Hub, System Health, Force Quit with their shortcuts; Lock; Sleep, Restart, Shut Down and Log Out as round buttons), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, an optional **system monitor** (processor and memory at a glance; its popover adds temperature, download and upload speed, free disk space; Settings → Desktop & Dock → Top Bar), status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
-| **Dock** | Pinned and running apps with one mark per open window (up to three; the window you're in is a short bar in the accent color), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one. Minimized windows get their own icon near the Trash; one click restores them. Magnification, autohide, bottom/left/right, and three styles: one floating shelf, islands of glass (Launchpad, the apps and the Trash each on their own pill, like the top bar's floating style) or a full-width taskbar. |
+| **Dock** | Pinned and running apps with one mark per open window (up to three; the window you're in is a short bar in the accent color), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one; a minimized one is listed as such and one click brings it back. Apps that are only open can be left out entirely, so the top bar's window buttons are the single list of what is running. Magnification, bottom/left/right, and it gets out of the way the way other docks do: by default it keeps no strip of screen, so a maximized window uses the whole display and the dock slides away until the pointer reaches the edge (or never, or always). Three styles: one floating shelf, islands of glass (Launchpad, the apps and the Trash each on their own pill, like the top bar's floating style) or a full-width taskbar. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`), system actions (`restart`, `lock`, `empty trash`, `task manager`…), the time anywhere (`time in Tokyo`), paths (`~/Doc…`, `/etc`), web addresses (`github.com`) and the web. |
 | **Rounded screen corners** | The display is shaped like modern hardware: four small surfaces round the corners of every monitor, without taking a single click. 0 to 24 px in Settings → Desktop & Dock. |
 | **Launchpad** | Full-screen grid of every app, in sections: Frequently Used (what Screen Time counted over the last week), then Internet, Office, Photos, Music & Video, Games, Development and Utilities, each alphabetical. Type to search instead. |
@@ -1456,6 +1456,9 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **Reduce transparency** (Settings → Accessibility → Seeing) makes every glass surface
+  solid in one switch, for anyone who reads better without a picture behind the text.
+- **The chrome can take the accent** (Settings → Desktop & Dock → Top Bar → *Tint with the accent color*): the top bar's and the dock's glass is mixed with the accent instead of a neutral dark violet. Together with the wallpaper accent below, the desktop's own furniture follows the picture behind it.
 - **The accent can come from the wallpaper** (Settings → Appearance → Style → *Color from
   the background*): `aurora/accent.py` reads the picture on screen at 64×64, gathers its
   pixels into 18 hue buckets weighted by saturation, and takes the heaviest one; the color
@@ -1471,7 +1474,12 @@ set up a feature, and every place it appears has its own switch.
   under them reads straight through their text. The Control Center used to show the desktop's
   clock and calendar widgets through its own cards.
 - **Animations:** Wayfire's `animate` plugin handles application windows, including
-  minimize and restore. GTK and Files retain their own content transitions
+  minimize and restore. The shell adds the small motions a desktop is expected to have
+  in 2026 and nothing more: menus and popovers grow from the edge they hang off,
+  notifications slide in from the corner, the volume and brightness indicators rise,
+  a dock icon bounces while its app starts and gives under a click, tiles and window
+  cards lift under the pointer. All of it is CSS, so GTK drops every bit of it when
+  animations are turned off. GTK and Files retain their own content transitions
   (`gtk4-animations.css`). The Window animations switch controls both layers.
 - **Rendering in virtual machines:** labwc uses wlroots' **pixman** renderer and GTK's
   **cairo** renderer without a GPU. Wayfire 0.9 requires GLES, so Aurora uses Mesa's

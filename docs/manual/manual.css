@@ -243,3 +243,29 @@ dd { margin: 0.2em 0 0 1.2em; color: var(--text); }
   .top, .sidebar, .toc, .pager { display: none; }
   .layout, main { display: block; padding: 0; }
 }
+
+/* On a phone a wide reference table cannot be read sideways: each row becomes
+   a small card and every value sits under the name of its own column. */
+@media (max-width: 700px) {
+  .table-wrap { overflow-x: visible; border: none; border-radius: 0; }
+  .table-wrap thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%);
+  }
+  .table-wrap table, .table-wrap tbody, .table-wrap tr, .table-wrap td {
+    display: block; width: auto;
+  }
+  .table-wrap tr {
+    border: 1px solid var(--border); border-radius: 12px;
+    margin: 0 0 10px; padding: 6px 0;
+  }
+  .table-wrap td {
+    border: none; padding: 6px 14px; white-space: normal !important; width: auto;
+  }
+  .table-wrap td:empty { display: none; }
+  .table-wrap td::before {
+    content: attr(data-label); display: block;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; opacity: 0.5; margin-bottom: 2px;
+  }
+  .table-wrap td[data-label=""]::before { content: none; }
+}

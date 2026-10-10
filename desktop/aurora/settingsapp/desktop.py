@@ -16,7 +16,7 @@ PRESETS = {
         "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "right",
                    "panel-opacity": 0.78,
                    "dock-position": "bottom", "dock-style": "floating", "dock-icon-size": 48,
-                   "dock-magnification": True, "dock-autohide": False,
+                   "dock-magnification": True, "dock-hide": "windows",
                    "window-buttons": "left", "window-button-style": "traffic",
                    "launcher-style": "spotlight"},
     },
@@ -26,7 +26,7 @@ PRESETS = {
         "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "right",
                    "panel-opacity": 0.95,
                    "dock-position": "bottom", "dock-style": "panel", "dock-icon-size": 36,
-                   "dock-magnification": False, "dock-autohide": False,
+                   "dock-magnification": False, "dock-hide": "never",
                    "window-buttons": "right", "window-button-style": "symbolic",
                    "launcher-style": "grid"},
     },
@@ -36,7 +36,7 @@ PRESETS = {
         "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "center",
                    "panel-opacity": 0.95,
                    "dock-position": "left", "dock-style": "panel", "dock-icon-size": 42,
-                   "dock-magnification": False, "dock-autohide": False,
+                   "dock-magnification": False, "dock-hide": "never",
                    "window-buttons": "right", "window-button-style": "symbolic",
                    "launcher-style": "grid"},
     },
@@ -46,7 +46,7 @@ PRESETS = {
         "values": {"panel-position": "top", "panel-style": "bar", "clock-position": "center",
                    "panel-opacity": 0.5,
                    "dock-position": "bottom", "dock-style": "floating", "dock-icon-size": 44,
-                   "dock-magnification": True, "dock-autohide": True,
+                   "dock-magnification": True, "dock-hide": "always",
                    "window-buttons": "left", "window-button-style": "traffic",
                    "launcher-style": "spotlight"},
     },
@@ -157,6 +157,7 @@ class Desktop(Page):
         self._combo(bar, _("Clock"), "clock-position",
                     [("right", _("Right")), ("center", _("Center"))])
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
+        self._switch(bar, _("Tint with the accent color"), "chrome-tint")
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
         self._switch(bar, _("Show Desktop button"), "show-desktop-button")
@@ -180,7 +181,11 @@ class Desktop(Page):
                      ("panel", _("Full-width panel"))])
         self._scale(dock, _("Icon size"), "dock-icon-size", 24, 80, 2)
         self._switch(dock, _("Magnify icons on hover"), "dock-magnification")
-        self._switch(dock, _("Automatically hide"), "dock-autohide")
+        self._combo(dock, _("Hide the dock"), "dock-hide",
+                    [("never", _("Never")),
+                     ("windows", _("When a window needs the screen")),
+                     ("always", _("Always"))])
+        self._switch(dock, _("Show open apps"), "dock-running-apps")
         self._switch(dock, _("Show Trash"), "dock-show-trash")
 
         win = self.group(_("Windows"))

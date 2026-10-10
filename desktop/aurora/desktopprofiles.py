@@ -8,17 +8,17 @@ import tempfile
 
 from aurora import settings
 
-KEYS = ("dock-position", "dock-style", "dock-autohide", "dock-magnification",
+KEYS = ("dock-position", "dock-style", "dock-hide", "dock-magnification",
         "panel-opacity", "do-not-disturb", "window-animations", "wallpaper",
         "wallpaper-dynamic", "wallpaper-slideshow")
 
 BUILTINS = {
-    "work": {"dock-position": "bottom", "dock-autohide": False,
+    "work": {"dock-position": "bottom", "dock-hide": "never",
              "do-not-disturb": False, "window-animations": True, "power": "balanced"},
-    "gaming": {"dock-position": "bottom", "dock-autohide": True,
+    "gaming": {"dock-position": "bottom", "dock-hide": "always",
                "do-not-disturb": True, "window-animations": True,
                "power": "performance"},
-    "battery": {"dock-autohide": True, "dock-magnification": False,
+    "battery": {"dock-hide": "always", "dock-magnification": False,
                 "do-not-disturb": False, "window-animations": False,
                 "wallpaper-dynamic": False, "wallpaper-slideshow": False,
                 "power": "power-saver"},
