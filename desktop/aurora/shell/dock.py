@@ -520,8 +520,21 @@ class Dock(LayerWindow):
     # --- content ---
 
     def _separator(self):
-        return Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL if self.vertical
-                             else Gtk.Orientation.VERTICAL, css_classes=["dock-separator"])
+        """A short line between two groups of icons.
+
+        It has to be given a length: left to fill the row, it grew with the
+        row — which gets taller the moment an icon next to it is magnified —
+        and stuck out of the dock."""
+        length = max(20, self.icon_size - 8)
+        sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL if self.vertical
+                            else Gtk.Orientation.VERTICAL, css_classes=["dock-separator"])
+        if self.vertical:
+            sep.set_size_request(length, 1)
+            sep.set_halign(Gtk.Align.CENTER)
+        else:
+            sep.set_size_request(1, length)
+            sep.set_valign(Gtk.Align.END)
+        return sep
 
     def _island(self):
         """One pill of frosted glass holding its own row of icons.
