@@ -536,9 +536,13 @@ make 2>&1 | why                                 # explains the error and the fix
 Right-click an app, recent file or project in Spotlight for quick actions. Apps can be
 pinned to the dock or desktop; files can be opened in Files, copied by path or handed to
 the Assistant; projects can launch a configured workspace. Settings → System Health →
-Guided Diagnostics creates a local report for installation, boot/login or app problems.
-The default report excludes raw logs; including them is opt-in, and you can edit the
-preview before saving. Nothing is uploaded automatically.
+Guided Diagnostics creates a local report for installation, boot/login, app problems or
+hardware (screen, sound, another device): every report opens with the machine itself —
+model, processor, memory, kernel, Aurora version, session and renderer — and the hardware
+one adds `lspci`, the disks and the kernel's warnings. The default report excludes raw
+logs; including them is opt-in, and you can edit the preview before saving. Home paths,
+e-mail addresses, machine and disk ids, serial numbers and anything shaped like a password
+are redacted first. Nothing is uploaded automatically.
 
 ### Sharing
 - **Files with nearby devices:** right-click a file in Files → *Send to Nearby Device…*

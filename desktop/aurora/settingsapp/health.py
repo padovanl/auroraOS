@@ -263,9 +263,10 @@ class Health(Page):
         dialog = Adw.AlertDialog(heading=_("Guided Diagnostics"),
                                  body=_("No report is uploaded automatically."))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        categories = ("install", "boot", "apps")
+        categories = ("install", "boot", "apps", "hardware")
         issue = Adw.ComboRow(title=_("Problem"), model=Gtk.StringList.new(
-            [_ ("Installation"), _("Startup or login"), _("Applications")]))
+            [_("Installation"), _("Startup or login"), _("Applications"),
+             _("Screen, sound or another device")]))
         details = Adw.SwitchRow(title=_("Include detailed logs"),
                                 subtitle=_("Logs may contain personal information. Review "
                                            "the report before sharing it."))
