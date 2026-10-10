@@ -175,6 +175,7 @@ class Shell(Adw.Application):
                       lambda *a: self._later(self._reshape_screen))
             s.connect("changed::accent-from-wallpaper",
                       lambda *a: self._later(self._accent_switched))
+            s.connect("changed::chrome-tint", lambda *a: self._update_dynamic_css())
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -195,7 +196,8 @@ class Shell(Adw.Application):
             from aurora import look
             for key in ("color-scheme", "accent-color"):
                 iface.connect(f"changed::{key}", lambda *a: self._later(look.apply))
-            iface.connect("changed::accent-color", lambda *a: self._load_css())
+            iface.connect("changed::accent-color",
+                          lambda *a: (self._load_css(), self._update_dynamic_css()))
             look.apply()
         # Tell tests (and anyone curious) when the desktop is up, once it has drawn.
         GLib.idle_add(self._ready, t0)
@@ -258,6 +260,7 @@ class Shell(Adw.Application):
         from aurora import look
         look.apply()
         self._load_css()
+        self._update_dynamic_css()
 
     def _accent_changed(self):
         """A new background, or a different way of choosing the accent."""
@@ -267,17 +270,40 @@ class Shell(Adw.Application):
         from aurora import look
         look.apply()
         self._load_css()
+        self._update_dynamic_css()
 
     def _reshape_screen(self):
         self._update_dynamic_css()
         self.screencorners.rebuild()
 
+    @staticmethod
+    def _tinted(base, accent, amount):
+        """base mixed with the accent: the chrome keeps its depth and takes the
+        color of the desktop."""
+        try:
+            hexed = accent.lstrip("#")
+            mix = tuple(int(hexed[i:i + 2], 16) for i in (0, 2, 4))
+        except (ValueError, IndexError):
+            return base
+        return tuple(round(b + (m - b) * amount) for b, m in zip(base, mix))
+
     def _update_dynamic_css(self):
         s = settings.get()
         opacity = s.get_double("panel-opacity") if s else 0.78
+        panel, dock = (20, 16, 30), (22, 18, 34)
+        # Windows 11's "accent on the taskbar", with Aurora's accent — which can
+        # itself come from the wallpaper, so the whole chrome takes the color of
+        # the picture behind it.
+        if s is not None and s.get_boolean("chrome-tint"):
+            from aurora import look
+            accent = look.accent_hex()
+            panel = self._tinted(panel, accent, 0.30)
+            dock = self._tinted(dock, accent, 0.26)
         css = (f".aurora-panel.panel-bar-style .panel-bar, "
                f".aurora-panel.panel-floating .panel-island "
-               f"{{ background-color: rgba(20, 16, 30, {opacity:.2f}); }}")
+               f"{{ background-color: rgba({panel[0]}, {panel[1]}, {panel[2]}, {opacity:.2f}); }}"
+               f"\n.aurora-dock .dock-box, .aurora-dock.dock-islands .dock-island "
+               f"{{ background-color: rgba({dock[0]}, {dock[1]}, {dock[2]}, 0.70); }}")
         # The rounded screen corners: black outside a quarter circle, one
         # surface per corner, so the radius has to reach the stylesheet.
         r = s.get_int("screen-corner-radius") if s else 0

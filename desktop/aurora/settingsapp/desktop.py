@@ -157,6 +157,7 @@ class Desktop(Page):
         self._combo(bar, _("Clock"), "clock-position",
                     [("right", _("Right")), ("center", _("Center"))])
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
+        self._switch(bar, _("Tint with the accent color"), "chrome-tint")
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
         self._switch(bar, _("Show Desktop button"), "show-desktop-button")

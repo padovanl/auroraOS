@@ -1457,6 +1457,7 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **The chrome can take the accent** (Settings → Desktop & Dock → Top Bar → *Tint with the accent color*): the top bar's and the dock's glass is mixed with the accent instead of a neutral dark violet. Together with the wallpaper accent below, the desktop's own furniture follows the picture behind it.
 - **The accent can come from the wallpaper** (Settings → Appearance → Style → *Color from
   the background*): `aurora/accent.py` reads the picture on screen at 64×64, gathers its
   pixels into 18 hue buckets weighted by saturation, and takes the heaviest one; the color

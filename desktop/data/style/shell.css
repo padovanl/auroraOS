@@ -40,7 +40,8 @@ window.aurora-layer {
   padding: 0 4px;
   border-radius: 999px;
   border: 1px solid alpha(white, 0.10);
-  box-shadow: 0 4px 16px alpha(black, 0.28), inset 0 1px 0 alpha(white, 0.07);
+  box-shadow: 0 4px 16px alpha(black, 0.28), inset 0 1px 0 alpha(white, 0.14),
+              inset 0 -1px 0 alpha(black, 0.22);
 }
 .aurora-panel.panel-floating .panel-island > menubutton.panel-button > button,
 .aurora-panel.panel-floating .panel-island > button.panel-button,
@@ -263,13 +264,17 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 
 /* ---- Dock ---- */
+/* The glass has an edge: a bright line where the light catches the top of the
+   pane and a dark one under it, so it reads as a piece of material and not as
+   a flat rectangle of colour. */
 
 /* The same glass as the top bar's islands, a touch more see-through: the dock
    sits on the wallpaper, and nothing but the wallpaper goes under it. */
 .aurora-dock .dock-box {
   background-color: rgba(22, 18, 34, 0.70);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .aurora-dock.dock-floating .dock-box { border-radius: 26px; }
@@ -288,7 +293,8 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   background-color: rgba(22, 18, 34, 0.70);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .dock-row { margin: 6px; }
