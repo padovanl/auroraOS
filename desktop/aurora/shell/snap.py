@@ -285,7 +285,16 @@ class SnapOverlay(LayerWindow):
             icon.set_from_gicon(app.get_icon())
         else:
             icon.set_from_icon_name("application-x-executable")
-        box.append(icon)
+        # The window as it last looked, so you choose by sight (previews.py).
+        shot = self.shell.previews.for_view(view)
+        if shot is not None:
+            picture = Gtk.Picture(paintable=shot, content_fit=Gtk.ContentFit.COVER,
+                                  can_shrink=True, width_request=160, height_request=96)
+            framed = Gtk.Box(css_classes=["snap-window-shot"], overflow=Gtk.Overflow.HIDDEN)
+            framed.append(picture)
+            box.append(framed)
+        else:
+            box.append(icon)
         box.append(Gtk.Label(label=view.get("title") or (app.get_display_name() if app else ""),
                              ellipsize=Pango.EllipsizeMode.END, max_width_chars=18,
                              css_classes=["caption"]))

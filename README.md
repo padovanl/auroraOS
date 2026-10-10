@@ -136,7 +136,7 @@ learning was the point. — *Luca Padovan*
 | **Rounded screen corners** | The display is shaped like modern hardware: four small surfaces round the corners of every monitor, without taking a single click. 0 to 24 px in Settings → Desktop & Dock. |
 | **Lock screen** | Clock, date, a chip with the weather and one with the battery, and the music that is playing with its cover and controls (gtklock and its playerctl module). The picture darkens at the top and the bottom so everything reads on any wallpaper, and the account picture, the unlock arrow and the focused field take your accent color. |
 | **Launchpad** | Full-screen grid of every app, in sections: Frequently Used (what Screen Time counted over the last week), then Internet, Office, Photos, Music & Video, Games, Development and Utilities, each alphabetical. Type to search instead. |
-| **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
+| **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop, each showing the window as you last saw it with its app's icon in the corner: type to filter, click to switch, × or middle-click to close, "Show Desktop". The same pictures appear in the dock's window lists and in Snap Assist; they need the Aurora session and can be turned off. |
 | **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
 | **Desktop widgets** | Twenty-three glanceable cards on the desktop, in five groups. Everyday: clock (analog or digital), calendar, weather, world clock, sun & moon (sunrise, sunset, daylight and the moon's phase), photo frame, now playing. Productivity: to-do list, notes, countdown to a date (with its own colors), focus timer, progress of the day, week, month or year, recent files, clipboard. System: gauges for processor, memory, disk and temperature that turn from your accent color to amber and red as they fill, network speed, battery. Developers: Git projects, local dev servers (click to open in the browser), containers. Gamers: Steam games, GPU, power profile. Drag them anywhere (a guide shows where they land and they line up with their neighbours), right-click for **Customize…**, and **Edit Widgets…** on the desktop's menu: open windows step aside until you're done, and a compact gallery with one tab per group adds widgets in the first free spot. They follow the accent color, light or dark style, clock format and units, and keep their place and proportions when the resolution changes. |
@@ -1301,9 +1301,16 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   live thumbnails.
 - **Why:** the overview (`shell/overview.py`) is a full-screen layer with a card per
   window from the foreign-toplevel list, over a blurred screenshot of the desktop (grim at
-  half scale, shrunk and scaled back up: a cheap blur with no GPU code). labwc 0.8 doesn't
-  let other programs capture single windows yet, so cards show the app icon and title
-  instead of live thumbnails. Hot corners (`shell/hotcorners.py`) are 2×2-pixel
+  half scale, shrunk and scaled back up: a cheap blur with no GPU code). A card shows the
+  window itself: no protocol here hands one client another client's window (wlr-screencopy
+  copies a whole output and per-window capture arrived in wlroots after the version Debian
+  13 carries), so `shell/previews.py` keeps a picture of each window, cropped out of the
+  screen with grim while that window was in front — which is when its pixels really are on
+  screen — and shows it later, as the big desktops do. Wayfire says where the focused
+  window is (`window-rules/get-focused-view`); the compatibility session has no such
+  interface, so there the cards keep their app icons, as they always did. The same pictures
+  appear in the dock's window lists and in Snap Assist, and Settings → Desktop & Dock →
+  Windows → Window previews turns them off. Hot corners (`shell/hotcorners.py`) are 2×2-pixel
   transparent layer surfaces in the corners. The pointer must rest there for 120 ms,
   which avoids triggers on fast passes, and there is a short cooldown afterwards.
 - **Quarters and thirds** are labwc snap regions defined in `rc.xml`, so they work with
@@ -1904,9 +1911,11 @@ screenshots, features, download and the install guide.
   subscriptions in the providers' own apps, so Aurora AI uses API keys (billed per use)
   and Dev Hub installs Claude Code and Codex for subscription users. *Idea:* an Aurora MCP
   server so those assistants can act on the desktop.
-- **Overview thumbnails.** labwc 0.8 doesn't let other programs capture single windows,
-  so the overview shows app icons and titles. *Planned:* live thumbnails once labwc
-  supports the `ext-image-capture-source` protocol.
+- **Live window thumbnails.** No compositor here lets one program capture another's
+  window, so a preview is the window as it last looked, cropped out of the screen while it
+  was in front (see Overview above). *Planned:* real live thumbnails once wlroots'
+  `ext-image-copy-capture` protocol reaches Debian; in the compatibility session, which has
+  no interface for asking where a window is, the cards stay app icons.
 - **Snapshots need btrfs.** On ext4 or xfs installs there is no automatic snapshot or
   boot-menu rollback (Timeshift can still make rsync copies).
 - **Fingerprint** unlocks sudo and admin prompts, not the login or lock screen (on

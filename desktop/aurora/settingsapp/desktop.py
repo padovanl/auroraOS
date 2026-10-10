@@ -198,6 +198,9 @@ class Desktop(Page):
                     [("traffic", _("Colored circles")), ("symbolic", _("Monochrome icons"))])
         self._scale(win, _("Corner radius"), "window-corner-radius", 0, 18, 1)
         self._scale(win, _("Gaps around snapped windows"), "window-gaps", 0, 24, 1)
+        self._switch(win, _("Window previews"), "window-previews",
+                     _("Show each window as you last saw it in the overview, the dock's "
+                       "window lists and Snap Assist. Needs the Aurora session"))
 
         desk = self.group(_("Desktop"))
         self._scale(desk, _("Rounded screen corners"), "screen-corner-radius", 0, 24, 1)

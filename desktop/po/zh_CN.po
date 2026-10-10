@@ -181,8 +181,8 @@ msgid "Stop generating"
 msgstr "停止生成"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:891
-#: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:327
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:895
+#: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:384
 #: aurora/shell/launcher.py:60 aurora/shell/launcher.py:157
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
 msgid "Open"
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "写作工具"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:741
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:745
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -447,7 +447,7 @@ msgstr "保存此工作区中已打开窗口的位置"
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:505 aurora/settingsapp/system.py:579
 #: aurora/settingsapp/system.py:666 aurora/settingsapp/system.py:685
-#: aurora/shell/app.py:643 aurora/shell/desktopicons.py:191
+#: aurora/shell/app.py:647 aurora/shell/desktopicons.py:191
 msgid "Cancel"
 msgstr "取消"
 
@@ -1165,7 +1165,7 @@ msgid "New Tab"
 msgstr "新建标签页"
 
 #: aurora/files/window.py:144 aurora/files/window.py:358
-#: aurora/shell/dock.py:258 aurora/shell/dock.py:261
+#: aurora/shell/dock.py:306 aurora/shell/dock.py:309
 #: aurora/shell/launcher.py:65 aurora/shell/panel.py:569
 #: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
@@ -1192,7 +1192,7 @@ msgstr "主文件夹"
 
 #: aurora/files/window.py:183 aurora/files/window.py:829
 #: aurora/settingsapp/storage.py:26 aurora/settingsapp/system.py:130
-#: aurora/shell/dock.py:306
+#: aurora/shell/dock.py:357
 msgid "Trash"
 msgstr "废纸篓"
 
@@ -1262,7 +1262,7 @@ msgid "Folder is Empty"
 msgstr "文件夹为空"
 
 #: aurora/files/window.py:432 aurora/files/window.py:1209
-#: aurora/files/window.py:1573 aurora/shell/dock.py:328
+#: aurora/files/window.py:1573 aurora/shell/dock.py:385
 #: aurora/shell/search.py:479
 msgid "Empty Trash"
 msgstr "清空废纸篓"
@@ -1430,7 +1430,7 @@ msgstr "发送给 Aurora AI 之前请检查更改。"
 msgid "Loading…"
 msgstr "正在加载…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:895
+#: aurora/files/window.py:1352 aurora/shell/app.py:899
 msgid "Ask Aurora"
 msgstr "问问 Aurora"
 
@@ -1716,7 +1716,7 @@ msgstr "操作系统"
 msgid "Based on"
 msgstr "基于"
 
-#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:202
+#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:205
 #: aurora/settingsapp/storage.py:24
 msgid "Desktop"
 msgstr "桌面"
@@ -2323,7 +2323,7 @@ msgstr "照片"
 msgid "PDF"
 msgstr "PDF"
 
-#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:213
+#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:216
 #: aurora/settingsapp/storage.py:18 aurora/shell/quicksettings.py:459
 #: aurora/taskmanager.py:326
 msgid "Apps"
@@ -2589,7 +2589,7 @@ msgstr "速度、左手模式和手势在“鼠标和触摸板”中设置。"
 
 #: aurora/settingsapp/app.py:49 aurora/settingsapp/app.py:71
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
-#: aurora/settingsapp/desktop.py:214 aurora/settingsapp/inputs.py:48
+#: aurora/settingsapp/desktop.py:217 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
 #: data/applications/org.aurora.Settings.desktop:2
@@ -3011,71 +3011,79 @@ msgstr "圆角半径"
 msgid "Gaps around snapped windows"
 msgstr "贴靠窗口周围的间距"
 
-#: aurora/settingsapp/desktop.py:203
+#: aurora/settingsapp/desktop.py:201
+msgid "Window previews"
+msgstr "窗口预览"
+
+#: aurora/settingsapp/desktop.py:202
+msgid "Show each window as you last saw it in the overview, the dock's window lists and Snap Assist. Needs the Aurora session"
+msgstr "在总览、程序坞的窗口列表和 Snap Assist 中，按你上次看到的样子显示每个窗口。需要 Aurora 会话"
+
+#: aurora/settingsapp/desktop.py:206
 msgid "Rounded screen corners"
 msgstr "屏幕圆角"
 
-#: aurora/settingsapp/desktop.py:204
+#: aurora/settingsapp/desktop.py:207
 msgid "Show files from the Desktop folder"
 msgstr "显示“桌面”文件夹中的文件"
 
-#: aurora/settingsapp/desktop.py:205
+#: aurora/settingsapp/desktop.py:208
 msgid "Icon position"
 msgstr "图标位置"
 
-#: aurora/settingsapp/desktop.py:206 aurora/settingsapp/inputs.py:362
+#: aurora/settingsapp/desktop.py:209 aurora/settingsapp/inputs.py:362
 msgid "Top left"
 msgstr "左上角"
 
-#: aurora/settingsapp/desktop.py:206 aurora/settingsapp/inputs.py:362
+#: aurora/settingsapp/desktop.py:209 aurora/settingsapp/inputs.py:362
 msgid "Top right"
 msgstr "右上角"
 
-#: aurora/settingsapp/desktop.py:208
+#: aurora/settingsapp/desktop.py:211
 msgid "Super Key"
 msgstr "Super 键"
 
-#: aurora/settingsapp/desktop.py:209
+#: aurora/settingsapp/desktop.py:212
 msgid "Super opens"
 msgstr "Super 键打开"
 
-#: aurora/settingsapp/desktop.py:210
+#: aurora/settingsapp/desktop.py:213
 msgid "Spotlight search"
 msgstr "Spotlight 搜索"
 
-#: aurora/settingsapp/desktop.py:210
+#: aurora/settingsapp/desktop.py:213
 msgid "Launchpad (all apps)"
 msgstr "Launchpad（所有应用）"
 
-#: aurora/settingsapp/desktop.py:212
+#: aurora/settingsapp/desktop.py:215
 msgid "Search Results"
 msgstr "搜索结果"
 
-#: aurora/settingsapp/desktop.py:212
+#: aurora/settingsapp/desktop.py:215
 msgid "What Spotlight shows as you type."
 msgstr "输入时 Spotlight 显示哪些内容。"
 
-#: aurora/settingsapp/desktop.py:213
+#: aurora/settingsapp/desktop.py:216
 msgid "Recent files"
 msgstr "最近的文件"
 
-#: aurora/settingsapp/desktop.py:214
+#: aurora/settingsapp/desktop.py:217
 msgid "Code projects"
 msgstr "代码项目"
 
-#: aurora/settingsapp/desktop.py:215
+#: aurora/settingsapp/desktop.py:218
 msgid "Calculator"
 msgstr "计算器"
 
-#: aurora/settingsapp/desktop.py:216
+#: aurora/settingsapp/desktop.py:219
 msgid "Unit and currency conversion"
 msgstr "单位和货币换算"
 
-#: aurora/settingsapp/desktop.py:217
+#: aurora/settingsapp/desktop.py:220
 msgid "Ask Aurora AI"
 msgstr "询问 Aurora AI"
 
-#: aurora/settingsapp/desktop.py:217
+#: aurora/settingsapp/desktop.py:220
 msgid "Web search"
 msgstr "网页搜索"
 
@@ -4004,7 +4012,7 @@ msgstr "显示所有窗口"
 msgid "Show Apps (Launchpad)"
 msgstr "显示应用（Launchpad）"
 
-#: aurora/settingsapp/inputs.py:357 aurora/shell/overview.py:95
+#: aurora/settingsapp/inputs.py:357 aurora/shell/overview.py:121
 #: aurora/shell/panel.py:461 aurora/shell/search.py:483
 msgid "Show Desktop"
 msgstr "显示桌面"
@@ -5195,140 +5203,140 @@ msgstr "实用工具"
 msgid "Opening App Center…"
 msgstr "正在打开应用中心…"
 
-#: aurora/shell/app.py:226
+#: aurora/shell/app.py:230
 msgid "Night Light can't change this screen's colors"
 msgstr "夜灯无法更改此屏幕的颜色"
 
-#: aurora/shell/app.py:227
+#: aurora/shell/app.py:231
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "显卡驱动不允许。这在虚拟机中很常见；在电脑上，请在 设置 → 更新 → 附加驱动 中安装显卡驱动。"
 
-#: aurora/shell/app.py:240
+#: aurora/shell/app.py:244
 msgid "Graphics fallback started"
 msgstr "已启动备用图形模式"
 
-#: aurora/shell/app.py:241
+#: aurora/shell/app.py:245
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire 无法启动。Aurora 已改为打开安全桌面。选择此通知查看启动报告。"
 
-#: aurora/shell/app.py:243
+#: aurora/shell/app.py:247
 msgid "Open System Health"
 msgstr "打开系统健康"
 
-#: aurora/shell/app.py:546
+#: aurora/shell/app.py:550
 msgid "Writing tools are off"
 msgstr "写作工具已关闭"
 
-#: aurora/shell/app.py:638
+#: aurora/shell/app.py:642
 msgid "Restart didn't happen"
 msgstr "没有重启"
 
-#: aurora/shell/app.py:638
+#: aurora/shell/app.py:642
 msgid "Shut down didn't happen"
 msgstr "没有关机"
 
-#: aurora/shell/app.py:639
+#: aurora/shell/app.py:643
 msgid "Sleep didn't happen"
 msgstr "没有进入睡眠"
 
-#: aurora/shell/app.py:640
+#: aurora/shell/app.py:644
 msgid "Restart Anyway"
 msgstr "仍然重启"
 
-#: aurora/shell/app.py:640
+#: aurora/shell/app.py:644
 msgid "Shut Down Anyway"
 msgstr "仍然关机"
 
-#: aurora/shell/app.py:641
+#: aurora/shell/app.py:645
 msgid "Sleep Anyway"
 msgstr "仍然睡眠"
 
-#: aurora/shell/app.py:738
+#: aurora/shell/app.py:742
 msgid "Always on Top"
 msgstr "始终置顶"
 
-#: aurora/shell/app.py:738
+#: aurora/shell/app.py:742
 msgid "Always on Top Off"
 msgstr "已取消置顶"
 
-#: aurora/shell/app.py:742
+#: aurora/shell/app.py:746
 msgid "Set it up in Settings → AI."
 msgstr "在“设置 → AI”中配置。"
 
-#: aurora/shell/app.py:748
+#: aurora/shell/app.py:752
 msgid "Dictation is off"
 msgstr "语音输入已关闭"
 
-#: aurora/shell/app.py:755
+#: aurora/shell/app.py:759
 msgid "Dictation isn't installed yet"
 msgstr "语音输入尚未安装"
 
-#: aurora/shell/app.py:759
+#: aurora/shell/app.py:763
 msgid "Listening… press Super+H to stop"
 msgstr "正在聆听… 按 Super+H 停止"
 
-#: aurora/shell/app.py:761
+#: aurora/shell/app.py:765
 msgid "Writing it down…"
 msgstr "正在转写…"
 
-#: aurora/shell/app.py:775
+#: aurora/shell/app.py:779
 msgid "Nothing was heard"
 msgstr "什么也没听到"
 
-#: aurora/shell/app.py:784
+#: aurora/shell/app.py:788
 msgid "Read aloud is off"
 msgstr "朗读已关闭"
 
-#: aurora/shell/app.py:791
+#: aurora/shell/app.py:795
 msgid "Select some text first"
 msgstr "请先选中一些文本"
 
-#: aurora/shell/app.py:865
+#: aurora/shell/app.py:869
 msgid "Screenshot captured"
 msgstr "已截图"
 
-#: aurora/shell/app.py:866
+#: aurora/shell/app.py:870
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "已保存到 {path} 并复制到剪贴板。"
 
-#: aurora/shell/app.py:891
+#: aurora/shell/app.py:895
 msgid "Pin to Screen"
 msgstr "固定到屏幕"
 
-#: aurora/shell/app.py:891
+#: aurora/shell/app.py:895
 msgid "Annotate"
 msgstr "标注"
 
-#: aurora/shell/app.py:892
+#: aurora/shell/app.py:896
 msgid "Copy Text"
 msgstr "复制文本"
 
-#: aurora/shell/app.py:960 aurora/shell/app.py:967
+#: aurora/shell/app.py:964 aurora/shell/app.py:971
 msgid "Text Recognition"
 msgstr "文字识别"
 
-#: aurora/shell/app.py:960
+#: aurora/shell/app.py:964
 msgid "No text found"
 msgstr "未找到文字"
 
-#: aurora/shell/app.py:961
+#: aurora/shell/app.py:965
 msgid "Try a larger or sharper area."
 msgstr "请尝试更大或更清晰的区域。"
 
-#: aurora/shell/app.py:967
+#: aurora/shell/app.py:971
 msgid "Text copied"
 msgstr "文本已复制"
 
-#: aurora/shell/app.py:1022 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:1026 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "屏幕录制"
 
-#: aurora/shell/app.py:1022
+#: aurora/shell/app.py:1026
 msgid "Screen recording saved"
 msgstr "屏幕录制已保存"
 
-#: aurora/shell/app.py:1023
+#: aurora/shell/app.py:1027
 msgid "Saved to {path}."
 msgstr "已保存到 {path}。"
 
@@ -5422,33 +5430,33 @@ msgstr "打开 Game Hub"
 msgid "Install Steam from Game Hub and your games appear here"
 msgstr "从 Game Hub 安装 Steam，你的游戏会显示在这里"
 
-#: aurora/shell/dock.py:148 aurora/shell/dock.py:189 aurora/shell/dock.py:248
+#: aurora/shell/dock.py:185 aurora/shell/dock.py:226 aurora/shell/dock.py:296
 #: aurora/shell/panel.py:510 aurora/shell/panel.py:547
 msgid "Window"
 msgstr "窗口"
 
-#: aurora/shell/dock.py:203 aurora/shell/overview.py:61
+#: aurora/shell/dock.py:251 aurora/shell/overview.py:87
 #: aurora/shell/panel.py:562
 msgid "Minimized"
 msgstr "已最小化"
 
-#: aurora/shell/dock.py:269 aurora/shell/launcher.py:72
+#: aurora/shell/dock.py:317 aurora/shell/launcher.py:72
 msgid "Remove from Dock"
 msgstr "从程序坞中移除"
 
-#: aurora/shell/dock.py:271 aurora/shell/launcher.py:75
+#: aurora/shell/dock.py:319 aurora/shell/launcher.py:75
 msgid "Keep in Dock"
 msgstr "保留在程序坞中"
 
-#: aurora/shell/dock.py:273
+#: aurora/shell/dock.py:321
 msgid "Quit"
 msgstr "退出"
 
-#: aurora/shell/dock.py:274 aurora/shell/panel.py:574
+#: aurora/shell/dock.py:322 aurora/shell/panel.py:574
 msgid "Quit {n} Windows"
 msgstr "关闭 {n} 个窗口"
 
-#: aurora/shell/dock.py:597
+#: aurora/shell/dock.py:671
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -5734,15 +5742,15 @@ msgstr "像素"
 msgid "Candy"
 msgstr "糖果"
 
-#: aurora/shell/overview.py:44 aurora/shell/panel.py:572
+#: aurora/shell/overview.py:50 aurora/shell/panel.py:572
 msgid "Close Window"
 msgstr "关闭窗口"
 
-#: aurora/shell/overview.py:89
+#: aurora/shell/overview.py:115
 msgid "Type to filter windows"
 msgstr "输入以筛选窗口"
 
-#: aurora/shell/overview.py:106
+#: aurora/shell/overview.py:132
 msgid "No open windows"
 msgstr "没有打开的窗口"
 

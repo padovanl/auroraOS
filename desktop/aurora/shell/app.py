@@ -145,6 +145,10 @@ class Shell(Adw.Application):
         self.lock_keys = LockKeys(self)
         from aurora.shell.screentrack import ScreenTimeTracker
         self.screen_time = ScreenTimeTracker(self)
+        # Pictures of the windows, taken while each one was in front, for the
+        # overview, the dock's window lists and Snap Assist.
+        from aurora.shell.previews import Previews
+        self.previews = Previews(self)
         self.launcher = Launcher(self)
         self.osd = OSD(self)
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))

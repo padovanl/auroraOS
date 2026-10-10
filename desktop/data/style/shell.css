@@ -383,6 +383,11 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .dock-peek-card { padding: 10px 12px; border-radius: 12px; }
 .dock-peek-card.active { background-color: alpha(@shell_fg, 0.1); }
 .dock-peek-card label { font-size: 0.9em; }
+.dock-peek-shot {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(10, 8, 18, 0.5);
+}
 .dock-bottom .dock-dots { min-height: 6px; }
 .dock-left .dock-dots, .dock-right .dock-dots { min-width: 6px; }
 
@@ -574,6 +579,16 @@ window.aurora-overview { background: rgba(0, 0, 0, 0.3); }
 }
 .overview-card.current { border-color: alpha(@accent_color, 0.55); }
 .overview-card.minimized { opacity: 0.6; }
+/* The window's own picture: cut to rounded corners by the box around it
+   (overflow hidden), with a hairline so a pale window keeps an edge. */
+.overview-shot {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(10, 8, 18, 0.5);
+}
+.overview-badge {
+  -gtk-icon-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
 .overview-card .overview-title { font-weight: 600; }
 .overview-card .overview-close { opacity: 0; min-width: 24px; min-height: 24px; padding: 0; }
 .overview-card:hover .overview-close { opacity: 1; }
@@ -630,6 +645,11 @@ window.aurora-snap { background: transparent; }
 .snap-window:hover, .snap-window:focus {
   background-color: alpha(@accent_color, 0.35);
   box-shadow: 0 0 0 2px alpha(@accent_color, 0.9);
+}
+.snap-window-shot {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(10, 8, 18, 0.5);
 }
 .snap-skip { color: #fff; background-color: rgba(255, 255, 255, 0.12); }
 

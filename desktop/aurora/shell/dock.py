@@ -19,6 +19,8 @@ from aurora.shell.toplevels import window_labels
 
 MAX_DOTS = 3           # running-window dots under an icon
 PEEK_DELAY_MS = 500    # rest on an icon this long to see its windows
+PEEK_SHOT_WIDTH = 150  # a window's picture in that list
+PEEK_SHOT_HEIGHT = 92
 MAX_SCALE = 1.7        # magnified icon size relative to the resting size
 SPREAD = 2.6           # how many icon widths the magnification reaches
 BAR_PADDING = 28       # bar padding + item padding + running dot around an icon
@@ -231,7 +233,18 @@ class DockItem(Gtk.Button):
                 icon.set_from_gicon(self.app.get_icon())
             else:
                 icon.set_from_icon_name("application-x-executable")
-            inner.append(icon)
+            # Each window as it last looked, so two windows of the same app are
+            # told apart by sight and not only by their titles.
+            shot = self.dock.shell.previews.get(w)
+            if shot is not None:
+                picture = Gtk.Picture(paintable=shot, content_fit=Gtk.ContentFit.COVER,
+                                      can_shrink=True, width_request=PEEK_SHOT_WIDTH,
+                                      height_request=PEEK_SHOT_HEIGHT)
+                framed = Gtk.Box(css_classes=["dock-peek-shot"], overflow=Gtk.Overflow.HIDDEN)
+                framed.append(picture)
+                inner.append(framed)
+            else:
+                inner.append(icon)
             inner.append(Gtk.Label(label=title, ellipsize=3,
                                    max_width_chars=18, width_chars=12))
             if w.minimized:
