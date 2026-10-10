@@ -68,8 +68,11 @@ def _plain(line):
 
 
 def _rgba(colour):
+    """A colour VTE will actually take. Gdk.RGBA(r, g, b, a) built by hand
+    comes back empty here, and an empty foreground is text you cannot read."""
     rgba = Gdk.RGBA()
-    rgba.parse(colour)
+    if not rgba.parse(colour):
+        raise ValueError(f"bad colour {colour}")
     return rgba
 
 
@@ -109,8 +112,8 @@ AUTHORIZED = "::aurora:authorized"
 DENIED = "::aurora:denied"
 MARKERS = (AUTHORIZED, DENIED)
 # A terminal in Aurora's own colours rather than the toolkit's black and grey.
-TERMINAL_BG = (0.082, 0.067, 0.122)
-TERMINAL_FG = (0.925, 0.906, 0.969)
+TERMINAL_BG = "#16111f"
+TERMINAL_FG = "#f2eefa"
 TERMINAL_PALETTE = ("#16111f", "#ff6f91", "#6fe0b4", "#ffd35c", "#9ec5ff", "#c98bff",
                     "#46c7c0", "#d8d4e4", "#5a5470", "#ff93ab", "#8ff0cb", "#ffe08a",
                     "#bcd8ff", "#dcb3ff", "#7fe0db", "#f2eefa")
@@ -160,14 +163,14 @@ class InstallWindow(Adw.Window):
         # The line the recipe is on, in words: enough to follow along without
         # reading a terminal, which is behind the button below.
         self.line = Gtk.Label(label="", xalign=0, ellipsize=Pango.EllipsizeMode.END,
-                              max_width_chars=64, css_classes=["caption", "dim-label"])
+                              max_width_chars=64, css_classes=["dim-label"])
         box.append(self.line)
 
         self.terminal = Vte.Terminal(vexpand=True, hexpand=True)
         self.terminal.set_scrollback_lines(5000)
         self.terminal.set_allow_hyperlink(True)
         self.terminal.set_font(Pango.FontDescription("monospace 10"))
-        self.terminal.set_colors(Gdk.RGBA(*TERMINAL_FG, 1.0), Gdk.RGBA(*TERMINAL_BG, 1.0),
+        self.terminal.set_colors(_rgba(TERMINAL_FG), _rgba(TERMINAL_BG),
                                  [_rgba(colour) for colour in TERMINAL_PALETTE])
         self.terminal.set_cursor_shape(Vte.CursorShape.IBEAM)
         padded = Gtk.Box(css_classes=["devhub-terminal"], overflow=Gtk.Overflow.HIDDEN)
