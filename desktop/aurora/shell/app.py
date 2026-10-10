@@ -175,7 +175,8 @@ class Shell(Adw.Application):
                       lambda *a: self._later(self._reshape_screen))
             s.connect("changed::accent-from-wallpaper",
                       lambda *a: self._later(self._accent_switched))
-            s.connect("changed::chrome-tint", lambda *a: self._update_dynamic_css())
+            for key in ("chrome-tint", "reduce-transparency"):
+                s.connect(f"changed::{key}", lambda *a: self._update_dynamic_css())
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -312,6 +313,32 @@ class Shell(Adw.Application):
                                ("bottom-left", "100% 0%"), ("bottom-right", "0% 0%")):
                 css += (f"\n.screen-corner-{corner} {{ background-image: radial-gradient("
                         f"circle at {at}, transparent {r - 1}px, #000000 {r}px); }}")
+        # Reduce transparency (Settings → Accessibility → Seeing): nothing the
+        # shell draws lets the wallpaper through any more.
+        if s is not None and s.get_boolean("reduce-transparency"):
+            css += (f"\n.aurora-panel.panel-bar-style .panel-bar,"
+                    f"\n.aurora-panel.panel-floating .panel-island"
+                    f"{{ background-color: rgb({panel[0]}, {panel[1]}, {panel[2]}); }}"
+                    f"\n.aurora-dock .dock-box, .aurora-dock.dock-islands .dock-island"
+                    f"{{ background-color: rgb({dock[0]}, {dock[1]}, {dock[2]}); }}"
+                    "\n.notification, .aurora-osd .osd-box,"
+                    "\npopover.aurora-context-menu > contents"
+                    "{ background-color: rgb(20, 16, 30); }"
+                    "\n.aurora-quicksettings > contents"
+                    "{ background-color: @window_bg_color; }"
+                    "\n.aurora-launcher.mode-spotlight .launcher-root"
+                    "{ background-color: rgb(30, 25, 42); }"
+                    "\n.aurora-launcher.mode-grid .launcher-backdrop"
+                    "{ background-image: none; background-color: rgb(16, 12, 24); }"
+                    "\n.aurora-launcher.mode-spotlight .launcher-backdrop"
+                    "{ background-color: rgba(0, 0, 0, 0.45); }"
+                    "\n.desktop-widget"
+                    "{ background-image: none; background-color: rgb(32, 26, 48); }"
+                    "\n.desktop-widget.light"
+                    "{ background-image: none; background-color: rgb(247, 245, 251); }"
+                    "\n.overview-card { background-color: rgb(30, 26, 44); }"
+                    "\n.snap-picker, .snap-assist { background-color: rgb(30, 26, 44); }"
+                    "\n.shortcuts-card { background-color: rgb(24, 20, 36); }")
         if not hasattr(self, "_dyn_css"):
             self._dyn_css = Gtk.CssProvider()
             Gtk.StyleContext.add_provider_for_display(
