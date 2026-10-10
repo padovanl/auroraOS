@@ -96,8 +96,27 @@ class AppTile(Gtk.FlowBoxChild):
             print(f"aurora: cannot add app to desktop: {err}")
 
 
+def highlight(text, query):
+    """The letters you typed, in bold, inside the rest of the title.
+
+    Every piece is escaped on its own, so a result called "Tom & Jerry" or
+    "<draft>" comes out whole instead of blank."""
+    needle = (query or "").strip().lower()
+    if not needle:
+        return GLib.markup_escape_text(text)
+    low, parts, at = text.lower(), [], 0
+    while (found := low.find(needle, at)) >= 0:
+        parts.append(GLib.markup_escape_text(text[at:found]))
+        parts.append("<b>" + GLib.markup_escape_text(text[found:found + len(needle)]) + "</b>")
+        at = found + len(needle)
+    if not parts:
+        return GLib.markup_escape_text(text)
+    parts.append(GLib.markup_escape_text(text[at:]))
+    return "".join(parts)
+
+
 class ResultRow(Gtk.ListBoxRow):
-    def __init__(self, result, shell=None):
+    def __init__(self, result, shell=None, query=""):
         super().__init__(css_classes=["launcher-result"])
         self.result = result
         self.app = result.app
@@ -106,8 +125,9 @@ class ResultRow(Gtk.ListBoxRow):
                       margin_start=10, margin_end=10)
         box.append(_icon_image(result.icon, 32))
         text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, valign=Gtk.Align.CENTER)
-        text.append(Gtk.Label(label=result.title, xalign=0, ellipsize=3,
-                              css_classes=["result-title"]))
+        title = Gtk.Label(xalign=0, ellipsize=3, css_classes=["result-title"])
+        title.set_markup(highlight(result.title, query))
+        text.append(title)
         if result.subtitle:
             text.append(Gtk.Label(label=result.subtitle, xalign=0, ellipsize=3,
                                   css_classes=["dim-label", "caption"]))
@@ -260,7 +280,7 @@ class Launcher(LayerWindow):
         self.results.remove_all()
         for r in search.search(text, self.shell.open_settings,
                                refresh=lambda: self._on_search(self.entry)):
-            self.results.append(ResultRow(r, self.shell))
+            self.results.append(ResultRow(r, self.shell, text))
         self.results.select_row(self.results.get_row_at_index(0))
         self.stack.set_visible_child_name("results")
         # Documents by meaning arrive later (a local model computes them).
@@ -277,7 +297,7 @@ class Launcher(LayerWindow):
         if self.entry.get_text() != query:
             return
         for r in results:
-            row = ResultRow(r, self.shell)
+            row = ResultRow(r, self.shell, query)
             # Insert before the web-search fallback at the end.
             self.results.insert(row, max(0, self._count_rows() - 1))
 
