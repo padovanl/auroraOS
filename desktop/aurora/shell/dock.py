@@ -42,10 +42,10 @@ def dock_settings():
     s = settings.get()
     if s is None:
         return {"position": "bottom", "style": "floating", "size": 48, "magnify": True,
-                "autohide": False, "trash": True, "running": True}
+                "hide": "windows", "trash": True, "running": True}
     return {"position": s.get_string("dock-position"), "style": s.get_string("dock-style"),
             "size": s.get_int("dock-icon-size"), "magnify": s.get_boolean("dock-magnification"),
-            "autohide": s.get_boolean("dock-autohide"), "trash": s.get_boolean("dock-show-trash"),
+            "hide": s.get_string("dock-hide"), "trash": s.get_boolean("dock-show-trash"),
             "running": s.get_boolean("dock-running-apps")}
 
 
@@ -349,7 +349,12 @@ class Dock(LayerWindow):
         self.floating = self.islands or cfg["style"] == "floating"
         self.icon_size = cfg["size"]
         self.magnify = cfg["magnify"] and self.floating
-        self.autohide = cfg["autohide"]
+        # "always": hidden until the pointer reaches the edge. "windows": out
+        # of the way while a window uses the whole screen, so the window gets
+        # that screen and no empty band of desktop is left around the dock.
+        self.autohide = cfg["hide"] == "always"
+        self.hide_for_windows = cfg["hide"] == "windows"
+        self.reserves_space = cfg["hide"] == "never"
         self.show_trash = cfg["trash"]
         # Off: only pinned apps, and the top bar's window buttons are the one
         # list of what is open (Settings → Desktop & Dock → Dock).
@@ -450,7 +455,8 @@ class Dock(LayerWindow):
         s = settings.get()
         if s:
             s.connect("changed::dock-favorites", lambda *a: self.rebuild())
-        shell.toplevels.connect("changed", lambda *a: self.rebuild())
+        shell.toplevels.connect("changed", lambda *a: (self.rebuild(),
+                                                       self._follow_windows()))
         Gio.AppInfoMonitor.get().connect("changed", lambda *a: (apps.invalidate(), self.rebuild()))
         self.connect("map", lambda *a: GLib.idle_add(self._update_geometry))
         self.connect("map", lambda *a: self.publish())
@@ -460,6 +466,8 @@ class Dock(LayerWindow):
         self.rebuild()
         if self.autohide:
             GLib.timeout_add(1500, self._auto_hide)
+        elif self.hide_for_windows:
+            GLib.timeout_add(1500, lambda: self._follow_windows() or False)
 
     # --- favorites ---
 
@@ -506,7 +514,7 @@ class Dock(LayerWindow):
 
     def _drag_end(self):
         self._dragging = False
-        if self.autohide and self._pointer is None:
+        if self._wants_hiding() and self._pointer is None:
             self._schedule_hide()
 
     # --- content ---
@@ -661,7 +669,7 @@ class Dock(LayerWindow):
         for item in self._items.values():
             item.target = float(self.icon_size)
         self._animate()
-        if self.autohide and not self._held and not self._dragging:
+        if self._wants_hiding() and not self._held and not self._dragging:
             self._schedule_hide()
 
     def _animate(self):
@@ -684,7 +692,33 @@ class Dock(LayerWindow):
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
-    # --- autohide ---
+    # --- getting out of the way ---
+
+    def _covered(self):
+        """A window is using the whole screen the dock sits on."""
+        return any((t.maximized or t.fullscreen) and not t.minimized
+                   for t in self.shell.toplevels.toplevels)
+
+    def _wants_hiding(self):
+        return self.autohide or (self.hide_for_windows and self._covered())
+
+    def hold_open(self, on):
+        """Keep the dock out while something covers the screen (Launchpad)."""
+        self._held = max(0, self._held + (1 if on else -1))
+        if on:
+            self._show()
+        elif self._pointer is None and self._wants_hiding():
+            self._schedule_hide()
+
+    def _follow_windows(self):
+        """A window was maximized, restored, minimized or closed."""
+        if not self.hide_for_windows:
+            return
+        if self._covered():
+            if not self._hidden and self._pointer is None and not self._held:
+                self._schedule_hide()
+        elif self._hidden:
+            self._show()
 
     def hold(self, popover):
         """Keep the dock visible while one of its menus is open."""
@@ -692,7 +726,7 @@ class Dock(LayerWindow):
 
         def closed(*_a):
             self._held -= 1
-            if self.autohide and self._pointer is None:
+            if self._wants_hiding() and self._pointer is None:
                 self._schedule_hide()
         popover.connect("closed", closed)
 
@@ -703,7 +737,7 @@ class Dock(LayerWindow):
 
     def _auto_hide(self):
         self._hide_source = 0
-        if self.autohide and not self._held and not self._dragging and self._pointer is None:
+        if self._wants_hiding() and not self._held and not self._dragging and self._pointer is None:
             self._hidden = True
             self.revealer.set_reveal_child(False)
             self.publish()
@@ -771,10 +805,10 @@ class Dock(LayerWindow):
     def _update_geometry(self):
         """Exclusive zone for the resting bar; input only where the dock is drawn."""
         margin = EDGE_MARGIN if self.floating else 0
-        if self.autohide:
-            LS.set_exclusive_zone(self, 0)
-        else:
+        if self.reserves_space:
             LS.set_exclusive_zone(self, self.bar_thickness + margin)
+        else:
+            LS.set_exclusive_zone(self, 0)
         surface = self.get_surface()
         if surface is None:
             return GLib.SOURCE_REMOVE

@@ -265,9 +265,15 @@
       <default>true</default>
       <summary>Magnify dock icons under the pointer</summary>
     </key>
-    <key name="dock-autohide" type="b">
-      <default>false</default>
-      <summary>Hide the dock until the pointer reaches the screen edge</summary>
+    <key name="dock-hide" type="s">
+      <choices><choice value="never"/><choice value="windows"/><choice value="always"/></choices>
+      <default>'windows'</default>
+      <summary>When the dock gets out of the way</summary>
+      <description>never: it always keeps its strip of screen, and windows stop above it.
+      windows: it slides away while a window is using the whole screen, and comes back when
+      the pointer reaches the edge — so a maximized window has the whole screen and no band
+      of empty desktop is left around the dock. always: it stays hidden until the pointer
+      reaches the edge.</description>
     </key>
     <key name="dock-running-apps" type="b">
       <default>true</default>

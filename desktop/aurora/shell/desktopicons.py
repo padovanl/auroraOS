@@ -254,7 +254,10 @@ class DesktopIcons(Gtk.Fixed):
     def _bounds(self):
         s = settings.get()
         bar = 46
-        dock = 0 if s is None or s.get_boolean("dock-autohide") else s.get_int("dock-icon-size") + 40
+        # Room for the dock, unless it is always hidden: in the "windows"
+        # mode it is on screen whenever the desktop is.
+        hidden = s is None or s.get_string("dock-hide") == "always"
+        dock = 0 if hidden else s.get_int("dock-icon-size") + 40
         panel_top = s is None or s.get_string("panel-position") != "bottom"
         where = s.get_string("dock-position") if s else "bottom"
         left = 16 + (dock if where == "left" else 0)
@@ -357,7 +360,7 @@ class DesktopIcons(Gtk.Fixed):
         if s:
             s.connect("changed::desktop-icons", lambda *a: self.reload())
             s.connect("changed::desktop-icons-position", lambda *a: self.reload())
-            for key in ("panel-position", "dock-position", "dock-icon-size", "dock-autohide"):
+            for key in ("panel-position", "dock-position", "dock-icon-size", "dock-hide"):
                 s.connect(f"changed::{key}", lambda *a: self._fit_margins())
         self._fit_margins()
         self.reload()

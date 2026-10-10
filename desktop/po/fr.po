@@ -1726,7 +1726,7 @@ msgstr "Système d'exploitation"
 msgid "Based on"
 msgstr "Basé sur"
 
-#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:195
+#: aurora/settingsapp/about.py:92 aurora/settingsapp/desktop.py:198
 #: aurora/settingsapp/storage.py:24
 msgid "Desktop"
 msgstr "Bureau"
@@ -2317,7 +2317,7 @@ msgstr "Photos"
 msgid "PDF"
 msgstr "PDF"
 
-#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:206
+#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:209
 #: aurora/settingsapp/storage.py:18 aurora/shell/quicksettings.py:459
 #: aurora/taskmanager.py:326
 msgid "Apps"
@@ -2575,7 +2575,7 @@ msgstr "La vitesse, l’usage pour gaucher et les gestes sont dans Souris et pav
 
 #: aurora/settingsapp/app.py:49 aurora/settingsapp/app.py:71
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
-#: aurora/settingsapp/desktop.py:207 aurora/settingsapp/inputs.py:48
+#: aurora/settingsapp/desktop.py:210 aurora/settingsapp/inputs.py:48
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
 #: data/applications/org.aurora.Settings.desktop:2
@@ -2861,7 +2861,7 @@ msgid "Clock"
 msgstr "Horloge"
 
 #: aurora/settingsapp/desktop.py:158 aurora/settingsapp/desktop.py:176
-#: aurora/settingsapp/desktop.py:189 aurora/settingsapp/sound.py:151
+#: aurora/settingsapp/desktop.py:192 aurora/settingsapp/sound.py:151
 msgid "Right"
 msgstr "Droite"
 
@@ -2906,7 +2906,7 @@ msgstr "Modifier les widgets…"
 msgid "Dock"
 msgstr "Dock"
 
-#: aurora/settingsapp/desktop.py:176 aurora/settingsapp/desktop.py:189
+#: aurora/settingsapp/desktop.py:176 aurora/settingsapp/desktop.py:192
 #: aurora/settingsapp/sound.py:149
 msgid "Left"
 msgstr "Gauche"
@@ -2932,110 +2932,124 @@ msgid "Magnify icons on hover"
 msgstr "Agrandir les icônes au survol"
 
 #: aurora/settingsapp/desktop.py:183
-msgid "Automatically hide"
-msgstr "Masquer automatiquement"
+msgid "Hide the dock"
+msgstr "Masquer le dock"
 
-#: aurora/settingsapp/desktop.py:184
+#: aurora/settingsapp/desktop.py:184 aurora/settingsapp/power.py:66
+#: aurora/settingsapp/power.py:86 aurora/settingsapp/power.py:135
+#: aurora/settingsapp/storage.py:164
+msgid "Never"
+msgstr "Jamais"
+
+#: aurora/settingsapp/desktop.py:185
+msgid "When a window needs the screen"
+msgstr "Quand une fenêtre occupe l'écran"
+
+#: aurora/settingsapp/desktop.py:186
+msgid "Always"
+msgstr "Toujours"
+
+#: aurora/settingsapp/desktop.py:187
 msgid "Show open apps"
 msgstr "Afficher les applications ouvertes"
 
-#: aurora/settingsapp/desktop.py:185
+#: aurora/settingsapp/desktop.py:188
 msgid "Show Trash"
 msgstr "Afficher la corbeille"
 
-#: aurora/settingsapp/desktop.py:187 aurora/settingsapp/inputs.py:371
+#: aurora/settingsapp/desktop.py:190 aurora/settingsapp/inputs.py:371
 msgid "Windows"
 msgstr "Fenêtres"
 
-#: aurora/settingsapp/desktop.py:188
+#: aurora/settingsapp/desktop.py:191
 msgid "Buttons"
 msgstr "Boutons"
 
-#: aurora/settingsapp/desktop.py:190
+#: aurora/settingsapp/desktop.py:193
 msgid "Button style"
 msgstr "Style des boutons"
 
-#: aurora/settingsapp/desktop.py:191
+#: aurora/settingsapp/desktop.py:194
 msgid "Colored circles"
 msgstr "Cercles colorés"
 
-#: aurora/settingsapp/desktop.py:191
+#: aurora/settingsapp/desktop.py:194
 msgid "Monochrome icons"
 msgstr "Icônes monochromes"
 
-#: aurora/settingsapp/desktop.py:192
+#: aurora/settingsapp/desktop.py:195
 msgid "Corner radius"
 msgstr "Rayon des coins"
 
-#: aurora/settingsapp/desktop.py:193
+#: aurora/settingsapp/desktop.py:196
 msgid "Gaps around snapped windows"
 msgstr "Espace autour des fenêtres ancrées"
 
-#: aurora/settingsapp/desktop.py:196
+#: aurora/settingsapp/desktop.py:199
 msgid "Rounded screen corners"
 msgstr "Coins d'écran arrondis"
 
-#: aurora/settingsapp/desktop.py:197
+#: aurora/settingsapp/desktop.py:200
 msgid "Show files from the Desktop folder"
 msgstr "Afficher les fichiers du dossier Bureau"
 
-#: aurora/settingsapp/desktop.py:198
+#: aurora/settingsapp/desktop.py:201
 msgid "Icon position"
 msgstr "Position des icônes"
 
-#: aurora/settingsapp/desktop.py:199 aurora/settingsapp/inputs.py:362
+#: aurora/settingsapp/desktop.py:202 aurora/settingsapp/inputs.py:362
 msgid "Top left"
 msgstr "En haut à gauche"
 
-#: aurora/settingsapp/desktop.py:199 aurora/settingsapp/inputs.py:362
+#: aurora/settingsapp/desktop.py:202 aurora/settingsapp/inputs.py:362
 msgid "Top right"
 msgstr "En haut à droite"
 
-#: aurora/settingsapp/desktop.py:201
+#: aurora/settingsapp/desktop.py:204
 msgid "Super Key"
 msgstr "Touche Super"
 
-#: aurora/settingsapp/desktop.py:202
+#: aurora/settingsapp/desktop.py:205
 msgid "Super opens"
 msgstr "Super ouvre"
 
-#: aurora/settingsapp/desktop.py:203
+#: aurora/settingsapp/desktop.py:206
 msgid "Spotlight search"
 msgstr "Recherche Spotlight"
 
-#: aurora/settingsapp/desktop.py:203
+#: aurora/settingsapp/desktop.py:206
 msgid "Launchpad (all apps)"
 msgstr "Launchpad (toutes les applications)"
 
-#: aurora/settingsapp/desktop.py:205
+#: aurora/settingsapp/desktop.py:208
 msgid "Search Results"
 msgstr "Résultats de recherche"
 
-#: aurora/settingsapp/desktop.py:205
+#: aurora/settingsapp/desktop.py:208
 msgid "What Spotlight shows as you type."
 msgstr "Ce que Spotlight affiche pendant la saisie."
 
-#: aurora/settingsapp/desktop.py:206
+#: aurora/settingsapp/desktop.py:209
 msgid "Recent files"
 msgstr "Fichiers récents"
 
-#: aurora/settingsapp/desktop.py:207
+#: aurora/settingsapp/desktop.py:210
 msgid "Code projects"
 msgstr "Projets de code"
 
-#: aurora/settingsapp/desktop.py:208
+#: aurora/settingsapp/desktop.py:211
 msgid "Calculator"
 msgstr "Calculatrice"
 
-#: aurora/settingsapp/desktop.py:209
+#: aurora/settingsapp/desktop.py:212
 msgid "Unit and currency conversion"
 msgstr "Conversion d’unités et de devises"
 
-#: aurora/settingsapp/desktop.py:210
+#: aurora/settingsapp/desktop.py:213
 msgid "Ask Aurora AI"
 msgstr "Demander à Aurora IA"
 
-#: aurora/settingsapp/desktop.py:210
+#: aurora/settingsapp/desktop.py:213
 msgid "Web search"
 msgstr "Recherche web"
 
@@ -4181,11 +4195,6 @@ msgid "{n} minute"
 msgid_plural "{n} minutes"
 msgstr[0] "{n} minute"
 msgstr[1] "{n} minutes"
-
-#: aurora/settingsapp/power.py:66 aurora/settingsapp/power.py:86
-#: aurora/settingsapp/power.py:135 aurora/settingsapp/storage.py:164
-msgid "Never"
-msgstr "Jamais"
 
 #: aurora/settingsapp/power.py:79
 msgid "Screen blank"
@@ -5417,7 +5426,7 @@ msgstr "Quitter"
 msgid "Quit {n} Windows"
 msgstr "Fermer {n} fenêtres"
 
-#: aurora/shell/dock.py:576
+#: aurora/shell/dock.py:584
 msgid "Launchpad"
 msgstr "Launchpad"
 
@@ -5433,11 +5442,11 @@ msgstr "Afficher dans Fichiers"
 msgid "Ask Aurora about this file"
 msgstr "Interroger Aurora sur ce fichier"
 
-#: aurora/shell/launcher.py:176
+#: aurora/shell/launcher.py:179
 msgid "Search apps, files and settings, or type ? to ask Aurora"
 msgstr "Recherchez applications, fichiers et paramètres, ou tapez ? pour demander à Aurora"
 
-#: aurora/shell/launcher.py:240
+#: aurora/shell/launcher.py:243
 msgid "Frequently Used"
 msgstr "Fréquemment utilisées"
 

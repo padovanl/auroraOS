@@ -159,9 +159,12 @@ class Launcher(LayerWindow):
     """Two faces: "spotlight" (a search bar) and "grid" (Launchpad, all apps)."""
 
     def __init__(self, shell):
+        # exclusive=-1: the whole screen, under the top bar and under the strip
+        # the dock reserves. Without it the backdrop stopped at them and a band
+        # of wallpaper was left under the app grid.
         super().__init__(shell, "aurora-launcher", layer=Layer.OVERLAY,
                          anchors=("top", "bottom", "left", "right"),
-                         keyboard=Keyboard.EXCLUSIVE)
+                         keyboard=Keyboard.EXCLUSIVE, exclusive=-1)
         self.add_css_class("aurora-launcher")
         self.shell = shell
 
@@ -390,3 +393,5 @@ class Launcher(LayerWindow):
                 window.set_layer(Layer.OVERLAY if on else Layer.TOP)
                 if on:
                     window.queue_draw()
+                if hasattr(window, "hold_open"):
+                    window.hold_open(on)
