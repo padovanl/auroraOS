@@ -494,6 +494,10 @@ class Shell(Adw.Application):
                 return 1
             self._start()
         if args:
+            if args[0] == "previews":
+                # How many windows there is a picture of (shell/previews.py).
+                cmdline.print_literal(f"{self.previews.count()}\n")
+                return 0
             if args[0] == "windows":
                 # For tests and scripts: the open windows as JSON, one per line.
                 import json
@@ -566,9 +570,6 @@ class Shell(Adw.Application):
                 self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
-        elif cmd == "previews":
-            # How many windows there is a picture of (shell/previews.py).
-            print(self.previews.count())
         elif cmd == "osk":
             # aurora-shell osk [show|hide|toggle]
             {"show": self.osk.show_keyboard, "hide": self.osk.hide_keyboard}.get(

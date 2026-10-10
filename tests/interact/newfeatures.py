@@ -42,7 +42,7 @@ def difference(a, b, box=None):
     return sum(ImageStat.Stat(ImageChops.difference(first, second)).mean) / 3
 
 
-DOCK = (560, 960, 1360, 1070)      # the dock's strip on a 1920x1080 screen
+DOCK = (420, 840, 1240, 960)       # the dock's strip, inside the smallest screen used
 
 
 def icon_styles(vm):
@@ -89,7 +89,7 @@ def moving_background(vm):
     one = vm.shot("background-1")
     time.sleep(4)
     two = vm.shot("background-2")
-    moved = difference(one, two, (0, 40, 1920, 500))
+    moved = difference(one, two, (0, 40, 1000, 400))
     # Light drifting over a photograph is a small number by nature; what makes
     # it a pass is that Still, measured the same way below, is a smaller one.
     check("the background moves", moved > 0.08, f"difference={moved:.2f}")
@@ -98,7 +98,7 @@ def moving_background(vm):
     still_one = vm.shot("background-still-1")
     time.sleep(3)
     still_two = vm.shot("background-still-2")
-    stays = difference(still_one, still_two, (0, 40, 1920, 500))
+    stays = difference(still_one, still_two, (0, 40, 1000, 400))
     check("still means still", stays < 0.04, f"difference={stays:.2f}")
     check("moving differs from still", moved > stays * 3,
           f"moving={moved:.2f} still={stays:.2f}")
@@ -106,16 +106,27 @@ def moving_background(vm):
 
 
 def window_previews(vm):
-    """The shell takes a picture of each window as it comes to the front, and
-    the overview shows it. Asked of the shell, not guessed from pixels: the
-    cards are small and a blurred background behind them moves too."""
+    """The shell takes a picture of each window as it comes to the front.
+
+    This needs the Aurora session on Wayfire: a window's place on the screen
+    comes from its IPC. In a VM with a render node but no 3D, Aurora runs
+    labwc on purpose (see aurora-session), and then there are no previews by
+    design — boot this test with a display that has no render node
+    (bochs-display) to exercise the real path."""
+    code, out = vm.user("pgrep -x wayfire >/dev/null && echo wayfire || echo labwc")
+    compositor = (out or "").strip()
     vm.user("gsettings set org.aurora.desktop window-previews true")
     vm.launch("org.gnome.TextEditor.desktop")
-    vm.wait_for(lambda: vm.window("org.gnome.TextEditor"), timeout=25, what="the editor")
-    time.sleep(5)                                   # it settles, then is photographed
+    vm.wait_for(lambda: vm.window("org.gnome.TextEditor"), timeout=30, what="the editor")
+    time.sleep(6)                                   # it settles, then is photographed
     code, out = vm.user("aurora-shell previews")
     taken = int((out or "0").strip() or 0)
-    check("the shell has a picture of the window", taken >= 1, f"pictures={taken}")
+    if compositor != "wayfire":
+        check("previews are off in the compatibility session, as documented",
+              taken == 0, f"compositor={compositor} pictures={taken}")
+        return
+    check("the shell has a picture of the window", taken >= 1,
+          f"compositor={compositor} pictures={taken}")
     vm.user("aurora-shell overview")
     time.sleep(3)
     with_preview = vm.shot("overview-previews")
@@ -126,7 +137,7 @@ def window_previews(vm):
     vm.user("aurora-shell overview")
     time.sleep(3)
     without = vm.shot("overview-icons")
-    changed = difference(with_preview, without, (560, 300, 1360, 780))
+    changed = difference(with_preview, without, (300, 200, 1000, 620))
     check("the overview's cards differ with previews on and off", changed > 0.5,
           f"difference={changed:.2f}")
     vm.user("aurora-shell overview")
@@ -156,9 +167,13 @@ def main():
     parser.add_argument("iso")
     parser.add_argument("--out", default=os.path.join(os.path.dirname(
         os.path.abspath(__file__)), "..", "..", "work", "newfeatures"))
+    parser.add_argument("--vga", default="bochs-display",
+                        help="the VM's display. bochs-display has no render node, "
+                             "which is what makes Aurora run Wayfire in software; "
+                             "virtio-vga makes it run labwc, as it does on a real VM.")
     args = parser.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    vm = VM(args.iso, args.out)
+    vm = VM(args.iso, args.out, vga=args.vga)
     try:
         for step in (icon_styles, launchpad_pages, moving_background, window_previews,
                      new_apps):

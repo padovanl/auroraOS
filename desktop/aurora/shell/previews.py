@@ -116,6 +116,11 @@ class Previews:
             return GLib.SOURCE_REMOVE
         if info.get("minimized") or info.get("app-id") == "org.aurora.Shell":
             return GLib.SOURCE_REMOVE
+        # The shell's own surfaces — the dock, the bar, Launchpad, the overview
+        # — are views to Wayfire like any other. A picture of the overview is
+        # not a picture of a window.
+        if info.get("role", "toplevel") != "toplevel":
+            return GLib.SOURCE_REMOVE
         # bbox: where the window really is on the screen, decorations and all.
         geometry = info.get("bbox") or info.get("geometry") or {}
         key = (info.get("app-id") or "", info.get("title") or "")
