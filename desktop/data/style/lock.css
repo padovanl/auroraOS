@@ -39,6 +39,90 @@ window {
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
+/* The chips under the date: the weather and the battery, as a phone shows
+   them, on the picture with no card around them. */
+#chips {
+  margin-top: 16px;
+}
+
+#chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.30);
+}
+
+#chip-text {
+  font-family: Inter;
+  font-size: 11pt;
+  font-weight: 500;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+#chip-icon {
+  color: #ffffff;
+  -gtk-icon-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* Music, when something is playing (gtklock's playerctl module): the same
+   glass as the chips, with the cover rounded like everything else. */
+#playerctl-box {
+  /* The module hangs its card from the top of the screen, where the clock is:
+     this pushes it under the clock, the date and the chips. */
+  margin-top: 268px;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+#album-art {
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* The module's own buttons are plain GTK ones: round them, empty them and
+   leave only the glyph, like every other control Aurora draws. */
+#playerctl-box button {
+  min-width: 36px;
+  min-height: 36px;
+  margin: 0 3px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+  text-shadow: none;
+  color: #ffffff;
+}
+
+#playerctl-box button:hover { background-color: rgba(255, 255, 255, 0.26); }
+#playerctl-box button:active { background-color: rgba(255, 255, 255, 0.36); }
+
+#playerctl-box button image {
+  color: #ffffff;
+  -gtk-icon-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+#title-label {
+  font-family: Inter;
+  font-size: 11.5pt;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+#artist-label,
+#album-label {
+  font-family: Inter;
+  font-size: 10pt;
+  color: rgba(255, 255, 255, 0.78);
+}
+
 #body-grid {
   margin-bottom: 16px;
 }

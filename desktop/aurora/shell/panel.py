@@ -386,12 +386,14 @@ class AuroraMenu(Gtk.MenuButton):
 
 
 class Panel(LayerWindow):
-    HEIGHT = 30
+    HEIGHT = 30             # comfortable; see Settings → Appearance → Density
+    COMPACT_HEIGHT = 25
     FLOAT_MARGIN = 10       # room around the floating islands
 
     def __init__(self, shell, monitor):
         s = settings.get()
         edge = s.get_string("panel-position") if s else "top"
+        compact = s is not None and s.get_string("interface-density") == "compact"
         super().__init__(shell, "aurora-panel", layer=Layer.TOP,
                          anchors=(edge, "left", "right"), monitor=monitor,
                          exclusive=True, keyboard=Keyboard.ON_DEMAND)
@@ -402,7 +404,8 @@ class Panel(LayerWindow):
         # the screen's edge.
         floating = s is not None and s.get_string("panel-style") == "floating"
         self.add_css_class("panel-floating" if floating else "panel-bar-style")
-        height = self.HEIGHT + (self.FLOAT_MARGIN if floating else 0)
+        bar_height = self.COMPACT_HEIGHT if compact else self.HEIGHT
+        height = bar_height + (self.FLOAT_MARGIN if floating else 0)
         self.shell = shell
         self.set_default_size(-1, height)
 

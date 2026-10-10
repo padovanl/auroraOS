@@ -7,15 +7,20 @@ wallpaper=$(readlink -f "${XDG_CACHE_HOME:-$HOME/.cache}/aurora/wallpaper" 2>/de
 [ -f "$wallpaper" ] || wallpaper=$(gsettings get org.aurora.desktop wallpaper 2>/dev/null | tr -d "'")
 [ -f "$wallpaper" ] || wallpaper=/usr/share/backgrounds/aurora/aurora-dynamic-dawn.png
 
+# Where Aurora is installed: /usr normally, somewhere else when the desktop is
+# run from a tree of its own (the headless session the tests use).
+prefix=${AURORA_PREFIX:-/usr}
+libdir=${AURORA_LIBDIR:-/usr/lib/aurora}
+
 # Settings → Appearance → Lock Screen: the same picture, blurred, or its own.
-picked=$(python3 /usr/lib/aurora/aurora/lockscreen.py "$wallpaper" 2>/dev/null)
+picked=$(python3 "$libdir/aurora/lockscreen.py" "$wallpaper" 2>/dev/null)
 [ -f "$picked" ] && wallpaper=$picked
 
 clock="%H:%M"
 [ "$(gsettings get org.aurora.desktop clock-format 2>/dev/null)" = "'12h'" ] && clock="%l:%M %p"
 
 # This account's name and picture go into a copy of the layout and style.
-style_dir=/usr/share/aurora/style
+style_dir="$prefix/share/aurora/style"
 run=${XDG_RUNTIME_DIR:-/tmp}/aurora-lock
 mkdir -p "$run"
 user=$(id -un)
@@ -31,12 +36,86 @@ fi
 sed -e "s|@NAME@|$(escape "$name")|" -e "s|@INITIAL@|$(escape "$initial")|" \
     -e "s|@AVATAR@|$avatar|g" -e "s|@BODY_VALIGN@|$body|" \
     "$style_dir/lock.ui" > "$run/lock.ui"
+
+# The chips under the date: the weather and the battery as they are at this
+# moment. Anything that cannot be said is simply left out.
+python3 - "$run/lock.ui" "$libdir" <<'PY' 2>/dev/null || sed -i "s|@CHIPS@||" "$run/lock.ui"
+import sys
+sys.path.insert(0, sys.argv[2])
+from xml.sax.saxutils import escape
+
+chips = []
+
+
+def chip(name, icon, text):
+    chips.append(
+        f'        <child>\n'
+        f'          <object class="GtkBox" id="chip-{name}">\n'
+        f'            <property name="name">chip</property>\n'
+        f'            <property name="halign">center</property>\n'
+        f'            <property name="spacing">7</property>\n'
+        f'            <child><object class="GtkImage" id="chip-{name}-icon">\n'
+        f'              <property name="name">chip-icon</property>\n'
+        f'              <property name="icon-name">{escape(icon)}</property>\n'
+        f'              <property name="pixel-size">16</property></object></child>\n'
+        f'            <child><object class="GtkLabel" id="chip-{name}-text">\n'
+        f'              <property name="name">chip-text</property>\n'
+        f'              <property name="label">{escape(text)}</property></object></child>\n'
+        f'          </object>\n'
+        f'        </child>')
+
+
+try:
+    from aurora import weather
+    from aurora.i18n import _
+    where, _city = weather.place()
+    reading = weather.cached(*where) if where else None
+    if reading:
+        sky, icon = weather.describe(reading["code"], reading["is_day"])
+        chip("weather", icon, f"{reading['temp']:.0f}{reading['unit']} · {_(sky)}")
+except Exception:
+    pass
+
+try:
+    import glob
+    import os
+    for battery in sorted(glob.glob("/sys/class/power_supply/BAT*")):
+        with open(os.path.join(battery, "capacity")) as f:
+            charge = int(f.read().strip())
+        state = ""
+        try:
+            with open(os.path.join(battery, "status")) as f:
+                state = f.read().strip().lower()
+        except OSError:
+            pass
+        charging = "-charging" if state == "charging" else ""
+        level = max(0, min(100, round(charge / 10) * 10))
+        chip("battery", f"battery-level-{level}{charging}-symbolic", f"{charge}%")
+        break
+except Exception:
+    pass
+
+row = ""
+if chips:
+    row = ('    <child>\n'
+           '      <object class="GtkBox" id="chips">\n'
+           '        <property name="name">chips</property>\n'
+           '        <property name="halign">center</property>\n'
+           '        <property name="spacing">10</property>\n'
+           + "\n".join(chips) + "\n"
+           '      </object>\n'
+           '    </child>')
+with open(sys.argv[1], encoding="utf-8") as layout:
+    text = layout.read()
+with open(sys.argv[1], "w", encoding="utf-8") as layout:
+    layout.write(text.replace("@CHIPS@", row))
+PY
 cp "$style_dir/lock.css" "$run/lock.css"
 # Painted in the accent the desktop uses — including the accent taken from the
 # background picture — instead of a fixed violet.
-python3 - "$run/lock.css" <<'PY' 2>/dev/null || true
+python3 - "$run/lock.css" "$libdir" <<'PY' 2>/dev/null || true
 import sys
-sys.path.insert(0, "/usr/lib/aurora")
+sys.path.insert(0, sys.argv[2])
 from aurora import look
 
 raw = look.accent_hex().lstrip("#")
@@ -66,7 +145,14 @@ fi
     fi
 done
 
-exec gtklock --daemonize \
+# Music on the lock screen, when a player is running (gtklock's own module).
+modules=""
+for module in /usr/lib/*/gtklock/playerctl-module.so "$prefix"/lib/*/gtklock/playerctl-module.so; do
+    [ -r "$module" ] && modules="-m $module"
+done
+
+# shellcheck disable=SC2086  # $modules is one option and a path, on purpose
+exec gtklock --daemonize $modules \
     --background "$wallpaper" \
     --style "$run/lock.css" \
     --layout "$run/lock.ui" \

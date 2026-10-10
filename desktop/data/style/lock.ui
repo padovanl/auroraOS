@@ -2,8 +2,9 @@
 <!-- Aurora's lock screen, laid out like Windows': the time and date high on the
      wallpaper; under them the account's picture and name, and the password
      field with its arrow. Keep gtklock's expected IDs and signal handlers.
-     aurora-lock fills in @NAME@, @INITIAL@, @AVATAR@ (its size, 0 to hide it) and
-     @BODY_VALIGN@ (center, or start without the account). -->
+     aurora-lock fills in @NAME@, @INITIAL@, @AVATAR@ (its size, 0 to hide it),
+     @BODY_VALIGN@ (center, or start without the account) and @CHIPS@ (the
+     weather and battery row, empty when there is nothing to say). -->
 <interface>
   <object class="GtkBox" id="window-box">
     <property name="name">window-box</property>
@@ -33,6 +34,9 @@
                 <property name="halign">center</property>
               </object>
             </child>
+            <!-- aurora-lock puts a row of small chips here: the weather and
+                 the battery as they were when the screen locked. -->
+            @CHIPS@
           </object>
         </child>
       </object>
