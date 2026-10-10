@@ -335,28 +335,14 @@
       <description>Four small surfaces paint the corners of every monitor black outside
       a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
     </key>
-    <key name="wallpaper-live-scene" type="s">
-      <choices>
-        <choice value=""/><choice value="aurora"/><choice value="nebula"/>
-        <choice value="waves"/><choice value="constellation"/><choice value="sunrise"/>
-        <choice value="rings"/>
-      </choices>
-      <default>''</default>
-      <summary>An animated background, drawn instead of a picture</summary>
-      <description>Empty: the background is a picture. Otherwise the scene drawn,
-      frame by frame, in place of one (shell/livescenes.py). Like the movement over
-      a picture, it stops while a window covers the desktop or the computer is
-      saving power.</description>
-    </key>
     <key name="wallpaper-animation" type="s">
-      <choices><choice value="off"/><choice value="aurora"/><choice value="zoom"/></choices>
+      <choices><choice value="off"/><choice value="zoom"/><choice value="aurora"/></choices>
       <default>'aurora'</default>
-      <summary>Movement over the background picture</summary>
-      <description>Aurora: bands of light leaning slowly across the top of the screen,
-      in your accent colour, drawn at a quarter of the screen's size and fifteen frames
-      a second, and not drawn at all while a window covers the desktop or the computer
-      is saving power. Zoom: a ninety-second drift into the picture and back out, which
-      GTK animates itself.</description>
+      <summary>What moves in the background picture</summary>
+      <description>Aurora: curtains of light folding across the sky of the picture,
+      added over it so what is underneath stays a photograph. Zoom: a ninety-second
+      drift into the picture and back, which GTK animates itself. Neither is drawn
+      while a window covers the desktop or the computer is saving power.</description>
     </key>
     <key name="launchpad-layout" type="s">
       <choices><choice value="pages"/><choice value="sections"/></choices>

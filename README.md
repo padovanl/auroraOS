@@ -1338,32 +1338,22 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   login screen computes the same phase. "Auto" dark style flips the system color scheme
   at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
 
-#### Animated backgrounds, drawn with the processor
-- **Alternatives:** a GLSL shader wallpaper, a looping video, a GIF.
-- **Why:** Aurora renders in software in a virtual machine, where a shader wallpaper is a
-  slide show and a video loop is a fan. So **Animated** (Settings → Appearance → Background)
-  draws the background itself, frame by frame, with Cairo (`shell/livescenes.py`): six scenes
-  — northern lights, nebula, silk, constellation, sunrise, rings — each a pure function of
-  width, height and a phase, which is what makes a still of one its own preview in Settings
-  and lets a test say the same moment always paints the same picture. Light is *added* rather
-  than painted on (cairo's ADD operator), which is the difference between a glow and a grey
-  shape, and between two colours meeting in a third and one covering the other. Each frame is
-  painted a quarter of the screen's size and scaled up: cheap, and where the softness comes
-  from. Fifteen frames a second, nothing at all while a window covers the desktop or the
-  machine is in power-saver mode.
-
-#### A background that moves, without a GPU
-- **Alternatives:** a GLSL shader wallpaper, a looping video, nothing.
-- **Why:** Aurora renders in software in a virtual machine, where a shader wallpaper is a
-  slide show and a video loop is a fan. So **Movement** (Settings → Appearance → Background)
-  draws the aurora itself with Cairo (`shell/livingwallpaper.py`): four bands of light leaning
-  across the top of the screen in the accent colour, drawn into a surface a quarter of the
-  screen's size and scaled up — which is also where their softness comes from — fifteen times
-  a second. **Slow zoom** is a ninety-second drift into the picture and back, expressed as a
-  CSS animation on the picture, so GTK's renderer does all of it and the shell does none.
-  Neither runs while a window covers the desktop or the machine is in power-saver mode: the
-  cost while you work is zero, which is the only way an animated background is defensible on
-  a laptop.
+#### A background that moves, and stays a photograph
+- **Alternatives:** a GLSL shader wallpaper, a looping video, a scene drawn from scratch.
+- **Why:** a scene made of lines and gradients looks drawn, whatever is spent on it — that
+  was tried and thrown away — and Aurora renders in software in a virtual machine, where a
+  shader wallpaper is a slide show and a video loop is a fan. So **Movement** (Settings →
+  Appearance → Background) leaves the photograph alone and adds light over it
+  (`shell/livingwallpaper.py`): three curtains of aurora folding across the sky, green at the
+  foot and violet at the crown, fading out at their ends and before they reach the ground.
+  They are *added* (cairo's ADD operator), never painted on top, which is what makes them
+  read as light in the picture rather than as a shape over it, and why the same layer works
+  on a picture it was never made for. Drawn into a surface a quarter of the screen's size and
+  scaled up — cheap, and where the softness comes from — fifteen times a second. **Slow zoom**
+  is a ninety-second drift into the picture, expressed as a CSS animation on the picture, so
+  GTK's renderer does all of it and the shell does none. Neither runs while a window covers
+  the desktop or the machine is in power-saver mode: the cost while you work is zero, which
+  is the only way an animated background is defensible on a laptop.
 
 #### Icons: one generator, five styles
 - **Alternatives:** shipping a drawn icon set, or using Papirus as-is.

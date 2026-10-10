@@ -541,11 +541,11 @@ msgstr "Éditeur"
 msgid "Automatic"
 msgstr "Automatique"
 
-#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:219
+#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:212
 msgid "Open Terminal"
 msgstr "Ouvrir un terminal"
 
-#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:220 aurora/welcome.py:21
+#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:213 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "Ouvrir Fichiers"
 
@@ -1336,7 +1336,7 @@ msgid "Forward"
 msgstr "Suivant"
 
 #: aurora/files/window.py:345 aurora/files/window.py:1212
-#: aurora/shell/wallpaper.py:217
+#: aurora/shell/wallpaper.py:210
 msgid "New File…"
 msgstr "Nouveau fichier…"
 
@@ -1480,7 +1480,7 @@ msgstr "Sommes SHA-256"
 msgid "Move to Trash"
 msgstr "Mettre à la corbeille"
 
-#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:218
+#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:211
 msgid "New Folder…"
 msgstr "Nouveau dossier…"
 
@@ -2569,7 +2569,7 @@ msgstr "Verrouiller l'écran"
 msgid "Picture"
 msgstr "Image"
 
-#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:205
+#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:170
 msgid "Background"
 msgstr "Arrière-plan"
 
@@ -2601,7 +2601,7 @@ msgstr "Choisir…"
 msgid "Lock Screen Picture"
 msgstr "Image de l'écran de verrouillage"
 
-#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:490
+#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:413
 #: aurora/settingsapp/system.py:527
 msgid "Images"
 msgstr "Images"
@@ -2901,7 +2901,7 @@ msgstr "La vitesse, l’usage pour gaucher et les gestes sont dans Souris et pav
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
 #: aurora/settingsapp/desktop.py:219 aurora/settingsapp/inputs.py:49
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
-#: aurora/shell/wallpaper.py:224
+#: aurora/shell/wallpaper.py:217
 #: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "Paramètres"
@@ -2919,10 +2919,6 @@ msgid "Dynamic (follows the sun)"
 msgstr "Dynamique (suit le soleil)"
 
 #: aurora/settingsapp/backgrounds.py:26
-msgid "Animated"
-msgstr "Animé"
-
-#: aurora/settingsapp/backgrounds.py:27
 msgid "Picture of the day"
 msgstr "Image du jour"
 
@@ -2934,186 +2930,154 @@ msgstr "Diaporama"
 msgid "Solid color"
 msgstr "Couleur unie"
 
-#: aurora/settingsapp/backgrounds.py:28
-msgid "Northern lights"
-msgstr "Aurore boréale"
-
-#: aurora/settingsapp/backgrounds.py:28
-msgid "Nebula"
-msgstr "Nébuleuse"
+#: aurora/settingsapp/backgrounds.py:29
+msgid "Aurora over the sky"
+msgstr "Aurore sur le ciel"
 
 #: aurora/settingsapp/backgrounds.py:29
-msgid "Silk"
-msgstr "Soie"
-
-#: aurora/settingsapp/backgrounds.py:29
-msgid "Constellation"
-msgstr "Constellation"
-
-#: aurora/settingsapp/backgrounds.py:30
-msgid "Sunrise"
-msgstr "Lever de soleil"
-
-#: aurora/settingsapp/backgrounds.py:30
-msgid "Rings"
-msgstr "Anneaux"
-
-#: aurora/settingsapp/backgrounds.py:91
-msgid "Dawn"
-msgstr "Aube"
-
-#: aurora/settingsapp/backgrounds.py:91
-msgid "Day"
-msgstr "Jour"
-
-#: aurora/settingsapp/backgrounds.py:91
-msgid "Dusk"
-msgstr "Crépuscule"
-
-#: aurora/settingsapp/backgrounds.py:91
-msgid "Night"
-msgstr "Nuit"
-
-#: aurora/settingsapp/backgrounds.py:226
-msgid "Personalize your background"
-msgstr "Personnaliser l'arrière-plan"
-
-#: aurora/settingsapp/backgrounds.py:233 aurora/settingsapp/desktop.py:14
-#: aurora/shell/osk_themes.py:7 aurora/shell/sysnotify.py:159
-msgid "Aurora"
-msgstr "Aurora"
-
-#: aurora/settingsapp/backgrounds.py:233
 msgid "Slow zoom"
 msgstr "Zoom lent"
 
-#: aurora/settingsapp/backgrounds.py:233
+#: aurora/settingsapp/backgrounds.py:30
 msgid "Still"
 msgstr "Immobile"
 
-#: aurora/settingsapp/backgrounds.py:236
+#: aurora/settingsapp/backgrounds.py:58
+msgid "Dawn"
+msgstr "Aube"
+
+#: aurora/settingsapp/backgrounds.py:58
+msgid "Day"
+msgstr "Jour"
+
+#: aurora/settingsapp/backgrounds.py:58
+msgid "Dusk"
+msgstr "Crépuscule"
+
+#: aurora/settingsapp/backgrounds.py:58
+msgid "Night"
+msgstr "Nuit"
+
+#: aurora/settingsapp/backgrounds.py:191
+msgid "Personalize your background"
+msgstr "Personnaliser l'arrière-plan"
+
+#: aurora/settingsapp/backgrounds.py:200
 msgid "Movement"
 msgstr "Mouvement"
 
-#: aurora/settingsapp/backgrounds.py:238
-msgid "Light moving over the picture, or a slow drift into it. Neither runs while a window covers the desktop."
-msgstr "De la lumière qui passe sur l'image, ou une lente dérive vers l'intérieur. Ni l'une ni l'autre ne tourne tant qu'une fenêtre couvre le bureau."
+#: aurora/settingsapp/backgrounds.py:202
+msgid "Light added over the picture — it stays a photograph. Nothing moves while a window covers the desktop or the computer is saving power."
+msgstr "De la lumière ajoutée sur l'image : elle reste une photographie. Rien ne bouge tant qu'une fenêtre couvre le bureau ou que l'ordinateur économise l'énergie."
 
-#: aurora/settingsapp/backgrounds.py:256
+#: aurora/settingsapp/backgrounds.py:221
 msgid "Series"
 msgstr "Série"
 
-#: aurora/settingsapp/backgrounds.py:256
+#: aurora/settingsapp/backgrounds.py:221
 msgid "The same landscape at dawn, day, dusk and night"
 msgstr "Le même paysage à l'aube, le jour, au crépuscule et la nuit"
 
-#: aurora/settingsapp/backgrounds.py:283
-msgid "Scene"
-msgstr "Scène"
-
-#: aurora/settingsapp/backgrounds.py:284
-msgid "Drawn frame by frame, and never while a window covers the desktop"
-msgstr "Dessinée image par image, et jamais tant qu'une fenêtre couvre le bureau"
-
-#: aurora/settingsapp/backgrounds.py:295
+#: aurora/settingsapp/backgrounds.py:232
 msgid "Browse Photos…"
 msgstr "Parcourir les photos…"
 
-#: aurora/settingsapp/backgrounds.py:297
+#: aurora/settingsapp/backgrounds.py:234
 msgid "All Wallpapers…"
 msgstr "Tous les fonds d'écran…"
 
-#: aurora/settingsapp/backgrounds.py:302
+#: aurora/settingsapp/backgrounds.py:239
 msgid "Recent images"
 msgstr "Images récentes"
 
-#: aurora/settingsapp/backgrounds.py:311
+#: aurora/settingsapp/backgrounds.py:248
 msgid "Picture from"
 msgstr "Image de"
 
-#: aurora/settingsapp/backgrounds.py:314
+#: aurora/settingsapp/backgrounds.py:251
 msgid "Aurora asks the service for today's picture once a day; nothing else is sent"
 msgstr "Aurora demande l'image du jour au service une fois par jour ; rien d'autre n'est envoyé"
 
-#: aurora/settingsapp/backgrounds.py:324
+#: aurora/settingsapp/backgrounds.py:261
 msgid "Pictures from"
 msgstr "Images de"
 
-#: aurora/settingsapp/backgrounds.py:329
+#: aurora/settingsapp/backgrounds.py:266
 msgid "Change picture every"
 msgstr "Changer d'image toutes les"
 
-#: aurora/settingsapp/backgrounds.py:330 aurora/shell/widgets.py:920
+#: aurora/settingsapp/backgrounds.py:267 aurora/shell/widgets.py:920
 msgid "15 minutes"
 msgstr "15 minutes"
 
-#: aurora/settingsapp/backgrounds.py:330 aurora/settingsapp/screentime.py:17
+#: aurora/settingsapp/backgrounds.py:267 aurora/settingsapp/screentime.py:17
 msgid "1 hour"
 msgstr "1 heure"
 
-#: aurora/settingsapp/backgrounds.py:330
+#: aurora/settingsapp/backgrounds.py:267
 msgid "6 hours"
 msgstr "6 heures"
 
-#: aurora/settingsapp/backgrounds.py:330
+#: aurora/settingsapp/backgrounds.py:267
 msgid "24 hours"
 msgstr "24 heures"
 
-#: aurora/settingsapp/backgrounds.py:334
+#: aurora/settingsapp/backgrounds.py:271
 msgid "Shuffle the picture order"
 msgstr "Ordre aléatoire des images"
 
-#: aurora/settingsapp/backgrounds.py:353
+#: aurora/settingsapp/backgrounds.py:290
 msgid "Custom Color"
 msgstr "Couleur personnalisée"
 
-#: aurora/settingsapp/backgrounds.py:357
+#: aurora/settingsapp/backgrounds.py:294
 msgid "Choose a color"
 msgstr "Choisir une couleur"
 
-#: aurora/settingsapp/backgrounds.py:395
+#: aurora/settingsapp/backgrounds.py:332
 msgid "Dawn, day, dusk and night follow the sun where you are"
 msgstr "L'aube, le jour, le crépuscule et la nuit suivent le soleil là où vous êtes"
 
-#: aurora/settingsapp/backgrounds.py:398
+#: aurora/settingsapp/backgrounds.py:335
 msgid "Today's picture is on its way…"
 msgstr "L'image du jour arrive…"
 
-#: aurora/settingsapp/backgrounds.py:399
-msgid "Drawn, frame by frame, instead of a picture"
-msgstr "Dessiné image par image, à la place d'une photo"
-
-#: aurora/settingsapp/backgrounds.py:400
+#: aurora/settingsapp/backgrounds.py:336
 msgid "A new picture every so often"
 msgstr "Une nouvelle image de temps en temps"
 
-#: aurora/settingsapp/backgrounds.py:401
+#: aurora/settingsapp/backgrounds.py:337
 msgid "A calm, solid color"
 msgstr "Une couleur unie et apaisante"
 
-#: aurora/settingsapp/backgrounds.py:419
+#: aurora/settingsapp/backgrounds.py:351
 msgid "Included wallpapers"
 msgstr "Fonds d'écran inclus"
 
-#: aurora/settingsapp/backgrounds.py:489
+#: aurora/settingsapp/backgrounds.py:412
 msgid "Choose a Background"
 msgstr "Choisir un arrière-plan"
 
-#: aurora/settingsapp/backgrounds.py:518
+#: aurora/settingsapp/backgrounds.py:441
 msgid "Pictures for the Slideshow"
 msgstr "Images du diaporama"
 
-#: aurora/settingsapp/backgrounds.py:534
+#: aurora/settingsapp/backgrounds.py:457
 msgid "All Wallpapers"
 msgstr "Tous les fonds d'écran"
 
-#: aurora/settingsapp/backgrounds.py:538
+#: aurora/settingsapp/backgrounds.py:461
 msgid "Search wallpapers"
 msgstr "Rechercher des fonds d'écran"
 
-#: aurora/settingsapp/backgrounds.py:559
+#: aurora/settingsapp/backgrounds.py:482
 msgid "{n} pictures"
 msgstr "{n} images"
+
+#: aurora/settingsapp/desktop.py:14 aurora/shell/osk_themes.py:7
+#: aurora/shell/sysnotify.py:159
+msgid "Aurora"
+msgstr "Aurora"
 
 #: aurora/settingsapp/desktop.py:14
 msgid "Menu bar on top, floating dock"
@@ -3289,7 +3253,7 @@ msgstr "Horloge, calendrier, météo, système, projets Git, conteneurs, GPU, je
 msgid "Show widgets"
 msgstr "Afficher les widgets"
 
-#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:221
+#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:214
 #: aurora/shell/widgets.py:1427
 msgid "Edit Widgets…"
 msgstr "Modifier les widgets…"
@@ -6702,11 +6666,11 @@ msgstr "{name} connecté"
 msgid "The drive is ready to use."
 msgstr "Le lecteur est prêt à être utilisé."
 
-#: aurora/shell/wallpaper.py:222
+#: aurora/shell/wallpaper.py:215
 msgid "Change Background…"
 msgstr "Changer l'arrière-plan…"
 
-#: aurora/shell/wallpaper.py:223
+#: aurora/shell/wallpaper.py:216
 msgid "Display Settings"
 msgstr "Paramètres des écrans"
 

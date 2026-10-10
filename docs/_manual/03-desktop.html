@@ -176,34 +176,20 @@ Notifications → Automatic Do Not Disturb):</p>
   <dt>Drop a file on an app</dt><dd>Opens it with that app: drag one or more files out of <a href="files.html">Files</a> or off the desktop and onto an icon, which lights up when it can take them. An app whose command accepts no file (a terminal, for instance) doesn't light up and doesn't take the drop. Dropped on the Trash, the files are moved there. If the dock is hidden, carrying files to the screen's edge brings it up, and it stays up until you let go.</dd>
 </dl>
 
-<h2>Animated backgrounds</h2>
-<p>Settings → Appearance → Background → <strong>Animated</strong> replaces the picture with a
-scene that is drawn, frame by frame, on your screen. Six of them, each in your accent colour
-and each previewed by a frame of itself:</p>
-<dl>
-  <dt>Northern lights</dt><dd>Three curtains hanging from the dark, green at the foot and violet at the crown, folding as they drift, with their light along the ridges below.</dd>
-  <dt>Nebula</dt><dd>Dust and star clouds with the galaxy's band lying across them.</dd>
-  <dt>Silk</dt><dd>Long bands of light sliding over one another, each with a bright line along its fold; where two cross, their colours add.</dd>
-  <dt>Constellation</dt><dd>Points drifting in the dark, joined by a line whenever two come close: a sky that draws itself and undraws itself.</dd>
-  <dt>Sunrise</dt><dd>The sun low over the hills, clouds crossing it, the colour of the whole sky moving with it over several minutes.</dd>
-  <dt>Rings</dt><dd>Arcs turning around a point below the screen. The quietest of the six.</dd>
-</dl>
-<p>They are drawn with the processor, not a graphics card — a shader would be a slide show in a
-virtual machine, where Aurora renders in software — into a picture a quarter of the screen's
-size which is then scaled up, which is both cheap and where their softness comes from. As with
-the movement below, nothing is drawn while a window covers the desktop or the computer is
-saving power, so an animated background costs nothing while you work.</p>
-
 <h2>Movement</h2>
-<p>If the background is a picture rather than a scene, Settings → Appearance → Background →
-<strong>Movement</strong> gives it something to do:</p>
+<p>Settings → Appearance → Background → <strong>Movement</strong> makes the picture move.
+There is no scene drawn here instead of your picture — a scene made of lines and gradients
+looks drawn, whatever is spent on it. The picture stays the photograph it is, and light is
+added over it:</p>
 <dl>
-  <dt>Aurora</dt><dd>The default. Bands of light lean slowly across the top of the screen in your accent colour, drawn over the picture. They are drawn at a quarter of the screen's size and scaled up — which is where their softness comes from — fifteen times a second.</dd>
+  <dt>Aurora over the sky</dt><dd>The default. Three curtains of light fold slowly across the top of the picture, green at the foot and violet at the crown, fading out at their ends and before they reach the ground. On a night picture they look like an aurora because they are added to the light already there, not painted on top of it.</dd>
   <dt>Slow zoom</dt><dd>A ninety-second drift into the picture and back out again. GTK animates it, so it costs the desktop nothing at all.</dd>
   <dt>Still</dt><dd>The picture, and nothing else.</dd>
 </dl>
 <p>Neither movement runs while a window covers the desktop — there is nothing to look at — or
-while the computer is in power-saver mode, so it never costs anything while you work.</p>
+while the computer is in power-saver mode, so it never costs anything while you work. More
+movements (stars, cloud, light on water) are being worked on; they are not here yet because
+measured over the installed wallpaper they moved it by almost nothing.</p>
 
 <h2>Style</h2>
 <p>Settings → Desktop &amp; Dock → Dock → <strong>Style</strong>:</p>
