@@ -1458,6 +1458,9 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **Density** (Settings → Appearance → Style): *Comfortable* or *Compact*. Compact shortens
+  the top bar from 30 to 25 px and tightens menus, the Control Center, notifications,
+  Spotlight and the dock's row, the way every system offers a density control now.
 - **The glass has grain:** frosted glass scatters light, and the eye reads that as a very
   fine texture. `tools/glass-noise.py` draws a 128×128 tile of light and shadow at a few
   percent of opacity, laid over the top bar, the dock and Spotlight: too faint to see as

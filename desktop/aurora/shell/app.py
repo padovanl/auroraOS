@@ -177,6 +177,9 @@ class Shell(Adw.Application):
                       lambda *a: self._later(self._accent_switched))
             for key in ("chrome-tint", "reduce-transparency"):
                 s.connect(f"changed::{key}", lambda *a: self._update_dynamic_css())
+            # The bar is a different height: it has to be built again.
+            s.connect("changed::interface-density",
+                      lambda *a: self._later(self._redensify))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -273,6 +276,12 @@ class Shell(Adw.Application):
         self._load_css()
         self._update_dynamic_css()
 
+    def _redensify(self):
+        """Comfortable or compact: the stylesheet and the bar's own height."""
+        self._update_dynamic_css()
+        self.panels.rebuild()
+        self.docks.rebuild()
+
     def _reshape_screen(self):
         self._update_dynamic_css()
         self.screencorners.rebuild()
@@ -313,6 +322,30 @@ class Shell(Adw.Application):
                                ("bottom-left", "100% 0%"), ("bottom-right", "0% 0%")):
                 css += (f"\n.screen-corner-{corner} {{ background-image: radial-gradient("
                         f"circle at {at}, transparent {r - 1}px, #000000 {r}px); }}")
+        # Compact (Settings → Appearance → Density): the same desktop with less
+        # room around everything. The top bar's own height is in panel.py.
+        if s is not None and s.get_string("interface-density") == "compact":
+            css += (
+                "\n.aurora-panel .panel-bar { font-size: 9.5pt; }"
+                "\nbutton.panel-button, menubutton.panel-button > button"
+                "{ min-height: 19px; padding: 1px 7px; margin: 2px 0; }"
+                "\n.panel-window { padding: 1px 6px; }"
+                "\n.dock-row { margin: 4px; }"
+                "\n.aurora-menu-group { padding: 3px; }"
+                "\nbutton.aurora-menu-row { padding: 6px 9px; }"
+                "\npopover.aurora-context-menu button.model,"
+                "\npopover.aurora-context-menu button.context-action"
+                "{ min-height: 28px; padding: 3px 11px; }"
+                "\n.qs-module { padding: 7px; border-radius: 15px; }"
+                "\n.qs-tile button.qs-toggle { padding: 3px 5px; }"
+                "\n.qs-tile-badge { min-width: 30px; min-height: 30px; }"
+                "\n.qs-time { font-size: 2em; }"
+                "\n.notification { padding: 10px; border-radius: 17px; }"
+                "\n.launcher-tile { padding: 10px 6px; }"
+                "\n.launcher-section-title { margin: 10px 18px 2px; }"
+                "\n.aurora-launcher.mode-spotlight .launcher-root { padding: 6px; }"
+                "\n.launcher-search { min-height: 40px; font-size: 13pt; }")
+
         # Reduce transparency (Settings → Accessibility → Seeing): nothing the
         # shell draws lets the wallpaper through any more.
         if s is not None and s.get_boolean("reduce-transparency"):

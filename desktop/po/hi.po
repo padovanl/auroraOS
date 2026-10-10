@@ -181,9 +181,9 @@ msgid "Stop generating"
 msgstr "जवाब बनाना रोकें"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:848
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:884
 #: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:327
-#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:137
+#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:157
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
 msgid "Open"
 msgstr "खोलें"
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "लेखन उपकरण"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:698
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:734
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -394,7 +394,7 @@ msgstr "प्रोजेक्ट के लिए एडिटर, टर्�
 msgid "Add Project"
 msgstr "प्रोजेक्ट जोड़ें"
 
-#: aurora/devhub/app.py:266 aurora/shell/launcher.py:142
+#: aurora/devhub/app.py:266 aurora/shell/launcher.py:162
 msgid "Open Workspace"
 msgstr "कार्यस्थान खोलें"
 
@@ -447,7 +447,7 @@ msgstr "इस कार्यक्षेत्र के लिए खुल�
 #: aurora/settingsapp/inputs.py:283 aurora/settingsapp/storage.py:287
 #: aurora/settingsapp/system.py:505 aurora/settingsapp/system.py:579
 #: aurora/settingsapp/system.py:666 aurora/settingsapp/system.py:685
-#: aurora/shell/app.py:600 aurora/shell/desktopicons.py:191
+#: aurora/shell/app.py:636 aurora/shell/desktopicons.py:191
 msgid "Cancel"
 msgstr "रद्द करें"
 
@@ -1061,7 +1061,7 @@ msgstr "छोटा"
 msgid "Medium (1366 px)"
 msgstr "मध्यम (1366 px)"
 
-#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:165
+#: aurora/files/imagetools.py:15 aurora/settingsapp/appearance.py:175
 #: aurora/settingsapp/applications.py:187
 msgid "Medium"
 msgstr "मध्यम"
@@ -1168,18 +1168,18 @@ msgstr "नया टैब"
 
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:258 aurora/shell/dock.py:261
-#: aurora/shell/launcher.py:65 aurora/shell/panel.py:566
+#: aurora/shell/launcher.py:65 aurora/shell/panel.py:569
 #: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "नई विंडो"
 
 #: aurora/files/window.py:148 aurora/files/window.py:346
-#: aurora/files/window.py:1215 aurora/shell/launcher.py:143
+#: aurora/files/window.py:1215 aurora/shell/launcher.py:163
 msgid "Open in Terminal"
 msgstr "टर्मिनल में खोलें"
 
 #: aurora/files/window.py:150 aurora/files/window.py:1200
-#: aurora/shell/launcher.py:139
+#: aurora/shell/launcher.py:159
 msgid "Copy Path"
 msgstr "पथ कॉपी करें"
 
@@ -1255,7 +1255,7 @@ msgid "About Files"
 msgstr "फ़ाइलें के बारे में"
 
 #: aurora/files/window.py:364 aurora/settingsapp/devices.py:42
-#: aurora/shell/panel.py:436
+#: aurora/shell/panel.py:439
 msgid "Search"
 msgstr "खोजें"
 
@@ -1432,7 +1432,7 @@ msgstr "Aurora AI को भेजने से पहले परिवर्�
 msgid "Loading…"
 msgstr "लोड हो रहा है…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:852
+#: aurora/files/window.py:1352 aurora/shell/app.py:888
 msgid "Ask Aurora"
 msgstr "Aurora से पूछें"
 
@@ -2108,183 +2108,199 @@ msgstr "स्वचालित"
 msgid "Auto switches to dark at sunset and back at sunrise"
 msgstr "स्वचालित सूर्यास्त पर गहरी और सूर्योदय पर वापस हल्की हो जाती है"
 
-#: aurora/settingsapp/appearance.py:76
+#: aurora/settingsapp/appearance.py:79
+msgid "Density"
+msgstr "सघनता"
+
+#: aurora/settingsapp/appearance.py:79
+msgid "Comfortable"
+msgstr "आरामदेह"
+
+#: aurora/settingsapp/appearance.py:79
+msgid "Compact"
+msgstr "संहत"
+
+#: aurora/settingsapp/appearance.py:82
+msgid "How much room the top bar, menus and the dock take"
+msgstr "टॉप बार, मेन्यू और डॉक कितनी जगह लें"
+
+#: aurora/settingsapp/appearance.py:86
 msgid "Accent color"
 msgstr "एक्सेंट रंग"
 
-#: aurora/settingsapp/appearance.py:100
+#: aurora/settingsapp/appearance.py:110
 msgid "Color from the background"
 msgstr "बैकग्राउंड से रंग"
 
-#: aurora/settingsapp/appearance.py:102
+#: aurora/settingsapp/appearance.py:112
 msgid "The most vivid color of your background becomes the accent"
 msgstr "आपके बैकग्राउंड का सबसे चटख रंग एक्सेंट बन जाता है"
 
-#: aurora/settingsapp/appearance.py:111
+#: aurora/settingsapp/appearance.py:121
 msgid "Icons"
 msgstr "आइकन"
 
-#: aurora/settingsapp/appearance.py:119
+#: aurora/settingsapp/appearance.py:129
 msgid "Pointer"
 msgstr "कर्सर"
 
-#: aurora/settingsapp/appearance.py:125 aurora/settingsapp/applications.py:232
+#: aurora/settingsapp/appearance.py:135 aurora/settingsapp/applications.py:232
 msgid "Pointer size"
 msgstr "कर्सर का आकार"
 
-#: aurora/settingsapp/appearance.py:129
+#: aurora/settingsapp/appearance.py:139
 msgid "Animations"
 msgstr "एनिमेशन"
 
-#: aurora/settingsapp/appearance.py:137
+#: aurora/settingsapp/appearance.py:147
 msgid "Window animations"
 msgstr "विंडो एनिमेशन"
 
-#: aurora/settingsapp/appearance.py:139
+#: aurora/settingsapp/appearance.py:149
 msgid "Windows fade in as they open; files and folders float in as a folder opens"
 msgstr "खुलते समय विंडो धीरे से दिखती हैं; फ़ोल्डर खोलने पर फ़ाइलें और फ़ोल्डर तैरते हुए आते हैं"
 
-#: aurora/settingsapp/appearance.py:142
+#: aurora/settingsapp/appearance.py:152
 msgid "Fonts"
 msgstr "फ़ॉन्ट"
 
-#: aurora/settingsapp/appearance.py:144
+#: aurora/settingsapp/appearance.py:154
 msgid "Interface"
 msgstr "इंटरफ़ेस"
 
-#: aurora/settingsapp/appearance.py:144 aurora/settingsapp/storage.py:19
+#: aurora/settingsapp/appearance.py:154 aurora/settingsapp/storage.py:19
 #: aurora/shell/morewidgets.py:406
 msgid "Documents"
 msgstr "दस्तावेज़"
 
-#: aurora/settingsapp/appearance.py:145
+#: aurora/settingsapp/appearance.py:155
 msgid "Monospace"
 msgstr "मोनोस्पेस"
 
-#: aurora/settingsapp/appearance.py:147
+#: aurora/settingsapp/appearance.py:157
 msgid "Scaling"
 msgstr "स्केलिंग"
 
-#: aurora/settingsapp/appearance.py:159
+#: aurora/settingsapp/appearance.py:169
 msgid "Anti-aliasing"
 msgstr "एंटीएलियासिंग"
 
-#: aurora/settingsapp/appearance.py:159
+#: aurora/settingsapp/appearance.py:169
 msgid "Standard (grayscale)"
 msgstr "मानक (ग्रेस्केल)"
 
-#: aurora/settingsapp/appearance.py:160
+#: aurora/settingsapp/appearance.py:170
 msgid "Subpixel (for LCD screens)"
 msgstr "सबपिक्सेल (LCD स्क्रीन के लिए)"
 
-#: aurora/settingsapp/appearance.py:160 aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:170 aurora/settingsapp/appearance.py:175
 #: aurora/settingsapp/inputs.py:198
 msgid "None"
 msgstr "कोई नहीं"
 
-#: aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:175
 msgid "Hinting"
 msgstr "हिंटिंग"
 
-#: aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:175
 msgid "Slight"
 msgstr "हल्की"
 
-#: aurora/settingsapp/appearance.py:165
+#: aurora/settingsapp/appearance.py:175
 msgid "Full"
 msgstr "पूर्ण"
 
-#: aurora/settingsapp/appearance.py:171 aurora/settingsapp/appearance.py:172
+#: aurora/settingsapp/appearance.py:181 aurora/settingsapp/appearance.py:182
 #: aurora/shell/quicksettings.py:217
 msgid "Night Light"
 msgstr "रात्रि प्रकाश"
 
-#: aurora/settingsapp/appearance.py:171
+#: aurora/settingsapp/appearance.py:181
 msgid "Warmer colors are easier on the eyes at night."
 msgstr "गर्म रंग शाम को आँखों के लिए आरामदायक होते हैं।"
 
-#: aurora/settingsapp/appearance.py:177
+#: aurora/settingsapp/appearance.py:187
 msgid "Not available on this screen"
 msgstr "इस स्क्रीन पर उपलब्ध नहीं"
 
-#: aurora/settingsapp/appearance.py:178
+#: aurora/settingsapp/appearance.py:188
 msgid "The graphics driver doesn't allow color changes (usual in a virtual machine)."
 msgstr "ग्राफ़िक्स ड्राइवर रंग बदलने नहीं देता (वर्चुअल मशीन में आम)।"
 
-#: aurora/settingsapp/appearance.py:183
+#: aurora/settingsapp/appearance.py:193
 msgid "Schedule"
 msgstr "समय-सारणी"
 
-#: aurora/settingsapp/appearance.py:183
+#: aurora/settingsapp/appearance.py:193
 msgid "Sunset to Sunrise"
 msgstr "सूर्यास्त से सूर्योदय तक"
 
-#: aurora/settingsapp/appearance.py:183
+#: aurora/settingsapp/appearance.py:193
 msgid "Manual"
 msgstr "मैन्युअल"
 
-#: aurora/settingsapp/appearance.py:184
+#: aurora/settingsapp/appearance.py:194
 msgid "All the Time"
 msgstr "हमेशा"
 
-#: aurora/settingsapp/appearance.py:186
+#: aurora/settingsapp/appearance.py:196
 msgid "Sunset and sunrise follow your time zone"
 msgstr "सूर्यास्त और सूर्योदय आपके समय क्षेत्र से निकाले जाते हैं"
 
-#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:144
+#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/applications.py:144
 msgid "From"
 msgstr "से"
 
-#: aurora/settingsapp/appearance.py:189 aurora/settingsapp/applications.py:146
+#: aurora/settingsapp/appearance.py:199 aurora/settingsapp/applications.py:146
 msgid "To"
 msgstr "तक"
 
-#: aurora/settingsapp/appearance.py:196
+#: aurora/settingsapp/appearance.py:206
 msgid "Color temperature"
 msgstr "रंग तापमान"
 
-#: aurora/settingsapp/appearance.py:212 aurora/settingsapp/inputs.py:360
+#: aurora/settingsapp/appearance.py:222 aurora/settingsapp/inputs.py:360
 #: aurora/shell/panel.py:349 aurora/shell/search.py:470
 msgid "Lock Screen"
 msgstr "स्क्रीन लॉक करें"
 
-#: aurora/settingsapp/appearance.py:214 aurora/settingsapp/backgrounds.py:26
+#: aurora/settingsapp/appearance.py:224 aurora/settingsapp/backgrounds.py:26
 msgid "Picture"
 msgstr "तस्वीर"
 
-#: aurora/settingsapp/appearance.py:224 aurora/settingsapp/backgrounds.py:166
+#: aurora/settingsapp/appearance.py:234 aurora/settingsapp/backgrounds.py:166
 msgid "Background"
 msgstr "पृष्ठभूमि"
 
-#: aurora/settingsapp/appearance.py:224
+#: aurora/settingsapp/appearance.py:234
 msgid "Same as the desktop"
 msgstr "डेस्कटॉप जैसा"
 
-#: aurora/settingsapp/appearance.py:225
+#: aurora/settingsapp/appearance.py:235
 msgid "The desktop's, blurred"
 msgstr "डेस्कटॉप वाला, धुंधला"
 
-#: aurora/settingsapp/appearance.py:225
+#: aurora/settingsapp/appearance.py:235
 msgid "A picture"
 msgstr "एक तस्वीर"
 
-#: aurora/settingsapp/appearance.py:229
+#: aurora/settingsapp/appearance.py:239
 msgid "Show my name and picture"
 msgstr "मेरा नाम और तस्वीर दिखाएँ"
 
-#: aurora/settingsapp/appearance.py:232
+#: aurora/settingsapp/appearance.py:242
 msgid "Off: only the time, the date and the password field"
 msgstr "बंद: सिर्फ़ समय, तारीख़ और पासवर्ड"
 
-#: aurora/settingsapp/appearance.py:238
+#: aurora/settingsapp/appearance.py:248
 msgid "Choose…"
 msgstr "चुनें…"
 
-#: aurora/settingsapp/appearance.py:241
+#: aurora/settingsapp/appearance.py:251
 msgid "Lock Screen Picture"
 msgstr "लॉक स्क्रीन की तस्वीर"
 
-#: aurora/settingsapp/appearance.py:242 aurora/settingsapp/backgrounds.py:397
+#: aurora/settingsapp/appearance.py:252 aurora/settingsapp/backgrounds.py:397
 #: aurora/settingsapp/system.py:553
 msgid "Images"
 msgstr "चित्र"
@@ -3991,7 +4007,7 @@ msgid "Show Apps (Launchpad)"
 msgstr "ऐप्स दिखाएँ (Launchpad)"
 
 #: aurora/settingsapp/inputs.py:357 aurora/shell/overview.py:95
-#: aurora/shell/panel.py:458 aurora/shell/search.py:483
+#: aurora/shell/panel.py:461 aurora/shell/search.py:483
 msgid "Show Desktop"
 msgstr "डेस्कटॉप दिखाएँ"
 
@@ -5182,140 +5198,140 @@ msgstr "यूटिलिटीज़"
 msgid "Opening App Center…"
 msgstr "ऐप सेंटर खुल रहा है…"
 
-#: aurora/shell/app.py:221
+#: aurora/shell/app.py:224
 msgid "Night Light can't change this screen's colors"
 msgstr "नाइट लाइट इस स्क्रीन के रंग नहीं बदल सकती"
 
-#: aurora/shell/app.py:222
+#: aurora/shell/app.py:225
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "ग्राफ़िक्स ड्राइवर इसकी अनुमति नहीं देता। वर्चुअल मशीन में ऐसा आम है; कंप्यूटर पर सेटिंग्स → अपडेट → अतिरिक्त ड्राइवर से ग्राफ़िक्स ड्राइवर इंस्टॉल करें।"
 
-#: aurora/shell/app.py:235
+#: aurora/shell/app.py:238
 msgid "Graphics fallback started"
 msgstr "ग्राफ़िक्स वैकल्पिक मोड शुरू हुआ"
 
-#: aurora/shell/app.py:236
+#: aurora/shell/app.py:239
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire शुरू नहीं हो सका। Aurora ने इसके बजाय सुरक्षित डेस्कटॉप खोला। स्टार्टअप रिपोर्ट देखने के लिए यह सूचना चुनें।"
 
-#: aurora/shell/app.py:238
+#: aurora/shell/app.py:241
 msgid "Open System Health"
 msgstr "सिस्टम स्वास्थ्य खोलें"
 
-#: aurora/shell/app.py:503
+#: aurora/shell/app.py:539
 msgid "Writing tools are off"
 msgstr "लेखन उपकरण बंद हैं"
 
-#: aurora/shell/app.py:595
+#: aurora/shell/app.py:631
 msgid "Restart didn't happen"
 msgstr "रीस्टार्ट नहीं हुआ"
 
-#: aurora/shell/app.py:595
+#: aurora/shell/app.py:631
 msgid "Shut down didn't happen"
 msgstr "शट डाउन नहीं हुआ"
 
-#: aurora/shell/app.py:596
+#: aurora/shell/app.py:632
 msgid "Sleep didn't happen"
 msgstr "स्लीप नहीं हुआ"
 
-#: aurora/shell/app.py:597
+#: aurora/shell/app.py:633
 msgid "Restart Anyway"
 msgstr "फिर भी रीस्टार्ट करें"
 
-#: aurora/shell/app.py:597
+#: aurora/shell/app.py:633
 msgid "Shut Down Anyway"
 msgstr "फिर भी शट डाउन करें"
 
-#: aurora/shell/app.py:598
+#: aurora/shell/app.py:634
 msgid "Sleep Anyway"
 msgstr "फिर भी स्लीप करें"
 
-#: aurora/shell/app.py:695
+#: aurora/shell/app.py:731
 msgid "Always on Top"
 msgstr "हमेशा ऊपर"
 
-#: aurora/shell/app.py:695
+#: aurora/shell/app.py:731
 msgid "Always on Top Off"
 msgstr "हमेशा ऊपर बंद"
 
-#: aurora/shell/app.py:699
+#: aurora/shell/app.py:735
 msgid "Set it up in Settings → AI."
 msgstr "सेटिंग्स → AI में सेट करें।"
 
-#: aurora/shell/app.py:705
+#: aurora/shell/app.py:741
 msgid "Dictation is off"
 msgstr "डिक्टेशन बंद है"
 
-#: aurora/shell/app.py:712
+#: aurora/shell/app.py:748
 msgid "Dictation isn't installed yet"
 msgstr "डिक्टेशन अभी स्थापित नहीं है"
 
-#: aurora/shell/app.py:716
+#: aurora/shell/app.py:752
 msgid "Listening… press Super+H to stop"
 msgstr "सुन रहा हूँ… रोकने के लिए Super+H दबाएँ"
 
-#: aurora/shell/app.py:718
+#: aurora/shell/app.py:754
 msgid "Writing it down…"
 msgstr "लिखा जा रहा है…"
 
-#: aurora/shell/app.py:732
+#: aurora/shell/app.py:768
 msgid "Nothing was heard"
 msgstr "कुछ सुनाई नहीं दिया"
 
-#: aurora/shell/app.py:741
+#: aurora/shell/app.py:777
 msgid "Read aloud is off"
 msgstr "पढ़कर सुनाना बंद है"
 
-#: aurora/shell/app.py:748
+#: aurora/shell/app.py:784
 msgid "Select some text first"
 msgstr "पहले कुछ टेक्स्ट चुनें"
 
-#: aurora/shell/app.py:822
+#: aurora/shell/app.py:858
 msgid "Screenshot captured"
 msgstr "स्क्रीनशॉट लिया गया"
 
-#: aurora/shell/app.py:823
+#: aurora/shell/app.py:859
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "{path} में सहेजा गया और क्लिपबोर्ड पर कॉपी किया गया।"
 
-#: aurora/shell/app.py:848
+#: aurora/shell/app.py:884
 msgid "Pin to Screen"
 msgstr "स्क्रीन पर पिन करें"
 
-#: aurora/shell/app.py:848
+#: aurora/shell/app.py:884
 msgid "Annotate"
 msgstr "टिप्पणी करें"
 
-#: aurora/shell/app.py:849
+#: aurora/shell/app.py:885
 msgid "Copy Text"
 msgstr "टेक्स्ट कॉपी करें"
 
-#: aurora/shell/app.py:917 aurora/shell/app.py:924
+#: aurora/shell/app.py:953 aurora/shell/app.py:960
 msgid "Text Recognition"
 msgstr "टेक्स्ट पहचान"
 
-#: aurora/shell/app.py:917
+#: aurora/shell/app.py:953
 msgid "No text found"
 msgstr "कोई टेक्स्ट नहीं मिला"
 
-#: aurora/shell/app.py:918
+#: aurora/shell/app.py:954
 msgid "Try a larger or sharper area."
 msgstr "बड़ा या साफ़ क्षेत्र आज़माएँ।"
 
-#: aurora/shell/app.py:924
+#: aurora/shell/app.py:960
 msgid "Text copied"
 msgstr "टेक्स्ट कॉपी किया गया"
 
-#: aurora/shell/app.py:979 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:1015 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "स्क्रीन रिकॉर्डिंग"
 
-#: aurora/shell/app.py:979
+#: aurora/shell/app.py:1015
 msgid "Screen recording saved"
 msgstr "स्क्रीन रिकॉर्डिंग सहेजी गई"
 
-#: aurora/shell/app.py:980
+#: aurora/shell/app.py:1016
 msgid "Saved to {path}."
 msgstr "{path} में सहेजा गया।"
 
@@ -5413,12 +5429,12 @@ msgid "Install Steam from Game Hub and your games appear here"
 msgstr "Game Hub से Steam इंस्टॉल करें, आपके गेम यहाँ दिखेंगे"
 
 #: aurora/shell/dock.py:148 aurora/shell/dock.py:189 aurora/shell/dock.py:248
-#: aurora/shell/panel.py:507 aurora/shell/panel.py:544
+#: aurora/shell/panel.py:510 aurora/shell/panel.py:547
 msgid "Window"
 msgstr "विंडो"
 
 #: aurora/shell/dock.py:203 aurora/shell/overview.py:61
-#: aurora/shell/panel.py:559
+#: aurora/shell/panel.py:562
 msgid "Minimized"
 msgstr "छोटा किया गया"
 
@@ -5434,7 +5450,7 @@ msgstr "डॉक में रखें"
 msgid "Quit"
 msgstr "बंद करें"
 
-#: aurora/shell/dock.py:274 aurora/shell/panel.py:571
+#: aurora/shell/dock.py:274 aurora/shell/panel.py:574
 msgid "Quit {n} Windows"
 msgstr "{n} विंडो बंद करें"
 
@@ -5446,19 +5462,19 @@ msgstr "Launchpad"
 msgid "Add to Desktop"
 msgstr "डेस्कटॉप पर जोड़ें"
 
-#: aurora/shell/launcher.py:78 aurora/shell/launcher.py:138
+#: aurora/shell/launcher.py:78 aurora/shell/launcher.py:158
 msgid "Show in Files"
 msgstr "फ़ाइलें में दिखाएँ"
 
-#: aurora/shell/launcher.py:146
+#: aurora/shell/launcher.py:166
 msgid "Ask Aurora about this file"
 msgstr "इस फ़ाइल के बारे में Aurora से पूछें"
 
-#: aurora/shell/launcher.py:179
+#: aurora/shell/launcher.py:199
 msgid "Search apps, files and settings, or type ? to ask Aurora"
 msgstr "ऐप्स, फ़ाइलें और सेटिंग्स खोजें, या Aurora से पूछने के लिए ? लिखें"
 
-#: aurora/shell/launcher.py:243
+#: aurora/shell/launcher.py:263
 msgid "Frequently Used"
 msgstr "अक्सर उपयोग किए गए"
 
@@ -5731,7 +5747,7 @@ msgstr "पिक्सेल"
 msgid "Candy"
 msgstr "कैंडी"
 
-#: aurora/shell/overview.py:44 aurora/shell/panel.py:569
+#: aurora/shell/overview.py:44 aurora/shell/panel.py:572
 msgid "Close Window"
 msgstr "विंडो बंद करें"
 
@@ -5817,11 +5833,11 @@ msgstr "लॉग आउट"
 msgid "Aurora Menu"
 msgstr "Aurora मेनू"
 
-#: aurora/shell/panel.py:428
+#: aurora/shell/panel.py:431
 msgid "Aurora Assistant (Super+Shift+Space)"
 msgstr "Aurora सहायक (Super+Shift+Space)"
 
-#: aurora/shell/panel.py:568
+#: aurora/shell/panel.py:571
 msgid "Minimize"
 msgstr "छोटा करें"
 

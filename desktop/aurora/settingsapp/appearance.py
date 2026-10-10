@@ -73,6 +73,16 @@ class Appearance(Page):
                             subtitle=_("Auto switches to dark at sunset and back at sunrise"),
                             on_change=self._set_scheme))
 
+        if aurora is not None:
+            density = ["comfortable", "compact"]
+            current_density = aurora.get_string("interface-density")
+            style.add(combo_row(_("Density"), [_("Comfortable"), _("Compact")],
+                                density.index(current_density)
+                                if current_density in density else 0,
+                                subtitle=_("How much room the top bar, menus and the dock take"),
+                                on_change=lambda i: aurora.set_string("interface-density",
+                                                                      density[i])))
+
         accent_row = Adw.ActionRow(title=_("Accent color"))
         accent_box = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
         current = iface.get_string("accent-color") if iface else "purple"
