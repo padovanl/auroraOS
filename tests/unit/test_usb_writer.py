@@ -173,3 +173,66 @@ def test_the_helper_refuses_a_write_protected_stick(monkeypatch):
     monkeypatch.setattr(module, "mounted_filesystems", lambda text=None: [])
     with pytest.raises(SystemExit):
         module.check("/dev/sdb")
+
+
+# --- checking the download ------------------------------------------------
+
+def test_the_checksum_that_came_with_the_download_is_found(tmp_path, image):
+    digest = usbwriter.checksum(str(image))
+    assert len(digest) == 64
+    assert usbwriter.stated_checksum(str(image)) is None
+    # <image>.sha256, as most projects publish it.
+    (tmp_path / "disk.img.sha256").write_text(f"{digest}  disk.img\n")
+    assert usbwriter.stated_checksum(str(image)) == (digest, "disk.img.sha256")
+    (tmp_path / "disk.img.sha256").unlink()
+    # ...or one SHA256SUMS listing several files, of which ours is one.
+    (tmp_path / "SHA256SUMS").write_text(
+        f"{'0' * 64}  other.img\n{digest}  disk.img\n")
+    assert usbwriter.stated_checksum(str(image)) == (digest, "SHA256SUMS")
+
+
+def test_a_checksum_run_can_be_stopped(image):
+    import threading
+    stop = threading.Event()
+    stop.set()
+    assert usbwriter.checksum(str(image), stop=stop) == hashlib_empty()
+
+
+def hashlib_empty():
+    import hashlib
+    return hashlib.sha256().hexdigest()
+
+
+# --- the stick's own name --------------------------------------------------
+
+def test_the_first_partition_is_named_the_way_the_kernel_names_it():
+    assert usbwriter.partition_of("/dev/sdb") == "/dev/sdb1"
+    assert usbwriter.partition_of("/dev/mmcblk0") == "/dev/mmcblk0p1"
+    assert usbwriter.partition_of("/dev/nvme0n1") == "/dev/nvme0n1p1"
+    assert helper().partition_of("/dev/sdb") == usbwriter.partition_of("/dev/sdb")
+    assert helper().partition_of("/dev/mmcblk0") == usbwriter.partition_of("/dev/mmcblk0")
+
+
+# --- what it remembers ----------------------------------------------------
+
+def test_choices_are_remembered_and_nonsense_is_not(home):
+    assert usbwriter.prefs() == {"verify": True, "eject": True, "filesystem": "exfat"}
+    usbwriter.save_prefs({"verify": False, "eject": False, "filesystem": "ext4"})
+    assert usbwriter.prefs() == {"verify": False, "eject": False, "filesystem": "ext4"}
+    usbwriter.save_prefs({"filesystem": "ntfs-but-we-cannot"})
+    assert usbwriter.prefs()["filesystem"] == "exfat"
+
+
+def test_a_name_for_a_fat_volume_keeps_what_fat_allows():
+    module = helper()
+    seen = {}
+
+    def fake_run(argv, text=None, check=True):
+        seen.setdefault("argv", []).append(argv)
+        return type("R", (), {"returncode": 0, "stderr": b""})()
+    module.run = fake_run
+    module.unmount = lambda device: None
+    module.os.path.exists = lambda path: True
+    assert module.format_stick("/dev/sdb", "fat32", "Chiavetta di Luca!") == 0
+    mkfs = [a for a in seen["argv"] if a[0].startswith("mkfs")][0]
+    assert mkfs == ["mkfs.fat", "-F", "32", "-n", "CHIAVETTA D", "/dev/sdb1"]

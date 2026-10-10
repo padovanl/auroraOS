@@ -339,7 +339,7 @@ msgstr "{n} दिन पहले"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
-#: aurora/usbwriter.py:307
+#: aurora/usbwriter.py:414
 msgid "Image"
 msgstr "छवि"
 
@@ -373,7 +373,7 @@ msgstr "इतिहास खाली करें"
 msgid "Clipboard Settings…"
 msgstr "क्लिपबोर्ड सेटिंग्स…"
 
-#: aurora/clipboardapp.py:216
+#: aurora/clipboardapp.py:216 aurora/usbwriter.py:467
 msgid "Menu"
 msgstr ""
 
@@ -415,7 +415,8 @@ msgstr "कॉपी किया गया सब कुछ — पिन क�
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:646
+#: aurora/usbwriter.py:688
 msgid "Cancel"
 msgstr "रद्द करें"
 
@@ -621,483 +622,483 @@ msgstr "कुछ भी खेलें"
 msgid "Steam with Proton runs most Windows games. Add the Epic and GOG stores, Windows programs with Bottles, and Android apps with Waydroid, each with one click."
 msgstr "Proton के साथ Steam ज़्यादातर Windows गेम चलाता है। Epic और GOG स्टोर, Bottles से Windows प्रोग्राम और Waydroid से Android ऐप्स जोड़ें — हर एक, एक क्लिक में।"
 
-#: aurora/devhub/recipes.py:27
+#: aurora/devhub/recipes.py:66
 msgid "Editors & IDEs"
 msgstr "एडिटर और IDE"
 
-#: aurora/devhub/recipes.py:28
+#: aurora/devhub/recipes.py:67
 msgid "Languages & Runtimes"
 msgstr "भाषाएँ और रनटाइम"
 
-#: aurora/devhub/recipes.py:29
+#: aurora/devhub/recipes.py:68
 msgid "Cloud & DevOps"
 msgstr "क्लाउड और DevOps"
 
-#: aurora/devhub/recipes.py:30
+#: aurora/devhub/recipes.py:69
 msgid "Databases & API Tools"
 msgstr "डेटाबेस और API उपकरण"
 
-#: aurora/devhub/recipes.py:31
+#: aurora/devhub/recipes.py:70
 msgid "AI Assistants"
 msgstr "AI सहायक"
 
-#: aurora/devhub/recipes.py:32
+#: aurora/devhub/recipes.py:71
 msgid "Shells & Terminals"
 msgstr "शेल और टर्मिनल"
 
-#: aurora/devhub/recipes.py:33
+#: aurora/devhub/recipes.py:72
 msgid "Command-Line Tools"
 msgstr "कमांड-लाइन उपकरण"
 
-#: aurora/devhub/recipes.py:34
+#: aurora/devhub/recipes.py:73
 msgid "Version Control"
 msgstr "संस्करण नियंत्रण"
 
-#: aurora/devhub/recipes.py:35
+#: aurora/devhub/recipes.py:74
 msgid "Containers & Virtual Machines"
 msgstr "कंटेनर और वर्चुअल मशीन"
 
-#: aurora/devhub/recipes.py:36
+#: aurora/devhub/recipes.py:75
 msgid "Web Development"
 msgstr "वेब विकास"
 
-#: aurora/devhub/recipes.py:37
+#: aurora/devhub/recipes.py:76
 msgid "Mobile"
 msgstr "मोबाइल"
 
-#: aurora/devhub/recipes.py:38
+#: aurora/devhub/recipes.py:77
 msgid "Debugging & Performance"
 msgstr "डीबगिंग और प्रदर्शन"
 
-#: aurora/devhub/recipes.py:39
+#: aurora/devhub/recipes.py:78
 msgid "Data Science"
 msgstr "डेटा साइंस"
 
-#: aurora/devhub/recipes.py:40
+#: aurora/devhub/recipes.py:79
 msgid "Game Development"
 msgstr "गेम विकास"
 
-#: aurora/devhub/recipes.py:41
+#: aurora/devhub/recipes.py:80
 msgid "Embedded & Hardware"
 msgstr "एम्बेडेड और हार्डवेयर"
 
-#: aurora/devhub/recipes.py:42
+#: aurora/devhub/recipes.py:81
 msgid "Design & Documentation"
 msgstr "डिज़ाइन और दस्तावेज़ीकरण"
 
-#: aurora/devhub/recipes.py:43
+#: aurora/devhub/recipes.py:82
 msgid "Security & Networking"
 msgstr "सुरक्षा और नेटवर्किंग"
 
-#: aurora/devhub/recipes.py:88
+#: aurora/devhub/recipes.py:127
 msgid "Microsoft's popular code editor, from the official apt repository."
 msgstr "Microsoft का लोकप्रिय कोड एडिटर, आधिकारिक apt रिपॉज़िटरी से।"
 
-#: aurora/devhub/recipes.py:102
+#: aurora/devhub/recipes.py:144
 msgid "VS Code built from source without telemetry."
 msgstr "स्रोत से बना VS Code, टेलीमेट्री के बिना।"
 
-#: aurora/devhub/recipes.py:113
+#: aurora/devhub/recipes.py:155
 msgid "A very fast, collaborative editor written in Rust."
 msgstr "Rust में लिखा तेज़, सहयोगी एडिटर।"
 
-#: aurora/devhub/recipes.py:117
+#: aurora/devhub/recipes.py:159
 msgid "The JetBrains IDE for Java and Kotlin (Flathub)."
 msgstr "Java और Kotlin के लिए JetBrains IDE (Flathub)।"
 
-#: aurora/devhub/recipes.py:121
+#: aurora/devhub/recipes.py:163
 msgid "The JetBrains IDE for Python (Flathub)."
 msgstr "Python के लिए JetBrains IDE (Flathub)।"
 
-#: aurora/devhub/recipes.py:125
+#: aurora/devhub/recipes.py:167
 msgid "Google's IDE for Android apps (Flathub)."
 msgstr "Android ऐप्स के लिए Google का IDE (Flathub)।"
 
-#: aurora/devhub/recipes.py:131
+#: aurora/devhub/recipes.py:173
 msgid "rustup, cargo and the stable toolchain."
 msgstr "rustup, cargo और स्थिर टूलचेन।"
 
-#: aurora/devhub/recipes.py:135
+#: aurora/devhub/recipes.py:177
 msgid "The latest Go release from go.dev, in /usr/local/go."
 msgstr "go.dev से नवीनतम Go, /usr/local/go में।"
 
-#: aurora/devhub/recipes.py:147
+#: aurora/devhub/recipes.py:189
 msgid "OpenJDK 21 LTS with Maven and Gradle."
 msgstr "Maven और Gradle के साथ OpenJDK 21 LTS।"
 
-#: aurora/devhub/recipes.py:150
+#: aurora/devhub/recipes.py:192
 msgid "Node.js versions (fnm)"
 msgstr "Node.js संस्करण (fnm)"
 
-#: aurora/devhub/recipes.py:151
+#: aurora/devhub/recipes.py:193
 msgid "Install and switch any Node.js version, including the latest LTS."
 msgstr "नवीनतम LTS सहित कोई भी Node.js संस्करण स्थापित करें और बदलें।"
 
-#: aurora/devhub/recipes.py:155
+#: aurora/devhub/recipes.py:197
 msgid "Astral's extremely fast Python package and project manager."
 msgstr "Astral का बेहद तेज़ Python पैकेज और प्रोजेक्ट मैनेजर।"
 
-#: aurora/devhub/recipes.py:159
+#: aurora/devhub/recipes.py:201
 msgid "All-in-one JavaScript runtime, bundler and test runner."
 msgstr "JavaScript रनटाइम, बंडलर और टेस्ट रनर एक साथ।"
 
-#: aurora/devhub/recipes.py:163
+#: aurora/devhub/recipes.py:205
 msgid "Secure JavaScript and TypeScript runtime."
 msgstr "JavaScript और TypeScript के लिए सुरक्षित रनटाइम।"
 
-#: aurora/devhub/recipes.py:169
+#: aurora/devhub/recipes.py:211
 msgid "Work with GitHub issues, pull requests and Actions from the terminal."
 msgstr "टर्मिनल से GitHub issues, pull requests और Actions पर काम करें।"
 
-#: aurora/devhub/recipes.py:178
+#: aurora/devhub/recipes.py:220
 msgid "The Kubernetes command-line tool, latest stable."
 msgstr "Kubernetes कमांड-लाइन टूल, नवीनतम स्थिर संस्करण।"
 
-#: aurora/devhub/recipes.py:189
+#: aurora/devhub/recipes.py:231
 msgid "Infrastructure as code by HashiCorp, latest release."
 msgstr "HashiCorp का इन्फ्रास्ट्रक्चर-एज़-कोड, नवीनतम संस्करण।"
 
-#: aurora/devhub/recipes.py:201
+#: aurora/devhub/recipes.py:243
 msgid "Amazon Web Services command-line interface v2."
 msgstr "Amazon Web Services कमांड-लाइन इंटरफ़ेस v2।"
 
-#: aurora/devhub/recipes.py:213
+#: aurora/devhub/recipes.py:255
 msgid "PostgreSQL (Docker)"
 msgstr "PostgreSQL (Docker)"
 
-#: aurora/devhub/recipes.py:214
+#: aurora/devhub/recipes.py:256
 msgid "PostgreSQL 17 in a container. User and password: postgres."
 msgstr "कंटेनर में PostgreSQL 17। उपयोगकर्ता और पासवर्ड: postgres।"
 
-#: aurora/devhub/recipes.py:217
+#: aurora/devhub/recipes.py:259
 msgid "MariaDB (Docker)"
 msgstr "MariaDB (Docker)"
 
-#: aurora/devhub/recipes.py:218
+#: aurora/devhub/recipes.py:260
 msgid "MariaDB in a container. Root password: mariadb."
 msgstr "कंटेनर में MariaDB। root पासवर्ड: mariadb।"
 
-#: aurora/devhub/recipes.py:221
+#: aurora/devhub/recipes.py:263
 msgid "Redis (Docker)"
 msgstr "Redis (Docker)"
 
-#: aurora/devhub/recipes.py:222
+#: aurora/devhub/recipes.py:264
 msgid "Redis key-value store in a container."
 msgstr "कंटेनर में Redis की-वैल्यू स्टोर।"
 
-#: aurora/devhub/recipes.py:225
+#: aurora/devhub/recipes.py:267
 msgid "MongoDB (Docker)"
 msgstr "MongoDB (Docker)"
 
-#: aurora/devhub/recipes.py:226
+#: aurora/devhub/recipes.py:268
 msgid "MongoDB document database in a container."
 msgstr "कंटेनर में MongoDB दस्तावेज़ डेटाबेस।"
 
-#: aurora/devhub/recipes.py:230
+#: aurora/devhub/recipes.py:272
 msgid "Universal database client (Flathub)."
 msgstr "सार्वभौमिक डेटाबेस क्लाइंट (Flathub)।"
 
-#: aurora/devhub/recipes.py:234
+#: aurora/devhub/recipes.py:276
 msgid "API development and testing (Flathub)."
 msgstr "API विकास और परीक्षण (Flathub)।"
 
-#: aurora/devhub/recipes.py:240
+#: aurora/devhub/recipes.py:282
 msgid "Anthropic's coding agent in the terminal. Sign in with your Claude subscription or an API key."
 msgstr "टर्मिनल में Anthropic का कोडिंग एजेंट। Claude सदस्यता या API कुंजी से साइन इन करें।"
 
-#: aurora/devhub/recipes.py:246
+#: aurora/devhub/recipes.py:288
 msgid "OpenAI's coding agent in the terminal. Sign in with your ChatGPT plan or an API key."
 msgstr "टर्मिनल में OpenAI का कोडिंग एजेंट। ChatGPT प्लान या API कुंजी से साइन इन करें।"
 
-#: aurora/devhub/recipes.py:252
+#: aurora/devhub/recipes.py:294
 msgid "Run many more open models locally; Aurora AI can use it as its provider."
 msgstr "कई अन्य ओपन मॉडल स्थानीय रूप से चलाएँ; Aurora AI इसे प्रदाता के रूप में उपयोग कर सकता है।"
 
-#: aurora/devhub/recipes.py:258
+#: aurora/devhub/recipes.py:300
 msgid "The Z shell, with autosuggestions and syntax highlighting."
 msgstr "Z शेल, स्वचालित सुझावों और सिंटैक्स हाइलाइटिंग के साथ।"
 
-#: aurora/devhub/recipes.py:266
+#: aurora/devhub/recipes.py:308
 msgid "Themes and hundreds of plugins for Zsh (installs Zsh too)."
 msgstr "Zsh के लिए थीम और सैकड़ों प्लगइन (Zsh भी स्थापित करता है)।"
 
-#: aurora/devhub/recipes.py:273
+#: aurora/devhub/recipes.py:315
 msgid "A friendly shell with suggestions and colors out of the box."
 msgstr "एक दोस्ताना शेल, पहले से सुझावों और रंगों के साथ।"
 
-#: aurora/devhub/recipes.py:276
+#: aurora/devhub/recipes.py:318
 msgid "Zsh as default shell"
 msgstr "Zsh को डिफ़ॉल्ट शेल बनाएँ"
 
-#: aurora/devhub/recipes.py:278
+#: aurora/devhub/recipes.py:320
 msgid "Open new terminals in Zsh (installs it if needed)."
 msgstr "नए टर्मिनल Zsh में खोलें (ज़रूरत हो तो स्थापित करता है)।"
 
-#: aurora/devhub/recipes.py:281
+#: aurora/devhub/recipes.py:323
 msgid "fish as default shell"
 msgstr "fish को डिफ़ॉल्ट शेल बनाएँ"
 
-#: aurora/devhub/recipes.py:283
+#: aurora/devhub/recipes.py:325
 msgid "Open new terminals in fish (installs it if needed)."
 msgstr "नए टर्मिनल fish में खोलें (ज़रूरत हो तो स्थापित करता है)।"
 
-#: aurora/devhub/recipes.py:286
+#: aurora/devhub/recipes.py:328
 msgid "Bash as default shell"
 msgstr "Bash को डिफ़ॉल्ट शेल बनाएँ"
 
-#: aurora/devhub/recipes.py:288
+#: aurora/devhub/recipes.py:330
 msgid "Go back to Bash, Aurora's standard shell."
 msgstr "Bash पर लौटें, जो Aurora का मानक शेल है।"
 
-#: aurora/devhub/recipes.py:293
+#: aurora/devhub/recipes.py:335
 msgid "A fast, informative prompt for Bash, Zsh and fish."
 msgstr "Bash, Zsh और fish के लिए तेज़, जानकारी भरा प्रॉम्प्ट।"
 
-#: aurora/devhub/recipes.py:305
+#: aurora/devhub/recipes.py:347
 msgid "A terminal workspace with panes, tabs and plugins, an alternative to tmux."
 msgstr "पैन, टैब और प्लगइन वाला टर्मिनल वर्कस्पेस, tmux का विकल्प।"
 
-#: aurora/devhub/recipes.py:312
+#: aurora/devhub/recipes.py:354
 msgid "A fast, GPU-accelerated terminal with tabs, splits and images."
 msgstr "टैब, विभाजन और चित्रों वाला तेज़, GPU-त्वरित टर्मिनल।"
 
-#: aurora/devhub/recipes.py:317
+#: aurora/devhub/recipes.py:359
 msgid "A minimal, very fast GPU-accelerated terminal."
 msgstr "एक न्यूनतम, बहुत तेज़ GPU-त्वरित टर्मिनल।"
 
-#: aurora/devhub/recipes.py:322
+#: aurora/devhub/recipes.py:364
 msgid "A GPU-accelerated terminal and multiplexer, configured in Lua (Flathub)."
 msgstr "GPU-त्वरित टर्मिनल और मल्टीप्लेक्सर, Lua में कॉन्फ़िगर (Flathub)।"
 
-#: aurora/devhub/recipes.py:327
+#: aurora/devhub/recipes.py:369
 msgid "A tiling terminal: split one window into many terminals."
 msgstr "टाइलिंग टर्मिनल: एक विंडो को कई टर्मिनलों में बाँटें।"
 
-#: aurora/devhub/recipes.py:332
+#: aurora/devhub/recipes.py:374
 msgid "Several terminals in a grid, with broadcast typing."
 msgstr "ग्रिड में कई टर्मिनल, एक साथ टाइपिंग के साथ।"
 
-#: aurora/devhub/recipes.py:335
+#: aurora/devhub/recipes.py:377
 msgid "GNOME Console"
 msgstr "GNOME कंसोल"
 
-#: aurora/devhub/recipes.py:337
+#: aurora/devhub/recipes.py:379
 msgid "A simple terminal, GNOME's default."
 msgstr "एक सरल टर्मिनल, GNOME का डिफ़ॉल्ट।"
 
-#: aurora/devhub/recipes.py:361
+#: aurora/devhub/recipes.py:403
 msgid "More CLI tools"
 msgstr "और कमांड-लाइन उपकरण"
 
-#: aurora/devhub/recipes.py:362
+#: aurora/devhub/recipes.py:404
 msgid "eza (a modern ls), yq (jq for YAML), just (a command runner), tldr pages, ncdu and duf for disk usage."
 msgstr "eza (आधुनिक ls), yq (YAML के लिए jq), just (कमांड रनर), tldr पेज, और डिस्क उपयोग के लिए ncdu व duf।"
 
-#: aurora/devhub/recipes.py:367
+#: aurora/devhub/recipes.py:409
 msgid "A smarter cd that remembers the folders you use."
 msgstr "एक समझदार cd जो आपके फ़ोल्डर याद रखता है।"
 
-#: aurora/devhub/recipes.py:371
+#: aurora/devhub/recipes.py:413
 msgid "Searchable shell history, synced across your machines if you want."
 msgstr "खोजने योग्य शेल इतिहास, चाहें तो आपकी मशीनों में सिंक।"
 
-#: aurora/devhub/recipes.py:375
+#: aurora/devhub/recipes.py:417
 msgid "Readable, syntax-highlighted git diffs."
 msgstr "पढ़ने में आसान, सिंटैक्स-हाइलाइटेड git डिफ़।"
 
-#: aurora/devhub/recipes.py:380
+#: aurora/devhub/recipes.py:422
 msgid "Read Markdown beautifully in the terminal."
 msgstr "टर्मिनल में Markdown को सुंदर ढंग से पढ़ें।"
 
-#: aurora/devhub/recipes.py:385
+#: aurora/devhub/recipes.py:427
 msgid "Compare and merge files and folders visually."
 msgstr "फ़ाइलों और फ़ोल्डरों की दृश्य तुलना और मर्ज करें।"
 
-#: aurora/devhub/recipes.py:387
+#: aurora/devhub/recipes.py:429
 msgid "Merge requests, issues and pipelines from the terminal."
 msgstr "टर्मिनल से मर्ज रिक्वेस्ट, इश्यू और पाइपलाइन।"
 
-#: aurora/devhub/recipes.py:390
+#: aurora/devhub/recipes.py:432
 msgid "GitHub's Git client (community build, Flathub)."
 msgstr "GitHub का Git क्लाइंट (समुदाय संस्करण, Flathub)।"
 
-#: aurora/devhub/recipes.py:393
+#: aurora/devhub/recipes.py:435
 msgid "A visual Git client with a commit graph (Flathub)."
 msgstr "कमिट ग्राफ़ वाला दृश्य Git क्लाइंट (Flathub)।"
 
-#: aurora/devhub/recipes.py:396
+#: aurora/devhub/recipes.py:438
 msgid "A fast Git client from the makers of Sublime Text (Flathub)."
 msgstr "Sublime Text के निर्माताओं का तेज़ Git क्लाइंट (Flathub)।"
 
-#: aurora/devhub/recipes.py:401
+#: aurora/devhub/recipes.py:443
 msgid "Manage containers, images and Kubernetes from a window (Flathub)."
 msgstr "एक विंडो से कंटेनर, इमेज और Kubernetes प्रबंधित करें (Flathub)।"
 
-#: aurora/devhub/recipes.py:405
+#: aurora/devhub/recipes.py:447
 msgid "Full KVM virtual machines with QEMU and libvirt."
 msgstr "QEMU और libvirt के साथ पूर्ण KVM वर्चुअल मशीनें।"
 
-#: aurora/devhub/recipes.py:410
+#: aurora/devhub/recipes.py:452
 msgid "Simple virtual machines: pick an OS and go."
 msgstr "सरल वर्चुअल मशीनें: एक OS चुनें और शुरू करें।"
 
-#: aurora/devhub/recipes.py:413
+#: aurora/devhub/recipes.py:455
 msgid "Local Kubernetes clusters running in Docker."
 msgstr "Docker में चलने वाले स्थानीय Kubernetes क्लस्टर।"
 
-#: aurora/devhub/recipes.py:415
+#: aurora/devhub/recipes.py:457
 msgid "A terminal UI for Kubernetes clusters."
 msgstr "Kubernetes क्लस्टरों के लिए टर्मिनल UI।"
 
-#: aurora/devhub/recipes.py:421
+#: aurora/devhub/recipes.py:463
 msgid "The package manager for Kubernetes."
 msgstr "Kubernetes के लिए पैकेज मैनेजर।"
 
-#: aurora/devhub/recipes.py:424
+#: aurora/devhub/recipes.py:466
 msgid "A terminal UI for Docker."
 msgstr "Docker के लिए टर्मिनल UI।"
 
-#: aurora/devhub/recipes.py:432
+#: aurora/devhub/recipes.py:474
 msgid "Chrome and its developer tools, for testing sites (Flathub)."
 msgstr "साइटों की जाँच के लिए Chrome और उसके डेवलपर टूल (Flathub)।"
 
-#: aurora/devhub/recipes.py:435
+#: aurora/devhub/recipes.py:477
 msgid "The open-source browser behind Chrome."
 msgstr "Chrome के पीछे का ओपन-सोर्स ब्राउज़र।"
 
-#: aurora/devhub/recipes.py:438
+#: aurora/devhub/recipes.py:480
 msgid "Trusted HTTPS certificates for localhost."
 msgstr "localhost के लिए भरोसेमंद HTTPS प्रमाणपत्र।"
 
-#: aurora/devhub/recipes.py:441
+#: aurora/devhub/recipes.py:483
 msgid "A web server with automatic HTTPS."
 msgstr "स्वचालित HTTPS वाला वेब सर्वर।"
 
-#: aurora/devhub/recipes.py:443
+#: aurora/devhub/recipes.py:485
 msgid "The popular web server and reverse proxy."
 msgstr "लोकप्रिय वेब सर्वर और रिवर्स प्रॉक्सी।"
 
-#: aurora/devhub/recipes.py:446
+#: aurora/devhub/recipes.py:488
 msgid "Android platform tools"
 msgstr "Android प्लेटफ़ॉर्म उपकरण"
 
-#: aurora/devhub/recipes.py:447
+#: aurora/devhub/recipes.py:489
 msgid "adb and fastboot to talk to Android phones."
 msgstr "Android फ़ोन से बात करने के लिए adb और fastboot।"
 
-#: aurora/devhub/recipes.py:450
+#: aurora/devhub/recipes.py:492
 msgid "Google's SDK for mobile, web and desktop apps."
 msgstr "मोबाइल, वेब और डेस्कटॉप ऐप्स के लिए Google का SDK।"
 
-#: aurora/devhub/recipes.py:460
+#: aurora/devhub/recipes.py:502
 msgid "Debugging toolkit"
 msgstr "डीबगिंग टूलकिट"
 
-#: aurora/devhub/recipes.py:461
+#: aurora/devhub/recipes.py:503
 msgid "gdb, valgrind, strace and perf."
 msgstr "gdb, valgrind, strace और perf।"
 
-#: aurora/devhub/recipes.py:464
+#: aurora/devhub/recipes.py:506
 msgid "Benchmark commands with statistics."
 msgstr "आँकड़ों के साथ कमांड का बेंचमार्क।"
 
-#: aurora/devhub/recipes.py:466
+#: aurora/devhub/recipes.py:508
 msgid "Capture and inspect network traffic."
 msgstr "नेटवर्क ट्रैफ़िक कैप्चर करें और जाँचें।"
 
-#: aurora/devhub/recipes.py:471
+#: aurora/devhub/recipes.py:513
 msgid "An offline API client that keeps collections as files (Flathub)."
 msgstr "ऑफ़लाइन API क्लाइंट जो संग्रहों को फ़ाइलों में रखता है (Flathub)।"
 
-#: aurora/devhub/recipes.py:474
+#: aurora/devhub/recipes.py:516
 msgid "Design and test REST, GraphQL and gRPC APIs (Flathub)."
 msgstr "REST, GraphQL और gRPC API डिज़ाइन और परीक्षण करें (Flathub)।"
 
-#: aurora/devhub/recipes.py:477
+#: aurora/devhub/recipes.py:519
 msgid "JSON, Base64, JWT, regex, hashes and other converters (Flathub)."
 msgstr "JSON, Base64, JWT, regex, हैश और अन्य कनवर्टर (Flathub)।"
 
-#: aurora/devhub/recipes.py:482
+#: aurora/devhub/recipes.py:524
 msgid "Notebooks for Python, with pandas and matplotlib."
 msgstr "pandas और matplotlib के साथ Python नोटबुक।"
 
-#: aurora/devhub/recipes.py:486
+#: aurora/devhub/recipes.py:528
 msgid "conda and mamba with the conda-forge packages."
 msgstr "conda-forge पैकेजों के साथ conda और mamba।"
 
-#: aurora/devhub/recipes.py:492
+#: aurora/devhub/recipes.py:534
 msgid "The R language for statistics."
 msgstr "सांख्यिकी के लिए R भाषा।"
 
-#: aurora/devhub/recipes.py:495
+#: aurora/devhub/recipes.py:537
 msgid "A MATLAB-compatible numerical environment."
 msgstr "MATLAB-संगत संख्यात्मक वातावरण।"
 
-#: aurora/devhub/recipes.py:500
+#: aurora/devhub/recipes.py:542
 msgid "The open-source 2D and 3D game engine (Flathub)."
 msgstr "ओपन-सोर्स 2D और 3D गेम इंजन (Flathub)।"
 
-#: aurora/devhub/recipes.py:503
+#: aurora/devhub/recipes.py:545
 msgid "3D modeling, animation and rendering (Flathub)."
 msgstr "3D मॉडलिंग, एनिमेशन और रेंडरिंग (Flathub)।"
 
-#: aurora/devhub/recipes.py:505
+#: aurora/devhub/recipes.py:547
 msgid "Make 2D games in Lua."
 msgstr "Lua में 2D गेम बनाएँ।"
 
-#: aurora/devhub/recipes.py:510
+#: aurora/devhub/recipes.py:552
 msgid "Program Arduino and compatible boards (Flathub)."
 msgstr "Arduino और संगत बोर्ड प्रोग्राम करें (Flathub)।"
 
-#: aurora/devhub/recipes.py:514
+#: aurora/devhub/recipes.py:556
 msgid "Build and flash firmware for many boards."
 msgstr "कई बोर्डों के लिए फ़र्मवेयर बनाएँ और फ़्लैश करें।"
 
-#: aurora/devhub/recipes.py:516
+#: aurora/devhub/recipes.py:558
 msgid "Design schematics and circuit boards."
 msgstr "स्कीमैटिक और सर्किट बोर्ड डिज़ाइन करें।"
 
-#: aurora/devhub/recipes.py:518
+#: aurora/devhub/recipes.py:560
 msgid "Serial consoles"
 msgstr "सीरियल कंसोल"
 
-#: aurora/devhub/recipes.py:519
+#: aurora/devhub/recipes.py:561
 msgid "picocom and minicom for serial ports."
 msgstr "सीरियल पोर्ट के लिए picocom और minicom।"
 
-#: aurora/devhub/recipes.py:524
+#: aurora/devhub/recipes.py:566
 msgid "Vector graphics: icons, diagrams, illustrations."
 msgstr "वेक्टर ग्राफ़िक्स: आइकन, आरेख, चित्रण।"
 
-#: aurora/devhub/recipes.py:526
+#: aurora/devhub/recipes.py:568
 msgid "Edit photos and images."
 msgstr "फ़ोटो और चित्र संपादित करें।"
 
-#: aurora/devhub/recipes.py:529
+#: aurora/devhub/recipes.py:571
 msgid "Diagrams: flowcharts, architecture, UML (Flathub)."
 msgstr "आरेख: फ़्लोचार्ट, आर्किटेक्चर, UML (Flathub)।"
 
-#: aurora/devhub/recipes.py:532
+#: aurora/devhub/recipes.py:574
 msgid "Notes in Markdown files, linked together (Flathub)."
 msgstr "Markdown फ़ाइलों में नोट्स, आपस में जुड़े हुए (Flathub)।"
 
-#: aurora/devhub/recipes.py:535
+#: aurora/devhub/recipes.py:577
 msgid "Offline documentation for hundreds of languages and libraries."
 msgstr "सैकड़ों भाषाओं और लाइब्रेरी का ऑफ़लाइन दस्तावेज़ीकरण।"
 
-#: aurora/devhub/recipes.py:539
+#: aurora/devhub/recipes.py:581
 msgid "Scan networks and ports."
 msgstr "नेटवर्क और पोर्ट स्कैन करें।"
 
-#: aurora/devhub/recipes.py:542
+#: aurora/devhub/recipes.py:584
 msgid "Find vulnerabilities in web apps (Flathub)."
 msgstr "वेब ऐप्स में कमज़ोरियाँ खोजें (Flathub)।"
 
-#: aurora/devhub/recipes.py:545
+#: aurora/devhub/recipes.py:587
 msgid "A private network between your devices, built on WireGuard."
 msgstr "WireGuard पर आधारित, आपके उपकरणों के बीच निजी नेटवर्क।"
 
-#: aurora/devhub/recipes.py:549
+#: aurora/devhub/recipes.py:591
 msgid "SSH that survives sleep and changing networks."
 msgstr "SSH जो स्लीप और नेटवर्क बदलने पर भी चलता रहता है।"
 
@@ -1118,7 +1119,7 @@ msgid "New File"
 msgstr "नई फ़ाइल"
 
 #: aurora/files/create.py:19 aurora/files/properties.py:65
-#: aurora/files/window.py:396 aurora/taskmanager.py:141
+#: aurora/files/window.py:396 aurora/taskmanager.py:141 aurora/usbwriter.py:677
 msgid "Name"
 msgstr "नाम"
 
@@ -2381,7 +2382,7 @@ msgstr "मेरा नाम और तस्वीर दिखाएँ"
 msgid "Off: only the time, the date and the password field"
 msgstr "बंद: सिर्फ़ समय, तारीख़ और पासवर्ड"
 
-#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:399
 msgid "Choose…"
 msgstr "चुनें…"
 
@@ -4754,8 +4755,8 @@ msgstr "{n} पुराने डाउनलोड ट्रैश में �
 msgid "{n} items moved to the Trash"
 msgstr "{n} आइटम ट्रैश में भेजे"
 
-#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
-#: aurora/usbwriter.py:281
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:341
+#: aurora/usbwriter.py:375 aurora/usbwriter.py:719
 msgid "Authorization was cancelled"
 msgstr "प्राधिकरण रद्द किया गया"
 
@@ -5770,7 +5771,7 @@ msgid_plural "{n} days left this month"
 msgstr[0] "इस महीने {n} दिन बाक़ी"
 msgstr[1] "इस महीने {n} दिन बाक़ी"
 
-#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:493
 msgid "All files"
 msgstr "सभी फ़ाइलें"
 
@@ -6034,7 +6035,7 @@ msgstr "लॉक करें"
 msgid "Power Off / Log Out"
 msgstr "बंद करें / लॉग आउट"
 
-#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:656
 msgid "Starting…"
 msgstr "शुरू हो रहा है…"
 
@@ -6699,7 +6700,7 @@ msgstr "सेवाएँ खोजें"
 msgid "yours"
 msgstr "आपका"
 
-#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:443
 msgid "Stop"
 msgstr "रोकें"
 
@@ -6715,135 +6716,231 @@ msgstr "प्रोसेस"
 msgid "Services"
 msgstr "सेवाएँ"
 
-#: aurora/usbwriter.py:159
+#: aurora/usbwriter.py:253
 msgid "The zip file holds more than one file"
 msgstr "zip फ़ाइल में एक से अधिक फ़ाइलें हैं"
 
-#: aurora/usbwriter.py:205
+#: aurora/usbwriter.py:299
 msgid "Stopped. The stick is half written."
 msgstr "रोक दिया। स्टिक आधी लिखी है।"
 
-#: aurora/usbwriter.py:210
+#: aurora/usbwriter.py:304
 msgid "Stopped before checking finished."
 msgstr "जाँच पूरी होने से पहले रोक दिया।"
 
-#: aurora/usbwriter.py:233
+#: aurora/usbwriter.py:327
 msgid "Writing {done} of {total}"
 msgstr "{total} में से {done} लिखा"
 
-#: aurora/usbwriter.py:236
+#: aurora/usbwriter.py:330
 msgid "Writing {done}"
 msgstr "{done} लिखा"
 
-#: aurora/usbwriter.py:244
+#: aurora/usbwriter.py:338
 msgid "Finishing the write…"
 msgstr "लिखना पूरा किया जा रहा है…"
 
-#: aurora/usbwriter.py:250
+#: aurora/usbwriter.py:344
 msgid "The stick could not be written"
 msgstr "स्टिक पर नहीं लिखा जा सका"
 
-#: aurora/usbwriter.py:255
+#: aurora/usbwriter.py:349
 msgid "The stick took {landed} of {sent}"
 msgstr "स्टिक ने {sent} में से {landed} लिया"
 
-#: aurora/usbwriter.py:262
+#: aurora/usbwriter.py:356
 msgid "Checking the stick…"
 msgstr "स्टिक जाँची जा रही है…"
 
-#: aurora/usbwriter.py:274
+#: aurora/usbwriter.py:368
 msgid "Checking {done} of {total}"
 msgstr "{total} में से {done} जाँचा"
 
-#: aurora/usbwriter.py:284
+#: aurora/usbwriter.py:378
 msgid "The stick could not be read back"
 msgstr "स्टिक वापस नहीं पढ़ी जा सकी"
 
-#: aurora/usbwriter.py:286
+#: aurora/usbwriter.py:380
 msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
 msgstr "स्टिक में वह नहीं है जो उस पर लिखा गया। वह घिसी या नकली हो सकती है — दूसरी आज़माएँ।"
 
-#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+#: aurora/usbwriter.py:388 data/applications/org.aurora.UsbWriter.desktop:2
 msgid "USB Stick Writer"
 msgstr "USB स्टिक राइटर"
 
-#: aurora/usbwriter.py:301
+#: aurora/usbwriter.py:397
 msgid "No image chosen"
 msgstr "कोई इमेज नहीं चुनी"
 
-#: aurora/usbwriter.py:302
+#: aurora/usbwriter.py:398
 msgid "An .iso or .img file, compressed or not"
 msgstr "एक .iso या .img फ़ाइल, संपीड़ित हो या न हो"
 
-#: aurora/usbwriter.py:311
+#: aurora/usbwriter.py:405
+msgid "Check the download"
+msgstr "डाउनलोड जाँचें"
+
+#: aurora/usbwriter.py:406
+msgid "Compares the file with its SHA-256"
+msgstr "फ़ाइल को उसके SHA-256 से मिलाता है"
+
+#: aurora/usbwriter.py:407
+msgid "Paste the SHA-256 here"
+msgstr "यहाँ SHA-256 चिपकाएँ"
+
+#: aurora/usbwriter.py:410
+msgid "Check"
+msgstr "जाँचें"
+
+#: aurora/usbwriter.py:419
 msgid "Stick"
 msgstr "स्टिक"
 
-#: aurora/usbwriter.py:312
+#: aurora/usbwriter.py:420
 msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
 msgstr "केवल हटाने योग्य और USB डिस्क सूचीबद्ध हैं। आप जिसे चुनेंगे उस पर का सब कुछ मिट जाएगा।"
 
-#: aurora/usbwriter.py:316
+#: aurora/usbwriter.py:424
 msgid "Check the stick afterwards"
 msgstr "बाद में स्टिक जाँचें"
 
-#: aurora/usbwriter.py:317
+#: aurora/usbwriter.py:425
 msgid "Reads it back and compares it with the image"
 msgstr "उसे वापस पढ़कर इमेज से मिलाता है"
 
-#: aurora/usbwriter.py:324
+#: aurora/usbwriter.py:427
+msgid "Eject when finished"
+msgstr "पूरा होने पर बाहर निकालें"
+
+#: aurora/usbwriter.py:428
+msgid "Flushes it and powers it down, so it can be pulled out straight away"
+msgstr "लेखन पूरा कर उसे बंद कर देता है, ताकि तुरंत निकाला जा सके"
+
+#: aurora/usbwriter.py:433
+msgid "Options"
+msgstr "विकल्प"
+
+#: aurora/usbwriter.py:439
 msgid "Write"
 msgstr "लिखें"
 
-#: aurora/usbwriter.py:346
+#: aurora/usbwriter.py:461
 msgid "Look for sticks again"
 msgstr "फिर से स्टिक खोजें"
 
-#: aurora/usbwriter.py:364
+#: aurora/usbwriter.py:465
+msgid "Erase the Stick…"
+msgstr "स्टिक मिटाएँ…"
+
+#: aurora/usbwriter.py:487
 msgid "Choose a disk image"
 msgstr "डिस्क इमेज चुनें"
 
-#: aurora/usbwriter.py:365
+#: aurora/usbwriter.py:488
 msgid "Disk images"
 msgstr "डिस्क इमेज"
 
-#: aurora/usbwriter.py:402
+#: aurora/usbwriter.py:521
+msgid "The SHA-256 from {file}"
+msgstr "{file} से SHA-256"
+
+#: aurora/usbwriter.py:524
+msgid "Paste the SHA-256 from the download page, if you have it"
+msgstr "अगर आपके पास है तो डाउनलोड पेज से SHA-256 चिपकाएँ"
+
+#: aurora/usbwriter.py:537
+msgid "That is not a SHA-256"
+msgstr "यह SHA-256 नहीं है"
+
+#: aurora/usbwriter.py:544
+msgid "Checking the download…"
+msgstr "डाउनलोड जाँचा जा रहा है…"
+
+#: aurora/usbwriter.py:573
+msgid "The download matches its SHA-256"
+msgstr "डाउनलोड अपने SHA-256 से मेल खाता है"
+
+#: aurora/usbwriter.py:574
+msgid "The download is sound"
+msgstr "डाउनलोड ठीक है"
+
+#: aurora/usbwriter.py:577
+msgid "The file's SHA-256 is {got}"
+msgstr "फ़ाइल का SHA-256 {got} है"
+
+#: aurora/usbwriter.py:579
+msgid "The download does not match — download it again"
+msgstr "डाउनलोड मेल नहीं खाता — उसे दोबारा डाउनलोड करें"
+
+#: aurora/usbwriter.py:588
 msgid "No stick found"
 msgstr "कोई स्टिक नहीं मिली"
 
-#: aurora/usbwriter.py:403
+#: aurora/usbwriter.py:589
 msgid "Plug one in, then press the refresh button"
 msgstr "एक लगाएँ, फिर रिफ़्रेश बटन दबाएँ"
 
-#: aurora/usbwriter.py:424
+#: aurora/usbwriter.py:610
 msgid "in use at {where}"
 msgstr "{where} पर उपयोग में"
 
-#: aurora/usbwriter.py:452
+#: aurora/usbwriter.py:638
 msgid "The image needs {needed}; the stick holds {has}"
 msgstr "इमेज को {needed} चाहिए; स्टिक में {has} है"
 
-#: aurora/usbwriter.py:456
+#: aurora/usbwriter.py:642 aurora/usbwriter.py:672
 msgid "Erase {stick}?"
 msgstr "{stick} मिटाएँ?"
 
-#: aurora/usbwriter.py:457
+#: aurora/usbwriter.py:643
 msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
 msgstr "{path} ({size}) पर का सब कुछ {image} से बदल जाएगा। इसे पलटा नहीं जा सकता।"
 
-#: aurora/usbwriter.py:461
+#: aurora/usbwriter.py:647
 msgid "Erase and Write"
 msgstr "मिटाएँ और लिखें"
 
-#: aurora/usbwriter.py:492
+#: aurora/usbwriter.py:673
+msgid "Everything on {path} ({size}) is removed and the stick becomes one empty disk again — which is what it takes to use a stick for files after an installer has been written to it."
+msgstr "{path} ({size}) पर का सब कुछ हटा दिया जाता है और स्टिक फिर एक खाली डिस्क बन जाती है — इंस्टॉलर लिखने के बाद उसे फ़ाइलों के लिए उपयोग करने के लिए यही चाहिए।"
+
+#: aurora/usbwriter.py:678
+msgid "Format"
+msgstr "फ़ॉर्मैट"
+
+#: aurora/usbwriter.py:680
+msgid "exFAT is read by Windows and macOS too, and holds files larger than 4 GB"
+msgstr "exFAT को Windows और macOS भी पढ़ते हैं, और यह 4 GB से बड़ी फ़ाइलें रख सकता है"
+
+#: aurora/usbwriter.py:689
+msgid "Erase"
+msgstr "मिटाएँ"
+
+#: aurora/usbwriter.py:706
+msgid "Erasing {stick}…"
+msgstr "{stick} मिटाई जा रही है…"
+
+#: aurora/usbwriter.py:723
+msgid "The stick could not be erased"
+msgstr "स्टिक मिटाई नहीं जा सकी"
+
+#: aurora/usbwriter.py:730
+msgid "The stick is empty and ready for files"
+msgstr "स्टिक खाली है और फ़ाइलों के लिए तैयार"
+
+#: aurora/usbwriter.py:733
+msgid "{stick} is empty and ready for files"
+msgstr "{stick} खाली है और फ़ाइलों के लिए तैयार"
+
+#: aurora/usbwriter.py:774
+msgid "Done — you can unplug the stick"
+msgstr "हो गया — आप स्टिक निकाल सकते हैं"
+
+#: aurora/usbwriter.py:775
 msgid "Done — the stick is ready"
 msgstr "हो गया — स्टिक तैयार है"
 
-#: aurora/usbwriter.py:494
-msgid "The stick is ready"
-msgstr "स्टिक तैयार है"
-
-#: aurora/usbwriter.py:503
+#: aurora/usbwriter.py:788
 msgid "Stopping…"
 msgstr "रोका जा रहा है…"
 

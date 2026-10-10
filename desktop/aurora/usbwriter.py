@@ -7,18 +7,25 @@ write is done the stick is read back and compared, byte for byte, with what was
 sent — a stick that quietly drops writes is the usual reason an installer boots
 to a corrupt file.
 
+It also does the two things people go looking for afterwards: checking that the
+download itself is sound before it goes anywhere (the SHA-256 beside it, or one
+pasted in), and giving a stick its life back as a plain empty disk once the
+installer on it has done its job.
+
 Only removable and USB disks are offered, the disk this system runs from is
-never among them, and the actual writing is done by
-/usr/libexec/aurora-usb-write through pkexec, which checks all of that again on
-its own side: a program asking for a disk to be overwritten cannot be trusted to
-have asked the right questions.
+never among them, and the actual work is done by /usr/libexec/aurora-usb-write
+through pkexec, which checks all of that again on its own side: a program
+asking for a disk to be overwritten cannot be trusted to have asked the right
+questions.
 """
 
 import hashlib
+import json
 import os
 import re
 import subprocess
 import sys
+import tempfile
 import threading
 
 import gi
@@ -31,9 +38,96 @@ from aurora.i18n import _  # noqa: E402
 
 HELPER = "/usr/libexec/aurora-usb-write"
 BLOCK = 4 * 1024 * 1024
+# Where a stick goes back to being a stick. exFAT first: FAT32 stops at 4 GB
+# per file, and every other computer reads exFAT too.
+FILESYSTEMS = (("exfat", "exFAT"), ("fat32", "FAT32"), ("ext4", "Ext4"))
 # Mount points that mean a disk is this running system, not a spare stick.
 SYSTEM_PATHS = ("/", "/boot", "/boot/efi", "/efi", "/usr", "/var", "/home",
                 "/run/live/medium", "/run/live/rootfs", "/lib/live/mount/medium")
+
+
+def partition_of(device):
+    """The first partition's node: /dev/sdb -> /dev/sdb1, /dev/mmcblk0 -> p1."""
+    return device + ("p1" if device[-1].isdigit() else "1")
+
+
+def prefs_path():
+    return os.path.join(GLib.get_user_config_dir(), "aurora", "usb-writer.json")
+
+
+def prefs():
+    """What was chosen last time: the checks and the format of an erased stick."""
+    try:
+        with open(prefs_path(), encoding="utf-8") as stream:
+            saved = json.load(stream)
+    except (OSError, ValueError):
+        saved = {}
+    known = [name for name, _label in FILESYSTEMS]
+    return {"verify": bool(saved.get("verify", True)),
+            "eject": bool(saved.get("eject", True)),
+            "filesystem": saved.get("filesystem") if saved.get("filesystem") in known
+            else known[0]}
+
+
+def save_prefs(values):
+    target = prefs_path()
+    try:
+        os.makedirs(os.path.dirname(target), mode=0o700, exist_ok=True)
+        fd, name = tempfile.mkstemp(prefix=".usb-writer-", dir=os.path.dirname(target))
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump(values, stream)
+        os.replace(name, target)
+    except OSError as err:
+        print(f"aurora: USB Stick Writer settings not saved: {err}")
+
+
+# --- checking the image itself --------------------------------------------
+
+SHA256 = re.compile(r"\b([0-9a-fA-F]{64})\b")
+
+
+def stated_checksum(image):
+    """The SHA-256 the download came with: <image>.sha256, .sha256sum, or a
+    line naming this file in a SHA256SUMS next to it. None when there is none."""
+    directory, name = os.path.split(image)
+    for candidate in (image + ".sha256", image + ".sha256sum", image + ".sha256.txt"):
+        text = _read_text(candidate)
+        found = SHA256.search(text or "")
+        if found:
+            return found.group(1).lower(), os.path.basename(candidate)
+    for listing in ("SHA256SUMS", "sha256sums.txt", "SHA256SUMS.txt"):
+        text = _read_text(os.path.join(directory, listing))
+        for line in (text or "").splitlines():
+            if name in line:
+                found = SHA256.search(line)
+                if found:
+                    return found.group(1).lower(), listing
+    return None
+
+
+def _read_text(path):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as stream:
+            return stream.read(64 * 1024)
+    except OSError:
+        return None
+
+
+def checksum(path, progress=None, stop=None):
+    """The image's own SHA-256, read in blocks so a 5 GB file can be stopped."""
+    digest = hashlib.sha256()
+    total = os.path.getsize(path)
+    done = 0
+    with open(path, "rb", buffering=0) as stream:
+        while stop is None or not stop.is_set():
+            chunk = stream.read(BLOCK)
+            if not chunk:
+                break
+            digest.update(chunk)
+            done += len(chunk)
+            if progress is not None and total:
+                progress(done / total)
+    return digest.hexdigest()
 
 
 def human(size):
@@ -292,10 +386,12 @@ class Writer(threading.Thread):
 class WriterWindow(Adw.ApplicationWindow):
     def __init__(self, app, image=None):
         super().__init__(application=app, title=_("USB Stick Writer"),
-                         default_width=560, default_height=440)
+                         default_width=580, default_height=660)
         self.image = None
         self.sticks = []
         self.worker = None
+        self.hasher = None
+        self.settings = prefs()
         self.toasts = Adw.ToastOverlay()
 
         self.image_row = Adw.ActionRow(title=_("No image chosen"),
@@ -304,8 +400,20 @@ class WriterWindow(Adw.ApplicationWindow):
         choose.connect("clicked", lambda *_a: self._choose_image())
         self.image_row.add_suffix(choose)
         self.image_row.set_activatable_widget(choose)
+        # Checking the download before it goes anywhere: the SHA-256 that came
+        # with it, or one pasted from the page it was downloaded from.
+        self.sum_row = Adw.ActionRow(title=_("Check the download"), visible=False,
+                                     subtitle=_("Compares the file with its SHA-256"))
+        self.sum_entry = Gtk.Entry(placeholder_text=_("Paste the SHA-256 here"),
+                                   valign=Gtk.Align.CENTER, width_chars=18, hexpand=True)
+        self.sum_entry.connect("activate", lambda *_a: self._check_image())
+        self.sum_button = Gtk.Button(label=_("Check"), valign=Gtk.Align.CENTER)
+        self.sum_button.connect("clicked", lambda *_a: self._check_image())
+        self.sum_row.add_suffix(self.sum_entry)
+        self.sum_row.add_suffix(self.sum_button)
         images = Adw.PreferencesGroup(title=_("Image"))
         images.add(self.image_row)
+        images.add(self.sum_row)
 
         self.sticks_group = Adw.PreferencesGroup(
             title=_("Stick"),
@@ -315,9 +423,16 @@ class WriterWindow(Adw.ApplicationWindow):
 
         self.verify = Adw.SwitchRow(title=_("Check the stick afterwards"),
                                     subtitle=_("Reads it back and compares it with the image"),
-                                    active=True)
-        options = Adw.PreferencesGroup()
+                                    active=self.settings["verify"])
+        self.eject = Adw.SwitchRow(title=_("Eject when finished"),
+                                   subtitle=_("Flushes it and powers it down, so it can be "
+                                              "pulled out straight away"),
+                                   active=self.settings["eject"])
+        for row in (self.verify, self.eject):
+            row.connect("notify::active", lambda *_a: self._remember())
+        options = Adw.PreferencesGroup(title=_("Options"))
         options.add(self.verify)
+        options.add(self.eject)
 
         self.progress = Gtk.ProgressBar(show_text=True, text=" ", visible=False,
                                         margin_start=12, margin_end=12, margin_bottom=6)
@@ -346,6 +461,14 @@ class WriterWindow(Adw.ApplicationWindow):
                              tooltip_text=_("Look for sticks again"))
         refresh.connect("clicked", lambda *_a: self.refresh_sticks())
         header.pack_end(refresh)
+        menu = Gio.Menu()
+        menu.append(_("Erase the Stick…"), "win.erase")
+        header.pack_end(Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu,
+                                       tooltip_text=_("Menu")))
+        for name, callback in (("erase", self._ask_erase),):
+            action = Gio.SimpleAction.new(name, None)
+            action.connect("activate", lambda *_a, cb=callback: cb())
+            self.add_action(action)
         view.add_top_bar(header)
         self.toasts.set_child(view)
         self.set_content(self.toasts)
@@ -391,7 +514,70 @@ class WriterWindow(Adw.ApplicationWindow):
             return
         self.image_row.set_title(os.path.basename(path))
         self.image_row.set_subtitle(f"{human(size)} · {os.path.dirname(path)}")
+        self.sum_row.set_visible(True)
+        stated = stated_checksum(path)
+        if stated is not None:
+            self.sum_entry.set_text(stated[0])
+            self.sum_row.set_subtitle(_("The SHA-256 from {file}").format(file=stated[1]))
+        else:
+            self.sum_entry.set_text("")
+            self.sum_row.set_subtitle(_("Paste the SHA-256 from the download page, if you "
+                                        "have it"))
+        self.sum_row.remove_css_class("success")
+        self.sum_row.remove_css_class("error")
         self._update_start()
+
+    # --- checking the download ---
+
+    def _check_image(self):
+        wanted = SHA256.search(self.sum_entry.get_text() or "")
+        if self.image is None:
+            return
+        if wanted is None:
+            self.toasts.add_toast(Adw.Toast(title=_("That is not a SHA-256")))
+            return
+        if self.hasher is not None:
+            return
+        wanted = wanted.group(1).lower()
+        self.sum_button.set_sensitive(False)
+        self.progress.set_visible(True)
+        self.progress.set_text(_("Checking the download…"))
+        stop = threading.Event()
+
+        def work():
+            try:
+                got = checksum(self.image, lambda f: GLib.idle_add(self._sum_progress, f), stop)
+            except OSError as err:
+                GLib.idle_add(self._sum_done, None, wanted, str(err))
+                return
+            GLib.idle_add(self._sum_done, got, wanted, "")
+
+        self.hasher = threading.Thread(target=work, daemon=True)
+        self.hasher.start()
+
+    def _sum_progress(self, fraction):
+        self.progress.set_fraction(fraction)
+        return False
+
+    def _sum_done(self, got, wanted, error):
+        self.hasher = None
+        self.sum_button.set_sensitive(True)
+        self.progress.set_visible(False)
+        self.sum_row.remove_css_class("success")
+        self.sum_row.remove_css_class("error")
+        if error:
+            self.toasts.add_toast(Adw.Toast(title=error))
+            return False
+        if got == wanted:
+            self.sum_row.add_css_class("success")
+            self.sum_row.set_subtitle(_("The download matches its SHA-256"))
+            self.toasts.add_toast(Adw.Toast(title=_("The download is sound"), timeout=3))
+        else:
+            self.sum_row.add_css_class("error")
+            self.sum_row.set_subtitle(_("The file's SHA-256 is {got}").format(got=got))
+            self.toasts.add_toast(Adw.Toast(
+                title=_("The download does not match — download it again"), timeout=8))
+        return False
 
     def refresh_sticks(self):
         for row in self.stick_rows:
@@ -471,9 +657,102 @@ class WriterWindow(Adw.ApplicationWindow):
         self.start.set_visible(False)
         self.stop.set_visible(True)
         self.set_deletable(False)
+        self.stick = stick
         self.worker = Writer(self.image, stick, self.verify.get_active(),
                              self._on_progress, self._on_done)
         self.worker.start()
+
+    # --- erasing a stick back to a plain disk ---
+
+    def _ask_erase(self):
+        stick = self._chosen()
+        if stick is None or self.worker is not None:
+            return
+        dialog = Adw.AlertDialog(
+            heading=_("Erase {stick}?").format(stick=stick.label),
+            body=_("Everything on {path} ({size}) is removed and the stick becomes one "
+                   "empty disk again — which is what it takes to use a stick for files "
+                   "after an installer has been written to it.").format(
+                       path=stick.path, size=human(stick.size)))
+        name = Adw.EntryRow(title=_("Name"), text="USB")
+        kinds = Adw.ComboRow(title=_("Format"),
+                             model=Gtk.StringList.new([label for _id, label in FILESYSTEMS]),
+                             subtitle=_("exFAT is read by Windows and macOS too, and holds "
+                                        "files larger than 4 GB"))
+        chosen = [name for name, _label in FILESYSTEMS].index(self.settings["filesystem"])
+        kinds.set_selected(chosen)
+        group = Adw.PreferencesGroup()
+        group.add(name)
+        group.add(kinds)
+        dialog.set_extra_child(group)
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("erase", _("Erase"))
+        dialog.set_response_appearance("erase", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+
+        def answered(_dialog, response):
+            if response != "erase":
+                return
+            filesystem = FILESYSTEMS[kinds.get_selected()][0]
+            self.settings["filesystem"] = filesystem
+            save_prefs(self.settings)
+            self._erase(stick, filesystem, name.get_text().strip() or "USB")
+        dialog.connect("response", answered)
+        dialog.present(self)
+
+    def _erase(self, stick, filesystem, name):
+        self.progress.set_visible(True)
+        self.progress.set_fraction(0)
+        self.progress.set_text(_("Erasing {stick}…").format(stick=stick.label))
+        self.start.set_sensitive(False)
+        self.set_deletable(False)
+        pulse = GLib.timeout_add(120, lambda: (self.progress.pulse(), True)[1])
+
+        def work():
+            try:
+                proc = subprocess.run(["pkexec", HELPER, "format", stick.path,
+                                       filesystem, name], capture_output=True, timeout=600)
+            except (OSError, subprocess.SubprocessError) as err:
+                GLib.idle_add(done, False, str(err))
+                return
+            if proc.returncode in (126, 127):
+                GLib.idle_add(done, False, _("Authorization was cancelled"))
+                return
+            GLib.idle_add(done, proc.returncode == 0,
+                          proc.stderr.decode(errors="replace").strip() or
+                          _("The stick could not be erased"))
+
+        def done(ok, message):
+            GLib.source_remove(pulse)
+            self.set_deletable(True)
+            self.start.set_sensitive(True)
+            self.progress.set_fraction(1.0 if ok else 0.0)
+            self.progress.set_text(_("The stick is empty and ready for files") if ok
+                                   else message)
+            self.toasts.add_toast(Adw.Toast(
+                title=_("{stick} is empty and ready for files").format(stick=stick.label)
+                if ok else message, timeout=4 if ok else 8))
+            self.refresh_sticks()
+            self._update_start()
+            return False
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _remember(self):
+        self.settings["verify"] = self.verify.get_active()
+        self.settings["eject"] = self.eject.get_active()
+        save_prefs(self.settings)
+
+    def _eject(self, stick):
+        """Flush it and power it down, so it can be pulled out straight away.
+        udisks lets the person at the keyboard do this without a password."""
+        for argv in (["udisksctl", "unmount", "-b", partition_of(stick.path)],
+                     ["udisksctl", "power-off", "-b", stick.path]):
+            try:
+                subprocess.run(argv, capture_output=True, timeout=30)
+            except (OSError, subprocess.SubprocessError):
+                return False
+        return True
 
     def _on_progress(self, fraction, text):
         if fraction < 0:
@@ -484,15 +763,21 @@ class WriterWindow(Adw.ApplicationWindow):
         return False
 
     def _on_done(self, ok, message):
+        stick = getattr(self, "stick", None)
         self.worker = None
         self.set_deletable(True)
         self.stop.set_visible(False)
         self.start.set_visible(True)
         self.progress.set_fraction(1.0 if ok else 0.0)
-        self.progress.set_text(_("Done — the stick is ready") if ok else message)
-        self.toasts.add_toast(Adw.Toast(
-            title=_("The stick is ready") if ok else message,
-            timeout=3 if ok else 8))
+        ejected = ok and self.eject.get_active() and stick is not None and self._eject(stick)
+        if ok:
+            text = (_("Done — you can unplug the stick") if ejected
+                    else _("Done — the stick is ready"))
+        else:
+            text = message
+        self.progress.set_text(text)
+        self.toasts.add_toast(Adw.Toast(title=text if ok else message,
+                                        timeout=4 if ok else 8))
         self.refresh_sticks()
         self._update_start()
         return False

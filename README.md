@@ -214,7 +214,13 @@ learning was the point. — *Luca Padovan*
   offered and the disk the system runs from is never among them — nor, in a live session, the
   medium it booted from. When the write is done the stick is read back and compared byte for
   byte with what was sent, which catches the worn-out and counterfeit sticks that are the usual
-  reason a freshly written installer won't boot. The writing itself is done by
+  reason a freshly written installer won't boot. It also does the two things people go looking
+  for next: **checking the download** against its SHA-256 (the `.sha256` or `SHA256SUMS` beside
+  it is filled in automatically, otherwise paste the one from the download page), and
+  **erasing a stick back to a plain empty disk** — exFAT, FAT32 or ext4, with a name — because
+  a stick that has carried an installer is otherwise no use for files. *Eject when finished*
+  powers it down so it can be pulled straight out, and both switches are remembered. The
+  writing itself is done by
   `/usr/libexec/aurora-usb-write` through pkexec, and that helper makes every one of those
   checks again on its own side: a program asking for a disk to be overwritten cannot be trusted
   to have asked the right questions.

@@ -277,11 +277,28 @@ other system's.</p>
   <li><strong>Erase and Write.</strong> The dialog names the stick, its size and the image;
   everything on the stick is replaced.</li>
 </ol>
-<p><em>Check the stick afterwards</em> (on by default) reads the stick back when the write is
-done and compares it with the image, byte for byte. It is worth the extra minute: a stick that
-quietly drops writes is the usual reason a freshly made installer won't boot, and a counterfeit
-stick that claims more space than it has is caught here rather than halfway through an
-installation.</p>
+<h2>Checking the download first</h2>
+<p><em>Check the download</em> compares the file with its SHA-256 — the long line of letters
+and numbers a download page gives you. If the download came with one beside it
+(<span class="path">aurora-os-0.1-amd64.iso.sha256</span>, or a
+<span class="path">SHA256SUMS</span> naming it), it is filled in for you; otherwise paste it
+from the page. <em>Check</em> reads the file through and says whether it matches. Worth doing
+before writing: a half-finished download makes an installer that fails in the middle, and the
+check is the only way to tell one from a good one by looking.</p>
+
+<h2>Options</h2>
+<dl>
+  <dt>Check the stick afterwards</dt><dd>On by default. Reads the stick back when the write is done and compares it with the image, byte for byte. Worth the extra minute: a stick that quietly drops writes is the usual reason a freshly made installer won't boot, and a counterfeit stick that claims more space than it has is caught here rather than halfway through an installation.</dd>
+  <dt>Eject when finished</dt><dd>On by default. Flushes the stick and powers it down, so it can be pulled out as soon as the window says so.</dd>
+</dl>
+<p>Both are remembered for next time.</p>
+
+<h2>Giving a stick its life back</h2>
+<p>A stick that has carried an installer is no use for files: it holds a read-only image, and
+Windows offers to format it. The menu's <strong>Erase the Stick…</strong> makes it one empty
+disk again, with a name you choose and a format: <strong>exFAT</strong> (the default — Windows
+and macOS read it too, and it holds files larger than 4 GB), <strong>FAT32</strong> (what the
+oldest things read) or <strong>Ext4</strong> (Linux only, with permissions).</p>
 <p>Writing asks for your password, because overwriting a disk needs it. The checks above are
 made again by the part that runs with those privileges
 (<span class="path">/usr/libexec/aurora-usb-write</span>), so a mistake or a misbehaving program
