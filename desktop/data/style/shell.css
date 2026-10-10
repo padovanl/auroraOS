@@ -11,6 +11,16 @@
 @define-color shell_hover rgba(255, 255, 255, 0.09);
 @define-color shell_active rgba(255, 255, 255, 0.16);
 
+/* The grain of the glass: a 128x128 tile of very faint light and shadow laid
+   over the panes, so a large one doesn't read as flat paint. @noise@ is the
+   installed path, filled in when the shell loads this file. */
+.panel-bar, .panel-island, .dock-box, .dock-island,
+.aurora-launcher.mode-spotlight .launcher-root {
+  background-image: url("@noise@");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
 window.aurora-layer {
   background: transparent;
   color: @shell_fg;

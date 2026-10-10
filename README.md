@@ -1457,6 +1457,10 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **The glass has grain:** frosted glass scatters light, and the eye reads that as a very
+  fine texture. `tools/glass-noise.py` draws a 128×128 tile of light and shadow at a few
+  percent of opacity, laid over the top bar, the dock and Spotlight: too faint to see as
+  texture, enough to stop a large pane from looking like a rectangle of paint.
 - **Reduce transparency** (Settings → Accessibility → Seeing) makes every glass surface
   solid in one switch, for anyone who reads better without a picture behind the text.
 - **The chrome can take the accent** (Settings → Desktop & Dock → Top Bar → *Tint with the accent color*): the top bar's and the dock's glass is mixed with the accent instead of a neutral dark violet. Together with the wallpaper accent below, the desktop's own furniture follows the picture behind it.

@@ -369,9 +369,12 @@ class Shell(Adw.Application):
         if os.path.exists(path):
             from aurora import look
             accent = look.accent_hex()
+            noise = data_path("style", "noise.png")
             with open(path, encoding="utf-8") as f:
-                css = f.read().replace("@define-color aurora_violet #a970ff;",
-                                       f"@define-color aurora_violet {accent};")
+                css = (f.read()
+                       .replace("@define-color aurora_violet #a970ff;",
+                                f"@define-color aurora_violet {accent};")
+                       .replace("@noise@", f"file://{noise}"))
             if not hasattr(self, "_shell_css"):
                 self._shell_css = Gtk.CssProvider()
                 Gtk.StyleContext.add_provider_for_display(
