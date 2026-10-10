@@ -335,6 +335,19 @@
       <description>Four small surfaces paint the corners of every monitor black outside
       a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
     </key>
+    <key name="wallpaper-live-scene" type="s">
+      <choices>
+        <choice value=""/><choice value="aurora"/><choice value="nebula"/>
+        <choice value="waves"/><choice value="constellation"/><choice value="sunrise"/>
+        <choice value="rings"/>
+      </choices>
+      <default>''</default>
+      <summary>An animated background, drawn instead of a picture</summary>
+      <description>Empty: the background is a picture. Otherwise the scene drawn,
+      frame by frame, in place of one (shell/livescenes.py). Like the movement over
+      a picture, it stops while a window covers the desktop or the computer is
+      saving power.</description>
+    </key>
     <key name="wallpaper-animation" type="s">
       <choices><choice value="off"/><choice value="aurora"/><choice value="zoom"/></choices>
       <default>'aurora'</default>

@@ -22,14 +22,51 @@ from aurora.settingsapp.util import combo_row, switch_row
 
 WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
-MODES = ("dynamic", "picture", "daily", "slideshow", "color")
-MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Picture of the day"),
-               N_("Slideshow"), N_("Solid color"))
+MODES = ("dynamic", "picture", "animated", "daily", "slideshow", "color")
+MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Animated"),
+               N_("Picture of the day"), N_("Slideshow"), N_("Solid color"))
+SCENE_LABELS = {"aurora": N_("Northern lights"), "nebula": N_("Nebula"),
+                "waves": N_("Silk"), "constellation": N_("Constellation"),
+                "sunrise": N_("Sunrise"), "rings": N_("Rings")}
 DAILY_SOURCES = ("bing", "nasa", "wikimedia")
 COLORS = ("#1e1b2e", "#2d1b4e", "#0f2a43", "#12372a", "#3b1f2b", "#4a2c0f",
           "#6d28d9", "#be185d", "#0e7490", "#15803d", "#b45309", "#475569")
 RECENT = 6
 INTERVALS = (15, 60, 360, 1440)
+
+
+def scene_thumb(name, width, height):
+    """A still of a scene, drawn here and now: the preview is the scene."""
+    from gi.repository import Gdk, GdkPixbuf
+    from aurora import look
+    from aurora.shell import livescenes
+    colour = look.accent_hex()
+    try:
+        accent = tuple(int(colour[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    except (ValueError, IndexError):
+        accent = (0.66, 0.44, 1.0)
+    surface = livescenes.still(name, width, height, accent)
+    data = GdkPixbuf.Pixbuf.new_from_data(
+        bytes(surface.get_data()), GdkPixbuf.Colorspace.RGB, True, 8,
+        width, height, surface.get_stride())
+    # Cairo gives BGRA, GdkPixbuf wants RGBA.
+    image = Gtk.Picture(content_fit=Gtk.ContentFit.COVER, can_shrink=True,
+                        css_classes=["background-preview"])
+    image.set_size_request(width, height)
+    image.set_paintable(Gdk.Texture.new_for_pixbuf(_bgra_to_rgba(data)))
+    return image
+
+
+def _bgra_to_rgba(pixbuf):
+    """Cairo's ARGB32 is BGRA in memory on a little-endian machine."""
+    import struct
+    data = bytearray(pixbuf.get_pixels())
+    for i in range(0, len(data) - 3, 4):
+        data[i], data[i + 2] = data[i + 2], data[i]
+    from gi.repository import GdkPixbuf, GLib
+    return GdkPixbuf.Pixbuf.new_from_bytes(
+        GLib.Bytes.new(bytes(data)), GdkPixbuf.Colorspace.RGB, True, 8,
+        pixbuf.get_width(), pixbuf.get_height(), pixbuf.get_rowstride())
 
 
 # --- pure helpers (tested) -------------------------------------------------------
@@ -84,6 +121,8 @@ def recent_row(recent, current, included, count=RECENT):
 def mode_of(s):
     if s is None:
         return "dynamic"
+    if s.get_string("wallpaper-live-scene"):
+        return "animated"
     if s.get_boolean("wallpaper-slideshow"):
         return "slideshow"
     if s.get_string("wallpaper-daily"):
@@ -220,6 +259,34 @@ class BackgroundSection:
                                                         activatable=False))
         rows.add(self.series_expander)
 
+        # Animated: the scenes, each previewed by one frame of itself.
+        self.scene_box = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE,
+                                     max_children_per_line=3, min_children_per_line=2,
+                                     column_spacing=10, row_spacing=10,
+                                     margin_top=10, margin_bottom=10,
+                                     homogeneous=True)
+        self.scene_buttons = {}
+        self._last_scene = (self.s.get_string("wallpaper-live-scene") if self.s else "") \
+            or "aurora"
+        from aurora.shell import livescenes
+        for name in livescenes.SCENES:
+            button = Gtk.Button(css_classes=["background-recent"],
+                                tooltip_text=_(SCENE_LABELS[name]))
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            box.append(scene_thumb(name, 150, 84))
+            box.append(Gtk.Label(label=_(SCENE_LABELS[name]), css_classes=["caption"]))
+            button.set_child(box)
+            button.connect("clicked", lambda _b, n=name: self._set_scene(n))
+            self.scene_box.append(button)
+            self.scene_buttons[name] = button
+        self.scene_expander = Adw.ExpanderRow(
+            title=_("Scene"),
+            subtitle=_("Drawn frame by frame, and never while a window covers the desktop"),
+            expanded=True)
+        self.scene_expander.add_row(Adw.PreferencesRow(child=self.scene_box,
+                                                       activatable=False))
+        rows.add(self.scene_expander)
+
         # Picture: the recent ones and the ways to find more.
         self.recent_box = Gtk.Box(spacing=8, margin_top=10, margin_bottom=10)
         picture = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background-picker"])
@@ -329,10 +396,15 @@ class BackgroundSection:
             "picture": pretty_name(current),
             "daily": (" · ".join(x for x in (daily.get("title"), daily.get("credit")) if x)
                       if daily else _("Today's picture is on its way…")),
+            "animated": _("Drawn, frame by frame, instead of a picture"),
             "slideshow": _("A new picture every so often"),
             "color": _("A calm, solid color"),
         }[mode])
         self.picture_expander.set_visible(mode == "picture")
+        self.scene_expander.set_visible(mode == "animated")
+        scene = self.s.get_string("wallpaper-live-scene") if self.s else ""
+        for key, button in self.scene_buttons.items():
+            (button.add_css_class if key == scene else button.remove_css_class)("current")
         self.series_expander.set_visible(mode == "dynamic")
         for key, button in self.series_buttons.items():
             (button.add_css_class if key == series else button.remove_css_class)("current")
@@ -364,10 +436,19 @@ class BackgroundSection:
 
     # --- choices -------------------------------------------------------------------
 
+    def _set_scene(self, name):
+        if self.s is None:
+            return
+        self._last_scene = name
+        self.s.set_string("wallpaper-live-scene", name)
+        self.refresh()
+
     def _set_mode(self, index):
         if self.s is None or MODES[index] == mode_of(self.s):
             return
         mode = MODES[index]
+        self.s.set_string("wallpaper-live-scene",
+                          self._last_scene if mode == "animated" else "")
         self.s.set_boolean("wallpaper-slideshow", mode == "slideshow")
         self.s.set_boolean("wallpaper-dynamic", mode == "dynamic")
         self.s.set_string("wallpaper-daily", "bing" if mode == "daily" else "")

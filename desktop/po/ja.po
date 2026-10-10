@@ -181,7 +181,7 @@ msgid "Stop generating"
 msgstr "生成を停止"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:910
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:915
 #: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:384
 #: aurora/shell/launcher.py:90 aurora/shell/launcher.py:259
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "文章ツール"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:760
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:765
 msgid "Aurora AI"
 msgstr "Aurora AI"
 
@@ -414,7 +414,7 @@ msgstr "固定した項目や画像も含め、コピーしたものすべてを
 #: aurora/settingsapp/health.py:276 aurora/settingsapp/inputs.py:284
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
-#: aurora/settingsapp/system.py:659 aurora/shell/app.py:662
+#: aurora/settingsapp/system.py:659 aurora/shell/app.py:667
 #: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:646
 #: aurora/usbwriter.py:688
 msgid "Cancel"
@@ -541,11 +541,11 @@ msgstr "エディター"
 msgid "Automatic"
 msgstr "自動"
 
-#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:211
+#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:219
 msgid "Open Terminal"
 msgstr "ターミナルを開く"
 
-#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:212 aurora/welcome.py:21
+#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:220 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "「ファイル」を開く"
 
@@ -1334,7 +1334,7 @@ msgid "Forward"
 msgstr "進む"
 
 #: aurora/files/window.py:345 aurora/files/window.py:1212
-#: aurora/shell/wallpaper.py:209
+#: aurora/shell/wallpaper.py:217
 msgid "New File…"
 msgstr "新しいファイル…"
 
@@ -1478,7 +1478,7 @@ msgstr "SHA-256 チェックサム"
 msgid "Move to Trash"
 msgstr "ゴミ箱に入れる"
 
-#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:210
+#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:218
 msgid "New Folder…"
 msgstr "新規フォルダー…"
 
@@ -1536,7 +1536,7 @@ msgstr "Aurora AI に送る前に変更内容を確認してください。"
 msgid "Loading…"
 msgstr "読み込み中…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:914
+#: aurora/files/window.py:1352 aurora/shell/app.py:919
 msgid "Ask Aurora"
 msgstr "Aurora に質問"
 
@@ -2559,7 +2559,7 @@ msgstr "画面をロック"
 msgid "Picture"
 msgstr "画像"
 
-#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:166
+#: aurora/settingsapp/appearance.py:253 aurora/settingsapp/backgrounds.py:205
 msgid "Background"
 msgstr "背景"
 
@@ -2591,7 +2591,7 @@ msgstr "選択…"
 msgid "Lock Screen Picture"
 msgstr "ロック画面の画像"
 
-#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:409
+#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:490
 #: aurora/settingsapp/system.py:527
 msgid "Images"
 msgstr "画像"
@@ -2891,7 +2891,7 @@ msgstr "速度、左利き用、ジェスチャーは「マウスとタッチパ
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
 #: aurora/settingsapp/desktop.py:219 aurora/settingsapp/inputs.py:49
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
-#: aurora/shell/wallpaper.py:216
+#: aurora/shell/wallpaper.py:224
 #: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "設定"
@@ -2909,6 +2909,10 @@ msgid "Dynamic (follows the sun)"
 msgstr "ダイナミック（太陽に合わせて）"
 
 #: aurora/settingsapp/backgrounds.py:26
+msgid "Animated"
+msgstr "アニメーション"
+
+#: aurora/settingsapp/backgrounds.py:27
 msgid "Picture of the day"
 msgstr "今日の一枚"
 
@@ -2920,148 +2924,184 @@ msgstr "スライドショー"
 msgid "Solid color"
 msgstr "単色"
 
-#: aurora/settingsapp/backgrounds.py:54
+#: aurora/settingsapp/backgrounds.py:28
+msgid "Northern lights"
+msgstr "オーロラ"
+
+#: aurora/settingsapp/backgrounds.py:28
+msgid "Nebula"
+msgstr "星雲"
+
+#: aurora/settingsapp/backgrounds.py:29
+msgid "Silk"
+msgstr "シルク"
+
+#: aurora/settingsapp/backgrounds.py:29
+msgid "Constellation"
+msgstr "星座"
+
+#: aurora/settingsapp/backgrounds.py:30
+msgid "Sunrise"
+msgstr "日の出"
+
+#: aurora/settingsapp/backgrounds.py:30
+msgid "Rings"
+msgstr "リング"
+
+#: aurora/settingsapp/backgrounds.py:91
 msgid "Dawn"
 msgstr "夜明け"
 
-#: aurora/settingsapp/backgrounds.py:54
+#: aurora/settingsapp/backgrounds.py:91
 msgid "Day"
 msgstr "昼"
 
-#: aurora/settingsapp/backgrounds.py:54
+#: aurora/settingsapp/backgrounds.py:91
 msgid "Dusk"
 msgstr "夕暮れ"
 
-#: aurora/settingsapp/backgrounds.py:54
+#: aurora/settingsapp/backgrounds.py:91
 msgid "Night"
 msgstr "夜"
 
-#: aurora/settingsapp/backgrounds.py:187
+#: aurora/settingsapp/backgrounds.py:226
 msgid "Personalize your background"
 msgstr "背景をカスタマイズ"
 
-#: aurora/settingsapp/backgrounds.py:194 aurora/settingsapp/desktop.py:14
+#: aurora/settingsapp/backgrounds.py:233 aurora/settingsapp/desktop.py:14
 #: aurora/shell/osk_themes.py:7 aurora/shell/sysnotify.py:159
 msgid "Aurora"
 msgstr "Aurora"
 
-#: aurora/settingsapp/backgrounds.py:194
+#: aurora/settingsapp/backgrounds.py:233
 msgid "Slow zoom"
 msgstr "ゆっくりズーム"
 
-#: aurora/settingsapp/backgrounds.py:194
+#: aurora/settingsapp/backgrounds.py:233
 msgid "Still"
 msgstr "静止"
 
-#: aurora/settingsapp/backgrounds.py:197
+#: aurora/settingsapp/backgrounds.py:236
 msgid "Movement"
 msgstr "動き"
 
-#: aurora/settingsapp/backgrounds.py:199
+#: aurora/settingsapp/backgrounds.py:238
 msgid "Light moving over the picture, or a slow drift into it. Neither runs while a window covers the desktop."
 msgstr "画像の上を流れる光、または画像へのゆっくりした寄り。どちらもウィンドウがデスクトップを覆っている間は動きません。"
 
-#: aurora/settingsapp/backgrounds.py:217
+#: aurora/settingsapp/backgrounds.py:256
 msgid "Series"
 msgstr "シリーズ"
 
-#: aurora/settingsapp/backgrounds.py:217
+#: aurora/settingsapp/backgrounds.py:256
 msgid "The same landscape at dawn, day, dusk and night"
 msgstr "夜明け・昼・夕暮れ・夜の同じ風景"
 
-#: aurora/settingsapp/backgrounds.py:228
+#: aurora/settingsapp/backgrounds.py:283
+msgid "Scene"
+msgstr "シーン"
+
+#: aurora/settingsapp/backgrounds.py:284
+msgid "Drawn frame by frame, and never while a window covers the desktop"
+msgstr "1 コマずつ描かれ、ウィンドウがデスクトップを覆っている間は描かれません"
+
+#: aurora/settingsapp/backgrounds.py:295
 msgid "Browse Photos…"
 msgstr "写真を参照…"
 
-#: aurora/settingsapp/backgrounds.py:230
+#: aurora/settingsapp/backgrounds.py:297
 msgid "All Wallpapers…"
 msgstr "すべての壁紙…"
 
-#: aurora/settingsapp/backgrounds.py:235
+#: aurora/settingsapp/backgrounds.py:302
 msgid "Recent images"
 msgstr "最近の画像"
 
-#: aurora/settingsapp/backgrounds.py:244
+#: aurora/settingsapp/backgrounds.py:311
 msgid "Picture from"
 msgstr "画像の提供元"
 
-#: aurora/settingsapp/backgrounds.py:247
+#: aurora/settingsapp/backgrounds.py:314
 msgid "Aurora asks the service for today's picture once a day; nothing else is sent"
 msgstr "Aurora は 1 日 1 回、今日の画像をサービスに問い合わせます。ほかには何も送信しません"
 
-#: aurora/settingsapp/backgrounds.py:257
+#: aurora/settingsapp/backgrounds.py:324
 msgid "Pictures from"
 msgstr "画像の場所"
 
-#: aurora/settingsapp/backgrounds.py:262
+#: aurora/settingsapp/backgrounds.py:329
 msgid "Change picture every"
 msgstr "画像を変える間隔"
 
-#: aurora/settingsapp/backgrounds.py:263 aurora/shell/widgets.py:920
+#: aurora/settingsapp/backgrounds.py:330 aurora/shell/widgets.py:920
 msgid "15 minutes"
 msgstr "15 分"
 
-#: aurora/settingsapp/backgrounds.py:263 aurora/settingsapp/screentime.py:17
+#: aurora/settingsapp/backgrounds.py:330 aurora/settingsapp/screentime.py:17
 msgid "1 hour"
 msgstr "1 時間"
 
-#: aurora/settingsapp/backgrounds.py:263
+#: aurora/settingsapp/backgrounds.py:330
 msgid "6 hours"
 msgstr "6 時間"
 
-#: aurora/settingsapp/backgrounds.py:263
+#: aurora/settingsapp/backgrounds.py:330
 msgid "24 hours"
 msgstr "24 時間"
 
-#: aurora/settingsapp/backgrounds.py:267
+#: aurora/settingsapp/backgrounds.py:334
 msgid "Shuffle the picture order"
 msgstr "画像の順番をシャッフル"
 
-#: aurora/settingsapp/backgrounds.py:286
+#: aurora/settingsapp/backgrounds.py:353
 msgid "Custom Color"
 msgstr "カスタムカラー"
 
-#: aurora/settingsapp/backgrounds.py:290
+#: aurora/settingsapp/backgrounds.py:357
 msgid "Choose a color"
 msgstr "色を選択"
 
-#: aurora/settingsapp/backgrounds.py:328
+#: aurora/settingsapp/backgrounds.py:395
 msgid "Dawn, day, dusk and night follow the sun where you are"
 msgstr "夜明け・昼・夕暮れ・夜が、あなたの場所の太陽に合わせて変わります"
 
-#: aurora/settingsapp/backgrounds.py:331
+#: aurora/settingsapp/backgrounds.py:398
 msgid "Today's picture is on its way…"
 msgstr "今日の画像を取得中…"
 
-#: aurora/settingsapp/backgrounds.py:332
+#: aurora/settingsapp/backgrounds.py:399
+msgid "Drawn, frame by frame, instead of a picture"
+msgstr "写真の代わりに、1 コマずつ描かれます"
+
+#: aurora/settingsapp/backgrounds.py:400
 msgid "A new picture every so often"
 msgstr "ときどき新しい画像に"
 
-#: aurora/settingsapp/backgrounds.py:333
+#: aurora/settingsapp/backgrounds.py:401
 msgid "A calm, solid color"
 msgstr "落ち着いた単色"
 
-#: aurora/settingsapp/backgrounds.py:347
+#: aurora/settingsapp/backgrounds.py:419
 msgid "Included wallpapers"
 msgstr "付属の壁紙"
 
-#: aurora/settingsapp/backgrounds.py:408
+#: aurora/settingsapp/backgrounds.py:489
 msgid "Choose a Background"
 msgstr "背景を選択"
 
-#: aurora/settingsapp/backgrounds.py:437
+#: aurora/settingsapp/backgrounds.py:518
 msgid "Pictures for the Slideshow"
 msgstr "スライドショーの画像"
 
-#: aurora/settingsapp/backgrounds.py:453
+#: aurora/settingsapp/backgrounds.py:534
 msgid "All Wallpapers"
 msgstr "すべての壁紙"
 
-#: aurora/settingsapp/backgrounds.py:457
+#: aurora/settingsapp/backgrounds.py:538
 msgid "Search wallpapers"
 msgstr "壁紙を検索"
 
-#: aurora/settingsapp/backgrounds.py:478
+#: aurora/settingsapp/backgrounds.py:559
 msgid "{n} pictures"
 msgstr "{n} 枚の画像"
 
@@ -3239,7 +3279,7 @@ msgstr "時計、カレンダー、天気、システム、Git プロジェク�
 msgid "Show widgets"
 msgstr "ウィジェットを表示"
 
-#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:213
+#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:221
 #: aurora/shell/widgets.py:1427
 msgid "Edit Widgets…"
 msgstr "ウィジェットを編集…"
@@ -5518,140 +5558,140 @@ msgstr "ユーティリティ"
 msgid "Opening App Center…"
 msgstr "アプリセンターを開いています…"
 
-#: aurora/shell/app.py:233
+#: aurora/shell/app.py:234
 msgid "Night Light can't change this screen's colors"
 msgstr "夜間モードはこの画面の色を変更できません"
 
-#: aurora/shell/app.py:234
+#: aurora/shell/app.py:235
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "グラフィックドライバーが対応していません。仮想マシンではよくあることです。実機では 設定 → アップデート → 追加のドライバー からグラフィックドライバーをインストールしてください。"
 
-#: aurora/shell/app.py:247
+#: aurora/shell/app.py:248
 msgid "Graphics fallback started"
 msgstr "代替グラフィックで起動しました"
 
-#: aurora/shell/app.py:248
+#: aurora/shell/app.py:249
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire を起動できませんでした。Aurora は代わりに安全なデスクトップを開きました。この通知を選択すると起動レポートを確認できます。"
 
-#: aurora/shell/app.py:250
+#: aurora/shell/app.py:251
 msgid "Open System Health"
 msgstr "システムの状態を開く"
 
-#: aurora/shell/app.py:565
+#: aurora/shell/app.py:570
 msgid "Writing tools are off"
 msgstr "文章ツールはオフです"
 
-#: aurora/shell/app.py:657
+#: aurora/shell/app.py:662
 msgid "Restart didn't happen"
 msgstr "再起動されませんでした"
 
-#: aurora/shell/app.py:657
+#: aurora/shell/app.py:662
 msgid "Shut down didn't happen"
 msgstr "シャットダウンされませんでした"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:663
 msgid "Sleep didn't happen"
 msgstr "スリープしませんでした"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:664
 msgid "Restart Anyway"
 msgstr "それでも再起動"
 
-#: aurora/shell/app.py:659
+#: aurora/shell/app.py:664
 msgid "Shut Down Anyway"
 msgstr "それでもシャットダウン"
 
-#: aurora/shell/app.py:660
+#: aurora/shell/app.py:665
 msgid "Sleep Anyway"
 msgstr "それでもスリープ"
 
-#: aurora/shell/app.py:757
+#: aurora/shell/app.py:762
 msgid "Always on Top"
 msgstr "常に最前面"
 
-#: aurora/shell/app.py:757
+#: aurora/shell/app.py:762
 msgid "Always on Top Off"
 msgstr "最前面をオフ"
 
-#: aurora/shell/app.py:761
+#: aurora/shell/app.py:766
 msgid "Set it up in Settings → AI."
 msgstr "「設定 → AI」で設定してください。"
 
-#: aurora/shell/app.py:767
+#: aurora/shell/app.py:772
 msgid "Dictation is off"
 msgstr "音声入力はオフです"
 
-#: aurora/shell/app.py:774
+#: aurora/shell/app.py:779
 msgid "Dictation isn't installed yet"
 msgstr "音声入力はまだインストールされていません"
 
-#: aurora/shell/app.py:778
+#: aurora/shell/app.py:783
 msgid "Listening… press Super+H to stop"
 msgstr "聞き取り中… Super+H で停止"
 
-#: aurora/shell/app.py:780
+#: aurora/shell/app.py:785
 msgid "Writing it down…"
 msgstr "文字起こし中…"
 
-#: aurora/shell/app.py:794
+#: aurora/shell/app.py:799
 msgid "Nothing was heard"
 msgstr "何も聞こえませんでした"
 
-#: aurora/shell/app.py:803
+#: aurora/shell/app.py:808
 msgid "Read aloud is off"
 msgstr "読み上げはオフです"
 
-#: aurora/shell/app.py:810
+#: aurora/shell/app.py:815
 msgid "Select some text first"
 msgstr "先にテキストを選択してください"
 
-#: aurora/shell/app.py:884
+#: aurora/shell/app.py:889
 msgid "Screenshot captured"
 msgstr "スクリーンショットを撮りました"
 
-#: aurora/shell/app.py:885
+#: aurora/shell/app.py:890
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "{path} に保存し、クリップボードにコピーしました。"
 
-#: aurora/shell/app.py:910
+#: aurora/shell/app.py:915
 msgid "Pin to Screen"
 msgstr "画面にピン留め"
 
-#: aurora/shell/app.py:910
+#: aurora/shell/app.py:915
 msgid "Annotate"
 msgstr "注釈"
 
-#: aurora/shell/app.py:911
+#: aurora/shell/app.py:916
 msgid "Copy Text"
 msgstr "テキストをコピー"
 
-#: aurora/shell/app.py:979 aurora/shell/app.py:986
+#: aurora/shell/app.py:984 aurora/shell/app.py:991
 msgid "Text Recognition"
 msgstr "テキスト認識"
 
-#: aurora/shell/app.py:979
+#: aurora/shell/app.py:984
 msgid "No text found"
 msgstr "テキストが見つかりません"
 
-#: aurora/shell/app.py:980
+#: aurora/shell/app.py:985
 msgid "Try a larger or sharper area."
 msgstr "もっと大きい、または鮮明な範囲で試してください。"
 
-#: aurora/shell/app.py:986
+#: aurora/shell/app.py:991
 msgid "Text copied"
 msgstr "テキストをコピーしました"
 
-#: aurora/shell/app.py:1041 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:1046 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "画面収録"
 
-#: aurora/shell/app.py:1041
+#: aurora/shell/app.py:1046
 msgid "Screen recording saved"
 msgstr "画面収録を保存しました"
 
-#: aurora/shell/app.py:1042
+#: aurora/shell/app.py:1047
 msgid "Saved to {path}."
 msgstr "{path} に保存しました。"
 
@@ -6636,11 +6676,11 @@ msgstr "{name} を接続しました"
 msgid "The drive is ready to use."
 msgstr "ドライブを使用できます。"
 
-#: aurora/shell/wallpaper.py:214
+#: aurora/shell/wallpaper.py:222
 msgid "Change Background…"
 msgstr "背景を変更…"
 
-#: aurora/shell/wallpaper.py:215
+#: aurora/shell/wallpaper.py:223
 msgid "Display Settings"
 msgstr "ディスプレイ設定"
 

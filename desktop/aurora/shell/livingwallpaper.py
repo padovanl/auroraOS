@@ -1,4 +1,9 @@
-"""A background that moves: the aurora itself, drifting over the picture.
+"""A background that moves.
+
+Two things live here. A **scene** (livescenes.py) is an animated background:
+the picture itself is drawn, frame by frame, and there is no photograph behind
+it. **Movement** is the lighter thing: bands of light drifting over whatever
+picture is already there.
 
 Drawn with Cairo, not a GPU shader, because Aurora renders in software in a
 virtual machine and a shader would be a slide show there. It is cheap by
@@ -20,6 +25,7 @@ import cairo
 from gi.repository import GLib, Gtk
 
 from aurora import settings
+from aurora.shell import livescenes
 
 SCALE = 4               # the ribbons are drawn this much smaller, then scaled up
 FRAME_MS = 66           # 15 frames a second: this moves slowly on purpose
@@ -30,6 +36,13 @@ def style():
     s = settings.get()
     value = s.get_string("wallpaper-animation") if s is not None else "aurora"
     return value if value in ("off", "aurora", "zoom") else "off"
+
+
+def scene():
+    """The animated background in use, or "" when the background is a picture."""
+    s = settings.get()
+    name = s.get_string("wallpaper-live-scene") if s is not None else ""
+    return name if name in livescenes.SCENES else ""
 
 
 def ribbon(phase, index, width, height):
@@ -59,7 +72,8 @@ class LivingWallpaper(Gtk.DrawingArea):
         self._started = time.monotonic()
         s = settings.get()
         if s is not None:
-            s.connect("changed::wallpaper-animation", lambda *_a: self.refresh())
+            for key in ("wallpaper-animation", "wallpaper-live-scene"):
+                s.connect(f"changed::{key}", lambda *_a: self.refresh())
             s.connect("changed::accent-color", lambda *_a: self.queue_draw())
         shell.toplevels.connect("changed", lambda *_a: self.refresh())
         self.connect("map", lambda *_a: self.refresh())
@@ -83,9 +97,10 @@ class LivingWallpaper(Gtk.DrawingArea):
         return active == "power-saver"
 
     def refresh(self):
-        wanted = style() == "aurora" and self.get_mapped() and not self.covered() \
+        drawing = bool(scene()) or style() == "aurora"
+        wanted = drawing and self.get_mapped() and not self.covered() \
             and not self.saving_power()
-        self.set_visible(style() == "aurora")
+        self.set_visible(drawing)
         if wanted and not self._tick:
             self._last = 0.0
             self._tick = self.add_tick_callback(self._frame)
@@ -120,9 +135,26 @@ class LivingWallpaper(Gtk.DrawingArea):
         return r, g, b
 
     def _draw(self, _area, cr, width, height):
-        if style() != "aurora" or width <= 0 or height <= 0:
+        if width <= 0 or height <= 0:
             return
         phase = (time.monotonic() - self._started) * 0.6
+        name = scene()
+        if name:
+            # An animated background: the whole picture is ours to paint, so
+            # it is painted small and scaled up like the bands below.
+            small = cairo.ImageSurface(cairo.FORMAT_ARGB32,
+                                       max(1, width // SCALE), max(1, height // SCALE))
+            livescenes.paint(name, cairo.Context(small), width / SCALE, height / SCALE,
+                             phase, self._accent())
+            cr.save()
+            cr.scale(SCALE, SCALE)
+            cr.set_source_surface(small, 0, 0)
+            cr.get_source().set_filter(cairo.FILTER_BILINEAR)
+            cr.paint()
+            cr.restore()
+            return
+        if style() != "aurora":
+            return
         small = cairo.ImageSurface(cairo.FORMAT_ARGB32,
                                    max(1, width // SCALE), max(1, height // SCALE))
         inner = cairo.Context(small)

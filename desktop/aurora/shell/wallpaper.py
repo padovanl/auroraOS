@@ -28,9 +28,12 @@ class Wallpaper(LayerWindow):
         overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
         # The aurora moving over the picture, under everything else.
-        from aurora.shell.livingwallpaper import LivingWallpaper, style
+        from aurora.shell.livingwallpaper import LivingWallpaper, scene, style
         self.living = LivingWallpaper(app)
         overlay.add_overlay(self.living)
+        # An animated background is the background: the picture under it would
+        # only be something to peer at through it.
+        self._show_pictures(not scene())
         # The slow drift into the picture is a CSS animation on the pictures
         # themselves: GTK does the work, so it costs us nothing to run.
         self._set_drift(style() == "zoom")
@@ -38,6 +41,8 @@ class Wallpaper(LayerWindow):
         if s is not None:
             s.connect("changed::wallpaper-animation",
                       lambda *_a: self._set_drift(style() == "zoom"))
+            s.connect("changed::wallpaper-live-scene",
+                      lambda *_a: self._show_pictures(not scene()))
         # Files from ~/Desktop, on the primary monitor only.
         self._icons = None
         if monitor == app.get_primary_monitor():
@@ -79,6 +84,9 @@ class Wallpaper(LayerWindow):
         self._handler = app.daycycle.connect("wallpaper-changed", lambda *a: self.reload())
         self.connect("destroy", lambda *a: app.daycycle.disconnect(self._handler))
         self.reload()
+
+    def _show_pictures(self, on):
+        self._stack.set_visible(on)
 
     def _set_drift(self, on):
         for picture in self._pictures:
