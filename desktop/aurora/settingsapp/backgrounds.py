@@ -188,6 +188,18 @@ class BackgroundSection:
                                   MODES.index(mode_of(self.s)), on_change=self._set_mode)
         rows.add(self.mode_row)
 
+        # Whatever the picture is, it can be left alone or given something to do.
+        if self.s is not None:
+            movements = ["aurora", "zoom", "off"]
+            labels = [_("Aurora"), _("Slow zoom"), _("Still")]
+            current = self.s.get_string("wallpaper-animation")
+            rows.add(combo_row(
+                _("Movement"), labels,
+                movements.index(current) if current in movements else 0,
+                subtitle=_("Light moving over the picture, or a slow drift into it. "
+                           "Neither runs while a window covers the desktop."),
+                on_change=lambda i: self.s.set_string("wallpaper-animation", movements[i])))
+
         # Dynamic: which series follows the sun.
         self.series_box = Gtk.Box(spacing=10, margin_top=10, margin_bottom=10,
                                   halign=Gtk.Align.START)

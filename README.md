@@ -1338,6 +1338,19 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   login screen computes the same phase. "Auto" dark style flips the system color scheme
   at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
 
+#### A background that moves, without a GPU
+- **Alternatives:** a GLSL shader wallpaper, a looping video, nothing.
+- **Why:** Aurora renders in software in a virtual machine, where a shader wallpaper is a
+  slide show and a video loop is a fan. So **Movement** (Settings → Appearance → Background)
+  draws the aurora itself with Cairo (`shell/livingwallpaper.py`): four bands of light leaning
+  across the top of the screen in the accent colour, drawn into a surface a quarter of the
+  screen's size and scaled up — which is also where their softness comes from — fifteen times
+  a second. **Slow zoom** is a ninety-second drift into the picture and back, expressed as a
+  CSS animation on the picture, so GTK's renderer does all of it and the shell does none.
+  Neither runs while a window covers the desktop or the machine is in power-saver mode: the
+  cost while you work is zero, which is the only way an animated background is defensible on
+  a laptop.
+
 #### Icons: one generator, five styles
 - **Alternatives:** shipping a drawn icon set, or using Papirus as-is.
 - **Why:** every icon Aurora draws — apps, folders, file types, devices — is written by

@@ -541,11 +541,11 @@ msgstr "Редактор"
 msgid "Automatic"
 msgstr "Автоматически"
 
-#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:195
+#: aurora/devhub/app.py:452 aurora/shell/wallpaper.py:211
 msgid "Open Terminal"
 msgstr "Открыть терминал"
 
-#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:196 aurora/welcome.py:21
+#: aurora/devhub/app.py:453 aurora/shell/wallpaper.py:212 aurora/welcome.py:21
 msgid "Open Files"
 msgstr "Открыть «Файлы»"
 
@@ -1338,7 +1338,7 @@ msgid "Forward"
 msgstr "Вперёд"
 
 #: aurora/files/window.py:345 aurora/files/window.py:1212
-#: aurora/shell/wallpaper.py:193
+#: aurora/shell/wallpaper.py:209
 msgid "New File…"
 msgstr "Новый файл…"
 
@@ -1482,7 +1482,7 @@ msgstr "Контрольные суммы SHA-256"
 msgid "Move to Trash"
 msgstr "Переместить в корзину"
 
-#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:194
+#: aurora/files/window.py:1211 aurora/shell/wallpaper.py:210
 msgid "New Folder…"
 msgstr "Новая папка…"
 
@@ -2611,7 +2611,7 @@ msgstr "Выбрать…"
 msgid "Lock Screen Picture"
 msgstr "Изображение экрана блокировки"
 
-#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:397
+#: aurora/settingsapp/appearance.py:271 aurora/settingsapp/backgrounds.py:409
 #: aurora/settingsapp/system.py:527
 msgid "Images"
 msgstr "Изображения"
@@ -2911,7 +2911,7 @@ msgstr "Скорость, режим для левши и жесты — в ра
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
 #: aurora/settingsapp/desktop.py:219 aurora/settingsapp/inputs.py:49
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
-#: aurora/shell/wallpaper.py:200
+#: aurora/shell/wallpaper.py:216
 #: data/applications/org.aurora.Settings.desktop:2
 msgid "Settings"
 msgstr "Настройки"
@@ -2960,114 +2960,130 @@ msgstr "Ночь"
 msgid "Personalize your background"
 msgstr "Настройте фон"
 
-#: aurora/settingsapp/backgrounds.py:205
+#: aurora/settingsapp/backgrounds.py:194 aurora/settingsapp/desktop.py:14
+#: aurora/shell/osk_themes.py:7 aurora/shell/sysnotify.py:159
+msgid "Aurora"
+msgstr "Aurora"
+
+#: aurora/settingsapp/backgrounds.py:194
+msgid "Slow zoom"
+msgstr "Медленное приближение"
+
+#: aurora/settingsapp/backgrounds.py:194
+msgid "Still"
+msgstr "Неподвижно"
+
+#: aurora/settingsapp/backgrounds.py:197
+msgid "Movement"
+msgstr "Движение"
+
+#: aurora/settingsapp/backgrounds.py:199
+msgid "Light moving over the picture, or a slow drift into it. Neither runs while a window covers the desktop."
+msgstr "Свет, скользящий по картинке, или медленное приближение. Ни то ни другое не работает, пока окно закрывает рабочий стол."
+
+#: aurora/settingsapp/backgrounds.py:217
 msgid "Series"
 msgstr "Серия"
 
-#: aurora/settingsapp/backgrounds.py:205
+#: aurora/settingsapp/backgrounds.py:217
 msgid "The same landscape at dawn, day, dusk and night"
 msgstr "Один пейзаж на рассвете, днём, в сумерках и ночью"
 
-#: aurora/settingsapp/backgrounds.py:216
+#: aurora/settingsapp/backgrounds.py:228
 msgid "Browse Photos…"
 msgstr "Выбрать фото…"
 
-#: aurora/settingsapp/backgrounds.py:218
+#: aurora/settingsapp/backgrounds.py:230
 msgid "All Wallpapers…"
 msgstr "Все обои…"
 
-#: aurora/settingsapp/backgrounds.py:223
+#: aurora/settingsapp/backgrounds.py:235
 msgid "Recent images"
 msgstr "Недавние изображения"
 
-#: aurora/settingsapp/backgrounds.py:232
+#: aurora/settingsapp/backgrounds.py:244
 msgid "Picture from"
 msgstr "Изображение из"
 
-#: aurora/settingsapp/backgrounds.py:235
+#: aurora/settingsapp/backgrounds.py:247
 msgid "Aurora asks the service for today's picture once a day; nothing else is sent"
 msgstr "Aurora раз в день запрашивает у сервиса сегодняшнее изображение; больше ничего не отправляется"
 
-#: aurora/settingsapp/backgrounds.py:245
+#: aurora/settingsapp/backgrounds.py:257
 msgid "Pictures from"
 msgstr "Изображения из"
 
-#: aurora/settingsapp/backgrounds.py:250
+#: aurora/settingsapp/backgrounds.py:262
 msgid "Change picture every"
 msgstr "Менять изображение каждые"
 
-#: aurora/settingsapp/backgrounds.py:251 aurora/shell/widgets.py:920
+#: aurora/settingsapp/backgrounds.py:263 aurora/shell/widgets.py:920
 msgid "15 minutes"
 msgstr "15 минут"
 
-#: aurora/settingsapp/backgrounds.py:251 aurora/settingsapp/screentime.py:17
+#: aurora/settingsapp/backgrounds.py:263 aurora/settingsapp/screentime.py:17
 msgid "1 hour"
 msgstr "1 час"
 
-#: aurora/settingsapp/backgrounds.py:251
+#: aurora/settingsapp/backgrounds.py:263
 msgid "6 hours"
 msgstr "6 часов"
 
-#: aurora/settingsapp/backgrounds.py:251
+#: aurora/settingsapp/backgrounds.py:263
 msgid "24 hours"
 msgstr "24 часа"
 
-#: aurora/settingsapp/backgrounds.py:255
+#: aurora/settingsapp/backgrounds.py:267
 msgid "Shuffle the picture order"
 msgstr "Случайный порядок изображений"
 
-#: aurora/settingsapp/backgrounds.py:274
+#: aurora/settingsapp/backgrounds.py:286
 msgid "Custom Color"
 msgstr "Свой цвет"
 
-#: aurora/settingsapp/backgrounds.py:278
+#: aurora/settingsapp/backgrounds.py:290
 msgid "Choose a color"
 msgstr "Выберите цвет"
 
-#: aurora/settingsapp/backgrounds.py:316
+#: aurora/settingsapp/backgrounds.py:328
 msgid "Dawn, day, dusk and night follow the sun where you are"
 msgstr "Рассвет, день, закат и ночь следуют за солнцем там, где вы"
 
-#: aurora/settingsapp/backgrounds.py:319
+#: aurora/settingsapp/backgrounds.py:331
 msgid "Today's picture is on its way…"
 msgstr "Сегодняшнее изображение загружается…"
 
-#: aurora/settingsapp/backgrounds.py:320
+#: aurora/settingsapp/backgrounds.py:332
 msgid "A new picture every so often"
 msgstr "Новое изображение время от времени"
 
-#: aurora/settingsapp/backgrounds.py:321
+#: aurora/settingsapp/backgrounds.py:333
 msgid "A calm, solid color"
 msgstr "Спокойный сплошной цвет"
 
-#: aurora/settingsapp/backgrounds.py:335
+#: aurora/settingsapp/backgrounds.py:347
 msgid "Included wallpapers"
 msgstr "Встроенные обои"
 
-#: aurora/settingsapp/backgrounds.py:396
+#: aurora/settingsapp/backgrounds.py:408
 msgid "Choose a Background"
 msgstr "Выберите фон"
 
-#: aurora/settingsapp/backgrounds.py:425
+#: aurora/settingsapp/backgrounds.py:437
 msgid "Pictures for the Slideshow"
 msgstr "Изображения для слайд-шоу"
 
-#: aurora/settingsapp/backgrounds.py:441
+#: aurora/settingsapp/backgrounds.py:453
 msgid "All Wallpapers"
 msgstr "Все обои"
 
-#: aurora/settingsapp/backgrounds.py:445
+#: aurora/settingsapp/backgrounds.py:457
 msgid "Search wallpapers"
 msgstr "Поиск обоев"
 
-#: aurora/settingsapp/backgrounds.py:466
+#: aurora/settingsapp/backgrounds.py:478
 msgid "{n} pictures"
 msgstr "Изображений: {n}"
-
-#: aurora/settingsapp/desktop.py:14 aurora/shell/osk_themes.py:7
-#: aurora/shell/sysnotify.py:159
-msgid "Aurora"
-msgstr "Aurora"
 
 #: aurora/settingsapp/desktop.py:14
 msgid "Menu bar on top, floating dock"
@@ -3243,7 +3259,7 @@ msgstr "Часы, календарь, погода, система, Git-прое
 msgid "Show widgets"
 msgstr "Показывать виджеты"
 
-#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:197
+#: aurora/settingsapp/desktop.py:172 aurora/shell/wallpaper.py:213
 #: aurora/shell/widgets.py:1427
 msgid "Edit Widgets…"
 msgstr "Изменить виджеты…"
@@ -6672,11 +6688,11 @@ msgstr "{name} подключён"
 msgid "The drive is ready to use."
 msgstr "Накопитель готов к использованию."
 
-#: aurora/shell/wallpaper.py:198
+#: aurora/shell/wallpaper.py:214
 msgid "Change Background…"
 msgstr "Сменить фон…"
 
-#: aurora/shell/wallpaper.py:199
+#: aurora/shell/wallpaper.py:215
 msgid "Display Settings"
 msgstr "Параметры экранов"
 

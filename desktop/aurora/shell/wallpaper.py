@@ -2,6 +2,7 @@
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
+from aurora import settings
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
@@ -26,6 +27,17 @@ class Wallpaper(LayerWindow):
         self._current = None
         overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
+        # The aurora moving over the picture, under everything else.
+        from aurora.shell.livingwallpaper import LivingWallpaper, style
+        self.living = LivingWallpaper(app)
+        overlay.add_overlay(self.living)
+        # The slow drift into the picture is a CSS animation on the pictures
+        # themselves: GTK does the work, so it costs us nothing to run.
+        self._set_drift(style() == "zoom")
+        s = settings.get()
+        if s is not None:
+            s.connect("changed::wallpaper-animation",
+                      lambda *_a: self._set_drift(style() == "zoom"))
         # Files from ~/Desktop, on the primary monitor only.
         self._icons = None
         if monitor == app.get_primary_monitor():
@@ -67,6 +79,10 @@ class Wallpaper(LayerWindow):
         self._handler = app.daycycle.connect("wallpaper-changed", lambda *a: self.reload())
         self.connect("destroy", lambda *a: app.daycycle.disconnect(self._handler))
         self.reload()
+
+    def _set_drift(self, on):
+        for picture in self._pictures:
+            (picture.add_css_class if on else picture.remove_css_class)("wallpaper-drift")
 
     def _on_background_click(self, _gesture, _n, x, y):
         if _gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
