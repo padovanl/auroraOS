@@ -525,7 +525,7 @@ class Panel(LayerWindow):
             if t.minimized:
                 classes.append("minimized")
             b = Gtk.Button(child=content, css_classes=classes, tooltip_text=t.title or name)
-            b.connect("clicked", lambda _b, t=t: t.activate())
+            b.connect("clicked", lambda _b, t=t: t.toggle())
             right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
                                      propagation_phase=Gtk.PropagationPhase.CAPTURE)
             right.connect("pressed", self._window_context_menu, t, b)

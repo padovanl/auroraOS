@@ -16,7 +16,7 @@ gi.require_version('GdkPixbuf', '2.0')
 from gi.repository import Adw, GdkPixbuf, Gio, GLib, GObject, Gtk
 from aurora import settings, wallpapers
 from aurora.settingsapp.appearance import Appearance
-from aurora.settingsapp.backgrounds import MOTIONS, mode_of, find_wallpapers, personal_dir
+from aurora.settingsapp.backgrounds import mode_of, find_wallpapers, personal_dir
 from aurora.shell.daycycle import cache_link
 from aurora.shell.livingwallpaper import LivingWallpaper
 
@@ -98,12 +98,52 @@ page = Appearance()
 window = Gtk.Window(default_width=740, default_height=850, child=page)
 window.present()
 settle()
+page.background.mode_buttons['picture'].set_active(True)
+settle()
+
+def pick(path):
+    picker = page.background.picker
+    for index in range(picker.filtered.get_n_items()):
+        if picker.filtered.get_item(index).get_string() == path:
+            picker.grid.emit('activate', index)
+            return
+    raise AssertionError(f'Wallpaper missing from visible picker: {path}')
+
 for entry in static_credits:
     path = wallpapers.scene_path(entry['id'])
-    page.background.choose(path)
+    pick(path)
     wait_for(lambda: page.background.live_preview.path == path)
     assert page.background.live_preview.media is None, 'Static picture must not start a video decoder'
     assert mode_of(s) == 'picture' and s.get_string('wallpaper') == path
+    assert s.get_string('wallpaper-animation') == 'off', 'Static images must stay still'
+    assert page.background.picker.get_visible() and not page.background.picker.videos
+    assert page.background.mode_buttons['picture'].get_active()
+    assert not page.background.video_motion_row.get_visible()
+    assert not page.background.live_preview.running
+gallery = page.background.picker
+assert gallery.store.get_n_items() >= len(wallpapers.SCENES + wallpapers.STATIC)
+assert all(not wallpapers.is_video(gallery.store.get_item(i).get_string())
+           for i in range(gallery.store.get_n_items()))
+subprocess.run(['grim', str(OUT / 'static-settings.png')], check=True)
+page.background.mode_buttons['animated'].set_active(True)
+wait_for(lambda: mode_of(s) == 'animated' and ready(page.background.live_preview))
+assert gallery.store.get_n_items() == len(wallpapers.ANIMATED)
+assert all(wallpapers.is_video(gallery.store.get_item(i).get_string())
+           for i in range(gallery.store.get_n_items()))
+gallery.search.set_text('no-such-wallpaper-98765')
+settle(.3)
+assert gallery.filtered.get_n_items() == 0 and s.get_string('wallpaper')
+gallery.search.set_text('Nordic')
+settle(.3)
+assert gallery.filtered.get_n_items() == 1
+pick(wallpapers.animated_path('nordic-aurora'))
+wait_for(lambda: page.background.live_preview.path == wallpapers.animated_path('nordic-aurora'))
+page.background.video_motion_row.set_active(False)
+settle()
+assert mode_of(s) == 'animated', 'Pausing a video must keep its mode and selection'
+page.background.mode_buttons['picture'].set_active(True)
+wait_for(lambda: mode_of(s) == 'picture' and page.background.live_preview.media is None)
+assert not wallpapers.is_video(s.get_string('wallpaper'))
 print('15 downloaded static wallpapers: installation, gallery and Settings selection passed', flush=True)
 
 # Exercise the same asynchronous import used by the file picker: originals
@@ -169,19 +209,51 @@ for key, _label in test_wallpapers:
     previous = page.background.live_preview.media
     s.set_boolean('wallpaper-slideshow', True)
     s.set_string('wallpaper-animation', 'off')
-    page.background.animated_buttons[path].emit('clicked')
+    settle()
+    page.background.mode_buttons['animated'].set_active(True)
+    settle()
+    pick(path)
     wait_for(lambda: page.background.live_preview.path == path and ready(page.background.live_preview))
-    assert mode_of(s) == 'picture' and s.get_string('wallpaper') == path
+    assert mode_of(s) == 'animated' and s.get_string('wallpaper') == path
     assert s.get_string('wallpaper-animation') == 'auto'
-    assert page.background.motion_row.get_selected() == MOTIONS.index('auto')
     assert page.background.video_motion_row.get_visible() and page.background.video_motion_row.get_active()
-    assert not page.background.motion_row.get_visible()
+    assert page.background.picker.get_visible() and page.background.picker.videos
+    assert page.background.mode_buttons['animated'].get_active()
     assert page.background.live_preview.running and not page.background.live_preview._tick
     assert page.background.live_preview.media.get_loop()
     assert page.background.live_preview.media.get_muted()
     if previous is not None:
         assert previous.get_file() is None, 'Previous decoder was not closed'
     print(f'{key}: Settings selection and decoding passed', flush=True)
+
+# Rapid choices while changing playback must not create a decoder per click or
+# starve the GTK loop. One settings burst produces one preview/thumbnail refresh.
+heartbeat = []
+beat = GLib.timeout_add(30, lambda: (heartbeat.append(time.monotonic()), True)[1])
+original_refresh = page.background._refresh
+refreshes = []
+def counted_refresh():
+    refreshes.append(time.monotonic())
+    original_refresh()
+page.background._refresh = counted_refresh
+old_decoders = []
+for _round in range(3):
+    start = len(refreshes)
+    if page.background.live_preview.media is not None:
+        old_decoders.append(page.background.live_preview.media)
+    choices = wallpapers.ANIMATED if _round % 2 == 0 else tuple(reversed(wallpapers.ANIMATED))
+    for key, _label in choices:
+        page.background.choose(wallpapers.animated_path(key))
+    settle(.2)
+    assert len(refreshes) - start == 1, 'One selection burst caused repeated preview refreshes'
+last = wallpapers.animated_path(wallpapers.ANIMATED[-1][0])
+wait_for(lambda: page.background.live_preview.path == last and ready(page.background.live_preview))
+assert len(heartbeat) >= 3, 'GTK stopped responding during rapid wallpaper changes'
+assert all(media is page.background.live_preview.media or media.get_file() is None for media in old_decoders)
+assert sum(thread.name.startswith('wallpaper-thumbnail') for thread in __import__('threading').enumerate()) <= 3
+GLib.source_remove(beat)
+page.background._refresh = original_refresh
+print('81 rapid choices: coalesced refreshes, bounded thumbnail workers and responsive GTK passed', flush=True)
 subprocess.run(['grim', str(OUT / 'settings.png')], check=True)
 window.destroy()
 settle()

@@ -1346,10 +1346,12 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   `aurora-NAME.png`, and Settings gives each a readable name rather than its file name.
 
 #### Animated video wallpapers
-- **What:** Settings → Appearance → Background → **Animated wallpapers** offers the bundled
+- **What:** Settings → Appearance → Background → **Animated wallpaper** offers the bundled
   Full HD and 4K clips: auroras, nature, planets, space and abstract loops. Selecting a
-  thumbnail starts the video on the desktop and in the preview. **Browse Videos…**
-  imports a personal MP4, WebM, M4V or MOV; **Play animation** switches playback off to show its static poster.
+  thumbnail starts the video on the desktop and in the preview. **Static image** shows the included still images directly,
+  in the same inline searchable picker; choosing one leaves it still. Visible type buttons and a short explanation distinguish the modes.
+  **Daylight series** changes pictures at dawn, day, dusk and night. **Load a File…**
+  imports a personal image, MP4, WebM, M4V or MOV; **Play animation** switches playback off to show its static poster.
 - **How:** `shell/livingwallpaper.py` uses GTK's GStreamer media backend for silent,
   continuous playback. Bundled videos use H.264 at 30 fps, retaining 3840×2160 for available 4K sources and 1920×1080 otherwise. Thumbnails
   use PNG posters, so the grid opens only the selected video's decoder. The lock

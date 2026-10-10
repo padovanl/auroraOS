@@ -302,6 +302,37 @@ def test_background_recent_row_and_memory(tmp_path):
     assert b.find_wallpapers([str(tmp_path)]) == sorted(pics)
 
 
+def test_background_gallery_filters_and_finds_linked_install(tmp_path, monkeypatch):
+    from aurora.settingsapp import backgrounds as b
+    target = tmp_path / "artwork"
+    target.mkdir()
+    photo, video, poster = [target / name for name in ("landscape.jpg", "orbit.mp4", "orbit.png")]
+    for path in (photo, video, poster):
+        path.touch()
+    root = tmp_path / "backgrounds"
+    root.mkdir()
+    bundled = root / "aurora"
+    bundled.symlink_to(target, target_is_directory=True)
+    monkeypatch.setattr(b, "WALLPAPER_DIRS", [str(root)])
+    monkeypatch.setattr(b.wallpapers, "BACKGROUNDS", str(bundled))
+    assert b.find_wallpapers([str(root)], videos=False) == [str(bundled / photo.name)]
+    assert b.find_wallpapers([str(root)], videos=True) == [str(bundled / video.name)]
+    # A directory installed without links must not be listed twice either.
+    assert len(b.find_wallpapers([str(target), str(target)])) == 2
+
+
+def test_background_mode_distinguishes_paused_video_from_static_image():
+    from aurora.settingsapp import backgrounds as b
+    fake = FakeSettings(**{"wallpaper-dynamic": False, "wallpaper-slideshow": False,
+                           "wallpaper-daily": "", "wallpaper": "/backgrounds/orbit.mp4",
+                           "wallpaper-animation": "off"})
+    assert b.mode_of(fake) == "animated"
+    fake.values["wallpaper"] = "/backgrounds/landscape.png"
+    assert b.mode_of(fake) == "picture"
+    fake.values["wallpaper-dynamic"] = True
+    assert b.mode_of(fake) == "dynamic"
+
+
 def test_verification_codes_in_notifications():
     from aurora.otp import verification_code as code
     assert code("Bank", "Your verification code is 482913. Don't share it.") == "482913"
