@@ -56,6 +56,10 @@ def find_wallpapers(dirs=None):
 
 
 PHASE_NAMES = {"dawn": N_("Dawn"), "day": N_("Day"), "dusk": N_("Dusk"), "night": N_("Night")}
+# The single pictures, as they are called in Settings and the gallery.
+SCENE_NAMES = {"northern-lights": N_("Northern Lights"), "nebula": N_("Nebula"),
+               "wave": N_("Wave"), "milky-way": N_("Milky Way"),
+               "sunrise": N_("Sunrise"), "ringed-planet": N_("Ringed Planet")}
 
 
 def pretty_name(path):
@@ -65,6 +69,8 @@ def pretty_name(path):
     if len(parts) == 3 and parts[0] == "aurora" and parts[1] in series \
             and parts[2] in PHASE_NAMES:
         return f"{_(series[parts[1]])} · {_(PHASE_NAMES[parts[2]])}"
+    if name.startswith("aurora-") and name[len("aurora-"):] in SCENE_NAMES:
+        return _(SCENE_NAMES[name[len("aurora-"):]])
     return name.replace("-", " ").replace("_", " ")
 
 

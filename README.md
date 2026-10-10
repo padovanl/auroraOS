@@ -1338,6 +1338,13 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   login screen computes the same phase. "Auto" dark style flips the system color scheme
   at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
 
+#### The pictures that come with it
+- **What:** three series of four (Starfall, Veil, Horizon — dawn, day, dusk and night, the
+  ones the dynamic background moves between), and six single pictures: Northern Lights, Wave,
+  Nebula, Milky Way, Sunrise and Ringed Planet. All of them are in
+  `branding/wallpapers/`; the series go to `aurora-SERIES-PHASE.png` and the single ones to
+  `aurora-NAME.png`, and Settings gives each a readable name rather than its file name.
+
 #### A background that moves, and stays a photograph
 - **Alternatives:** a GLSL shader wallpaper, a looping video, a scene drawn from scratch.
 - **Why:** a scene made of lines and gradients looks drawn, whatever is spent on it — that

@@ -78,16 +78,21 @@ translations:
 	$(PYTHON) po/gtklock-catalogs.py po/gtklock.json build/locale
 
 # Three series of four pictures (dawn, day, dusk, night) in
-# branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png.
+# branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png, and the
+# single pictures in branding/wallpapers/scenes/ as aurora-NAME.png.
 wallpapers: build/wallpapers/.stamp
 
 build/wallpapers/.stamp: $(wildcard $(BRANDING)/wallpapers/*/*.png)
 	rm -rf build/wallpapers && mkdir -p build/wallpapers
 	for dir in $(BRANDING)/wallpapers/*/; do \
 		series=$$(basename $$dir); \
+		[ "$$series" = scenes ] && continue; \
 		for picture in $$dir*.png; do \
 			cp $$picture build/wallpapers/aurora-$$series-$$(basename $$picture); \
 		done; \
+	done
+	for picture in $(BRANDING)/wallpapers/scenes/*.png; do \
+		cp $$picture build/wallpapers/aurora-$$(basename $$picture); \
 	done
 	touch $@
 
