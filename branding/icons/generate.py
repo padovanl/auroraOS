@@ -72,6 +72,9 @@ GLYPHS = {
     "document": fill("M40 26h34l16 16v54a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z")
     + fill("M74 26v12a4 4 0 0 0 4 4h12z", "#ffd3cf")
     + stroke("M44 58h32M44 70h32M44 82h20", 5, "#e0463f"),
+    "usbstick": fill("M44 30h40a6 6 0 0 1 6 6v18H38V36a6 6 0 0 1 6-6z", "#cfd6e8")
+    + fill("M38 54h52v38a8 8 0 0 1-8 8H46a8 8 0 0 1-8-8z")
+    + stroke("M64 66v22M54 78l10 10 10-10", 7, "#6a5bd6"),
     "clipboard": fill("M36 32h56a6 6 0 0 1 6 6v58a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V38a6 6 0 0 1 6-6z")
     + fill("M54 22h20a6 6 0 0 1 6 6v8H48v-8a6 6 0 0 1 6-6z", "#cfd6e8")
     + stroke("M44 58h40M44 72h40M44 86h24", 5, "#6a5bd6"),
@@ -227,6 +230,8 @@ APPS = {
     ("goa-panel", "org.gnome.OnlineAccounts", "gnome-online-accounts",
      "org.gnome.OnlineAccounts.OAuth2"): ("#9ec5ff", "#5a78f0", "accounts"),
     ("org.aurora.Clipboard", "edit-paste", "clipboard"): ("#b49cff", "#6c4fd8", "clipboard"),
+    ("org.aurora.UsbWriter", "media-removable", "drive-removable-media-usb"):
+        ("#9ec5ff", "#4a5fd0", "usbstick"),
     ("preferences-system", "org.gnome.Settings", "preferences-desktop", "gnome-control-center",
      "systemsettings"): ("#9aa1b3", "#5b6275", "settings"),
 }

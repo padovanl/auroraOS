@@ -14,4 +14,15 @@
     </defaults>
     <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/aurora-admin</annotate>
   </action>
+  <action id="org.aurora.usb-write">
+    <description>Write an image to a USB stick</description>
+    <message>Authentication is required to write to the stick</message>
+    <icon_name>drive-removable-media-usb</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/aurora-usb-write</annotate>
+  </action>
 </policyconfig>

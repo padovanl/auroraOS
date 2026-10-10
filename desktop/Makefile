@@ -24,7 +24,7 @@ install: protocols translations wallpapers sounds
 	cp -r build/protocols $(LIBDIR)/aurora/protocols
 	install -m 755 $$(find bin -maxdepth 1 -type f) $(BINDIR)/
 	install -d $(DESTDIR)$(PREFIX)/libexec
-	install -m 755 libexec/* $(DESTDIR)$(PREFIX)/libexec/
+	install -m 755 $$(find libexec -maxdepth 1 -type f) $(DESTDIR)$(PREFIX)/libexec/
 	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/wayfire $(DATADIR)/style $(DATADIR)/gtk
 	install -m 644 data/gtk/* $(DATADIR)/gtk/
 	install -m 644 data/labwc/* $(DATADIR)/labwc/

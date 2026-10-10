@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 09:43+0000\n"
+"POT-Creation-Date: 2026-10-10 09:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -430,6 +430,7 @@ msgstr ""
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 #, no-python-format
 msgid "Image"
 msgstr ""
@@ -524,7 +525,7 @@ msgstr ""
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 #, no-python-format
 msgid "Cancel"
 msgstr ""
@@ -2844,7 +2845,7 @@ msgstr ""
 msgid "Off: only the time, the date and the password field"
 msgstr ""
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 #, no-python-format
 msgid "Choose…"
 msgstr ""
@@ -5794,7 +5795,8 @@ msgstr ""
 msgid "{n} items moved to the Trash"
 msgstr ""
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 #, no-python-format
 msgid "Authorization was cancelled"
 msgstr ""
@@ -7052,7 +7054,8 @@ msgid_plural "{n} days left this month"
 msgstr[0] ""
 msgstr[1] ""
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
+#, no-python-format
 msgid "All files"
 msgstr ""
 
@@ -7365,7 +7368,7 @@ msgstr ""
 msgid "Power Off / Log Out"
 msgstr ""
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 #, no-python-format
 msgid "Starting…"
 msgstr ""
@@ -8177,7 +8180,7 @@ msgstr ""
 msgid "yours"
 msgstr ""
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 #, no-python-format
 msgid "Stop"
 msgstr ""
@@ -8195,6 +8198,175 @@ msgstr ""
 #: aurora/taskmanager.py:704
 #, no-python-format
 msgid "Services"
+msgstr ""
+
+#: aurora/usbwriter.py:159
+#, no-python-format
+msgid "The zip file holds more than one file"
+msgstr ""
+
+#: aurora/usbwriter.py:205
+#, no-python-format
+msgid "Stopped. The stick is half written."
+msgstr ""
+
+#: aurora/usbwriter.py:210
+#, no-python-format
+msgid "Stopped before checking finished."
+msgstr ""
+
+#: aurora/usbwriter.py:233
+#, no-python-format, python-brace-format
+msgid "Writing {done} of {total}"
+msgstr ""
+
+#: aurora/usbwriter.py:236
+#, no-python-format, python-brace-format
+msgid "Writing {done}"
+msgstr ""
+
+#: aurora/usbwriter.py:244
+#, no-python-format
+msgid "Finishing the write…"
+msgstr ""
+
+#: aurora/usbwriter.py:250
+#, no-python-format
+msgid "The stick could not be written"
+msgstr ""
+
+#: aurora/usbwriter.py:255
+#, no-python-format, python-brace-format
+msgid "The stick took {landed} of {sent}"
+msgstr ""
+
+#: aurora/usbwriter.py:262
+#, no-python-format
+msgid "Checking the stick…"
+msgstr ""
+
+#: aurora/usbwriter.py:274
+#, no-python-format, python-brace-format
+msgid "Checking {done} of {total}"
+msgstr ""
+
+#: aurora/usbwriter.py:284
+#, no-python-format
+msgid "The stick could not be read back"
+msgstr ""
+
+#: aurora/usbwriter.py:286
+#, no-python-format
+msgid ""
+"The stick does not hold what was written to it. It may be worn out or "
+"counterfeit — try another one."
+msgstr ""
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+#, no-python-format
+msgid "USB Stick Writer"
+msgstr ""
+
+#: aurora/usbwriter.py:301
+#, no-python-format
+msgid "No image chosen"
+msgstr ""
+
+#: aurora/usbwriter.py:302
+#, no-python-format
+msgid "An .iso or .img file, compressed or not"
+msgstr ""
+
+#: aurora/usbwriter.py:311
+#, no-python-format
+msgid "Stick"
+msgstr ""
+
+#: aurora/usbwriter.py:312
+#, no-python-format
+msgid ""
+"Only removable and USB disks are listed. Everything on the one you pick is "
+"erased."
+msgstr ""
+
+#: aurora/usbwriter.py:316
+#, no-python-format
+msgid "Check the stick afterwards"
+msgstr ""
+
+#: aurora/usbwriter.py:317
+#, no-python-format
+msgid "Reads it back and compares it with the image"
+msgstr ""
+
+#: aurora/usbwriter.py:324
+#, no-python-format
+msgid "Write"
+msgstr ""
+
+#: aurora/usbwriter.py:346
+#, no-python-format
+msgid "Look for sticks again"
+msgstr ""
+
+#: aurora/usbwriter.py:364
+#, no-python-format
+msgid "Choose a disk image"
+msgstr ""
+
+#: aurora/usbwriter.py:365
+#, no-python-format
+msgid "Disk images"
+msgstr ""
+
+#: aurora/usbwriter.py:402
+#, no-python-format
+msgid "No stick found"
+msgstr ""
+
+#: aurora/usbwriter.py:403
+#, no-python-format
+msgid "Plug one in, then press the refresh button"
+msgstr ""
+
+#: aurora/usbwriter.py:424
+#, no-python-format, python-brace-format
+msgid "in use at {where}"
+msgstr ""
+
+#: aurora/usbwriter.py:452
+#, no-python-format, python-brace-format
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr ""
+
+#: aurora/usbwriter.py:456
+#, no-python-format, python-brace-format
+msgid "Erase {stick}?"
+msgstr ""
+
+#: aurora/usbwriter.py:457
+#, no-python-format, python-brace-format
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr ""
+
+#: aurora/usbwriter.py:461
+#, no-python-format
+msgid "Erase and Write"
+msgstr ""
+
+#: aurora/usbwriter.py:492
+#, no-python-format
+msgid "Done — the stick is ready"
+msgstr ""
+
+#: aurora/usbwriter.py:494
+#, no-python-format
+msgid "The stick is ready"
+msgstr ""
+
+#: aurora/usbwriter.py:503
+#, no-python-format
+msgid "Stopping…"
 msgstr ""
 
 #: aurora/wallpapers.py:11
@@ -8436,6 +8608,10 @@ msgstr ""
 
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
+msgstr ""
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
 msgstr ""
 
 #: data/applications/org.aurora.Welcome.desktop:3

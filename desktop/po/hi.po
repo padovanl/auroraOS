@@ -339,6 +339,7 @@ msgstr "{n} दिन पहले"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "छवि"
 
@@ -414,7 +415,7 @@ msgstr "कॉपी किया गया सब कुछ — पिन क�
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "रद्द करें"
 
@@ -2380,7 +2381,7 @@ msgstr "मेरा नाम और तस्वीर दिखाएँ"
 msgid "Off: only the time, the date and the password field"
 msgstr "बंद: सिर्फ़ समय, तारीख़ और पासवर्ड"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "चुनें…"
 
@@ -4753,7 +4754,8 @@ msgstr "{n} पुराने डाउनलोड ट्रैश में �
 msgid "{n} items moved to the Trash"
 msgstr "{n} आइटम ट्रैश में भेजे"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "प्राधिकरण रद्द किया गया"
 
@@ -5768,7 +5770,7 @@ msgid_plural "{n} days left this month"
 msgstr[0] "इस महीने {n} दिन बाक़ी"
 msgstr[1] "इस महीने {n} दिन बाक़ी"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "सभी फ़ाइलें"
 
@@ -6032,7 +6034,7 @@ msgstr "लॉक करें"
 msgid "Power Off / Log Out"
 msgstr "बंद करें / लॉग आउट"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "शुरू हो रहा है…"
 
@@ -6697,7 +6699,7 @@ msgstr "सेवाएँ खोजें"
 msgid "yours"
 msgstr "आपका"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "रोकें"
 
@@ -6712,6 +6714,138 @@ msgstr "प्रोसेस"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "सेवाएँ"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "zip फ़ाइल में एक से अधिक फ़ाइलें हैं"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "रोक दिया। स्टिक आधी लिखी है।"
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "जाँच पूरी होने से पहले रोक दिया।"
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "{total} में से {done} लिखा"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "{done} लिखा"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "लिखना पूरा किया जा रहा है…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "स्टिक पर नहीं लिखा जा सका"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "स्टिक ने {sent} में से {landed} लिया"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "स्टिक जाँची जा रही है…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "{total} में से {done} जाँचा"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "स्टिक वापस नहीं पढ़ी जा सकी"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "स्टिक में वह नहीं है जो उस पर लिखा गया। वह घिसी या नकली हो सकती है — दूसरी आज़माएँ।"
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "USB स्टिक राइटर"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "कोई इमेज नहीं चुनी"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr "एक .iso या .img फ़ाइल, संपीड़ित हो या न हो"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "स्टिक"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "केवल हटाने योग्य और USB डिस्क सूचीबद्ध हैं। आप जिसे चुनेंगे उस पर का सब कुछ मिट जाएगा।"
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "बाद में स्टिक जाँचें"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "उसे वापस पढ़कर इमेज से मिलाता है"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "लिखें"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "फिर से स्टिक खोजें"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "डिस्क इमेज चुनें"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "डिस्क इमेज"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "कोई स्टिक नहीं मिली"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "एक लगाएँ, फिर रिफ़्रेश बटन दबाएँ"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "{where} पर उपयोग में"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "इमेज को {needed} चाहिए; स्टिक में {has} है"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "{stick} मिटाएँ?"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "{path} ({size}) पर का सब कुछ {image} से बदल जाएगा। इसे पलटा नहीं जा सकता।"
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "मिटाएँ और लिखें"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "हो गया — स्टिक तैयार है"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "स्टिक तैयार है"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "रोका जा रहा है…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -6928,6 +7062,10 @@ msgstr "अपना Aurora सिस्टम कॉन्फ़िगर क�
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "देखें क्या चल रहा है, टास्क बंद करें और कंप्यूटर का प्रदर्शन देखें"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "डिस्क इमेज को USB स्टिक पर लिखें और जाँचें कि वह सही पहुँची"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"

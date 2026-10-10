@@ -339,6 +339,7 @@ msgstr "{n} дн. назад"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "Изображение"
 
@@ -414,7 +415,7 @@ msgstr "Будет забыто всё скопированное, включа�
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -2390,7 +2391,7 @@ msgstr "Показывать моё имя и изображение"
 msgid "Off: only the time, the date and the password field"
 msgstr "Выкл.: только время, дата и поле пароля"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "Выбрать…"
 
@@ -4768,7 +4769,8 @@ msgstr "Переместить старые загрузки в корзину (
 msgid "{n} items moved to the Trash"
 msgstr "В корзину перемещено: {n}"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "Авторизация отменена"
 
@@ -5793,7 +5795,7 @@ msgstr[0] "до конца месяца {n} день"
 msgstr[1] "до конца месяца {n} дня"
 msgstr[2] "до конца месяца {n} дней"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "Все файлы"
 
@@ -6057,7 +6059,7 @@ msgstr "Заблокировать"
 msgid "Power Off / Log Out"
 msgstr "Выключение / Выход"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "Запуск…"
 
@@ -6723,7 +6725,7 @@ msgstr "Поиск служб"
 msgid "yours"
 msgstr "ваша"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "Остановить"
 
@@ -6738,6 +6740,138 @@ msgstr "Процессы"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "Службы"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "В zip-архиве больше одного файла"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "Остановлено. Флешка записана наполовину."
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "Остановлено до конца проверки."
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "Записано {done} из {total}"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "Записано {done}"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "Завершение записи…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "Не удалось записать флешку"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "Флешка приняла {landed} из {sent}"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "Проверка флешки…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "Проверено {done} из {total}"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "Не удалось считать флешку обратно"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "На флешке не то, что на неё записали. Возможно, она изношена или поддельная — возьмите другую."
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "Запись USB-флешек"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "Образ не выбран"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr "Файл .iso или .img, сжатый или нет"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "Флешка"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "Показаны только съёмные и USB-диски. Всё, что есть на выбранном, будет стёрто."
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "Проверить флешку после записи"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "Считывает её обратно и сравнивает с образом"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "Записать"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "Искать флешки снова"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "Выберите образ диска"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "Образы дисков"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "Флешка не найдена"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "Подключите её и нажмите кнопку обновления"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "используется в {where}"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "Образу нужно {needed}, а на флешке {has}"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "Стереть {stick}?"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "Всё на {path} ({size}) будет заменено образом {image}. Отменить нельзя."
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "Стереть и записать"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "Готово — флешка готова"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "Флешка готова"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "Остановка…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -6954,6 +7088,10 @@ msgstr "Настройка системы Aurora"
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "Что запущено, завершение задач и производительность компьютера"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "Записывает образ диска на USB-флешку и проверяет, что он записался"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"

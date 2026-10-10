@@ -208,6 +208,16 @@ learning was the point. — *Luca Padovan*
   Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
   it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
+- **USB Stick Writer**: a disk image onto a USB stick, like Rufus or Etcher. Compressed
+  downloads (`.gz`, `.xz`, `.bz2`, `.zst`, a `.zip` holding one image) are unpacked while they
+  are written, so a 5 GB download needn't be unpacked first. Only removable and USB disks are
+  offered and the disk the system runs from is never among them — nor, in a live session, the
+  medium it booted from. When the write is done the stick is read back and compared byte for
+  byte with what was sent, which catches the worn-out and counterfeit sticks that are the usual
+  reason a freshly written installer won't boot. The writing itself is done by
+  `/usr/libexec/aurora-usb-write` through pkexec, and that helper makes every one of those
+  checks again on its own side: a program asking for a disk to be overwritten cannot be trusted
+  to have asked the right questions.
 - **Clipboard** (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>): everything you have copied in
   a window — pinned entries first, then the rest newest first, pictures among them, each with
   its age and line count and code in a monospace font. Search, click to copy (the window

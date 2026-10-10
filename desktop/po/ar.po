@@ -339,6 +339,7 @@ msgstr "قبل {n} يوم"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "صورة"
 
@@ -414,7 +415,7 @@ msgstr "سيُنسى كل ما نُسخ، بما في ذلك العناصر ال
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -2420,7 +2421,7 @@ msgstr "إظهار اسمي وصورتي"
 msgid "Off: only the time, the date and the password field"
 msgstr "عند الإيقاف: الوقت والتاريخ وحقل كلمة المرور فقط"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "اختر…"
 
@@ -4813,7 +4814,8 @@ msgstr "نقل {n} من التنزيلات القديمة إلى المهملا�
 msgid "{n} items moved to the Trash"
 msgstr "نُقل {n} عنصر إلى المهملات"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "أُلغي التفويض"
 
@@ -5868,7 +5870,7 @@ msgstr[3] "تبقى {n} يوم هذا الشهر"
 msgstr[4] "تبقى {n} يوم هذا الشهر"
 msgstr[5] "تبقى {n} يوم هذا الشهر"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "كل الملفات"
 
@@ -6132,7 +6134,7 @@ msgstr "قفل"
 msgid "Power Off / Log Out"
 msgstr "إيقاف التشغيل / تسجيل الخروج"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "جارٍ البدء…"
 
@@ -6801,7 +6803,7 @@ msgstr "ابحث في الخدمات"
 msgid "yours"
 msgstr "خاصتك"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "إيقاف"
 
@@ -6816,6 +6818,138 @@ msgstr "العمليات"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "الخدمات"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "ملف zip يحتوي أكثر من ملف واحد"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "أُوقف. القرص مكتوب نصفه."
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "أُوقف قبل انتهاء الفحص."
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "كُتب {done} من {total}"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "كُتب {done}"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "إنهاء الكتابة…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "تعذّرت الكتابة على القرص"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "استقبل القرص {landed} من {sent}"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "يجري فحص القرص…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "فُحص {done} من {total}"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "تعذّرت إعادة قراءة القرص"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "القرص لا يحتوي ما كُتب عليه. قد يكون تالفًا أو مزيفًا — جرّب قرصًا آخر."
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "كاتب أقراص USB"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "لم تُختر صورة"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr "ملف ‎.iso‎ أو ‎.img‎، مضغوط أو غير مضغوط"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "قرص USB"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "تُعرض الأقراص القابلة للإزالة وأقراص USB فقط. كل ما على القرص الذي تختاره سيُمحى."
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "تحقّق من القرص بعد الكتابة"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "يعيد قراءته ويقارنه بالصورة"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "اكتب"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "ابحث عن الأقراص مجددًا"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "اختر صورة قرص"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "صور الأقراص"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "لم يُعثر على قرص USB"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "أدخل واحدًا ثم اضغط زر التحديث"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "مستخدم في {where}"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "تحتاج الصورة {needed}، وسعة القرص {has}"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "محو {stick}؟"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "سيُستبدل كل ما على {path} ‏({size}) بالصورة {image}. لا يمكن التراجع."
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "امحُ واكتب"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "تم — القرص جاهز"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "القرص جاهز"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "يتوقّف…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -7032,6 +7166,10 @@ msgstr "اضبط نظام Aurora"
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "اعرف ما يعمل، وأنهِ المهام، وراقب أداء الحاسوب"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "يكتب صورة قرص على قرص USB ويتحقق من وصولها"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"

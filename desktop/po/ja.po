@@ -339,6 +339,7 @@ msgstr "{n} 日前"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "画像"
 
@@ -414,7 +415,7 @@ msgstr "固定した項目や画像も含め、コピーしたものすべてを
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -2370,7 +2371,7 @@ msgstr "名前と画像を表示"
 msgid "Off: only the time, the date and the password field"
 msgstr "オフ：時刻、日付、パスワード欄のみ"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "選択…"
 
@@ -4738,7 +4739,8 @@ msgstr "古いダウンロード {n} 件をゴミ箱に移しますか?"
 msgid "{n} items moved to the Trash"
 msgstr "{n} 項目をゴミ箱に移しました"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "認証がキャンセルされました"
 
@@ -5743,7 +5745,7 @@ msgid "{n} day left this month"
 msgid_plural "{n} days left this month"
 msgstr[0] "今月の残り {n} 日"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "すべてのファイル"
 
@@ -6007,7 +6009,7 @@ msgstr "ロック"
 msgid "Power Off / Log Out"
 msgstr "電源 / ログアウト"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "開始中…"
 
@@ -6671,7 +6673,7 @@ msgstr "サービスを検索"
 msgid "yours"
 msgstr "あなたの"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "停止"
 
@@ -6686,6 +6688,138 @@ msgstr "プロセス"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "サービス"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "zip ファイルに複数のファイルが入っています"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "中止しました。USB メモリは途中まで書かれています。"
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "確認が終わる前に中止しました。"
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "{total} 中 {done} を書き込み"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "{done} を書き込み"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "書き込みを仕上げています…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "USB メモリに書き込めませんでした"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "USB メモリは {sent} 中 {landed} を受け取りました"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "USB メモリを確認しています…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "{total} 中 {done} を確認"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "USB メモリを読み戻せませんでした"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "USB メモリの中身が書き込んだ内容と違います。劣化品か偽物かもしれません。別のものを試してください。"
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "USB メモリ書き込み"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "イメージが選ばれていません"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr ".iso または .img ファイル（圧縮されていても構いません）"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "USB メモリ"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "一覧に出るのはリムーバブルと USB のディスクだけです。選んだものの中身はすべて消えます。"
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "書き込み後にチェックする"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "読み戻してイメージと比べます"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "書き込む"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "USB メモリを探しなおす"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "ディスクイメージを選ぶ"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "ディスクイメージ"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "USB メモリが見つかりません"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "差し込んでから更新ボタンを押してください"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "{where} で使用中"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "イメージには {needed} 必要ですが、USB メモリは {has} です"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "{stick} を消去しますか？"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "{path}（{size}）の中身はすべて {image} に置き換わります。取り消せません。"
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "消去して書き込む"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "完了 — USB メモリの準備ができました"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "USB メモリの準備ができました"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "中止中…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -6902,6 +7036,10 @@ msgstr "Aurora システムを設定"
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "実行中のものを確認し、タスクを終了し、パフォーマンスを監視"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "ディスクイメージを USB メモリに書き込み、正しく書けたか確認します"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"

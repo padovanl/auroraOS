@@ -339,6 +339,7 @@ msgstr "hace {n} días"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "Imagen"
 
@@ -414,7 +415,7 @@ msgstr "Se olvida todo lo copiado, incluidas las entradas fijadas y las imágene
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -2380,7 +2381,7 @@ msgstr "Mostrar mi nombre e imagen"
 msgid "Off: only the time, the date and the password field"
 msgstr "Desactivado: solo la hora, la fecha y la contraseña"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "Elegir…"
 
@@ -4753,7 +4754,8 @@ msgstr "¿Mover {n} descargas antiguas a la papelera?"
 msgid "{n} items moved to the Trash"
 msgstr "{n} elementos movidos a la papelera"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "Se canceló la autorización"
 
@@ -5768,7 +5770,7 @@ msgid_plural "{n} days left this month"
 msgstr[0] "queda {n} día este mes"
 msgstr[1] "quedan {n} días este mes"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "Todos los archivos"
 
@@ -6032,7 +6034,7 @@ msgstr "Bloquear"
 msgid "Power Off / Log Out"
 msgstr "Apagar / Cerrar sesión"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "Iniciando…"
 
@@ -6697,7 +6699,7 @@ msgstr "Buscar servicios"
 msgid "yours"
 msgstr "tuyo"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "Detener"
 
@@ -6712,6 +6714,138 @@ msgstr "Procesos"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "Servicios"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "El archivo zip contiene más de un archivo"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "Detenido. La memoria está escrita a medias."
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "Detenido antes de terminar la comprobación."
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "Escrito {done} de {total}"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "Escrito {done}"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "Terminando la escritura…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "No se ha podido escribir la memoria"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "La memoria ha recibido {landed} de {sent}"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "Comprobando la memoria…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "Comprobado {done} de {total}"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "No se ha podido volver a leer la memoria"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "La memoria no contiene lo que se le escribió. Puede estar gastada o ser falsa: prueba con otra."
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "Grabador de memorias USB"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "Ninguna imagen elegida"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr "Un archivo .iso o .img, comprimido o no"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "Memoria"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "Solo se listan discos extraíbles y USB. Se borra todo lo que haya en el que elijas."
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "Comprobar la memoria al terminar"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "La vuelve a leer y la compara con la imagen"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "Escribir"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "Buscar memorias otra vez"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "Elige una imagen de disco"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "Imágenes de disco"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "No se ha encontrado ninguna memoria"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "Conecta una y pulsa el botón de actualizar"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "en uso en {where}"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "La imagen necesita {needed}; la memoria admite {has}"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "¿Borrar {stick}?"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "Todo lo que hay en {path} ({size}) se sustituye por {image}. No se puede deshacer."
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "Borrar y escribir"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "Listo: la memoria está preparada"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "La memoria está preparada"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "Deteniendo…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -6928,6 +7062,10 @@ msgstr "Configura tu sistema Aurora"
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "Mira qué se está ejecutando, finaliza tareas y vigila el rendimiento"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "Escribe una imagen de disco en una memoria USB y comprueba que ha llegado"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"

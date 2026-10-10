@@ -252,6 +252,33 @@ on this computer; passwords copied from password managers are never recorded. Th
 <kbd>Esc</kbd> closes; <em>Open</em> opens the file in its app. From a terminal:
 <code>aurora-quicklook FILE</code>.</p>
 
+<!-- page: usb-writer | USB Stick Writer | Writing a disk image to a USB stick, and checking that it arrived -->
+<p><strong>USB Stick Writer</strong> (Launchpad, or right-click an image in Files →
+<em>Open With</em>) puts a disk image on a USB stick — an Aurora ISO to install from, or any
+other system's.</p>
+<ol>
+  <li><strong>Choose the image</strong>: an <span class="path">.iso</span> or
+  <span class="path">.img</span>. Compressed downloads work as they are
+  (<span class="path">.gz</span>, <span class="path">.xz</span>, <span class="path">.bz2</span>,
+  <span class="path">.zst</span>, and a <span class="path">.zip</span> holding a single image):
+  they are unpacked while they are written, so there is no need to unpack a five-gigabyte
+  download first.</li>
+  <li><strong>Choose the stick.</strong> Only removable and USB disks are listed, and the disk
+  this system is running from is never among them — nor, on a live session, the stick you
+  booted from. A disk that is mounted says where, and is unmounted for you.</li>
+  <li><strong>Erase and Write.</strong> The dialog names the stick, its size and the image;
+  everything on the stick is replaced.</li>
+</ol>
+<p><em>Check the stick afterwards</em> (on by default) reads the stick back when the write is
+done and compares it with the image, byte for byte. It is worth the extra minute: a stick that
+quietly drops writes is the usual reason a freshly made installer won't boot, and a counterfeit
+stick that claims more space than it has is caught here rather than halfway through an
+installation.</p>
+<p>Writing asks for your password, because overwriting a disk needs it. The checks above are
+made again by the part that runs with those privileges
+(<span class="path">/usr/libexec/aurora-usb-write</span>), so a mistake or a misbehaving program
+cannot talk it into writing over the system's own disk.</p>
+
 <!-- page: included-apps | Included apps | Every app installed by default -->
 <p>Aurora includes the everyday apps Ubuntu ships (GTK 4 versions where they exist), plus its
 own. Each is checked by Aurora's tests to be installed, visible and able to start.</p>

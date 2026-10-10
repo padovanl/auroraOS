@@ -339,6 +339,7 @@ msgstr "{n} 天前"
 
 #: aurora/clipboardapp.py:114 aurora/clipboardapp.py:163
 #: aurora/shell/search.py:284 aurora/shell/search.py:290
+#: aurora/usbwriter.py:307
 msgid "Image"
 msgstr "图像"
 
@@ -414,7 +415,7 @@ msgstr "所有复制过的内容，包括已固定的条目和图片，都会被
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
 #: aurora/settingsapp/system.py:659 aurora/shell/app.py:647
-#: aurora/shell/desktopicons.py:191
+#: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:460
 msgid "Cancel"
 msgstr "取消"
 
@@ -2370,7 +2371,7 @@ msgstr "显示我的名字和头像"
 msgid "Off: only the time, the date and the password field"
 msgstr "关闭：只显示时间、日期和密码框"
 
-#: aurora/settingsapp/appearance.py:248
+#: aurora/settingsapp/appearance.py:248 aurora/usbwriter.py:303
 msgid "Choose…"
 msgstr "选择…"
 
@@ -4738,7 +4739,8 @@ msgstr "将 {n} 个旧下载移到回收站？"
 msgid "{n} items moved to the Trash"
 msgstr "已将 {n} 项移到回收站"
 
-#: aurora/settingsapp/system.py:31
+#: aurora/settingsapp/system.py:31 aurora/usbwriter.py:247
+#: aurora/usbwriter.py:281
 msgid "Authorization was cancelled"
 msgstr "授权已取消"
 
@@ -5743,7 +5745,7 @@ msgid "{n} day left this month"
 msgid_plural "{n} days left this month"
 msgstr[0] "本月还剩 {n} 天"
 
-#: aurora/shell/morewidgets.py:406
+#: aurora/shell/morewidgets.py:406 aurora/usbwriter.py:370
 msgid "All files"
 msgstr "所有文件"
 
@@ -6007,7 +6009,7 @@ msgstr "锁定"
 msgid "Power Off / Log Out"
 msgstr "关机 / 注销"
 
-#: aurora/shell/quicksettings.py:331
+#: aurora/shell/quicksettings.py:331 aurora/usbwriter.py:470
 msgid "Starting…"
 msgstr "正在启动…"
 
@@ -6671,7 +6673,7 @@ msgstr "搜索服务"
 msgid "yours"
 msgstr "你的"
 
-#: aurora/taskmanager.py:648
+#: aurora/taskmanager.py:648 aurora/usbwriter.py:328
 msgid "Stop"
 msgstr "停止"
 
@@ -6686,6 +6688,138 @@ msgstr "进程"
 #: aurora/taskmanager.py:704
 msgid "Services"
 msgstr "服务"
+
+#: aurora/usbwriter.py:159
+msgid "The zip file holds more than one file"
+msgstr "该 zip 文件中不止一个文件"
+
+#: aurora/usbwriter.py:205
+msgid "Stopped. The stick is half written."
+msgstr "已停止。U 盘只写了一半。"
+
+#: aurora/usbwriter.py:210
+msgid "Stopped before checking finished."
+msgstr "检查完成前已停止。"
+
+#: aurora/usbwriter.py:233
+msgid "Writing {done} of {total}"
+msgstr "已写入 {done}／{total}"
+
+#: aurora/usbwriter.py:236
+msgid "Writing {done}"
+msgstr "已写入 {done}"
+
+#: aurora/usbwriter.py:244
+msgid "Finishing the write…"
+msgstr "正在完成写入…"
+
+#: aurora/usbwriter.py:250
+msgid "The stick could not be written"
+msgstr "无法写入 U 盘"
+
+#: aurora/usbwriter.py:255
+msgid "The stick took {landed} of {sent}"
+msgstr "U 盘只接收了 {sent} 中的 {landed}"
+
+#: aurora/usbwriter.py:262
+msgid "Checking the stick…"
+msgstr "正在检查 U 盘…"
+
+#: aurora/usbwriter.py:274
+msgid "Checking {done} of {total}"
+msgstr "已检查 {done}／{total}"
+
+#: aurora/usbwriter.py:284
+msgid "The stick could not be read back"
+msgstr "无法读回 U 盘"
+
+#: aurora/usbwriter.py:286
+msgid "The stick does not hold what was written to it. It may be worn out or counterfeit — try another one."
+msgstr "U 盘里的内容与写入的不一致。它可能已经损耗或是假货——换一个试试。"
+
+#: aurora/usbwriter.py:294 data/applications/org.aurora.UsbWriter.desktop:2
+msgid "USB Stick Writer"
+msgstr "U 盘写入器"
+
+#: aurora/usbwriter.py:301
+msgid "No image chosen"
+msgstr "未选择映像"
+
+#: aurora/usbwriter.py:302
+msgid "An .iso or .img file, compressed or not"
+msgstr ".iso 或 .img 文件，压缩与否都可以"
+
+#: aurora/usbwriter.py:311
+msgid "Stick"
+msgstr "U 盘"
+
+#: aurora/usbwriter.py:312
+msgid "Only removable and USB disks are listed. Everything on the one you pick is erased."
+msgstr "只列出可移动磁盘和 USB 磁盘。你选中的那个上面的所有内容都会被抹掉。"
+
+#: aurora/usbwriter.py:316
+msgid "Check the stick afterwards"
+msgstr "写完后检查 U 盘"
+
+#: aurora/usbwriter.py:317
+msgid "Reads it back and compares it with the image"
+msgstr "读回内容并与映像比对"
+
+#: aurora/usbwriter.py:324
+msgid "Write"
+msgstr "写入"
+
+#: aurora/usbwriter.py:346
+msgid "Look for sticks again"
+msgstr "重新查找 U 盘"
+
+#: aurora/usbwriter.py:364
+msgid "Choose a disk image"
+msgstr "选择磁盘映像"
+
+#: aurora/usbwriter.py:365
+msgid "Disk images"
+msgstr "磁盘映像"
+
+#: aurora/usbwriter.py:402
+msgid "No stick found"
+msgstr "未找到 U 盘"
+
+#: aurora/usbwriter.py:403
+msgid "Plug one in, then press the refresh button"
+msgstr "插入一个，然后按刷新按钮"
+
+#: aurora/usbwriter.py:424
+msgid "in use at {where}"
+msgstr "正在 {where} 使用"
+
+#: aurora/usbwriter.py:452
+msgid "The image needs {needed}; the stick holds {has}"
+msgstr "映像需要 {needed}，而 U 盘只有 {has}"
+
+#: aurora/usbwriter.py:456
+msgid "Erase {stick}?"
+msgstr "要抹掉 {stick} 吗？"
+
+#: aurora/usbwriter.py:457
+msgid "Everything on {path} ({size}) is replaced by {image}. There is no undo."
+msgstr "{path}（{size}）上的所有内容都会被 {image} 取代。无法撤销。"
+
+#: aurora/usbwriter.py:461
+msgid "Erase and Write"
+msgstr "抹掉并写入"
+
+#: aurora/usbwriter.py:492
+msgid "Done — the stick is ready"
+msgstr "完成——U 盘已就绪"
+
+#: aurora/usbwriter.py:494
+msgid "The stick is ready"
+msgstr "U 盘已就绪"
+
+#: aurora/usbwriter.py:503
+msgid "Stopping…"
+msgstr "正在停止…"
 
 #: aurora/wallpapers.py:11
 msgid "Starfall"
@@ -6902,6 +7036,10 @@ msgstr "配置你的 Aurora 系统"
 #: data/applications/org.aurora.TaskManager.desktop:3
 msgid "See what's running, end tasks, and watch the computer's performance"
 msgstr "查看正在运行的程序、结束任务并监视电脑性能"
+
+#: data/applications/org.aurora.UsbWriter.desktop:3
+msgid "Put a disk image on a USB stick, and check that it arrived"
+msgstr "把磁盘映像写入 U 盘，并检查是否写对"
 
 #: data/applications/org.aurora.Welcome.desktop:3
 msgid "Get started with Aurora OS"
