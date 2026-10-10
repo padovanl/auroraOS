@@ -82,9 +82,14 @@ def convert(md):
                     rows.append(cells)
                 i += 1
             head, body = rows[0], rows[1:]
+            # Each cell keeps its column's name: on a phone the rows are
+            # stacked into cards, with every value under its own heading.
+            labels = [re.sub(r"<[^>]+>", "", inline(c)).replace('"', "&quot;") for c in head]
             out.append('<div class="table-wrap"><table><thead><tr>' +
                        "".join(f"<th>{inline(c)}</th>" for c in head) + "</tr></thead><tbody>" +
-                       "".join("<tr>" + "".join(f"<td>{inline(c)}</td>" for c in r) + "</tr>"
+                       "".join("<tr>" + "".join(
+                           f'<td data-label="{label}">{inline(c)}</td>'
+                           for label, c in zip(labels + [""] * len(r), r)) + "</tr>"
                                for r in body) + "</tbody></table></div>")
             continue
         m = re.match(r"^(\s*)([-*]|\d+\.)\s+(.*)", line)

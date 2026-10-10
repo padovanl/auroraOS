@@ -50,8 +50,14 @@ def read(*parts):
 
 
 def table(headers, rows, cls=""):
+    """A table whose cells remember their column: on a phone the rows are
+    stacked into cards and each value is shown under its own heading."""
     head = "".join(f"<th>{h}</th>" for h in headers)
-    body = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in row) + "</tr>" for row in rows)
+    body = ""
+    for row in rows:
+        cells = "".join(f'<td data-label="{esc(plain(str(h)))}">{c}</td>'
+                        for h, c in zip(list(headers) + [""] * len(row), row))
+        body += f"<tr>{cells}</tr>"
     return f'<div class="table-wrap"><table class="{cls}"><thead><tr>{head}</tr></thead>' \
            f"<tbody>{body}</tbody></table></div>"
 
