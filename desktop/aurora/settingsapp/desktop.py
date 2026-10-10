@@ -181,6 +181,7 @@ class Desktop(Page):
         self._scale(dock, _("Icon size"), "dock-icon-size", 24, 80, 2)
         self._switch(dock, _("Magnify icons on hover"), "dock-magnification")
         self._switch(dock, _("Automatically hide"), "dock-autohide")
+        self._switch(dock, _("Show open apps"), "dock-running-apps")
         self._switch(dock, _("Show Trash"), "dock-show-trash")
 
         win = self.group(_("Windows"))

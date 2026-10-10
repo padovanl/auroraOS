@@ -42,10 +42,11 @@ def dock_settings():
     s = settings.get()
     if s is None:
         return {"position": "bottom", "style": "floating", "size": 48, "magnify": True,
-                "autohide": False, "trash": True}
+                "autohide": False, "trash": True, "running": True}
     return {"position": s.get_string("dock-position"), "style": s.get_string("dock-style"),
             "size": s.get_int("dock-icon-size"), "magnify": s.get_boolean("dock-magnification"),
-            "autohide": s.get_boolean("dock-autohide"), "trash": s.get_boolean("dock-show-trash")}
+            "autohide": s.get_boolean("dock-autohide"), "trash": s.get_boolean("dock-show-trash"),
+            "running": s.get_boolean("dock-running-apps")}
 
 
 class DockItem(Gtk.Button):
@@ -350,6 +351,9 @@ class Dock(LayerWindow):
         self.magnify = cfg["magnify"] and self.floating
         self.autohide = cfg["autohide"]
         self.show_trash = cfg["trash"]
+        # Off: only pinned apps, and the top bar's window buttons are the one
+        # list of what is open (Settings → Desktop & Dock → Dock).
+        self.show_running = cfg["running"]
         self.popover_side = {"bottom": Gtk.PositionType.TOP, "left": Gtk.PositionType.RIGHT,
                              "right": Gtk.PositionType.LEFT}[self.position]
 
@@ -545,6 +549,8 @@ class Dock(LayerWindow):
             app = apps.find_app(t.app_id)
             key = app.get_id() if app else (t.app_id or "unknown")
             if key not in entries:
+                if not self.show_running:
+                    continue        # a window of an app that isn't pinned
                 entries[key] = (app, False, [])
                 order.append(key)
             entries[key][2].append(t)

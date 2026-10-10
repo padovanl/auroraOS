@@ -366,20 +366,27 @@ class Launcher(LayerWindow):
         self.present()
         self.entry.grab_focus()
         # After the launcher is on screen: whatever maps later lands on top.
-        GLib.timeout_add(120, lambda: (self._dock_on_top(self.get_visible()), False)[1])
+        GLib.timeout_add(120, lambda: (self._chrome_on_top(self.get_visible()), False)[1])
 
     def hide_launcher(self):
         self.set_visible(False)
-        self._dock_on_top(False)
+        self._chrome_on_top(False)
 
-    def _dock_on_top(self, on):
-        """Launchpad covers the screen in the overlay layer; the dock joins it
-        there (above it: it moves last), so its magnified icons aren't drawn
-        under the launcher's backdrop, and goes back to the top layer after."""
-        docks = getattr(self.shell, "docks", None)
-        if docks is None:
-            return
-        for dock in docks.windows():
-            dock.set_layer(Layer.OVERLAY if on else Layer.TOP)
-            if on:
-                dock.queue_draw()
+    def _chrome_on_top(self, on):
+        """Launchpad covers the screen in the overlay layer; the dock and the
+        top bar join it there (above it: they move last), and go back to the
+        top layer after.
+
+        The dock so its magnified icons aren't drawn under the launcher's
+        backdrop; the top bar because it stays usable while Launchpad is open
+        (its exclusive zone keeps the backdrop below it), and a menu opened
+        from it is a surface of the bar's layer: left in the top layer it
+        opened underneath the launcher, where it could be used but not seen."""
+        for group in ("docks", "panels"):
+            windows = getattr(self.shell, group, None)
+            if windows is None:
+                continue
+            for window in windows.windows():
+                window.set_layer(Layer.OVERLAY if on else Layer.TOP)
+                if on:
+                    window.queue_draw()

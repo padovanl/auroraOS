@@ -165,7 +165,7 @@ class Shell(Adw.Application):
             for key in ("panel-position", "clock-position", "panel-style"):
                 s.connect(f"changed::{key}", lambda *a: self._later(self.panels.rebuild))
             for key in ("dock-position", "dock-style", "dock-icon-size", "dock-magnification",
-                        "dock-autohide", "dock-show-trash"):
+                        "dock-autohide", "dock-show-trash", "dock-running-apps"):
                 s.connect(f"changed::{key}", lambda *a: self._later(self.docks.rebuild))
             s.connect("changed::panel-opacity", lambda *a: self._update_dynamic_css())
             for corner in ("top-left", "top-right", "bottom-left", "bottom-right"):
