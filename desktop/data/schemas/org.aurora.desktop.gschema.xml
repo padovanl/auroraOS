@@ -144,6 +144,14 @@
       <default>[]</default>
       <summary>Background pictures chosen lately, newest first</summary>
     </key>
+    <key name="shell-blur" type="b">
+      <default>false</default>
+      <summary>Blur the picture behind the top bar, the dock and Spotlight</summary>
+      <description>Real frosted glass, drawn by the compositor (Wayfire's blur plugin).
+      Needs a graphics card and the Aurora session: it does nothing in the compatibility
+      session, and on software rendering — a virtual machine — it is either slow or has no
+      effect at all, which is why it starts off.</description>
+    </key>
     <key name="interface-density" type="s">
       <choices><choice value="comfortable"/><choice value="compact"/></choices>
       <default>'comfortable'</default>

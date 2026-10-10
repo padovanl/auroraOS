@@ -102,8 +102,16 @@ def generate():
     iface = settings.interface()
 
     enabled = aurora is None or aurora.get_boolean("window-animations")
-    plugins = config["core"]["plugins"].split()
-    config["core"]["plugins"] = " ".join(p for p in plugins if enabled or p != "animate")
+    plugins = [p for p in config["core"]["plugins"].split() if enabled or p != "animate"]
+    # Real frosted glass behind the shell's surfaces, when asked for (Settings →
+    # Desktop & Dock → Top Bar → Blur behind). "all" because the top bar and the
+    # dock are layer-shell views, which no narrower rule names.
+    if aurora is not None and aurora.get_boolean("shell-blur"):
+        plugins.append("blur")
+        config["blur"] = {"method": "kawase", "blur_by_default": "all",
+                          "kawase_iterations": "2", "kawase_offset": "2",
+                          "saturation": "1.1"}
+    config["core"]["plugins"] = " ".join(plugins)
     try:
         count = max(1, min(9, int(root.find("desktops").get("number", "4"))))
     except (AttributeError, ValueError):

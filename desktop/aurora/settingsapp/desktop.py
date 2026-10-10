@@ -52,7 +52,8 @@ PRESETS = {
     },
 }
 
-LOOK_KEYS = {"window-buttons", "window-button-style", "window-corner-radius", "window-gaps"}
+LOOK_KEYS = {"window-buttons", "window-button-style", "window-corner-radius", "window-gaps",
+             "shell-blur"}     # the compositor's configuration is written again
 
 
 class DesktopProfiles(Page):
@@ -158,6 +159,8 @@ class Desktop(Page):
                     [("right", _("Right")), ("center", _("Center"))])
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
         self._switch(bar, _("Tint with the accent color"), "chrome-tint")
+        self._switch(bar, _("Blur behind"), "shell-blur",
+                     _("Needs a graphics card and the Aurora session"))
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
         self._switch(bar, _("Show Desktop button"), "show-desktop-button")
@@ -243,11 +246,11 @@ class Desktop(Page):
                         on_change=changed)
         group.add(row)
 
-    def _switch(self, group, title, key):
+    def _switch(self, group, title, key, subtitle=None):
         def changed(v):
             self.s.set_boolean(key, v)
             self._changed(key)
-        group.add(switch_row(title, self.s.get_boolean(key), changed))
+        group.add(switch_row(title, self.s.get_boolean(key), changed, subtitle))
 
     def _scale(self, group, title, key, lo, hi, step, double=False):
         row = Adw.ActionRow(title=title)

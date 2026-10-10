@@ -177,6 +177,8 @@ class Shell(Adw.Application):
                       lambda *a: self._later(self._accent_switched))
             for key in ("chrome-tint", "reduce-transparency"):
                 s.connect(f"changed::{key}", lambda *a: self._update_dynamic_css())
+            # Blur is the compositor's: its configuration has to be written again.
+            s.connect("changed::shell-blur", lambda *a: self._later(self._reblur))
             # The bar is a different height: it has to be built again.
             s.connect("changed::interface-density",
                       lambda *a: self._later(self._redensify))
@@ -275,6 +277,11 @@ class Shell(Adw.Application):
         look.apply()
         self._load_css()
         self._update_dynamic_css()
+
+    @staticmethod
+    def _reblur():
+        from aurora import look
+        look.apply()
 
     def _redensify(self):
         """Comfortable or compact: the stylesheet and the bar's own height."""

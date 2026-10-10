@@ -1475,6 +1475,11 @@ set up a feature, and every place it appears has its own switch.
   down further than blues), so no picture can produce an accent you can't read. It follows
   the dynamic background through the day — blue at noon, rose at dusk — and a picture with
   no real color leaves the chosen accent in place.
+- **Blur behind** (Settings → Desktop & Dock → Top Bar, off by default) hands the job to
+  Wayfire's `blur` plugin, which blurs what is behind the shell's surfaces for real. It
+  needs a GPU and the Aurora session; under the software rendering Aurora falls back to
+  in virtual machines it is slow or has no visible effect, so the glass below is still
+  what most installations see.
 - **Glass without a blur:** nothing blurs what is behind a surface — that needs the GPU, and
   Aurora runs on software rendering in virtual machines. So the shell's glass is graded by
   what can end up underneath: the top bar and the dock own their strip of screen and keep
