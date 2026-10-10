@@ -1473,7 +1473,12 @@ set up a feature, and every place it appears has its own switch.
   under them reads straight through their text. The Control Center used to show the desktop's
   clock and calendar widgets through its own cards.
 - **Animations:** Wayfire's `animate` plugin handles application windows, including
-  minimize and restore. GTK and Files retain their own content transitions
+  minimize and restore. The shell adds the small motions a desktop is expected to have
+  in 2026 and nothing more: menus and popovers grow from the edge they hang off,
+  notifications slide in from the corner, the volume and brightness indicators rise,
+  a dock icon bounces while its app starts and gives under a click, tiles and window
+  cards lift under the pointer. All of it is CSS, so GTK drops every bit of it when
+  animations are turned off. GTK and Files retain their own content transitions
   (`gtk4-animations.css`). The Window animations switch controls both layers.
 - **Rendering in virtual machines:** labwc uses wlroots' **pixman** renderer and GTK's
   **cairo** renderer without a GPU. Wayfire 0.9 requires GLES, so Aurora uses Mesa's

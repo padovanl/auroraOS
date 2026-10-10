@@ -76,6 +76,8 @@ menubutton.panel-button > button:hover {
   background-image: linear-gradient(to bottom, alpha(#ffffff, 0.13), alpha(#ffffff, 0.06));
   box-shadow: inset 0 1px alpha(#ffffff, 0.08);
 }
+button.panel-button:active image { transform: scale(0.92); }
+button.panel-button image { transition: transform 90ms ease-out; }
 button.panel-button:active,
 button.panel-button:checked,
 menubutton.panel-button > button:active,
@@ -310,12 +312,38 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 }
 
 .dock-item:hover { background: none; }
+/* A press gives a little, like a key. */
+.dock-item:active image { transform: scale(0.90); }
+.dock-item image { transition: transform 90ms ease-out; }
 .dock-item.dock-drop-target { background-color: alpha(@aurora_violet, 0.28); border-radius: 12px; }
 .aurora-dock.dock-panel .dock-item:hover { background-color: @shell_hover; }
 /* Magnification turned off: nothing moves under the pointer, so the icon it
    rests on is lit instead (a floating dock had no hover mark at all). */
 .aurora-dock.dock-still .dock-item:hover { background-color: @shell_hover; }
-.dock-item.launching image { opacity: 0.55; }
+/* Starting: the icon bounces once a second until the window is there, the
+   way a dock has said "working on it" since forever. */
+@keyframes dock-bounce {
+  0%, 60%, 100% { transform: none; }
+  30% { transform: translateY(-9px); }
+  45% { transform: translateY(-3px); }
+}
+.dock-item.launching image {
+  opacity: 0.75;
+  animation: dock-bounce 1s ease-in-out infinite;
+}
+.aurora-dock.dock-left .dock-item.launching image,
+.aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side; }
+@keyframes dock-bounce-side {
+  0%, 60%, 100% { transform: none; }
+  30% { transform: translateX(9px); }
+  45% { transform: translateX(3px); }
+}
+.aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side-left; }
+@keyframes dock-bounce-side-left {
+  0%, 60%, 100% { transform: none; }
+  30% { transform: translateX(-9px); }
+  45% { transform: translateX(-3px); }
+}
 .dock-launchpad image { color: @shell_fg; }
 
 /* One mark per open window: a dot, and a short bar in the accent color for
@@ -405,8 +433,10 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   color: @shell_fg;
 }
 
+.launcher-tile { transition: background-color 120ms ease-out, transform 120ms ease-out; }
 .launcher-tile:hover,
-.launcher-tile:focus { background-color: @shell_hover; }
+.launcher-tile:focus { background-color: @shell_hover; transform: translateY(-2px); }
+.launcher-tile:active { transform: scale(0.97); }
 
 .launcher-results {
   background: transparent;
@@ -438,6 +468,15 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   color: @shell_fg;
 }
 
+/* It arrives from the edge instead of appearing there. */
+@keyframes notification-in {
+  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.aurora-notifications .notification {
+  animation: notification-in 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
 .notification.critical { border-color: @aurora_rose; }
 
 .notification-history .notification {
@@ -448,7 +487,12 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 
 /* ---- OSD ---- */
 
+@keyframes osd-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
 .aurora-osd .osd-box {
+  animation: osd-in 160ms cubic-bezier(0.2, 0.9, 0.3, 1);
   background-color: @shell_bg;
   border: 1px solid @shell_border;
   border-radius: 999px;
@@ -508,6 +552,8 @@ window.aurora-overview { background: rgba(0, 0, 0, 0.3); }
 .overview-card:hover, .overview-card:selected, .overview-card:focus {
   background-color: rgba(60, 50, 90, 0.82);
   border-color: alpha(@accent_color, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 }
 .overview-card.current { border-color: alpha(@accent_color, 0.55); }
 .overview-card.minimized { opacity: 0.6; }
