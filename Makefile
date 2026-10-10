@@ -13,6 +13,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
+	test-newfeatures \
 	test-shortcut-edges test-files-shortcuts \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
@@ -103,6 +104,11 @@ test-boot:
 # the result: desktop icons, installer, windows, menus, Settings (~5 min).
 test-interact:
 	python3 tests/interact/scenarios.py $(ISO) --out work/interact-test
+
+# This release's new work, on the real system: the icon styles, Launchpad's
+# pages and folders, the moving background, window previews, the new apps.
+test-newfeatures:
+	python3 tests/interact/newfeatures.py $(ISO) --out work/newfeatures
 
 # Drives the system-wide combinations listed in the keyboard-shortcuts manual.
 test-shortcuts:

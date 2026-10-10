@@ -6,8 +6,8 @@ boot screen's flat background. GitHub shows the README on white or on dark
 depending on the reader, and a square of near-black around the logo looks like
 a hole in the page. This keys that background out: the animation is rebuilt as
 an APNG (GIF has no soft transparency, and the logo's glow needs it), where
-each pixel's alpha is how far it stands from the background and its color is
-what it would be over nothing.
+each pixel's alpha is how much light there is and its colour is that light's
+own colour, so the glow fades to nothing on a page of any colour.
 
 Usage: tools/boot-animation.py [--check]
 """
@@ -15,50 +15,68 @@ Usage: tools/boot-animation.py [--check]
 import os
 import sys
 
-from PIL import Image, ImageSequence
+from PIL import Image, ImageFilter, ImageSequence
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCE = os.path.join(ROOT, "docs", "aurora-boot.gif")
 TARGET = os.path.join(ROOT, "docs", "aurora-boot.png")
 HEIGHT = 160        # the README shows it about this big
-ALPHA_STEP = 8      # steps of the glow's transparency: fewer compress better
-KEEP = 4            # one frame in four: 120 ms each, and a file no heavier
-                    # than the GIF it replaces
+KEEP = 5            # one frame in five: 150 ms each, which with the rounding
+                    # below keeps the file about as light as the GIF it replaces
 MARGIN = 4          # breathing room around the drawing
+GLOW_BLUR = 1.6     # dissolves the GIF palette's steps in the glow
+GLOW_FALLOFF = 1.45  # the faint outer half of the halo fades out sooner
+COLOUR_STEP = 16     # the glow's colour, rounded: invisible, and much lighter
 
 
 def keyed(frame, bg):
-    """One frame over nothing: alpha from the distance to the background,
-    color un-mixed from it, so the glow fades out instead of ending in a
-    dark fringe."""
+    """One frame over nothing.
+
+    The boot screen is a glow *added* to a flat near-black, so the honest way
+    out of it is to subtract that background and read what is left as light:
+    how bright the light is becomes the alpha, and the light's own colour —
+    not the light mixed back into the background — becomes the pixel. Adding
+    the background back in, as this used to, left every half-transparent pixel
+    carrying a bit of the boot screen's black, which is the grey veil on a
+    white page and the dirty ring on a dark one.
+    """
     frame = frame.convert("RGB")
     out = Image.new("RGBA", frame.size)
     pixels = []
     for r, g, b in frame.getdata():
-        # How much of this pixel is not the background (the background is
-        # nearly black, so every channel only ever rises above it).
-        alpha = max((r - bg[0]) / max(1, 255 - bg[0]),
-                    (g - bg[1]) / max(1, 255 - bg[1]),
-                    (b - bg[2]) / max(1, 255 - bg[2]), 0.0)
-        if alpha <= 0.004:
+        light = (r - bg[0], g - bg[1], b - bg[2])
+        brightest = max(light)
+        if brightest <= 1:
             pixels.append((0, 0, 0, 0))
             continue
+        # The light at full strength: its colour, with the brightest channel
+        # taken to 255, and how much of it there is kept in the alpha.
+        scale = 255 / brightest
         pixels.append((
-            min(255, round(bg[0] + (r - bg[0]) / alpha)),
-            min(255, round(bg[1] + (g - bg[1]) / alpha)),
-            min(255, round(bg[2] + (b - bg[2]) / alpha)),
-            min(255, round(alpha * 255)),
+            max(0, min(255, round(light[0] * scale))),
+            max(0, min(255, round(light[1] * scale))),
+            max(0, min(255, round(light[2] * scale))),
+            min(255, brightest),
         ))
     out.putdata(pixels)
-    return out
+    return _smooth(out)
 
 
-def _posterize(frame):
-    """Round the glow's transparency to a few steps: invisible to the eye, and
-    it keeps the file as light as the GIF it replaces."""
+def _smooth(frame):
+    """The recording is a 256-colour GIF, so its glow comes in steps and the
+    halo ends on a visible edge. Blurring the transparency alone dissolves
+    those steps without touching the drawing, and bending it down makes the
+    faint outer half fade out sooner, which is what stops the halo reading as
+    a ring on a dark page."""
     r, g, b, a = frame.split()
-    a = a.point(lambda v: min(255, round(v / ALPHA_STEP) * ALPHA_STEP))
-    return Image.merge("RGBA", (r, g, b, a))
+    a = a.filter(ImageFilter.GaussianBlur(GLOW_BLUR))
+    a = a.point(lambda v: round(255 * (v / 255) ** GLOW_FALLOFF))
+    # The colour, unlike the transparency, can be rounded without being seen:
+    # it is a smooth warm gradient, and this is what keeps the file as light
+    # as the GIF it replaces.
+    quantise = (lambda v: min(255, round(v / COLOUR_STEP) * COLOUR_STEP))
+    return Image.merge("RGBA", (r.point(quantise), g.point(quantise),
+                                b.point(quantise), a))
 
 
 def mark_only(box, frames):
@@ -105,8 +123,7 @@ def build():
               for i, f in enumerate(ImageSequence.Iterator(source)) if i % KEEP == 0]
     box = mark_only(union_box(frames, frames[0].size), frames)
     width = round((box[2] - box[0]) * HEIGHT / (box[3] - box[1]))
-    frames = [_posterize(f.crop(box).resize((width, HEIGHT), Image.LANCZOS))
-              for f in frames]
+    frames = [f.crop(box).resize((width, HEIGHT), Image.LANCZOS) for f in frames]
     duration = source.info.get("duration", 30) * KEEP
     frames[0].save(TARGET, save_all=True, append_images=frames[1:], loop=0,
                    duration=duration, disposal=2, optimize=True, default_image=False)

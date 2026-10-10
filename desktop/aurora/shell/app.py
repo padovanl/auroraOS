@@ -187,8 +187,9 @@ class Shell(Adw.Application):
             s.connect("changed::interface-density",
                       lambda *a: self._later(self._redensify))
             s.connect("changed::icon-style", lambda *a: self._later(self._restyle_icons))
-            s.connect("changed::launchpad-layout",
-                      lambda *a: self._later(self.launcher._populate))
+            for key in ("launchpad-layout", "launchpad-folders"):
+                s.connect(f"changed::{key}",
+                          lambda *a: self._later(self.launcher._populate))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None
@@ -565,6 +566,9 @@ class Shell(Adw.Application):
                 self._ai_hint(_("Writing tools are off"))
         elif cmd == "overview":
             self.overview.toggle()
+        elif cmd == "previews":
+            # How many windows there is a picture of (shell/previews.py).
+            print(self.previews.count())
         elif cmd == "osk":
             # aurora-shell osk [show|hide|toggle]
             {"show": self.osk.show_keyboard, "hide": self.osk.hide_keyboard}.get(

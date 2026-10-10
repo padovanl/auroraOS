@@ -435,7 +435,7 @@ class Launcher(LayerWindow):
             flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
                                max_children_per_line=self._columns, min_children_per_line=3,
                                row_spacing=8, column_spacing=12, valign=Gtk.Align.START,
-                               activate_on_single_click=True)
+                               halign=Gtk.Align.CENTER, activate_on_single_click=True)
             flow.connect("child-activated", self._on_tile)
             for item in page:
                 if item[0] == "app":
@@ -450,13 +450,16 @@ class Launcher(LayerWindow):
                                              halign=Gtk.Align.CENTER)
             self.grid_area.append(dots)
 
+    GRID_WIDTH = 900        # what show_launcher() gives the grid to live in
+
     def _per_page(self):
-        """How many tiles fit, from the size of the screen this is drawn on."""
+        """How many tiles fit: the width Launchpad itself has, not the screen's,
+        or the last column is drawn half outside it."""
         monitor = self.shell.get_primary_monitor()
         area = monitor.get_geometry() if monitor is not None else None
-        width = min(760, area.width - 80) if area is not None else 760
+        width = min(self.GRID_WIDTH, area.width - 80) if area is not None else self.GRID_WIDTH
         height = (area.height - 320) if area is not None else 520
-        count, self._columns = appfolders.fits(width, height, 118, 128)
+        count, self._columns = appfolders.fits(width - 40, height, 120, 128)
         return count
 
     def _on_search(self, entry):
@@ -570,7 +573,7 @@ class Launcher(LayerWindow):
             monitor_h = surface_monitor.get_geometry().height if surface_monitor else 900
         self.root.set_margin_top(int(monitor_h * 0.2) if spotlight else 64)
         self.root.set_valign(Gtk.Align.START if spotlight else Gtk.Align.FILL)
-        self.root.set_size_request(680 if spotlight else 900, -1)
+        self.root.set_size_request(680 if spotlight else self.GRID_WIDTH, -1)
         self.stack.set_vexpand(not spotlight)
         self.entry.set_text("")
         if not spotlight:

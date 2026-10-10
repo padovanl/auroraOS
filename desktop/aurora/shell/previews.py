@@ -171,6 +171,11 @@ class Previews:
             old, _ = self._shots.popitem(last=False)
             self._taken.pop(old, None)
 
+    def count(self):
+        """How many windows there is a picture of. Asked by tests, and by
+        anyone wondering whether previews are working at all."""
+        return len(self._shots)
+
     def forget_closed(self, open_keys):
         """Drop the pictures of windows that are gone."""
         for key in [k for k in self._shots if k not in open_keys]:

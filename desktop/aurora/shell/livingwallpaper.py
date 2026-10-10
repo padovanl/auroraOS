@@ -143,9 +143,9 @@ class LivingWallpaper(Gtk.DrawingArea):
                 x0, y0 = points[i]
                 x1, y1 = points[i + 1]
                 cr.curve_to(x0, y0, x0, y0, (x0 + x1) / 2, (y0 + y1) / 2)
-            thickness = height * (0.10 + 0.03 * index)
+            thickness = height * (0.12 + 0.035 * index)
             fade = cairo.LinearGradient(0, 0, 0, height)
-            alpha = 0.16 - index * 0.025
+            alpha = 0.22 - index * 0.03
             # The far end of each band leans towards the accent, the near end
             # towards the green an aurora actually is.
             fade.add_color_stop_rgba(0.0, r, g, b, 0.0)
