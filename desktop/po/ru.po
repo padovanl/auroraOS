@@ -1329,7 +1329,7 @@ msgstr "Не удалось открыть {name}: {error}"
 msgid "{name} is read-only: Windows wasn't fully shut down"
 msgstr "{name} доступен только для чтения: Windows не была полностью выключена"
 
-#: aurora/files/window.py:320 aurora/welcome.py:50
+#: aurora/files/window.py:320 aurora/migrate.py:376 aurora/welcome.py:50
 msgid "Back"
 msgstr "Назад"
 
@@ -1754,6 +1754,172 @@ msgstr "Не удалось запустить сеанс"
 #: aurora/greeter/app.py:299
 msgid "Wrong password. Please try again."
 msgstr "Неверный пароль. Попробуйте ещё раз."
+
+#: aurora/migrate.py:305
+msgid "Copying {folder}…"
+msgstr "Копирование {folder}…"
+
+#: aurora/migrate.py:309
+msgid "Copying {folder}: {file}"
+msgstr "Копирование {folder}: {file}"
+
+#: aurora/migrate.py:321
+msgid "Collecting bookmarks…"
+msgstr "Сбор закладок…"
+
+#: aurora/migrate.py:338
+msgid "{n} bookmarks from {browsers} are in {file} — open it in your browser's bookmark manager to import them."
+msgstr "{n} закладок из {browsers} лежат в {file} — откройте его в менеджере закладок браузера, чтобы импортировать."
+
+#: aurora/migrate.py:354
+msgid "The background Windows was using is in {file}."
+msgstr "Фон, который использовала Windows, лежит в {file}."
+
+#: aurora/migrate.py:364 data/applications/org.aurora.Migrate.desktop:2
+msgid "Migrate from Windows"
+msgstr "Перенос из Windows"
+
+#: aurora/migrate.py:394
+msgid "Windows disks"
+msgstr "Диски Windows"
+
+#: aurora/migrate.py:395
+msgid "Aurora looks for Windows on every disk in this computer, including one plugged in over USB. Nothing on it is written to: it is opened read-only."
+msgstr "Aurora ищет Windows на всех дисках компьютера, в том числе на подключённом по USB. На диск ничего не пишется: он открывается только для чтения."
+
+#: aurora/migrate.py:400
+msgid "Look Again"
+msgstr "Искать снова"
+
+#: aurora/migrate.py:412
+msgid "No Windows disk found"
+msgstr "Диск с Windows не найден"
+
+#: aurora/migrate.py:413
+msgid "If Windows is on another disk, plug it in and press Look Again"
+msgstr "Если Windows на другом диске, подключите его и нажмите «Искать снова»"
+
+#: aurora/migrate.py:419
+msgid "Windows disk"
+msgstr "Диск Windows"
+
+#: aurora/migrate.py:422
+msgid "removable"
+msgstr "съёмный"
+
+#: aurora/migrate.py:430
+msgid "Opening {disk}…"
+msgstr "Открытие {disk}…"
+
+#: aurora/migrate.py:440
+msgid "That disk could not be opened"
+msgstr "Не удалось открыть этот диск"
+
+#: aurora/migrate.py:446
+msgid "There is no Windows installation on that disk"
+msgstr "На этом диске нет установленной Windows"
+
+#: aurora/migrate.py:458
+msgid "Accounts on that Windows"
+msgstr "Учётные записи в этой Windows"
+
+#: aurora/migrate.py:459
+msgid "Pick the one whose files you want here."
+msgstr "Выберите ту, файлы которой нужны здесь."
+
+#: aurora/migrate.py:469
+msgid "No accounts with files on them"
+msgstr "Нет учётных записей с файлами"
+
+#: aurora/migrate.py:485
+msgid "What to bring over"
+msgstr "Что перенести"
+
+#: aurora/migrate.py:487
+msgid "And these"
+msgstr "И это"
+
+#: aurora/migrate.py:488
+msgid "Files that are already here are kept, never replaced."
+msgstr "Файлы, которые уже здесь, сохраняются и никогда не заменяются."
+
+#: aurora/migrate.py:491
+msgid "Bring My Files"
+msgstr "Перенести мои файлы"
+
+#: aurora/migrate.py:505
+msgid "Measuring…"
+msgstr "Измерение…"
+
+#: aurora/migrate.py:512
+msgid "Browser bookmarks"
+msgstr "Закладки браузера"
+
+#: aurora/migrate.py:513
+msgid "Edge, Chrome, Brave and Opera, written to one file any browser can import"
+msgstr "Edge, Chrome, Brave и Opera — в один файл, который импортирует любой браузер"
+
+#: aurora/migrate.py:517
+msgid "Desktop background"
+msgstr "Фон рабочего стола"
+
+#: aurora/migrate.py:518
+msgid "The picture Windows was showing, copied to Pictures"
+msgstr "Картинка, которую показывала Windows, скопирована в «Изображения»"
+
+#: aurora/migrate.py:528
+msgid "Not found in that account"
+msgstr "Не найдено в этой учётной записи"
+
+#: aurora/migrate.py:538 aurora/settingsapp/storage.py:135
+msgid "Empty"
+msgstr "Очистить"
+
+#: aurora/migrate.py:542
+msgid "at least "
+msgstr "не менее "
+
+#: aurora/migrate.py:543
+msgid "{about}{n} files · {size}"
+msgstr "{about}{n} файлов · {size}"
+
+#: aurora/migrate.py:555
+msgid "Bringing your files over"
+msgstr "Переносим ваши файлы"
+
+#: aurora/migrate.py:561 aurora/taskmanager.py:648 aurora/usbwriter.py:443
+msgid "Stop"
+msgstr "Остановить"
+
+#: aurora/migrate.py:564 aurora/settingsapp/fingerprint.py:138
+#: aurora/shell/widgets.py:1355 aurora/shell/widgets.py:1478
+#: aurora/taskmanager.py:668 aurora/welcome.py:142
+msgid "Done"
+msgstr "Готово"
+
+#: aurora/migrate.py:581
+msgid "Nothing is chosen"
+msgstr "Ничего не выбрано"
+
+#: aurora/migrate.py:600
+msgid "Your files are here"
+msgstr "Ваши файлы здесь"
+
+#: aurora/migrate.py:601
+msgid "{n} files copied. {kept} were already here and were left alone."
+msgstr "Скопировано файлов: {n}. {kept} уже были здесь и остались нетронутыми."
+
+#: aurora/migrate.py:605
+msgid "Stopped"
+msgstr "Остановлено"
+
+#: aurora/migrate.py:605
+msgid "Something went wrong"
+msgstr "Что-то пошло не так"
+
+#: aurora/migrate.py:606
+msgid "What had been copied is here."
+msgstr "То, что успело скопироваться, здесь."
 
 #: aurora/mixerui.py:43 aurora/settingsapp/inputs.py:43
 #: aurora/settingsapp/sound.py:111
@@ -3439,11 +3605,6 @@ msgstr "Отпечаток сохранён."
 msgid "Enrollment failed. Please try again."
 msgstr "Регистрация не удалась. Попробуйте ещё раз."
 
-#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1355
-#: aurora/shell/widgets.py:1478 aurora/taskmanager.py:668 aurora/welcome.py:142
-msgid "Done"
-msgstr "Готово"
-
 #: aurora/settingsapp/health.py:40 aurora/settingsapp/storage.py:28
 #: aurora/shell/widgets.py:50 aurora/shell/widgets.py:1340
 msgid "System"
@@ -4686,10 +4847,6 @@ msgstr "Освободите место одним щелчком. Корзин�
 #: aurora/settingsapp/storage.py:134
 msgid "Empty the Trash"
 msgstr "Очистить корзину"
-
-#: aurora/settingsapp/storage.py:135
-msgid "Empty"
-msgstr "Очистить"
 
 #: aurora/settingsapp/storage.py:136
 msgid "Clear temporary files and cache"
@@ -6767,10 +6924,6 @@ msgstr "Поиск служб"
 msgid "yours"
 msgstr "ваша"
 
-#: aurora/taskmanager.py:648 aurora/usbwriter.py:443
-msgid "Stop"
-msgstr "Остановить"
-
 #: aurora/taskmanager.py:668
 msgid "Couldn't change {name}"
 msgstr "Не удалось изменить {name}"
@@ -7214,6 +7367,10 @@ msgstr "Просмотр и упорядочивание файлов"
 #: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "Игры Steam, Epic и GOG, приложения Windows через Bottles, Android через Waydroid"
+
+#: data/applications/org.aurora.Migrate.desktop:3
+msgid "Bring your documents, pictures, music, bookmarks and background over from a Windows installation"
+msgstr "Переносит документы, изображения, музыку, закладки и фон из установленной Windows"
 
 #: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"

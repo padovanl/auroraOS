@@ -265,6 +265,29 @@ on this computer; passwords copied from password managers are never recorded. Th
 <kbd>Esc</kbd> closes; <em>Open</em> opens the file in its app. From a terminal:
 <code>aurora-quicklook FILE</code>.</p>
 
+<!-- page: migrate | Migrate from Windows | Bringing your files, bookmarks and background over from a Windows installation -->
+<p><strong>Migrate from Windows</strong> (Launchpad, or the button on the Welcome screen when
+there is a Windows disk in the computer) brings what you had on Windows over here. It is for
+the computer that now has both, and for the old disk plugged in over USB.</p>
+<ol>
+  <li><strong>The disk.</strong> Every NTFS filesystem in the computer is listed with its name, size and whether it is removable. Choosing one opens it <em>read-only</em> and checks that Windows is really installed on it — an NTFS disk full of files is not a Windows installation, and it says so rather than showing you an empty list of accounts.</li>
+  <li><strong>The account.</strong> The real accounts in <span class="path">C:\Users</span>, without the ones Windows keeps for itself (Public, Default, the Defender sandbox account).</li>
+  <li><strong>What to bring.</strong> Desktop, Documents, Downloads, Pictures, Music and Videos, each with how many files it holds and how much room they take — measured while you read, and giving up with an honest "at least" on a folder too big to count quickly. An empty folder is greyed out.</li>
+  <li><strong>The copying</strong>, folder by folder, into the matching folders here.</li>
+</ol>
+<p>Two things people look for afterwards and rarely find come too:</p>
+<ul>
+  <li><strong>Browser bookmarks</strong> from Edge, Chrome, Brave and Opera, written to <span class="path">~/Documents/Windows bookmarks.html</span> — the format every browser imports (Firefox: Bookmarks → Manage Bookmarks → Import and Backup → Import Bookmarks from HTML).</li>
+  <li><strong>The desktop background</strong> Windows was using, copied to <span class="path">~/Pictures/Windows background.jpg</span>.</li>
+</ul>
+<p>Nothing on the Windows side is ever written to, and nothing here is overwritten: a file that
+already exists is kept as it is and counted as kept at the end. That means the assistant can be
+run twice without harm — the second run brings only what was not there the first time.</p>
+<p>Windows must be shut down properly, not left hibernated or in fast startup: a hibernated
+Windows leaves its disk in a state Linux will only open read-only at best, and the assistant
+says it could not open the disk. Turn off fast startup in Windows, or shut it down with
+<em>Shift</em> held while clicking Shut down.</p>
+
 <!-- page: usb-writer | USB Stick Writer | Writing a disk image to a USB stick, and checking that it arrived -->
 <p><strong>USB Stick Writer</strong> (Launchpad, or right-click an image in Files →
 <em>Open With</em>) puts a disk image on a USB stick — an Aurora ISO to install from, or any

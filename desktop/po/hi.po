@@ -1327,7 +1327,7 @@ msgstr "{name} नहीं खुल सका: {error}"
 msgid "{name} is read-only: Windows wasn't fully shut down"
 msgstr "{name} केवल पढ़ने के लिए है: Windows पूरी तरह बंद नहीं हुआ"
 
-#: aurora/files/window.py:320 aurora/welcome.py:50
+#: aurora/files/window.py:320 aurora/migrate.py:376 aurora/welcome.py:50
 msgid "Back"
 msgstr "पीछे"
 
@@ -1745,6 +1745,172 @@ msgstr "सत्र शुरू नहीं हो सका"
 #: aurora/greeter/app.py:299
 msgid "Wrong password. Please try again."
 msgstr "गलत पासवर्ड। फिर से कोशिश करें।"
+
+#: aurora/migrate.py:305
+msgid "Copying {folder}…"
+msgstr "{folder} कॉपी हो रहा है…"
+
+#: aurora/migrate.py:309
+msgid "Copying {folder}: {file}"
+msgstr "{folder} कॉपी: {file}"
+
+#: aurora/migrate.py:321
+msgid "Collecting bookmarks…"
+msgstr "बुकमार्क इकट्ठे किए जा रहे हैं…"
+
+#: aurora/migrate.py:338
+msgid "{n} bookmarks from {browsers} are in {file} — open it in your browser's bookmark manager to import them."
+msgstr "{browsers} के {n} बुकमार्क {file} में हैं — उन्हें आयात करने के लिए अपने ब्राउज़र के बुकमार्क मैनेजर में खोलें।"
+
+#: aurora/migrate.py:354
+msgid "The background Windows was using is in {file}."
+msgstr "Windows जो बैकग्राउंड उपयोग कर रहा था वह {file} में है।"
+
+#: aurora/migrate.py:364 data/applications/org.aurora.Migrate.desktop:2
+msgid "Migrate from Windows"
+msgstr "Windows से माइग्रेट करें"
+
+#: aurora/migrate.py:394
+msgid "Windows disks"
+msgstr "Windows डिस्क"
+
+#: aurora/migrate.py:395
+msgid "Aurora looks for Windows on every disk in this computer, including one plugged in over USB. Nothing on it is written to: it is opened read-only."
+msgstr "Aurora इस कंप्यूटर की हर डिस्क पर Windows खोजता है, USB से जुड़ी डिस्क पर भी। उस पर कुछ भी नहीं लिखा जाता: वह केवल पढ़ने के लिए खुलती है।"
+
+#: aurora/migrate.py:400
+msgid "Look Again"
+msgstr "फिर से खोजें"
+
+#: aurora/migrate.py:412
+msgid "No Windows disk found"
+msgstr "कोई Windows डिस्क नहीं मिली"
+
+#: aurora/migrate.py:413
+msgid "If Windows is on another disk, plug it in and press Look Again"
+msgstr "अगर Windows किसी दूसरी डिस्क पर है, उसे लगाएँ और “फिर से खोजें” दबाएँ"
+
+#: aurora/migrate.py:419
+msgid "Windows disk"
+msgstr "Windows डिस्क"
+
+#: aurora/migrate.py:422
+msgid "removable"
+msgstr "हटाने योग्य"
+
+#: aurora/migrate.py:430
+msgid "Opening {disk}…"
+msgstr "{disk} खोला जा रहा है…"
+
+#: aurora/migrate.py:440
+msgid "That disk could not be opened"
+msgstr "वह डिस्क नहीं खुल सकी"
+
+#: aurora/migrate.py:446
+msgid "There is no Windows installation on that disk"
+msgstr "उस डिस्क पर Windows इंस्टॉल नहीं है"
+
+#: aurora/migrate.py:458
+msgid "Accounts on that Windows"
+msgstr "उस Windows के खाते"
+
+#: aurora/migrate.py:459
+msgid "Pick the one whose files you want here."
+msgstr "वह खाता चुनें जिसकी फ़ाइलें आप यहाँ चाहते हैं।"
+
+#: aurora/migrate.py:469
+msgid "No accounts with files on them"
+msgstr "फ़ाइलों वाला कोई खाता नहीं"
+
+#: aurora/migrate.py:485
+msgid "What to bring over"
+msgstr "क्या लाना है"
+
+#: aurora/migrate.py:487
+msgid "And these"
+msgstr "और ये भी"
+
+#: aurora/migrate.py:488
+msgid "Files that are already here are kept, never replaced."
+msgstr "जो फ़ाइलें यहाँ पहले से हैं वे वैसी ही रहती हैं, बदली नहीं जातीं।"
+
+#: aurora/migrate.py:491
+msgid "Bring My Files"
+msgstr "मेरी फ़ाइलें लाएँ"
+
+#: aurora/migrate.py:505
+msgid "Measuring…"
+msgstr "माप रहा है…"
+
+#: aurora/migrate.py:512
+msgid "Browser bookmarks"
+msgstr "ब्राउज़र के बुकमार्क"
+
+#: aurora/migrate.py:513
+msgid "Edge, Chrome, Brave and Opera, written to one file any browser can import"
+msgstr "Edge, Chrome, Brave और Opera — एक ही फ़ाइल में, जिसे कोई भी ब्राउज़र आयात कर सकता है"
+
+#: aurora/migrate.py:517
+msgid "Desktop background"
+msgstr "डेस्कटॉप बैकग्राउंड"
+
+#: aurora/migrate.py:518
+msgid "The picture Windows was showing, copied to Pictures"
+msgstr "जो तस्वीर Windows दिखा रहा था, उसे Pictures में कॉपी करता है"
+
+#: aurora/migrate.py:528
+msgid "Not found in that account"
+msgstr "उस खाते में नहीं मिला"
+
+#: aurora/migrate.py:538 aurora/settingsapp/storage.py:135
+msgid "Empty"
+msgstr "खाली करें"
+
+#: aurora/migrate.py:542
+msgid "at least "
+msgstr "कम से कम "
+
+#: aurora/migrate.py:543
+msgid "{about}{n} files · {size}"
+msgstr "{about}{n} फ़ाइलें · {size}"
+
+#: aurora/migrate.py:555
+msgid "Bringing your files over"
+msgstr "आपकी फ़ाइलें लाई जा रही हैं"
+
+#: aurora/migrate.py:561 aurora/taskmanager.py:648 aurora/usbwriter.py:443
+msgid "Stop"
+msgstr "रोकें"
+
+#: aurora/migrate.py:564 aurora/settingsapp/fingerprint.py:138
+#: aurora/shell/widgets.py:1355 aurora/shell/widgets.py:1478
+#: aurora/taskmanager.py:668 aurora/welcome.py:142
+msgid "Done"
+msgstr "हो गया"
+
+#: aurora/migrate.py:581
+msgid "Nothing is chosen"
+msgstr "कुछ भी नहीं चुना"
+
+#: aurora/migrate.py:600
+msgid "Your files are here"
+msgstr "आपकी फ़ाइलें यहाँ हैं"
+
+#: aurora/migrate.py:601
+msgid "{n} files copied. {kept} were already here and were left alone."
+msgstr "{n} फ़ाइलें कॉपी हुईं। {kept} पहले से यहाँ थीं और उन्हें छुआ नहीं गया।"
+
+#: aurora/migrate.py:605
+msgid "Stopped"
+msgstr "रोक दिया"
+
+#: aurora/migrate.py:605
+msgid "Something went wrong"
+msgstr "कुछ गड़बड़ हुई"
+
+#: aurora/migrate.py:606
+msgid "What had been copied is here."
+msgstr "जो कॉपी हो चुका था वह यहाँ है।"
 
 #: aurora/mixerui.py:43 aurora/settingsapp/inputs.py:43
 #: aurora/settingsapp/sound.py:111
@@ -3428,11 +3594,6 @@ msgstr "फ़िंगरप्रिंट सहेजा गया।"
 msgid "Enrollment failed. Please try again."
 msgstr "दर्ज करना विफल रहा। फिर से कोशिश करें।"
 
-#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1355
-#: aurora/shell/widgets.py:1478 aurora/taskmanager.py:668 aurora/welcome.py:142
-msgid "Done"
-msgstr "हो गया"
-
 #: aurora/settingsapp/health.py:40 aurora/settingsapp/storage.py:28
 #: aurora/shell/widgets.py:50 aurora/shell/widgets.py:1340
 msgid "System"
@@ -4671,10 +4832,6 @@ msgstr "एक क्लिक में जगह खाली करें। 
 #: aurora/settingsapp/storage.py:134
 msgid "Empty the Trash"
 msgstr "ट्रैश खाली करें"
-
-#: aurora/settingsapp/storage.py:135
-msgid "Empty"
-msgstr "खाली करें"
 
 #: aurora/settingsapp/storage.py:136
 msgid "Clear temporary files and cache"
@@ -6741,10 +6898,6 @@ msgstr "सेवाएँ खोजें"
 msgid "yours"
 msgstr "आपका"
 
-#: aurora/taskmanager.py:648 aurora/usbwriter.py:443
-msgid "Stop"
-msgstr "रोकें"
-
 #: aurora/taskmanager.py:668
 msgid "Couldn't change {name}"
 msgstr "{name} बदला नहीं जा सका"
@@ -7188,6 +7341,10 @@ msgstr "अपनी फ़ाइलें ब्राउज़ और व्�
 #: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "Steam, Epic और GOG गेम, Bottles से Windows ऐप, Waydroid से Android ऐप"
+
+#: data/applications/org.aurora.Migrate.desktop:3
+msgid "Bring your documents, pictures, music, bookmarks and background over from a Windows installation"
+msgstr "किसी Windows इंस्टॉलेशन से दस्तावेज़, तस्वीरें, संगीत, बुकमार्क और बैकग्राउंड यहाँ लाएँ"
 
 #: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"

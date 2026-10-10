@@ -353,6 +353,14 @@ GLYPHS = {
                      + fill("M26 56a8 8 0 0 1 8-8h60a8 8 0 0 1 8 8v34a8 8 0 0 1-8 8H34"
                             "a8 8 0 0 1-8-8z")),
     # A page under a lens: Quick Look.
+    # Files arriving in a folder from the left: bringing what you had over.
+    "migrate": (fill("M70 46a6 6 0 0 1 6-6h12l6 6h18a6 6 0 0 1 6 6v4H70z", W, 'opacity=".55"')
+                + fill("M70 56a6 6 0 0 1 6-6h36a6 6 0 0 1 6 6v34a6 6 0 0 1-6 6H76"
+                       "a6 6 0 0 1-6-6z")
+                + stroke("M16 73h36", 9)
+                + stroke("M40 61 54 73 40 85", 9)
+                + '<rect x="16" y="40" width="20" height="7" rx="3.5" fill="#fff" opacity=".4"/>'
+                + '<rect x="16" y="99" width="20" height="7" rx="3.5" fill="#fff" opacity=".4"/>'),
     "quicklook": (fill("M32 28h34l18 18v26a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V36a8 8 0 0 1 8-8z",
                        W, 'opacity=".9"')
                   + stroke("M38 48h26M38 60h18", 5, "#2a2150")
@@ -437,6 +445,7 @@ APPS = {
     ("aurora-gamehub", "org.aurora.GameHub"): ("#a78bff", "#4b2bb5", "gamepad"),
     ("org.aurora.Files",): ("#9db8ff", "#4a5fd0", "aurora-files"),
     ("org.aurora.QuickLook",): ("#7fd8ee", "#2f7bb5", "quicklook"),
+    ("org.aurora.Migrate",): ("#8fd8b4", "#2f7b9a", "migrate"),
     ("org.aurora.TaskManager",): ("#5ce0b8", "#1f8f78", "heartbeat"),
     ("portop",): ("#ffc46b", "#d8762a", "ports"),
     ("preferences-system", "org.gnome.Settings", "preferences-desktop", "gnome-control-center",

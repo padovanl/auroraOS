@@ -207,6 +207,17 @@ learning was the point. — *Luca Padovan*
   Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
   it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
+- **Migrate from Windows**: for the computer that now has both. It lists the NTFS
+  filesystems in the machine, opens the one you pick **read-only**, checks that Windows is
+  really installed on it, and offers the real accounts in `C:\Users` (not Public or Default).
+  Then Desktop, Documents, Downloads, Pictures, Music and Videos, each measured while you read
+  — honestly saying "at least" when a folder is too big to count quickly — and copied into the
+  matching folders here. Nothing on the Windows side is written to and nothing here is
+  overwritten: a file that already exists is kept and counted as kept, so running it twice
+  brings only what was missing. It also writes the **bookmarks** of Edge, Chrome, Brave and
+  Opera into one `Windows bookmarks.html` that any browser imports, and copies the **desktop
+  background** Windows was using. The Welcome screen offers it when it sees a Windows disk,
+  which is the one moment someone would think of it.
 - **USB Stick Writer**: a disk image onto a USB stick, like Rufus or Etcher. Compressed
   downloads (`.gz`, `.xz`, `.bz2`, `.zst`, a `.zip` holding one image) are unpacked while they
   are written, so a 5 GB download needn't be unpacked first. Only removable and USB disks are

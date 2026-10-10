@@ -1335,7 +1335,7 @@ msgstr "تعذّر فتح {name}: {error}"
 msgid "{name} is read-only: Windows wasn't fully shut down"
 msgstr "{name} للقراءة فقط: لم يُغلق Windows بالكامل"
 
-#: aurora/files/window.py:320 aurora/welcome.py:50
+#: aurora/files/window.py:320 aurora/migrate.py:376 aurora/welcome.py:50
 msgid "Back"
 msgstr "رجوع"
 
@@ -1781,6 +1781,172 @@ msgstr "تعذّر بدء الجلسة"
 #: aurora/greeter/app.py:299
 msgid "Wrong password. Please try again."
 msgstr "كلمة المرور غير صحيحة. حاول مرة أخرى."
+
+#: aurora/migrate.py:305
+msgid "Copying {folder}…"
+msgstr "يجري نسخ {folder}…"
+
+#: aurora/migrate.py:309
+msgid "Copying {folder}: {file}"
+msgstr "نسخ {folder}: {file}"
+
+#: aurora/migrate.py:321
+msgid "Collecting bookmarks…"
+msgstr "يجري جمع العلامات المرجعية…"
+
+#: aurora/migrate.py:338
+msgid "{n} bookmarks from {browsers} are in {file} — open it in your browser's bookmark manager to import them."
+msgstr "‏{n} علامة مرجعية من {browsers} موجودة في {file} — افتحه في مدير العلامات المرجعية بمتصفحك لاستيرادها."
+
+#: aurora/migrate.py:354
+msgid "The background Windows was using is in {file}."
+msgstr "الخلفية التي كان ويندوز يستخدمها موجودة في {file}."
+
+#: aurora/migrate.py:364 data/applications/org.aurora.Migrate.desktop:2
+msgid "Migrate from Windows"
+msgstr "الانتقال من ويندوز"
+
+#: aurora/migrate.py:394
+msgid "Windows disks"
+msgstr "أقراص ويندوز"
+
+#: aurora/migrate.py:395
+msgid "Aurora looks for Windows on every disk in this computer, including one plugged in over USB. Nothing on it is written to: it is opened read-only."
+msgstr "يبحث Aurora عن ويندوز في كل أقراص هذا الحاسوب، بما فيها قرص موصول عبر USB. لا يُكتب عليه شيء: يُفتح للقراءة فقط."
+
+#: aurora/migrate.py:400
+msgid "Look Again"
+msgstr "ابحث مجددًا"
+
+#: aurora/migrate.py:412
+msgid "No Windows disk found"
+msgstr "لم يُعثر على قرص ويندوز"
+
+#: aurora/migrate.py:413
+msgid "If Windows is on another disk, plug it in and press Look Again"
+msgstr "إن كان ويندوز على قرص آخر، فصِله ثم اضغط «ابحث مجددًا»"
+
+#: aurora/migrate.py:419
+msgid "Windows disk"
+msgstr "قرص ويندوز"
+
+#: aurora/migrate.py:422
+msgid "removable"
+msgstr "قابل للإزالة"
+
+#: aurora/migrate.py:430
+msgid "Opening {disk}…"
+msgstr "يجري فتح {disk}…"
+
+#: aurora/migrate.py:440
+msgid "That disk could not be opened"
+msgstr "تعذّر فتح ذلك القرص"
+
+#: aurora/migrate.py:446
+msgid "There is no Windows installation on that disk"
+msgstr "لا يوجد نظام ويندوز مثبّت على ذلك القرص"
+
+#: aurora/migrate.py:458
+msgid "Accounts on that Windows"
+msgstr "الحسابات في ذلك الويندوز"
+
+#: aurora/migrate.py:459
+msgid "Pick the one whose files you want here."
+msgstr "اختر الحساب الذي تريد ملفاته هنا."
+
+#: aurora/migrate.py:469
+msgid "No accounts with files on them"
+msgstr "لا حسابات تحتوي ملفات"
+
+#: aurora/migrate.py:485
+msgid "What to bring over"
+msgstr "ما الذي تريد جلبه"
+
+#: aurora/migrate.py:487
+msgid "And these"
+msgstr "وهذه أيضًا"
+
+#: aurora/migrate.py:488
+msgid "Files that are already here are kept, never replaced."
+msgstr "الملفات الموجودة هنا تُترك كما هي ولا تُستبدل أبدًا."
+
+#: aurora/migrate.py:491
+msgid "Bring My Files"
+msgstr "اجلب ملفاتي"
+
+#: aurora/migrate.py:505
+msgid "Measuring…"
+msgstr "يجري القياس…"
+
+#: aurora/migrate.py:512
+msgid "Browser bookmarks"
+msgstr "علامات المتصفح المرجعية"
+
+#: aurora/migrate.py:513
+msgid "Edge, Chrome, Brave and Opera, written to one file any browser can import"
+msgstr "إيدج وكروم وبريف وأوبرا، في ملف واحد يستورده أي متصفح"
+
+#: aurora/migrate.py:517
+msgid "Desktop background"
+msgstr "خلفية سطح المكتب"
+
+#: aurora/migrate.py:518
+msgid "The picture Windows was showing, copied to Pictures"
+msgstr "الصورة التي كان ويندوز يعرضها، منسوخة إلى مجلد الصور"
+
+#: aurora/migrate.py:528
+msgid "Not found in that account"
+msgstr "غير موجود في ذلك الحساب"
+
+#: aurora/migrate.py:538 aurora/settingsapp/storage.py:135
+msgid "Empty"
+msgstr "إفراغ"
+
+#: aurora/migrate.py:542
+msgid "at least "
+msgstr "على الأقل "
+
+#: aurora/migrate.py:543
+msgid "{about}{n} files · {size}"
+msgstr "{about}{n} ملفات · {size}"
+
+#: aurora/migrate.py:555
+msgid "Bringing your files over"
+msgstr "يجري جلب ملفاتك"
+
+#: aurora/migrate.py:561 aurora/taskmanager.py:648 aurora/usbwriter.py:443
+msgid "Stop"
+msgstr "إيقاف"
+
+#: aurora/migrate.py:564 aurora/settingsapp/fingerprint.py:138
+#: aurora/shell/widgets.py:1355 aurora/shell/widgets.py:1478
+#: aurora/taskmanager.py:668 aurora/welcome.py:142
+msgid "Done"
+msgstr "تم"
+
+#: aurora/migrate.py:581
+msgid "Nothing is chosen"
+msgstr "لم تختر شيئًا"
+
+#: aurora/migrate.py:600
+msgid "Your files are here"
+msgstr "ملفاتك هنا"
+
+#: aurora/migrate.py:601
+msgid "{n} files copied. {kept} were already here and were left alone."
+msgstr "نُسخ {n} ملفًا. و{kept} كانت موجودة هنا وتُركت كما هي."
+
+#: aurora/migrate.py:605
+msgid "Stopped"
+msgstr "أُوقف"
+
+#: aurora/migrate.py:605
+msgid "Something went wrong"
+msgstr "حدث خطأ ما"
+
+#: aurora/migrate.py:606
+msgid "What had been copied is here."
+msgstr "ما نُسخ بالفعل موجود هنا."
 
 #: aurora/mixerui.py:43 aurora/settingsapp/inputs.py:43
 #: aurora/settingsapp/sound.py:111
@@ -3472,11 +3638,6 @@ msgstr "حُفظت البصمة."
 msgid "Enrollment failed. Please try again."
 msgstr "فشل التسجيل. حاول مرة أخرى."
 
-#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1355
-#: aurora/shell/widgets.py:1478 aurora/taskmanager.py:668 aurora/welcome.py:142
-msgid "Done"
-msgstr "تم"
-
 #: aurora/settingsapp/health.py:40 aurora/settingsapp/storage.py:28
 #: aurora/shell/widgets.py:50 aurora/shell/widgets.py:1340
 msgid "System"
@@ -4731,10 +4892,6 @@ msgstr "حرّر مساحة بنقرة واحدة. يمكن دائمًا إفر�
 #: aurora/settingsapp/storage.py:134
 msgid "Empty the Trash"
 msgstr "إفراغ المهملات"
-
-#: aurora/settingsapp/storage.py:135
-msgid "Empty"
-msgstr "إفراغ"
 
 #: aurora/settingsapp/storage.py:136
 msgid "Clear temporary files and cache"
@@ -6845,10 +7002,6 @@ msgstr "ابحث في الخدمات"
 msgid "yours"
 msgstr "خاصتك"
 
-#: aurora/taskmanager.py:648 aurora/usbwriter.py:443
-msgid "Stop"
-msgstr "إيقاف"
-
 #: aurora/taskmanager.py:668
 msgid "Couldn't change {name}"
 msgstr "تعذّر تغيير {name}"
@@ -7292,6 +7445,10 @@ msgstr "تصفّح ملفاتك ونظّمها"
 #: data/applications/org.aurora.GameHub.desktop:3
 msgid "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with Waydroid"
 msgstr "ألعاب Steam وEpic وGOG، وتطبيقات Windows عبر Bottles، وتطبيقات Android عبر Waydroid"
+
+#: data/applications/org.aurora.Migrate.desktop:3
+msgid "Bring your documents, pictures, music, bookmarks and background over from a Windows installation"
+msgstr "يجلب المستندات والصور والموسيقى والعلامات المرجعية والخلفية من نظام ويندوز مثبّت"
 
 #: data/applications/org.aurora.QuickLook.desktop:3
 msgid "Preview files without opening them"

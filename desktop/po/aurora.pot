@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 13:55+0000\n"
+"POT-Creation-Date: 2026-10-10 14:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1523,7 +1523,7 @@ msgstr ""
 msgid "{name} is read-only: Windows wasn't fully shut down"
 msgstr ""
 
-#: aurora/files/window.py:320 aurora/welcome.py:50
+#: aurora/files/window.py:320 aurora/migrate.py:376 aurora/welcome.py:50
 #, no-python-format
 msgid "Back"
 msgstr ""
@@ -2033,6 +2033,218 @@ msgstr ""
 #: aurora/greeter/app.py:299
 #, no-python-format
 msgid "Wrong password. Please try again."
+msgstr ""
+
+#: aurora/migrate.py:305
+#, no-python-format, python-brace-format
+msgid "Copying {folder}…"
+msgstr ""
+
+#: aurora/migrate.py:309
+#, no-python-format, python-brace-format
+msgid "Copying {folder}: {file}"
+msgstr ""
+
+#: aurora/migrate.py:321
+#, no-python-format
+msgid "Collecting bookmarks…"
+msgstr ""
+
+#: aurora/migrate.py:338
+#, no-python-format, python-brace-format
+msgid ""
+"{n} bookmarks from {browsers} are in {file} — open it in your browser's "
+"bookmark manager to import them."
+msgstr ""
+
+#: aurora/migrate.py:354
+#, no-python-format, python-brace-format
+msgid "The background Windows was using is in {file}."
+msgstr ""
+
+#: aurora/migrate.py:364 data/applications/org.aurora.Migrate.desktop:2
+#, no-python-format
+msgid "Migrate from Windows"
+msgstr ""
+
+#: aurora/migrate.py:394
+#, no-python-format
+msgid "Windows disks"
+msgstr ""
+
+#: aurora/migrate.py:395
+#, no-python-format
+msgid ""
+"Aurora looks for Windows on every disk in this computer, including one "
+"plugged in over USB. Nothing on it is written to: it is opened read-only."
+msgstr ""
+
+#: aurora/migrate.py:400
+#, no-python-format
+msgid "Look Again"
+msgstr ""
+
+#: aurora/migrate.py:412
+#, no-python-format
+msgid "No Windows disk found"
+msgstr ""
+
+#: aurora/migrate.py:413
+#, no-python-format
+msgid "If Windows is on another disk, plug it in and press Look Again"
+msgstr ""
+
+#: aurora/migrate.py:419
+#, no-python-format
+msgid "Windows disk"
+msgstr ""
+
+#: aurora/migrate.py:422
+#, no-python-format
+msgid "removable"
+msgstr ""
+
+#: aurora/migrate.py:430
+#, no-python-format, python-brace-format
+msgid "Opening {disk}…"
+msgstr ""
+
+#: aurora/migrate.py:440
+#, no-python-format
+msgid "That disk could not be opened"
+msgstr ""
+
+#: aurora/migrate.py:446
+#, no-python-format
+msgid "There is no Windows installation on that disk"
+msgstr ""
+
+#: aurora/migrate.py:458
+#, no-python-format
+msgid "Accounts on that Windows"
+msgstr ""
+
+#: aurora/migrate.py:459
+#, no-python-format
+msgid "Pick the one whose files you want here."
+msgstr ""
+
+#: aurora/migrate.py:469
+#, no-python-format
+msgid "No accounts with files on them"
+msgstr ""
+
+#: aurora/migrate.py:485
+#, no-python-format
+msgid "What to bring over"
+msgstr ""
+
+#: aurora/migrate.py:487
+#, no-python-format
+msgid "And these"
+msgstr ""
+
+#: aurora/migrate.py:488
+#, no-python-format
+msgid "Files that are already here are kept, never replaced."
+msgstr ""
+
+#: aurora/migrate.py:491
+#, no-python-format
+msgid "Bring My Files"
+msgstr ""
+
+#: aurora/migrate.py:505
+#, no-python-format
+msgid "Measuring…"
+msgstr ""
+
+#: aurora/migrate.py:512
+#, no-python-format
+msgid "Browser bookmarks"
+msgstr ""
+
+#: aurora/migrate.py:513
+#, no-python-format
+msgid ""
+"Edge, Chrome, Brave and Opera, written to one file any browser can import"
+msgstr ""
+
+#: aurora/migrate.py:517
+#, no-python-format
+msgid "Desktop background"
+msgstr ""
+
+#: aurora/migrate.py:518
+#, no-python-format
+msgid "The picture Windows was showing, copied to Pictures"
+msgstr ""
+
+#: aurora/migrate.py:528
+#, no-python-format
+msgid "Not found in that account"
+msgstr ""
+
+#: aurora/migrate.py:538 aurora/settingsapp/storage.py:135
+#, no-python-format
+msgid "Empty"
+msgstr ""
+
+#: aurora/migrate.py:542
+#, no-python-format
+msgid "at least "
+msgstr ""
+
+#: aurora/migrate.py:543
+#, no-python-format, python-brace-format
+msgid "{about}{n} files · {size}"
+msgstr ""
+
+#: aurora/migrate.py:555
+#, no-python-format
+msgid "Bringing your files over"
+msgstr ""
+
+#: aurora/migrate.py:561 aurora/taskmanager.py:648 aurora/usbwriter.py:443
+#, no-python-format
+msgid "Stop"
+msgstr ""
+
+#: aurora/migrate.py:564 aurora/settingsapp/fingerprint.py:138
+#: aurora/shell/widgets.py:1355 aurora/shell/widgets.py:1478
+#: aurora/taskmanager.py:668 aurora/welcome.py:142
+#, no-python-format
+msgid "Done"
+msgstr ""
+
+#: aurora/migrate.py:581
+#, no-python-format
+msgid "Nothing is chosen"
+msgstr ""
+
+#: aurora/migrate.py:600
+#, no-python-format
+msgid "Your files are here"
+msgstr ""
+
+#: aurora/migrate.py:601
+#, no-python-format, python-brace-format
+msgid "{n} files copied. {kept} were already here and were left alone."
+msgstr ""
+
+#: aurora/migrate.py:605
+#, no-python-format
+msgid "Stopped"
+msgstr ""
+
+#: aurora/migrate.py:605
+#, no-python-format
+msgid "Something went wrong"
+msgstr ""
+
+#: aurora/migrate.py:606
+#, no-python-format
+msgid "What had been copied is here."
 msgstr ""
 
 #: aurora/mixerui.py:43 aurora/settingsapp/inputs.py:43
@@ -4131,12 +4343,6 @@ msgstr ""
 msgid "Enrollment failed. Please try again."
 msgstr ""
 
-#: aurora/settingsapp/fingerprint.py:138 aurora/shell/widgets.py:1355
-#: aurora/shell/widgets.py:1478 aurora/taskmanager.py:668 aurora/welcome.py:142
-#, no-python-format
-msgid "Done"
-msgstr ""
-
 #: aurora/settingsapp/health.py:40 aurora/settingsapp/storage.py:28
 #: aurora/shell/widgets.py:50 aurora/shell/widgets.py:1340
 #, no-python-format
@@ -5688,11 +5894,6 @@ msgstr ""
 #: aurora/settingsapp/storage.py:134
 #, no-python-format
 msgid "Empty the Trash"
-msgstr ""
-
-#: aurora/settingsapp/storage.py:135
-#, no-python-format
-msgid "Empty"
 msgstr ""
 
 #: aurora/settingsapp/storage.py:136
@@ -8231,11 +8432,6 @@ msgstr ""
 msgid "yours"
 msgstr ""
 
-#: aurora/taskmanager.py:648 aurora/usbwriter.py:443
-#, no-python-format
-msgid "Stop"
-msgstr ""
-
 #: aurora/taskmanager.py:668
 #, no-python-format, python-brace-format
 msgid "Couldn't change {name}"
@@ -8771,6 +8967,12 @@ msgstr ""
 msgid ""
 "Steam, Epic and GOG games, Windows apps with Bottles, Android apps with "
 "Waydroid"
+msgstr ""
+
+#: data/applications/org.aurora.Migrate.desktop:3
+msgid ""
+"Bring your documents, pictures, music, bookmarks and background over from a "
+"Windows installation"
 msgstr ""
 
 #: data/applications/org.aurora.QuickLook.desktop:3
