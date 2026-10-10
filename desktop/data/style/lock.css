@@ -6,6 +6,11 @@ window {
   background-size: cover;
   background-position: center;
   color: #ffffff;
+  /* A scrim at the top and the bottom, as a phone's lock screen has: the
+     clock and the password field read on a bright picture without a card
+     being drawn around them. */
+  box-shadow: inset 0 170px 190px -130px rgba(0, 0, 0, 0.75),
+              inset 0 -210px 230px -150px rgba(0, 0, 0, 0.8);
 }
 
 /* Everything must fit the shortest screens (1280×720 at 150 %: 480 px):
@@ -17,17 +22,20 @@ window {
 
 #clock-label {
   font-family: Inter;
-  font-size: 72pt;
-  font-weight: 600;
+  font-size: 86pt;
+  font-weight: 500;
+  letter-spacing: -4px;
   color: #ffffff;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
 }
 
 #date-label {
   font-family: Inter;
-  font-size: 17pt;
+  font-size: 15pt;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.88);
+  margin-top: 2px;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
@@ -63,7 +71,7 @@ window {
 }
 
 #input-field {
-  min-height: 46px;
+  min-height: 50px;
   border-radius: 999px 0 0 999px;
   padding: 0 8px 0 20px;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -83,8 +91,8 @@ window {
 /* The arrow: Aurora's gradient, see-through like the field, closing the
    pill on the right; a soft highlight on top and a glow around it. */
 #unlock-button {
-  min-width: 58px;
-  min-height: 46px;
+  min-width: 62px;
+  min-height: 50px;
   padding: 0;
   border-radius: 0 999px 999px 0;
   border: 1px solid rgba(255, 255, 255, 0.35);

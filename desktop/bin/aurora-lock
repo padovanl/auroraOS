@@ -32,6 +32,27 @@ sed -e "s|@NAME@|$(escape "$name")|" -e "s|@INITIAL@|$(escape "$initial")|" \
     -e "s|@AVATAR@|$avatar|g" -e "s|@BODY_VALIGN@|$body|" \
     "$style_dir/lock.ui" > "$run/lock.ui"
 cp "$style_dir/lock.css" "$run/lock.css"
+# Painted in the accent the desktop uses — including the accent taken from the
+# background picture — instead of a fixed violet.
+python3 - "$run/lock.css" <<'PY' 2>/dev/null || true
+import sys
+sys.path.insert(0, "/usr/lib/aurora")
+from aurora import look
+
+raw = look.accent_hex().lstrip("#")
+tone = tuple(int(raw[i:i + 2], 16) for i in (0, 2, 4))
+lighter = "#%02x%02x%02x" % tuple(min(255, round(c + (255 - c) * 0.38)) for c in tone)
+accent = "#" + raw
+with open(sys.argv[1], "a") as style:
+    style.write(
+        f"#avatar {{ background-color: {accent};\n"
+        f"  background-image: linear-gradient(135deg, {lighter}, {accent}); }}\n"
+        f"#unlock-button {{ background-image:\n"
+        f"  linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 60%),\n"
+        f"  linear-gradient(120deg, {lighter}, {accent}); }}\n"
+        f"#unlock-button:hover {{ box-shadow: 0 0 28px {accent}; }}\n"
+        f"#input-field:focus {{ border-color: {lighter}; }}\n")
+PY
 if [ "$avatar" = 0 ]; then
     # No picture or name: the password field comes up, under the date.
     printf '#avatar { min-width: 0; min-height: 0; border: none; background: none; box-shadow: none; }\n#body-grid { margin: 72px 0 0; }\n' \
