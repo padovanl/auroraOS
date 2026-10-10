@@ -3,11 +3,14 @@
 import os
 import shutil
 
-from gi.repository import Gdk, Gio, GLib, Gtk
+import gi
+
+gi.require_version("Adw", "1")
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
 from aurora.i18n import _
-from aurora.shell import search
+from aurora.shell import appfolders, search
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
 
 
@@ -40,6 +43,33 @@ class AppTile(Gtk.FlowBoxChild):
         right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY)
         right.connect("pressed", self._show_menu)
         self.add_controller(right)
+        # Dropped on another app, the two become a folder — the one gesture
+        # everyone already knows from a phone.
+        source = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+        source.connect("prepare", lambda *_a: Gdk.ContentProvider.new_for_value(
+            app.get_id() or ""))
+        source.connect("drag-begin", self._drag_begin)
+        self.add_controller(source)
+        target = Gtk.DropTarget.new(str, Gdk.DragAction.MOVE)
+        target.connect("enter", lambda *_a: self._lit(True) or Gdk.DragAction.MOVE)
+        target.connect("leave", lambda *_a: self._lit(False))
+        target.connect("drop", self._dropped)
+        self.add_controller(target)
+
+    def _drag_begin(self, source, _drag):
+        picture = self.get_first_child().get_first_child()
+        if picture is not None:
+            source.set_icon(Gtk.WidgetPaintable.new(picture), 32, 32)
+
+    def _lit(self, on):
+        (self.add_css_class if on else self.remove_css_class)("tile-drop-target")
+
+    def _dropped(self, _target, app_id, _x, _y):
+        self._lit(False)
+        if not app_id or app_id == (self.app.get_id() or ""):
+            return False
+        self.shell.launcher.make_folder(self.app.get_id() or "", app_id)
+        return True
 
     def _show_menu(self, _gesture, _n, x, y):
         pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
@@ -94,6 +124,78 @@ class AppTile(Gtk.FlowBoxChild):
             shutil.copy2(source, unique_destination(desktop_dir(), os.path.basename(source)))
         except OSError as err:
             print(f"aurora: cannot add app to desktop: {err}")
+
+
+class FolderTile(Gtk.FlowBoxChild):
+    """A folder in Launchpad: the first four icons inside it, and its name.
+    Clicking opens it where it stands; dropping an app on it puts that app in."""
+
+    def __init__(self, folder, members, shell):
+        super().__init__(css_classes=["launcher-tile", "launcher-folder"])
+        self.folder = folder
+        self.members = members
+        self.shell = shell
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                      halign=Gtk.Align.CENTER)
+        preview = Gtk.Grid(row_spacing=4, column_spacing=4, halign=Gtk.Align.CENTER,
+                           css_classes=["launcher-folder-preview"])
+        for i, app in enumerate(members[:4]):
+            preview.attach(_icon_image(app.get_icon() or "application-x-executable", 24),
+                           i % 2, i // 2, 1, 1)
+        box.append(preview)
+        box.append(Gtk.Label(label=folder["name"], wrap=True, lines=2,
+                             justify=Gtk.Justification.CENTER, ellipsize=3,
+                             max_width_chars=12, width_chars=12))
+        self.set_child(box)
+        self.name = folder["name"].lower()
+        self.set_tooltip_text(", ".join(app.get_display_name() for app in members))
+        target = Gtk.DropTarget.new(str, Gdk.DragAction.MOVE)
+        target.connect("enter", lambda *_a: self._lit(True) or Gdk.DragAction.MOVE)
+        target.connect("leave", lambda *_a: self._lit(False))
+        target.connect("drop", self._dropped)
+        self.add_controller(target)
+
+    def _lit(self, on):
+        (self.add_css_class if on else self.remove_css_class)("tile-drop-target")
+
+    def _dropped(self, _target, app_id, _x, _y):
+        self._lit(False)
+        if not app_id or not self.members:
+            return False
+        self.shell.launcher.make_folder(self.members[0].get_id() or "", app_id)
+        return True
+
+    def open_folder(self):
+        """The apps inside, where the folder is, with its name editable."""
+        pop = Gtk.Popover(has_arrow=True, css_classes=["launcher-folder-open"])
+        pop.set_parent(self)
+        pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10,
+                      margin_top=10, margin_bottom=10, margin_start=10, margin_end=10)
+        name = Gtk.Entry(text=self.folder["name"], css_classes=["launcher-folder-name"],
+                         halign=Gtk.Align.CENTER, xalign=0.5, width_chars=16,
+                         tooltip_text=_("Rename this folder"))
+        name.connect("activate", lambda entry: (
+            self.shell.launcher.rename_folder(self.folder["name"], entry.get_text()),
+            pop.popdown()))
+        box.append(name)
+        flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
+                           max_children_per_line=4, min_children_per_line=2,
+                           row_spacing=8, column_spacing=12,
+                           activate_on_single_click=True)
+        for app in self.members:
+            tile = AppTile(app, self.shell)
+            flow.append(tile)
+        flow.connect("child-activated", lambda _f, child: (pop.popdown(),
+                                                           self.shell.launcher._on_tile(_f, child)))
+        box.append(flow)
+        out = Gtk.Button(label=_("Take Everything Out"), css_classes=["flat"])
+        out.connect("clicked", lambda *_a: (pop.popdown(),
+                                            self.shell.launcher.dissolve_folder(self.folder)))
+        box.append(out)
+        pop.set_child(box)
+        pop.popup()
+        name.grab_focus()
 
 
 def highlight(text, query):
@@ -207,12 +309,12 @@ class Launcher(LayerWindow):
         self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
                                vexpand=True, vhomogeneous=False, interpolate_size=True)
 
-        # Launchpad: the apps used most, then a section per kind of app.
+        # Launchpad: either the apps used most then a section per kind of app,
+        # or pages of tiles with folders in them (Settings → Super Key).
         self.sections = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
                                 valign=Gtk.Align.START, css_classes=["launcher-sections"])
-        self.stack.add_named(Gtk.ScrolledWindow(child=self.sections,
-                                                hscrollbar_policy=Gtk.PolicyType.NEVER),
-                             "grid")
+        self.grid_area = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.stack.add_named(self.grid_area, "grid")
 
         self.results = Gtk.ListBox(css_classes=["launcher-results"],
                                    selection_mode=Gtk.SelectionMode.BROWSE,
@@ -255,14 +357,60 @@ class Launcher(LayerWindow):
             flow.append(AppTile(app, self.shell))
         return flow
 
+    def layout(self):
+        s = settings.get()
+        value = s.get_string("launchpad-layout") if s is not None else "pages"
+        return value if value in ("pages", "sections") else "pages"
+
+    def folders(self):
+        s = settings.get()
+        return appfolders.load(s.get_string("launchpad-folders") if s is not None else "")
+
+    def _save_folders(self, folders):
+        s = settings.get()
+        if s is not None:
+            s.set_string("launchpad-folders", appfolders.dump(folders))
+        self._populate()
+
+    # --- making and unmaking folders ---
+
+    def make_folder(self, onto_id, moved_id):
+        from aurora.shell import appgroups
+        folders = self.folders()
+        app = apps.app_by_id(onto_id)
+        name = _(appgroups.section_of(app.get_categories() if app else "")) \
+            if app is not None else _("Folder")
+        existing = {f["name"] for f in folders}
+        wanted, n = name, 2
+        while wanted in existing and appfolders.folder_of(folders, onto_id) is None:
+            wanted, n = f"{name} {n}", n + 1
+        self._save_folders(appfolders.put_together(folders, onto_id, moved_id, wanted))
+
+    def rename_folder(self, old, new):
+        self._save_folders(appfolders.rename(self.folders(), old, new))
+
+    def dissolve_folder(self, folder):
+        folders = self.folders()
+        for app_id in list(folder["apps"]):
+            folders = appfolders.take_out(folders, app_id)
+        self._save_folders(folders)
+
     def _populate(self):
+        while (child := self.grid_area.get_first_child()) is not None:
+            self.grid_area.remove(child)
+        self.grid = None
+        if self.layout() == "pages":
+            self._populate_pages()
+        else:
+            self._populate_sections()
+
+    def _populate_sections(self):
         from aurora.shell import appgroups
         while (child := self.sections.get_first_child()) is not None:
             self.sections.remove(child)
         everything = apps.all_apps()
         groups = [(_("Frequently Used"), appgroups.frequent(everything))]
         groups += [(_(title), members) for title, members in appgroups.group(everything).items()]
-        self.grid = None
         for title, members in groups:
             if not members:
                 continue
@@ -271,6 +419,45 @@ class Launcher(LayerWindow):
             flow = self._flow(members)
             self.grid = self.grid or flow       # the first, for keyboard focus
             self.sections.append(flow)
+        self.grid_area.append(Gtk.ScrolledWindow(child=self.sections, vexpand=True,
+                                                 hscrollbar_policy=Gtk.PolicyType.NEVER))
+
+    def _populate_pages(self):
+        """Every app on pages you move through sideways, folders among them."""
+        from aurora.shell import appgroups
+        everything = apps.all_apps()
+        ordered = []
+        for _title, members in appgroups.group(everything).items():
+            ordered.extend(members)
+        items = appfolders.arrange(ordered, self.folders())
+        self.carousel = Adw.Carousel(vexpand=True, allow_long_swipes=True)
+        for page in appfolders.paginate(items, self._per_page()):
+            flow = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE, homogeneous=True,
+                               max_children_per_line=self._columns, min_children_per_line=3,
+                               row_spacing=8, column_spacing=12, valign=Gtk.Align.START,
+                               activate_on_single_click=True)
+            flow.connect("child-activated", self._on_tile)
+            for item in page:
+                if item[0] == "app":
+                    flow.append(AppTile(item[1], self.shell))
+                else:
+                    flow.append(FolderTile(item[1], item[2], self.shell))
+            self.grid = self.grid or flow
+            self.carousel.append(flow)
+        self.grid_area.append(self.carousel)
+        if self.carousel.get_n_pages() > 1:
+            dots = Adw.CarouselIndicatorDots(carousel=self.carousel,
+                                             halign=Gtk.Align.CENTER)
+            self.grid_area.append(dots)
+
+    def _per_page(self):
+        """How many tiles fit, from the size of the screen this is drawn on."""
+        monitor = self.shell.get_primary_monitor()
+        area = monitor.get_geometry() if monitor is not None else None
+        width = min(760, area.width - 80) if area is not None else 760
+        height = (area.height - 320) if area is not None else 520
+        count, self._columns = appfolders.fits(width, height, 118, 128)
+        return count
 
     def _on_search(self, entry):
         text = entry.get_text()
@@ -314,6 +501,9 @@ class Launcher(LayerWindow):
         GLib.idle_add(lambda: (fn(), False)[1])
 
     def _on_tile(self, _grid, tile):
+        if isinstance(tile, FolderTile):
+            tile.open_folder()
+            return
         self._run(lambda: self.shell.launch_app(tile.app))
 
     def _on_row(self, _list, row):

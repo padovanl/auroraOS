@@ -1165,3 +1165,16 @@ window.osk-theme-mechanical button.osk-shift, window.osk-theme-typewriter button
 window.osk-theme-typewriter button.osk-backspace, window.osk-theme-typewriter button.osk-shift,
 window.osk-theme-pixel button.osk-return, window.osk-theme-pixel button.osk-backspace,
 window.osk-theme-pixel button.osk-shift { font-family: sans-serif; font-size: 20px; }
+
+/* Launchpad's folders: a tile that holds other tiles. */
+.launcher-folder-preview {
+  padding: 10px;
+  border-radius: 16px;
+  background-color: alpha(@shell_fg, 0.12);
+  border: 1px solid alpha(@shell_fg, 0.12);
+}
+.launcher-tile.tile-drop-target .launcher-folder-preview,
+.launcher-tile.tile-drop-target image { background-color: alpha(@aurora_violet, 0.35); }
+.launcher-tile.tile-drop-target { background-color: alpha(@aurora_violet, 0.28); border-radius: 18px; }
+.launcher-folder-open > contents { padding: 6px; border-radius: 22px; }
+.launcher-folder-name { font-weight: 700; }

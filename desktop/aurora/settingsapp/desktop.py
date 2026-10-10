@@ -211,6 +211,8 @@ class Desktop(Page):
         search = self.group(_("Super Key"))
         self._combo(search, _("Super opens"), "launcher-style",
                     [("spotlight", _("Spotlight search")), ("grid", _("Launchpad (all apps)"))])
+        self._combo(search, _("Launchpad layout"), "launchpad-layout",
+                    [("pages", _("Pages with folders")), ("sections", _("One list by kind"))])
 
         results = self.group(_("Search Results"), _("What Spotlight shows as you type."))
         for key, title in (("apps", _("Apps")), ("files", _("Recent files")),

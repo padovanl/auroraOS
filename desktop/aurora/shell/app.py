@@ -187,6 +187,8 @@ class Shell(Adw.Application):
             s.connect("changed::interface-density",
                       lambda *a: self._later(self._redensify))
             s.connect("changed::icon-style", lambda *a: self._later(self._restyle_icons))
+            s.connect("changed::launchpad-layout",
+                      lambda *a: self._later(self.launcher._populate))
         self._update_dynamic_css()
         self._clip_watch = None
         self._image_clip_watch = None

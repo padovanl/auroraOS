@@ -335,6 +335,21 @@
       <description>Four small surfaces paint the corners of every monitor black outside
       a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
     </key>
+    <key name="launchpad-layout" type="s">
+      <choices><choice value="pages"/><choice value="sections"/></choices>
+      <default>'pages'</default>
+      <summary>How Launchpad lays out the apps</summary>
+      <description>Pages: every app on pages you move through sideways, with folders
+      you make by dropping one app on another. Sections: one list, grouped by what the
+      apps are for, which was how Launchpad always looked.</description>
+    </key>
+    <key name="launchpad-folders" type="s">
+      <default>'[]'</default>
+      <summary>Launchpad's folders</summary>
+      <description>The folders made in Launchpad, as JSON: a name and the desktop ids
+      inside it. An app that is uninstalled is remembered here, so reinstalling it puts
+      it back in its folder.</description>
+    </key>
     <key name="icon-style" type="s">
       <choices>
         <choice value="galaxy"/><choice value="ribbon"/><choice value="glass"/>

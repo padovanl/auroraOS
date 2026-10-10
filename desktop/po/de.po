@@ -181,9 +181,9 @@ msgid "Stop generating"
 msgstr "Generierung stoppen"
 
 #: aurora/assistant.py:458 aurora/files/window.py:141
-#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:908
+#: aurora/files/window.py:1179 aurora/quicklook.py:147 aurora/shell/app.py:910
 #: aurora/shell/desktopicons.py:171 aurora/shell/dock.py:384
-#: aurora/shell/launcher.py:60 aurora/shell/launcher.py:157
+#: aurora/shell/launcher.py:90 aurora/shell/launcher.py:259
 #: aurora/shell/pinshot.py:121 aurora/shell/sysnotify.py:375
 msgid "Open"
 msgstr "Öffnen"
@@ -305,7 +305,7 @@ msgid "Writing Tools"
 msgstr "Schreibwerkzeuge"
 
 #: aurora/assistant.py:986 aurora/settingsapp/ai.py:76
-#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:758
+#: aurora/settingsapp/ai.py:82 aurora/shell/app.py:760
 msgid "Aurora AI"
 msgstr "Aurora KI"
 
@@ -414,7 +414,7 @@ msgstr "Alles Kopierte, auch angepinnte Einträge und Bilder, wird vergessen. Da
 #: aurora/settingsapp/health.py:276 aurora/settingsapp/inputs.py:284
 #: aurora/settingsapp/storage.py:287 aurora/settingsapp/system.py:479
 #: aurora/settingsapp/system.py:553 aurora/settingsapp/system.py:640
-#: aurora/settingsapp/system.py:659 aurora/shell/app.py:660
+#: aurora/settingsapp/system.py:659 aurora/shell/app.py:662
 #: aurora/shell/desktopicons.py:191 aurora/usbwriter.py:646
 #: aurora/usbwriter.py:688
 msgid "Cancel"
@@ -513,7 +513,7 @@ msgstr "Editor, Terminal und Dateien gemeinsam für ein Projekt öffnen."
 msgid "Add Project"
 msgstr "Projekt hinzufügen"
 
-#: aurora/devhub/app.py:412 aurora/shell/launcher.py:162
+#: aurora/devhub/app.py:412 aurora/shell/launcher.py:264
 msgid "Open Workspace"
 msgstr "Arbeitsbereich öffnen"
 
@@ -1274,18 +1274,18 @@ msgstr "Neuer Tab"
 
 #: aurora/files/window.py:144 aurora/files/window.py:358
 #: aurora/shell/dock.py:306 aurora/shell/dock.py:309
-#: aurora/shell/launcher.py:65 aurora/shell/panel.py:569
+#: aurora/shell/launcher.py:95 aurora/shell/panel.py:569
 #: data/applications/org.aurora.Files.desktop:15
 msgid "New Window"
 msgstr "Neues Fenster"
 
 #: aurora/files/window.py:148 aurora/files/window.py:346
-#: aurora/files/window.py:1215 aurora/shell/launcher.py:163
+#: aurora/files/window.py:1215 aurora/shell/launcher.py:265
 msgid "Open in Terminal"
 msgstr "Im Terminal öffnen"
 
 #: aurora/files/window.py:150 aurora/files/window.py:1200
-#: aurora/shell/launcher.py:159
+#: aurora/shell/launcher.py:261
 msgid "Copy Path"
 msgstr "Pfad kopieren"
 
@@ -1538,7 +1538,7 @@ msgstr "Prüfe die Änderungen, bevor du sie an Aurora AI sendest."
 msgid "Loading…"
 msgstr "Wird geladen…"
 
-#: aurora/files/window.py:1352 aurora/shell/app.py:912
+#: aurora/files/window.py:1352 aurora/shell/app.py:914
 msgid "Ask Aurora"
 msgstr "Aurora fragen"
 
@@ -1778,137 +1778,137 @@ msgstr "Windows-Datenträger"
 msgid "Aurora looks for Windows on every disk in this computer, including one plugged in over USB. Nothing on it is written to: it is opened read-only."
 msgstr "Aurora sucht Windows auf jedem Datenträger dieses Rechners, auch auf einem per USB angeschlossenen. Es wird nichts darauf geschrieben: er wird nur lesend geöffnet."
 
-#: aurora/migrate.py:400
+#: aurora/migrate.py:399
 msgid "Look Again"
 msgstr "Erneut suchen"
 
-#: aurora/migrate.py:412
+#: aurora/migrate.py:410
 msgid "No Windows disk found"
 msgstr "Kein Windows-Datenträger gefunden"
 
-#: aurora/migrate.py:413
+#: aurora/migrate.py:411
 msgid "If Windows is on another disk, plug it in and press Look Again"
 msgstr "Liegt Windows auf einem anderen Datenträger, schließen Sie ihn an und drücken Sie Erneut suchen"
 
-#: aurora/migrate.py:419
+#: aurora/migrate.py:417
 msgid "Windows disk"
 msgstr "Windows-Datenträger"
 
-#: aurora/migrate.py:422
+#: aurora/migrate.py:420
 msgid "removable"
 msgstr "wechselbar"
 
-#: aurora/migrate.py:430
+#: aurora/migrate.py:428
 msgid "Opening {disk}…"
 msgstr "{disk} wird geöffnet…"
 
-#: aurora/migrate.py:440
+#: aurora/migrate.py:438
 msgid "That disk could not be opened"
 msgstr "Dieser Datenträger konnte nicht geöffnet werden"
 
-#: aurora/migrate.py:446
+#: aurora/migrate.py:444
 msgid "There is no Windows installation on that disk"
 msgstr "Auf diesem Datenträger ist kein Windows installiert"
 
-#: aurora/migrate.py:458
+#: aurora/migrate.py:456
 msgid "Accounts on that Windows"
 msgstr "Konten in diesem Windows"
 
-#: aurora/migrate.py:459
+#: aurora/migrate.py:457
 msgid "Pick the one whose files you want here."
 msgstr "Wählen Sie das Konto, dessen Dateien hierher sollen."
 
-#: aurora/migrate.py:469
+#: aurora/migrate.py:467
 msgid "No accounts with files on them"
 msgstr "Keine Konten mit Dateien"
 
-#: aurora/migrate.py:485
+#: aurora/migrate.py:483
 msgid "What to bring over"
 msgstr "Was mitkommen soll"
 
-#: aurora/migrate.py:487
+#: aurora/migrate.py:485
 msgid "And these"
 msgstr "Und diese"
 
-#: aurora/migrate.py:488
+#: aurora/migrate.py:486
 msgid "Files that are already here are kept, never replaced."
 msgstr "Dateien, die hier schon sind, bleiben unangetastet."
 
-#: aurora/migrate.py:491
+#: aurora/migrate.py:488
 msgid "Bring My Files"
 msgstr "Meine Dateien holen"
 
-#: aurora/migrate.py:505
+#: aurora/migrate.py:501
 msgid "Measuring…"
 msgstr "Wird gemessen…"
 
-#: aurora/migrate.py:512
+#: aurora/migrate.py:508
 msgid "Browser bookmarks"
 msgstr "Lesezeichen des Browsers"
 
-#: aurora/migrate.py:513
+#: aurora/migrate.py:509
 msgid "Edge, Chrome, Brave and Opera, written to one file any browser can import"
 msgstr "Edge, Chrome, Brave und Opera, in eine Datei geschrieben, die jeder Browser importieren kann"
 
-#: aurora/migrate.py:517
+#: aurora/migrate.py:513
 msgid "Desktop background"
 msgstr "Schreibtischhintergrund"
 
-#: aurora/migrate.py:518
+#: aurora/migrate.py:514
 msgid "The picture Windows was showing, copied to Pictures"
 msgstr "Das Bild, das Windows zeigte, nach Bilder kopiert"
 
-#: aurora/migrate.py:528
+#: aurora/migrate.py:524
 msgid "Not found in that account"
 msgstr "In diesem Konto nicht gefunden"
 
-#: aurora/migrate.py:538 aurora/settingsapp/storage.py:135
+#: aurora/migrate.py:534 aurora/settingsapp/storage.py:135
 msgid "Empty"
 msgstr "Leeren"
 
-#: aurora/migrate.py:542
+#: aurora/migrate.py:538
 msgid "at least "
 msgstr "mindestens "
 
-#: aurora/migrate.py:543
+#: aurora/migrate.py:539
 msgid "{about}{n} files · {size}"
 msgstr "{about}{n} Dateien · {size}"
 
-#: aurora/migrate.py:555
+#: aurora/migrate.py:551
 msgid "Bringing your files over"
 msgstr "Ihre Dateien kommen herüber"
 
-#: aurora/migrate.py:561 aurora/taskmanager.py:648 aurora/usbwriter.py:443
+#: aurora/migrate.py:557 aurora/taskmanager.py:648 aurora/usbwriter.py:443
 msgid "Stop"
 msgstr "Beenden"
 
-#: aurora/migrate.py:564 aurora/settingsapp/fingerprint.py:138
+#: aurora/migrate.py:560 aurora/settingsapp/fingerprint.py:138
 #: aurora/shell/widgets.py:1355 aurora/shell/widgets.py:1478
-#: aurora/taskmanager.py:668 aurora/welcome.py:142
+#: aurora/taskmanager.py:668 aurora/welcome.py:155
 msgid "Done"
 msgstr "Fertig"
 
-#: aurora/migrate.py:581
+#: aurora/migrate.py:577
 msgid "Nothing is chosen"
 msgstr "Nichts ausgewählt"
 
-#: aurora/migrate.py:600
+#: aurora/migrate.py:596
 msgid "Your files are here"
 msgstr "Ihre Dateien sind da"
 
-#: aurora/migrate.py:601
+#: aurora/migrate.py:597
 msgid "{n} files copied. {kept} were already here and were left alone."
 msgstr "{n} Dateien kopiert. {kept} waren schon hier und blieben unangetastet."
 
-#: aurora/migrate.py:605
+#: aurora/migrate.py:601
 msgid "Stopped"
 msgstr "Angehalten"
 
-#: aurora/migrate.py:605
+#: aurora/migrate.py:601
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgegangen"
 
-#: aurora/migrate.py:606
+#: aurora/migrate.py:602
 msgid "What had been copied is here."
 msgstr "Was bereits kopiert wurde, ist hier."
 
@@ -1921,7 +1921,7 @@ msgstr "Stumm"
 msgid "Previous"
 msgstr "Zurück"
 
-#: aurora/quicklook.py:69 aurora/welcome.py:52 aurora/welcome.py:142
+#: aurora/quicklook.py:69 aurora/welcome.py:52 aurora/welcome.py:155
 msgid "Next"
 msgstr "Weiter"
 
@@ -2634,7 +2634,7 @@ msgstr "Fotos"
 msgid "PDF"
 msgstr "PDF"
 
-#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:216
+#: aurora/settingsapp/applications.py:26 aurora/settingsapp/desktop.py:218
 #: aurora/settingsapp/storage.py:18 aurora/shell/quicksettings.py:459
 #: aurora/taskmanager.py:326
 msgid "Apps"
@@ -2899,7 +2899,7 @@ msgstr "Geschwindigkeit, Linkshändermodus und Gesten findest du unter Maus und 
 
 #: aurora/settingsapp/app.py:49 aurora/settingsapp/app.py:71
 #: aurora/settingsapp/app.py:83 aurora/settingsapp/app.py:84
-#: aurora/settingsapp/desktop.py:217 aurora/settingsapp/inputs.py:49
+#: aurora/settingsapp/desktop.py:219 aurora/settingsapp/inputs.py:49
 #: aurora/shell/quicksettings.py:291 aurora/shell/search.py:620
 #: aurora/shell/wallpaper.py:200
 #: data/applications/org.aurora.Settings.desktop:2
@@ -3365,35 +3365,47 @@ msgstr "Spotlight-Suche"
 msgid "Launchpad (all apps)"
 msgstr "Launchpad (alle Apps)"
 
+#: aurora/settingsapp/desktop.py:214
+msgid "Launchpad layout"
+msgstr "Launchpad-Anordnung"
+
 #: aurora/settingsapp/desktop.py:215
+msgid "Pages with folders"
+msgstr "Seiten mit Ordnern"
+
+#: aurora/settingsapp/desktop.py:215
+msgid "One list by kind"
+msgstr "Eine Liste nach Art"
+
+#: aurora/settingsapp/desktop.py:217
 msgid "Search Results"
 msgstr "Suchergebnisse"
 
-#: aurora/settingsapp/desktop.py:215
+#: aurora/settingsapp/desktop.py:217
 msgid "What Spotlight shows as you type."
 msgstr "Was Spotlight beim Tippen zeigt."
 
-#: aurora/settingsapp/desktop.py:216
+#: aurora/settingsapp/desktop.py:218
 msgid "Recent files"
 msgstr "Zuletzt verwendete Dateien"
 
-#: aurora/settingsapp/desktop.py:217
+#: aurora/settingsapp/desktop.py:219
 msgid "Code projects"
 msgstr "Code-Projekte"
 
-#: aurora/settingsapp/desktop.py:218
+#: aurora/settingsapp/desktop.py:220
 msgid "Calculator"
 msgstr "Rechner"
 
-#: aurora/settingsapp/desktop.py:219
+#: aurora/settingsapp/desktop.py:221
 msgid "Unit and currency conversion"
 msgstr "Einheiten- und Währungsumrechnung"
 
-#: aurora/settingsapp/desktop.py:220
+#: aurora/settingsapp/desktop.py:222
 msgid "Ask Aurora AI"
 msgstr "Aurora KI fragen"
 
-#: aurora/settingsapp/desktop.py:220
+#: aurora/settingsapp/desktop.py:222
 msgid "Web search"
 msgstr "Websuche"
 
@@ -5505,140 +5517,140 @@ msgstr "Dienstprogramme"
 msgid "Opening App Center…"
 msgstr "App-Center wird geöffnet…"
 
-#: aurora/shell/app.py:231
+#: aurora/shell/app.py:233
 msgid "Night Light can't change this screen's colors"
 msgstr "Nachtlicht kann die Farben dieses Bildschirms nicht ändern"
 
-#: aurora/shell/app.py:232
+#: aurora/shell/app.py:234
 msgid "The graphics driver doesn't allow it. This is usual in a virtual machine; on a computer, install the graphics driver from Settings → Updates → Additional Drivers."
 msgstr "Der Grafiktreiber erlaubt es nicht. In einer virtuellen Maschine ist das üblich; auf einem Computer den Grafiktreiber unter Einstellungen → Aktualisierungen → Zusätzliche Treiber installieren."
 
-#: aurora/shell/app.py:245
+#: aurora/shell/app.py:247
 msgid "Graphics fallback started"
 msgstr "Grafik-Ausweichmodus gestartet"
 
-#: aurora/shell/app.py:246
+#: aurora/shell/app.py:248
 msgid "Wayfire could not start. Aurora opened the safe desktop instead. Select this notification to review the startup report."
 msgstr "Wayfire konnte nicht starten. Aurora hat stattdessen den sicheren Desktop geöffnet. Wähle diese Benachrichtigung, um den Startbericht anzusehen."
 
-#: aurora/shell/app.py:248
+#: aurora/shell/app.py:250
 msgid "Open System Health"
 msgstr "Systemzustand öffnen"
 
-#: aurora/shell/app.py:563
+#: aurora/shell/app.py:565
 msgid "Writing tools are off"
 msgstr "Die Schreibwerkzeuge sind aus"
 
-#: aurora/shell/app.py:655
+#: aurora/shell/app.py:657
 msgid "Restart didn't happen"
 msgstr "Neustart hat nicht stattgefunden"
 
-#: aurora/shell/app.py:655
+#: aurora/shell/app.py:657
 msgid "Shut down didn't happen"
 msgstr "Herunterfahren hat nicht stattgefunden"
 
-#: aurora/shell/app.py:656
+#: aurora/shell/app.py:658
 msgid "Sleep didn't happen"
 msgstr "Ruhezustand hat nicht stattgefunden"
 
-#: aurora/shell/app.py:657
+#: aurora/shell/app.py:659
 msgid "Restart Anyway"
 msgstr "Trotzdem neu starten"
 
-#: aurora/shell/app.py:657
+#: aurora/shell/app.py:659
 msgid "Shut Down Anyway"
 msgstr "Trotzdem herunterfahren"
 
-#: aurora/shell/app.py:658
+#: aurora/shell/app.py:660
 msgid "Sleep Anyway"
 msgstr "Trotzdem Ruhezustand"
 
-#: aurora/shell/app.py:755
+#: aurora/shell/app.py:757
 msgid "Always on Top"
 msgstr "Immer im Vordergrund"
 
-#: aurora/shell/app.py:755
+#: aurora/shell/app.py:757
 msgid "Always on Top Off"
 msgstr "Nicht mehr im Vordergrund"
 
-#: aurora/shell/app.py:759
+#: aurora/shell/app.py:761
 msgid "Set it up in Settings → AI."
 msgstr "Richte sie in Einstellungen → KI ein."
 
-#: aurora/shell/app.py:765
+#: aurora/shell/app.py:767
 msgid "Dictation is off"
 msgstr "Das Diktat ist aus"
 
-#: aurora/shell/app.py:772
+#: aurora/shell/app.py:774
 msgid "Dictation isn't installed yet"
 msgstr "Das Diktat ist noch nicht installiert"
 
-#: aurora/shell/app.py:776
+#: aurora/shell/app.py:778
 msgid "Listening… press Super+H to stop"
 msgstr "Hört zu … drücke Super+H zum Beenden"
 
-#: aurora/shell/app.py:778
+#: aurora/shell/app.py:780
 msgid "Writing it down…"
 msgstr "Wird aufgeschrieben …"
 
-#: aurora/shell/app.py:792
+#: aurora/shell/app.py:794
 msgid "Nothing was heard"
 msgstr "Es wurde nichts gehört"
 
-#: aurora/shell/app.py:801
+#: aurora/shell/app.py:803
 msgid "Read aloud is off"
 msgstr "Das Vorlesen ist aus"
 
-#: aurora/shell/app.py:808
+#: aurora/shell/app.py:810
 msgid "Select some text first"
 msgstr "Markiere zuerst einen Text"
 
-#: aurora/shell/app.py:882
+#: aurora/shell/app.py:884
 msgid "Screenshot captured"
 msgstr "Bildschirmfoto aufgenommen"
 
-#: aurora/shell/app.py:883
+#: aurora/shell/app.py:885
 msgid "Saved to {path} and copied to the clipboard."
 msgstr "In {path} gespeichert und in die Zwischenablage kopiert."
 
-#: aurora/shell/app.py:908
+#: aurora/shell/app.py:910
 msgid "Pin to Screen"
 msgstr "Am Bildschirm anheften"
 
-#: aurora/shell/app.py:908
+#: aurora/shell/app.py:910
 msgid "Annotate"
 msgstr "Kommentieren"
 
-#: aurora/shell/app.py:909
+#: aurora/shell/app.py:911
 msgid "Copy Text"
 msgstr "Text kopieren"
 
-#: aurora/shell/app.py:977 aurora/shell/app.py:984
+#: aurora/shell/app.py:979 aurora/shell/app.py:986
 msgid "Text Recognition"
 msgstr "Texterkennung"
 
-#: aurora/shell/app.py:977
+#: aurora/shell/app.py:979
 msgid "No text found"
 msgstr "Kein Text gefunden"
 
-#: aurora/shell/app.py:978
+#: aurora/shell/app.py:980
 msgid "Try a larger or sharper area."
 msgstr "Versuche einen größeren oder schärferen Bereich."
 
-#: aurora/shell/app.py:984
+#: aurora/shell/app.py:986
 msgid "Text copied"
 msgstr "Text kopiert"
 
-#: aurora/shell/app.py:1039 aurora/shell/quicksettings.py:223
+#: aurora/shell/app.py:1041 aurora/shell/quicksettings.py:223
 #: aurora/shell/quicksettings.py:244
 msgid "Screen Recording"
 msgstr "Bildschirmaufnahme"
 
-#: aurora/shell/app.py:1039
+#: aurora/shell/app.py:1041
 msgid "Screen recording saved"
 msgstr "Bildschirmaufnahme gespeichert"
 
-#: aurora/shell/app.py:1040
+#: aurora/shell/app.py:1042
 msgid "Saved to {path}."
 msgstr "In {path} gespeichert."
 
@@ -5745,11 +5757,11 @@ msgstr "Fenster"
 msgid "Minimized"
 msgstr "Minimiert"
 
-#: aurora/shell/dock.py:317 aurora/shell/launcher.py:72
+#: aurora/shell/dock.py:317 aurora/shell/launcher.py:102
 msgid "Remove from Dock"
 msgstr "Aus dem Dock entfernen"
 
-#: aurora/shell/dock.py:319 aurora/shell/launcher.py:75
+#: aurora/shell/dock.py:319 aurora/shell/launcher.py:105
 msgid "Keep in Dock"
 msgstr "Im Dock behalten"
 
@@ -5765,23 +5777,35 @@ msgstr "{n} Fenster schließen"
 msgid "Launchpad"
 msgstr "Launchpad"
 
-#: aurora/shell/launcher.py:77
+#: aurora/shell/launcher.py:107
 msgid "Add to Desktop"
 msgstr "Zum Desktop hinzufügen"
 
-#: aurora/shell/launcher.py:78 aurora/shell/launcher.py:158
+#: aurora/shell/launcher.py:108 aurora/shell/launcher.py:260
 msgid "Show in Files"
 msgstr "In Dateien anzeigen"
 
-#: aurora/shell/launcher.py:166
+#: aurora/shell/launcher.py:177
+msgid "Rename this folder"
+msgstr "Diesen Ordner umbenennen"
+
+#: aurora/shell/launcher.py:192
+msgid "Take Everything Out"
+msgstr "Alles herausnehmen"
+
+#: aurora/shell/launcher.py:268
 msgid "Ask Aurora about this file"
 msgstr "Aurora zu dieser Datei befragen"
 
-#: aurora/shell/launcher.py:199
+#: aurora/shell/launcher.py:301
 msgid "Search apps, files and settings, or type ? to ask Aurora"
 msgstr "Suche Apps, Dateien und Einstellungen, oder ? eingeben, um Aurora zu fragen"
 
-#: aurora/shell/launcher.py:263
+#: aurora/shell/launcher.py:382 aurora/shell/widgets.py:1011
+msgid "Folder"
+msgstr "Ordner"
+
+#: aurora/shell/launcher.py:412
 msgid "Frequently Used"
 msgstr "Häufig verwendet"
 
@@ -6742,10 +6766,6 @@ msgstr "Die Fokuszeit ist vorbei"
 msgid "Take a short break."
 msgstr "Mach eine kurze Pause."
 
-#: aurora/shell/widgets.py:1011
-msgid "Folder"
-msgstr "Ordner"
-
 #: aurora/shell/widgets.py:1012
 msgid "Change every"
 msgstr "Wechseln alle"
@@ -7294,15 +7314,19 @@ msgstr "Praktische Tastenkürzel"
 msgid "Install Aurora OS…"
 msgstr "Aurora OS installieren …"
 
-#: aurora/welcome.py:123
+#: aurora/welcome.py:131
+msgid "Bring My Files from Windows…"
+msgstr ""
+
+#: aurora/welcome.py:136
 msgid "Open Settings"
 msgstr "Einstellungen öffnen"
 
-#: aurora/welcome.py:127
+#: aurora/welcome.py:140
 msgid "You're All Set"
 msgstr "Alles bereit"
 
-#: aurora/welcome.py:128
+#: aurora/welcome.py:141
 msgid "Press the Super key to find apps, files and settings."
 msgstr "Drücke die Super-Taste, um Apps, Dateien und Einstellungen zu finden."
 
