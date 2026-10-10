@@ -104,7 +104,7 @@ class Privacy(Page):
         clear_clip = Adw.ButtonRow(title=_("Clear Clipboard History"))
         clear_clip.connect("activated", lambda *_: self._clear_clipboard())
         clip.add(clear_clip)
-        manage_clip = Adw.ButtonRow(title=_("Manage Clipboard History…"))
+        manage_clip = Adw.ButtonRow(title=_("Open Clipboard…"))
         manage_clip.connect("activated", lambda *_: self._manage_clipboard())
         clip.add(manage_clip)
 
@@ -144,37 +144,11 @@ class Privacy(Page):
         toast(self, _("Clipboard history cleared"))
 
     def _manage_clipboard(self):
-        from aurora import clipboard
-        dialog = Adw.AlertDialog(heading=_("Clipboard History"))
-        rows = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
-
-        def refresh():
-            while (child := rows.get_first_child()) is not None:
-                rows.remove(child)
-            for text in clipboard.load():
-                label = " ".join(text.split())[:90]
-                row = Gtk.Box(spacing=8, margin_top=4, margin_bottom=4,
-                              margin_start=8, margin_end=8)
-                row.append(Gtk.Label(label=label, xalign=0, hexpand=True,
-                                     ellipsize=3, tooltip_text=text))
-                is_pinned = clipboard.pinned(text)
-                pin = Gtk.Button(icon_name="emblem-favorite-symbolic", css_classes=["flat"],
-                                 tooltip_text=_("Unpin") if is_pinned else _("Pin"))
-                pin.set_opacity(1.0 if is_pinned else 0.5)
-                pin.connect("clicked", lambda _b, value=text, state=is_pinned:
-                            (clipboard.pin(value, not state), refresh()))
-                row.append(pin)
-                remove = Gtk.Button(icon_name="edit-delete-symbolic", css_classes=["flat"],
-                                    tooltip_text=_("Remove"))
-                remove.connect("clicked", lambda _b, value=text:
-                               (clipboard.delete(value), refresh()))
-                row.append(remove)
-                rows.append(row)
-        refresh()
-        dialog.set_extra_child(Gtk.ScrolledWindow(child=rows, min_content_width=480,
-                                                  min_content_height=300))
-        dialog.add_response("close", _("Close"))
-        dialog.present(self.get_root())
+        """The Clipboard app is the one place the history is shown and edited."""
+        try:
+            subprocess.Popen(["aurora-clipboard", "show"], start_new_session=True)
+        except OSError as err:
+            toast(self, str(err))
 
     def _set_firewall(self, on):
         ok, err = admin("firewall", "on" if on else "off")

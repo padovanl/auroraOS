@@ -208,6 +208,13 @@ learning was the point. — *Luca Padovan*
   Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
   it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
+- **Clipboard** (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>): everything you have copied in
+  a window — pinned entries first, then the rest newest first, pictures among them, each with
+  its age and line count and code in a monospace font. Search, click to copy (the window
+  closes and the text stays on the clipboard, because it is handed to `wl-copy` rather than
+  held by a window that is about to close), pin what you keep reaching for, delete one entry
+  or empty the lot. It follows the history live, so leaving it open shows new copies as they
+  happen. Spotlight's <kbd>Super</kbd>+<kbd>V</kbd> remains the quick look at the same history.
 - **Task Manager** (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>): apps (what has a window,
   with its processes folded underneath), background and system processes with CPU, memory
   and disk, End Task and Kill; performance graphs; startup apps with a switch each; system
@@ -455,6 +462,7 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> | Pin an area of the screen |
 | <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> | Start or stop screen recording (add <kbd>Shift</kbd> for an area) |
 | <kbd>Super</kbd>+<kbd>V</kbd> | Clipboard history |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> | Clipboard: the whole history in a window |
 | <kbd>Super</kbd>+<kbd>.</kbd> | Emoji |
 | <kbd>Super</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> | Terminal |
 | <kbd>Super</kbd>+<kbd>E</kbd> | Files |
@@ -1260,8 +1268,15 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   readable only by you. Password managers mark their copies as sensitive and wl-paste
   passes that on, so passwords are never stored. cliphist would work too, but it adds a
   Go binary for what is about 60 lines of Python, and it doesn't skip sensitive entries.
-  CopyQ and GPaste bring their own UIs, and ours is Spotlight. Turn it off or clear it in
-  Settings → Privacy.
+  CopyQ and GPaste bring their own UIs; ours are Spotlight, for the quick look, and the
+  **Clipboard** window (`aurora/clipboardapp.py`, `aurora-clipboard show`,
+  <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>) for the whole history: search, ages, line
+  counts, monospace for code, pins, delete, and the pictures `wl-paste --type image/png`
+  stored alongside the text. Copying from it runs `wl-copy`, which keeps serving the
+  selection after the window closes — a Wayland client owns its selection only while it
+  lives, and this window exists to be closed. Settings → Privacy has the same history: the
+  switch, Clear, and a button that opens this window rather than a second small list of its
+  own.
 
 #### Quick Look: GTK widgets per file type
 - **Alternatives:** GNOME Sushi (needs Nautilus and GJS), opening the default app.

@@ -20,6 +20,7 @@ def describe_shortcut(action, command, element):
         "aurora-shell launcher": _("Search and Launchpad"),
         "aurora-shell quick-settings": _("Control Center"),
         "aurora-shell clipboard": _("Clipboard history"),
+        "aurora-clipboard show": _("Clipboard window"),
         "aurora-shell emoji": _("Emoji picker"),
         "aurora-shell dictate": _("Dictation"),
         "aurora-shell read-aloud": _("Read selected text aloud"),

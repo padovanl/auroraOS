@@ -8,6 +8,7 @@ wl-paste passes that on in CLIPBOARD_STATE. The history lives in
 
     aurora-clipboard store     read a new entry from stdin
     aurora-clipboard list      print the history, newest first
+    aurora-clipboard show      open the Clipboard window (clipboardapp.py)
     aurora-clipboard clear     forget everything
 """
 
@@ -97,6 +98,19 @@ def _save_meta(meta):
 
 def pinned(text):
     return bool(_meta().get(_key(text), {}).get("pinned"))
+
+
+def info(text, meta=None):
+    """What is known about one entry: whether it is pinned and when it arrived.
+    Pass meta from _meta() when asking about a whole list, to read it once."""
+    entry = (meta if meta is not None else _meta()).get(_key(text), {})
+    return {"pinned": bool(entry.get("pinned")), "time": entry.get("time", 0)}
+
+
+def entries():
+    """The history as (text, info) pairs, in the order load() gives them."""
+    meta = _meta()
+    return [(text, info(text, meta)) for text in load()]
 
 
 def pin(text, value=True):
@@ -193,6 +207,9 @@ def main():
     elif cmd == "list":
         for item in load():
             print(item.replace("\n", "⏎"))
+    elif cmd == "show":
+        from aurora.clipboardapp import main as window
+        return window()
     elif cmd == "clear":
         clear()
     else:

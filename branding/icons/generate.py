@@ -72,6 +72,9 @@ GLYPHS = {
     "document": fill("M40 26h34l16 16v54a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z")
     + fill("M74 26v12a4 4 0 0 0 4 4h12z", "#ffd3cf")
     + stroke("M44 58h32M44 70h32M44 82h20", 5, "#e0463f"),
+    "clipboard": fill("M36 32h56a6 6 0 0 1 6 6v58a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V38a6 6 0 0 1 6-6z")
+    + fill("M54 22h20a6 6 0 0 1 6 6v8H48v-8a6 6 0 0 1 6-6z", "#cfd6e8")
+    + stroke("M44 58h40M44 72h40M44 86h24", 5, "#6a5bd6"),
     "text": fill("M36 26h40l14 14v56a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z")
     + stroke("M40 50h26M40 62h32M40 74h20", 5, "#f0a23a")
     + fill("M92 44l10 10-30 30-13 3 3-13z", "#3a2a1a") + fill("M92 44l10 10 4-4-10-10z", "#ff7a5c"),
@@ -223,6 +226,7 @@ APPS = {
     ("preferences-system-network", "nm-connection-editor"): ("#5aa2ff", "#3a58e0", "network"),
     ("goa-panel", "org.gnome.OnlineAccounts", "gnome-online-accounts",
      "org.gnome.OnlineAccounts.OAuth2"): ("#9ec5ff", "#5a78f0", "accounts"),
+    ("org.aurora.Clipboard", "edit-paste", "clipboard"): ("#b49cff", "#6c4fd8", "clipboard"),
     ("preferences-system", "org.gnome.Settings", "preferences-desktop", "gnome-control-center",
      "systemsettings"): ("#9aa1b3", "#5b6275", "settings"),
 }

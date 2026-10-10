@@ -5,6 +5,7 @@ import datetime
 import io
 import json
 import os
+import time
 import zoneinfo
 
 import pytest
@@ -138,6 +139,35 @@ def test_clipboard_limit_and_clear(data_home):
     clipboard.store(io.StringIO("x"), env={})
     clipboard.clear()
     assert clipboard.load() == []
+
+
+def test_clipboard_entries_carry_their_pin_and_time(data_home):
+    for text in ("one", "two"):
+        clipboard.store(io.StringIO(text), env={})
+    clipboard.pin("one")
+    entries = dict(clipboard.entries())
+    assert entries["one"]["pinned"] and not entries["two"]["pinned"]
+    assert entries["two"]["time"] > 0
+    # Pinned entries come first, which is the order the window shows.
+    assert [text for text, _info in clipboard.entries()][0] == "one"
+    assert clipboard.info("never copied") == {"pinned": False, "time": 0}
+
+
+# --- the Clipboard window ------------------------------------------------
+
+def test_clipboard_window_reads_ages_and_code():
+    from aurora import clipboardapp
+    now = time.time()
+    assert clipboardapp.when(now) == "just now"
+    assert clipboardapp.when(now - 600).startswith("10")
+    assert clipboardapp.when(now - 7200).startswith("2")
+    assert clipboardapp.when(now - 40 * 3600) == "yesterday"
+    assert clipboardapp.when(0) == ""
+    assert clipboardapp.looks_like_code("def hello():\n    return 1")
+    assert clipboardapp.looks_like_code("/etc/fstab")
+    assert clipboardapp.looks_like_code("https://example.com/x")
+    assert not clipboardapp.looks_like_code("remember to buy bread")
+    assert not clipboardapp.looks_like_code("una frase normale\ne un'altra riga")
 
 
 # --- OCR helpers ---------------------------------------------------------
