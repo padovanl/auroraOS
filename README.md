@@ -5,8 +5,7 @@
 # Aurora OS
 
 [![Latest release](https://img.shields.io/github/v/release/padovanl/auroraOS?display_name=release&label=release)](https://github.com/padovanl/auroraOS/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/padovanl/auroraOS/total?label=ISO%20downloads)](https://github.com/padovanl/auroraOS/releases)
-[![GitHub stars](https://img.shields.io/github/stars/padovanl/auroraOS?style=flat)](https://github.com/padovanl/auroraOS/stargazers)
+[![Release downloads](https://img.shields.io/github/downloads/padovanl/auroraOS/latest/total?label=release%20asset%20downloads)](https://github.com/padovanl/auroraOS/releases/latest)
 [![License](https://img.shields.io/github/license/padovanl/auroraOS)](LICENSE)
 [![Release ISO](https://img.shields.io/github/actions/workflow/status/padovanl/auroraOS/release-iso.yml?label=ISO%20build)](https://github.com/padovanl/auroraOS/actions/workflows/release-iso.yml)
 
