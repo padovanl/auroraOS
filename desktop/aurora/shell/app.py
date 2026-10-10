@@ -386,7 +386,7 @@ class Shell(Adw.Application):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 1)
         self._dyn_css.load_from_string(css)
 
-    def launch_app(self, app, action=None):
+    def launch_app(self, app, action=None, files=None):
         surfaces = (self.wallpapers.windows() + self.panels.windows() +
                     self.docks.windows() + [self.launcher])
         for surface in surfaces:
@@ -402,7 +402,7 @@ class Shell(Adw.Application):
             return GLib.SOURCE_REMOVE
 
         self._startup_cursor_source = GLib.timeout_add(2200, clear)
-        return apps.launch(app, action=action)
+        return apps.launch(app, files=files, action=action)
 
     def _load_css(self):
         path = data_path("style", "shell.css")

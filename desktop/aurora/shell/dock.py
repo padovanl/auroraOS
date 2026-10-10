@@ -12,7 +12,7 @@ import os
 import cairo
 from gi.repository import Gdk, Gio, GLib, Gtk
 
-from aurora import apps, settings
+from aurora import apps, dnd, settings
 from aurora.i18n import _
 from aurora.shell.layer import EDGES, Layer, LayerWindow, LS
 from aurora.shell.toplevels import window_labels
@@ -50,6 +50,9 @@ def dock_settings():
 
 
 class DockItem(Gtk.Button):
+    # What a file dropped here means: the app opens it where it is.
+    FILES_ACTION = Gdk.DragAction.COPY
+
     def __init__(self, dock, key, app=None, pinned=False, icon=None, tooltip=None):
         super().__init__(css_classes=["flat", "dock-item"])
         self.dock = dock
@@ -101,6 +104,19 @@ class DockItem(Gtk.Button):
             middle = Gtk.GestureClick(button=Gdk.BUTTON_MIDDLE)
             middle.connect("pressed", lambda *_: self.launch())
             self.add_controller(middle)
+        # A file dropped on an app opens with it; dropped on the Trash, it goes
+        # there. Files, the desktop and other apps all hand over a file list,
+        # and they offer it as a move, so both actions have to be welcome.
+        # An app whose command takes no file (a terminal, say) stays inert
+        # rather than lighting up and then swallowing the drop.
+        if key == "trash" or (app is not None and
+                              (app.supports_files() or app.supports_uris())):
+            dropped = Gtk.DropTarget.new(Gdk.FileList,
+                                         Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            dropped.connect("enter", self._files_enter)
+            dropped.connect("leave", lambda *_: self._drag_leave())
+            dropped.connect("drop", self._files_dropped)
+            self.add_controller(dropped)
         if pinned and app is not None:
             source = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
             source.connect("prepare", lambda *_: Gdk.ContentProvider.new_for_value(self.key))
@@ -127,6 +143,25 @@ class DockItem(Gtk.Button):
 
     def _drag_leave(self):
         self.remove_css_class("dock-drop-target")
+
+    def _files_enter(self, target, _x, _y):
+        # Light up, and answer with what we mean to do: open the files where
+        # they are, or, for the Trash, take them away.
+        self.add_css_class("dock-drop-target")
+        return dnd.preferred_action(target, self.FILES_ACTION)
+
+    def _files_dropped(self, _target, value, _x, _y):
+        self._drag_leave()
+        paths = dnd.file_paths(value)
+        return bool(paths) and self.drop_files(paths)
+
+    def drop_files(self, paths):
+        """Open these files with this app, and show it starting."""
+        if self.app is None:
+            return False
+        self.add_css_class("launching")
+        GLib.timeout_add(1200, lambda: self.remove_css_class("launching"))
+        return self.dock.shell.launch_app(self.app, files=paths)
 
     def _drop_favorite(self, _target, key, x, y):
         self._drag_leave()
@@ -302,6 +337,9 @@ class DockItem(Gtk.Button):
 
 
 class TrashItem(DockItem):
+    # Dropping here takes the files away from where they were.
+    FILES_ACTION = Gdk.DragAction.MOVE
+
     def __init__(self, dock):
         super().__init__(dock, "trash", icon="user-trash", tooltip=_("Trash"))
         self._file = Gio.File.new_for_uri(TRASH_URI)
@@ -322,6 +360,12 @@ class TrashItem(DockItem):
 
     def _refresh(self):
         self.set_icon("user-trash-full" if self._count() else "user-trash")
+
+    def drop_files(self, paths):
+        """Dropped on the Trash: moved there, and recoverable from it."""
+        moved = dnd.to_trash(paths)
+        self._refresh()
+        return moved > 0
 
     def menu_entries(self):
         return [(_("Open"), lambda: apps.spawn(["aurora-files", TRASH_URI])),
@@ -451,6 +495,13 @@ class Dock(LayerWindow):
         motion.connect("motion", self._on_motion)
         motion.connect("leave", self._on_leave)
         self.add_controller(motion)
+        # A drag doesn't move the pointer as far as the controller above is
+        # concerned, so a hidden dock would stay down while a file is carried
+        # to its edge. This listens for the files themselves and comes up.
+        edge = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+        edge.connect("enter", self._files_near)
+        edge.connect("leave", lambda *_: self._files_away())
+        self.add_controller(edge)
 
         s = settings.get()
         if s:
@@ -516,6 +567,16 @@ class Dock(LayerWindow):
         self._dragging = False
         if self._wants_hiding() and self._pointer is None:
             self._schedule_hide()
+
+    def _files_near(self, target, _x, _y):
+        """Files are being carried over the dock: show it, and keep it up."""
+        self._drag_start()
+        if self._hidden:
+            self._show()   # the revealer updates the input region when it lands
+        return dnd.preferred_action(target, Gdk.DragAction.COPY)
+
+    def _files_away(self):
+        self._drag_end()
 
     # --- content ---
 

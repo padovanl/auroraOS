@@ -333,9 +333,11 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 /* Starting: the icon bounces once a second until the window is there, the
    way a dock has said "working on it" since forever. */
 @keyframes dock-bounce {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateY(-9px); }
   45% { transform: translateY(-3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .dock-item.launching image {
   opacity: 0.75;
@@ -344,15 +346,19 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .aurora-dock.dock-left .dock-item.launching image,
 .aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side; }
 @keyframes dock-bounce-side {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateX(9px); }
   45% { transform: translateX(3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side-left; }
 @keyframes dock-bounce-side-left {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateX(-9px); }
   45% { transform: translateX(-3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .dock-launchpad image { color: @shell_fg; }
 
