@@ -128,6 +128,14 @@ Permissions.</p>
 Each install runs in a progress window with an embedded terminal: it shows every command,
 keeps the log visible if something fails, and asks for the administrator password there when
 needed. Installed tools show a check mark.</p>
+<p>When a tool comes from its own apt repository, Dev Hub keeps one definition of it and one
+signing key, in <span class="path">/etc/apt/keyrings</span>. Any other copy of the same
+repository — left by the vendor's own package, by an earlier attempt, or by a how-to followed
+by hand — is moved aside with a <span class="path">.aurora-disabled</span> suffix and named in
+the log. Two definitions of one repository with different key paths make apt refuse every
+update, system updates included (<em>Conflicting values set for option Signed-By</em>), so
+installing the tool again from Dev Hub is also the way to repair a machine already in that
+state.</p>
 <h2>Project Workspaces</h2>
 <p>For each repository or folder, a workspace opens your editor, a terminal and Files together;
 in the Aurora session it can also remember where those windows were and put them back.

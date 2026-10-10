@@ -1625,6 +1625,16 @@ set up a feature, and every place it appears has its own switch.
   databases) goes through **Dev Hub**. It installs from the official source, so versions
   are always current and don't age with Debian's release, and it shows every command in
   a terminal.
+- **One definition per third-party repository.** Two copies of the same apt repository with
+  different `Signed-By` key paths make apt refuse *every* update, system updates included
+  (`E: Conflicting values set for option Signed-By`). A vendor package's own postinst, an
+  earlier Dev Hub attempt or a how-to followed by hand all leave such a copy — Microsoft's
+  `code` package is the classic one. So `add_repo` keeps one definition and one key in
+  `/etc/apt/keyrings`, and moves every other copy of the same URI aside with a
+  `.aurora-disabled` suffix (apt ignores that suffix, and the log says what moved);
+  recipes whose package re-adds its repository while installing call `keep_one_source`
+  afterwards to do it again. Installing the tool from Dev Hub therefore also repairs a
+  machine already stuck in that state.
 - **Containers two ways:** Docker for compatibility with the ecosystem, and Podman plus
   distrobox for rootless containers and "any distro in a terminal" (like Fedora's
   Toolbox). Ptyxis integrates with both.

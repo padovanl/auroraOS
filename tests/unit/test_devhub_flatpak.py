@@ -92,8 +92,27 @@ def test_archive_recipes_use_private_temporary_directories():
         assert "cd /tmp" not in recipe["script"]
 
 
-def test_external_repositories_remove_conflicting_legacy_definition_first():
+def test_external_repositories_keep_one_definition_of_themselves():
+    """Two definitions of one repository with different key paths make apt
+    refuse every update, so ours is written only after the others are gone."""
     remove = 'sudo rm -f "/etc/apt/sources.list.d/$1.list"'
-    write = 'sudo tee "/etc/apt/sources.list.d/$1.sources"'
-    assert remove in APT_REPO
-    assert APT_REPO.index(remove) < APT_REPO.index(write) < APT_REPO.index("apt-get update")
+    sweep = 'drop_rival_sources "$source" "$uri"'
+    write = 'sudo tee "$source"'
+    assert remove in APT_REPO and sweep in APT_REPO
+    assert APT_REPO.index(remove) < APT_REPO.index(write)
+    assert APT_REPO.index(sweep) < APT_REPO.index(write) < APT_REPO.index("apt-get update")
+    # A rival is moved aside, never deleted, and apt ignores that suffix.
+    assert 'sudo mv "$file" "$file.aurora-disabled"' in APT_REPO
+    # The keyring has to exist and be readable by _apt, or every update of the
+    # repository fails for a missing public key.
+    assert 'sudo chmod 0644 "$keyring"' in APT_REPO
+    assert 'sudo test -s "$keyring"' in APT_REPO
+
+
+def test_vscode_puts_the_microsoft_repository_right_after_installing():
+    """The code package adds its own copy of the repository while it installs."""
+    recipe = next(r for r in DEV_RECIPES if r["id"] == "vscode")
+    assert "code code/add-microsoft-repo boolean false" in recipe["script"]
+    assert "keep_one_source vscode https://packages.microsoft.com/repos/code" in recipe["script"]
+    assert recipe["script"].index("apt-get install -y code") < \
+        recipe["script"].index("keep_one_source vscode")

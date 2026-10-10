@@ -11,15 +11,54 @@ import shlex
 from aurora.i18n import N_
 
 APT_REPO = r'''
+# Any other definition of the same repository, whatever it is called and
+# whoever wrote it (a vendor package's postinst, an older recipe, a how-to
+# followed by hand), makes apt refuse both of them: "Conflicting values set
+# for option Signed-By". Ours is the one that stays; the others are moved
+# aside, not deleted, and apt ignores a file with that suffix.
+drop_rival_sources() {  # drop_rival_sources KEEP_FILE URI
+    local file
+    for file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list \
+                /etc/apt/sources.list.d/*.sources; do
+        [ -f "$file" ] || continue
+        [ "$file" = "$1" ] && continue
+        if grep -qF "$2" "$file" 2>/dev/null; then
+            sudo mv "$file" "$file.aurora-disabled"
+            echo "Moved aside $file: it defined the same repository another way"
+        fi
+    done
+}
+
 add_repo() {  # add_repo NAME KEY_URL "deb822 lines..."
+    local keyring="/etc/apt/keyrings/$1.gpg" source="/etc/apt/sources.list.d/$1.sources"
+    local uri raw
+    uri=$(printf '%s\n' "$3" | sed -n 's/^URIs:[[:space:]]*//p' | head -1)
     sudo install -d -m 0755 /etc/apt/keyrings
-    curl -fsSL "$2" | gpg --dearmor | sudo tee "/etc/apt/keyrings/$1.gpg" >/dev/null
-    # Vendor packages and older recipes may have left the same repository in
-    # one-line format with a different Signed-By path. APT rejects both before
-    # it can install or repair anything, so replace that stale definition.
+    raw=$(mktemp)
+    curl -fsSL "$2" > "$raw" || { echo "Could not download the signing key from $2"; return 1; }
+    # An armoured key has to be dearmoured; a binary one must be left alone.
+    if head -c 200 "$raw" | grep -q "BEGIN PGP PUBLIC KEY BLOCK"; then
+        gpg --dearmor < "$raw" | sudo tee "$keyring" >/dev/null
+    else
+        sudo tee "$keyring" < "$raw" >/dev/null
+    fi
+    rm -f "$raw"
+    # apt reads the keyring as the _apt user: it has to be there and readable,
+    # or every update of this repository fails for a missing public key.
+    sudo test -s "$keyring" || { echo "The signing key from $2 is empty"; return 1; }
+    sudo chmod 0644 "$keyring"
     sudo rm -f "/etc/apt/sources.list.d/$1.list"
-    printf '%s\nSigned-By: /etc/apt/keyrings/%s.gpg\n' "$3" "$1" | sudo tee "/etc/apt/sources.list.d/$1.sources" >/dev/null
+    drop_rival_sources "$source" "$uri"
+    printf '%s\nSigned-By: %s\n' "$3" "$keyring" | sudo tee "$source" >/dev/null
     sudo apt-get update
+}
+
+# Some vendor packages add their own copy of the repository while they install,
+# with their own key path, which breaks the next apt update. Called after the
+# install to put that right and leave apt working.
+keep_one_source() {  # keep_one_source NAME URI
+    drop_rival_sources "/etc/apt/sources.list.d/$1.sources" "$2"
+    sudo apt-get update >/dev/null || true
 }
 '''
 
@@ -95,8 +134,11 @@ Components: main
 Architectures: amd64"
 # The package would add its own copy of the repository, signed with another
 # key path: apt then refuses both ("Conflicting values set for option Signed-By").
+# The answer is preseeded, and checked again afterwards in case the package
+# adds it anyway — on an older release, or because a previous attempt left one.
 echo "code code/add-microsoft-repo boolean false" | sudo debconf-set-selections
 sudo apt-get install -y code
+keep_one_source vscode https://packages.microsoft.com/repos/code
 '''},
     {"id": "vscodium", "cat": "editors", "name": "VSCodium", "icon": "vscodium",
      "fallback_icon": "text-editor", "desc": N_("VS Code built from source without telemetry."),
