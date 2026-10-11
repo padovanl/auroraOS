@@ -8,11 +8,11 @@ import sys
 
 DOCS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
 bad = []
-for page in glob.glob(os.path.join(DOCS, "*.html")):
+for page in glob.glob(os.path.join(DOCS, "*.html")) + glob.glob(os.path.join(DOCS, "manual", "*.html")):
     html = open(page).read()
-    name = os.path.basename(page)
+    name = os.path.relpath(page, DOCS)
     for ref in re.findall(r'(?:src|href)="([^"#:]+)(?:#[^"]*)?"', html):
-        if not os.path.exists(os.path.join(DOCS, ref)):
+        if not os.path.exists(os.path.join(os.path.dirname(page), ref)):
             bad.append(f"{name}: {ref}")
     for anchor in re.findall(r'href="#([^"]+)"', html):
         if anchor != "top" and f'id="{anchor}"' not in html:

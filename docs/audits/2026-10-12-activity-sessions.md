@@ -117,3 +117,24 @@ is Log Out → select another account at the login screen.
 
 The QEMU run stages sources into the old ISO; this is not a release test of a
 new ISO. A rebuilt image is still needed for final image-level validation.
+
+## Illustrated documentation
+
+The [published screenshot set](../screenshots/README.md) now includes eighteen
+current Full HD captures from QEMU with staged desktop sources. Fifteen manual
+pages include nineteen initially collapsed screenshot sections, including
+separate static and animated background examples. Guides load lossless WebP
+window crops on demand; each links to its full-screen PNG. The disclosure uses a
+short animation, native keyboard semantics and the reader's reduced-motion
+preference. Native details still work without JavaScript.
+
+`tests/docs-disclosures.py` checks the generated guide in Chromium at mobile
+width with ordinary and reduced motion, including real Enter-key activation,
+rapid clicks, image loading after expansion and cleanup after animation.
+The site-link check now also covers manual images and links. Capture and browser
+artifacts are in `work/docs-screenshots-2026-10-12/` and `work/docs-guide-check/`.
+
+Three task-oriented guides explain choosing/importing backgrounds, file transfers
+and recovery, and adding accounts/changing sessions. The manual now has 77 pages
+in 13 sections. The browser regression covers both 390 px and 1440 px viewports,
+including native keyboard disclosure with JavaScript disabled.
