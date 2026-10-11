@@ -138,3 +138,9 @@ Three task-oriented guides explain choosing/importing backgrounds, file transfer
 and recovery, and adding accounts/changing sessions. The manual now has 77 pages
 in 13 sections. The browser regression covers both 390 px and 1440 px viewports,
 including native keyboard disclosure with JavaScript disabled.
+
+The public website also has a shared mobile/tablet navigation disclosure: a
+hamburger changes to a close icon, shows every navigation link and retains the
+Download action. It closes on navigation, outside clicks, Escape and desktop
+resize, with keyboard focus and reduced-motion support. Browser checks cover
+home, installation and technical pages at 320 px and 1440 px.
