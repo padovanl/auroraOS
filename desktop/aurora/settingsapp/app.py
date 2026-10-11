@@ -49,9 +49,10 @@ class SettingsWindow(Adw.ApplicationWindow):
         super().__init__(application=app, title=_("Settings"), default_width=980,
                          default_height=680)
         self.set_size_request(360, 400)
+        self.add_css_class("aurora-settings-window")
         self._pages = {}
 
-        self.sidebar = Gtk.ListBox(css_classes=["navigation-sidebar"])
+        self.sidebar = Gtk.ListBox(css_classes=["navigation-sidebar", "settings-sidebar"])
         self.sidebar.connect("row-selected", self._on_row)
         firsts = {section[0] for section in SECTIONS[1:]}
         self.sidebar.set_header_func(
@@ -111,7 +112,9 @@ class SettingsWindow(Adw.ApplicationWindow):
     def show_page(self, page_id):
         for i, cls in enumerate(PAGES):
             if cls.page_id == page_id:
-                self.sidebar.select_row(self.sidebar.get_row_at_index(i))
+                row = self.sidebar.get_row_at_index(i)
+                self.sidebar.select_row(row)
+                row.grab_focus()
                 return
         self.sidebar.select_row(self.sidebar.get_row_at_index(0))
 

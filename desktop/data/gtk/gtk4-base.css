@@ -11,7 +11,13 @@ window.csd > .titlebar {
 
 /* A hairline edge, so a window stands out from one behind it. */
 window.csd {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 18px 48px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 1px alpha(@window_fg_color, 0.10), 0 16px 44px rgba(0, 0, 0, 0.24);
+}
+window.csd:backdrop {
+  box-shadow: 0 0 0 1px alpha(@window_fg_color, 0.07), 0 8px 26px rgba(0, 0, 0, 0.14);
+}
+headerbar {
+  background-image: linear-gradient(to bottom, alpha(@window_fg_color, 0.018), transparent);
 }
 
 popover > contents {
@@ -38,11 +44,26 @@ popover.menu button.model:focus {
 button:not(.circular):not(.flat):not(.image-button) { border-radius: 10px; }
 button.suggested-action, button.destructive-action { border-radius: 999px; padding-left: 18px; padding-right: 18px; }
 entry, spinbutton { border-radius: 10px; }
-.boxed-list, list.boxed-list, .card { border-radius: 14px; }
+.boxed-list, list.boxed-list, .card {
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px alpha(@window_fg_color, 0.065),
+              0 2px 6px alpha(#000000, 0.025);
+}
+.boxed-list > row { padding: 2px 4px; }
+.boxed-list > row:not(:last-child) { border-bottom: 1px solid alpha(@window_fg_color, 0.045); }
+button:not(.flat):not(.circular):not(.image-button):focus-visible,
+entry:focus-visible, spinbutton:focus-visible {
+  outline: 2px solid alpha(@accent_bg_color, 0.75);
+  outline-offset: 2px;
+}
+progressbar > trough { border-radius: 999px; min-height: 5px; }
+progressbar > trough > progress { border-radius: 999px; min-height: 5px; }
 
 /* The selected place in sidebars: the accent, softly. */
 .navigation-sidebar > row:selected,
 .navigation-sidebar > row:selected:hover {
-  background-color: alpha(@accent_bg_color, 0.22);
+  background-color: alpha(@accent_bg_color, 0.14);
+  box-shadow: inset 0 0 0 1px alpha(@accent_bg_color, 0.20);
 }
 .navigation-sidebar > row { border-radius: 10px; }
+.navigation-sidebar > row:selected label { font-weight: 600; }

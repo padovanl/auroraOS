@@ -157,6 +157,15 @@ peer network on (see <a href="included-apps.html#torrents">Torrents</a>).</p>
 
 <h2>Other users</h2>
 <p>Settings → Users → <strong>Add User</strong>: a full name, a username (suggested from the first name, accents dropped: <em>Lùca</em> → <code>luca</code>), a password and whether they're an administrator. <strong>Add</strong> stays off until the username is valid (lowercase letters, digits, <code>-</code> and <code>_</code>, starting with a letter) and free, and the password isn't empty. Removing a user deletes their home folder; if the computer logged them in automatically, it shows the login screen again instead.</p>
+<p>A username you edit manually stays unchanged when you update the full name.
+Account creation and removal run in the background during authorization; the Users
+page prevents duplicate requests and becomes available again after success or cancellation.</p>
+<p>Each account has its own preferences, clipboard and activity journal. Log out
+to return to the login screen and choose another account. The login screen clears
+the previous password when you select a different account. There is currently no
+graphical fast-user-switching control, and two simultaneous graphical desktops
+for the same account share application identities on the user bus; that configuration
+is not supported. Use distinct accounts for concurrent graphical sessions.</p>
 
 <!-- page: networking | Networking | Wi-Fi, wired, VPNs, hotspot, sharing Wi-Fi with a QR code, proxies and network tools -->
 <h2>Wi-Fi and wired</h2>

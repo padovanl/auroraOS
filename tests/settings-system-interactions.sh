@@ -9,5 +9,6 @@ python3 -X faulthandler /src/tests/menu-interactions.py > /out/menus.log 2>&1
 python3 -X faulthandler /src/tests/settings-system-interactions.py > /out/settings-system.log 2>&1
 python3 -X faulthandler /src/tests/daily-interactions.py > /out/daily-interactions.log 2>&1
 python3 -X faulthandler /src/tests/audit-bug-interactions.py > /out/audit-bugs.log 2>&1
+python3 -X faulthandler /src/tests/activity-user-interactions.py > /out/activity-users.log 2>&1
 python3 -X faulthandler /src/tests/file-interactions.py > /out/file-interactions.log 2>&1
 python3 -X faulthandler /src/tests/assistant-interactions.py > /out/assistant-interactions.log 2>&1

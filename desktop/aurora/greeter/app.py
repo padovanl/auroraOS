@@ -229,6 +229,7 @@ class Greeter(Adw.ApplicationWindow):
         return None
 
     def _on_user(self):
+        self.password.set_text("")
         user = self._selected_user()
         self.username.set_visible(user is None)
         if user is None:
@@ -259,6 +260,8 @@ class Greeter(Adw.ApplicationWindow):
             return
         self.busy = True
         self.login_btn.set_sensitive(False)
+        for control in (self.user_drop, self.username, self.password, self.session_drop):
+            control.set_sensitive(False)
         self._show_error("")
         self.spinner.set_visible(True)
         self.spinner.start()
@@ -268,6 +271,7 @@ class Greeter(Adw.ApplicationWindow):
 
     def _authenticate(self, name, password, cmd):
         """Runs in a thread: drive the greetd conversation."""
+        g = None
         try:
             g = Greetd()
             resp = g.create_session(name)
@@ -298,10 +302,15 @@ class Greeter(Adw.ApplicationWindow):
             if "auth" in msg.lower() or not msg:
                 msg = _("Wrong password. Please try again.")
             GLib.idle_add(self._failed, msg)
+        finally:
+            if g is not None:
+                g.close()
 
     def _failed(self, msg):
         self.busy = False
         self.login_btn.set_sensitive(True)
+        for control in (self.user_drop, self.username, self.password, self.session_drop):
+            control.set_sensitive(True)
         self.spinner.stop()
         self.spinner.set_visible(False)
         self.password.set_text("")

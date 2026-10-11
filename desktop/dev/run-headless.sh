@@ -21,4 +21,7 @@ fi
 if [ "$(basename "$scenario")" = logout-relogin.sh ]; then
     args+=(-e AURORA_RELOGIN_TEST=1)
 fi
+if [ "$(basename "$scenario")" = multiuser-sessions.sh ]; then
+    args+=(-e AURORA_MULTIUSER_TEST_CONTAINER=1)
+fi
 docker run "${args[@]}" aurora-os-dev bash /src/desktop/dev/session.sh "$inner_scenario" /out

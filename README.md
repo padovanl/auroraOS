@@ -1823,6 +1823,20 @@ an original, and batch renaming rejects paths outside the selected folder.
 Do Not Disturb preserves notification IDs and timers, so progress updates replace
 one history entry and a closed notification emits its closing signal only once.
 
+The [activity and account/session audit](docs/audits/2026-10-12-activity-sessions.md)
+adds a scrollable complete activity history, active jobs first, cancellation
+feedback and Clear completed. Abandoned jobs become Interrupted and malformed
+records are ignored. Creating/removing accounts keeps Settings responsive,
+manual usernames survive full-name edits, password-change PTYs close on every
+exit, and the greeter clears passwords on account changes and closes its IPC
+connections. Native multi-user and logout/relogin checks accompany the real
+greetd/PAM/logind QEMU scenario in `tests/interact/users_sessions.py`.
+The shared GTK window style now uses cool neutral light/dark surfaces, lighter
+card edges and shadows, clear selection/focus cues and a tidier Settings sidebar.
+Corner-radius preferences still override the shared defaults. The live surface
+palette yields to high contrast. `tests/window-style-preview.sh` captures Settings,
+Files and Task Manager in both schemes, including narrow Settings layouts.
+
 ### Testing
 - **Static:** syntax and shellcheck, desktop-file-validate, strict schema compilation,
   XML and YAML parsing, manifest consistency.

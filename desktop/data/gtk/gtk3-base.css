@@ -19,3 +19,8 @@ menu menuitem:hover,
 menu menuitem:focus {
   background-color: alpha(@theme_selected_bg_color, 0.30);
 }
+
+/* Keep classic GTK apps coherent with Aurora's newer windows. */
+button:not(.circular):not(.flat), entry, spinbutton { border-radius: 9px; }
+button.suggested-action, button.destructive-action { border-radius: 999px; }
+.navigation-sidebar row { border-radius: 9px; }

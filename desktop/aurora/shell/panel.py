@@ -180,7 +180,9 @@ class ActivityCenter(Gtk.MenuButton):
                             margin_top=12, margin_bottom=12,
                             margin_start=12, margin_end=12)
         self.rows.set_size_request(320, -1)
-        self.pop.set_child(self.rows)
+        self.pop.set_child(Gtk.ScrolledWindow(child=self.rows,
+            hscrollbar_policy=Gtk.PolicyType.NEVER, max_content_height=480,
+            propagate_natural_height=True))
         self.pop.connect("show", lambda *_: self.refresh())
         self.set_popover(self.pop)
         GLib.timeout_add_seconds(2, self._tick)
@@ -188,8 +190,7 @@ class ActivityCenter(Gtk.MenuButton):
 
     def _tick(self):
         from aurora import activities
-        items = activities.list_recent()
-        self.set_visible(bool(items))
+        items = activities.list_recent(limit=None)
         self.set_tooltip_text(_("Activities ({n} running)").format(
             n=sum(item.get("status") == "running" for item in items)))
         if self.pop.get_visible():
@@ -199,27 +200,38 @@ class ActivityCenter(Gtk.MenuButton):
     def refresh(self, items=None):
         from aurora import activities
         if items is None:
-            items = activities.list_recent()
+            items = activities.list_recent(limit=None)
         while (child := self.rows.get_first_child()) is not None:
             self.rows.remove(child)
-        self.rows.append(Gtk.Label(label=_("Activities"), xalign=0,
-                                   css_classes=["heading"]))
+        header = Gtk.Box(spacing=8)
+        header.append(Gtk.Label(label=_("Activities"), xalign=0, hexpand=True,
+                                css_classes=["heading"]))
+        clear = Gtk.Button(label=_("Clear completed"), css_classes=["flat"],
+                           sensitive=any(i.get("status") != "running" for i in items))
+        clear.connect("clicked", lambda *_: (activities.clear_finished(), self.refresh()))
+        header.append(clear)
+        self.rows.append(header)
         if not items:
             self.rows.append(Gtk.Label(label=_("No recent activities"), xalign=0,
                                        css_classes=["dim-label"]))
-        for item in items[:8]:
+        for item in items:
             line = Gtk.Box(spacing=8)
             text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3, hexpand=True)
-            text.append(Gtk.Label(label=item.get("label", ""), xalign=0, ellipsize=3))
+            text.append(Gtk.Label(label=item.get("label", ""), xalign=0, ellipsize=3,
+                                  tooltip_text=item.get("label", "")))
             state = item.get("status")
             detail = item.get("item") or ""
             if state == "failed":
-                detail = item.get("error") or _("Failed")
+                detail = (_("Interrupted") if item.get("interrupted") else
+                          item.get("error") or _("Failed"))
             elif state == "cancelled":
                 detail = _("Cancelled")
             elif state == "finished":
                 detail = _("Finished")
-            text.append(Gtk.Label(label=detail, xalign=0, ellipsize=3,
+            cancelling = state == "running" and activities.cancelled(item["id"])
+            if cancelling:
+                detail = _("Cancelling…")
+            text.append(Gtk.Label(label=detail, xalign=0, ellipsize=3, tooltip_text=detail,
                                   css_classes=["dim-label", "caption"]))
             if state == "running":
                 progress = item.get("progress", 0)
@@ -230,8 +242,10 @@ class ActivityCenter(Gtk.MenuButton):
                 line.append(text)
                 if item.get("cancellable", True):
                     cancel = Gtk.Button(icon_name="process-stop-symbolic",
+                                        sensitive=not cancelling,
                                         tooltip_text=_("Cancel transfer"))
-                    cancel.connect("clicked", lambda _b, ident=item["id"]: activities.cancel(ident))
+                    cancel.connect("clicked", lambda _b, ident=item["id"]:
+                                   (activities.cancel(ident), self.refresh()))
                     line.append(cancel)
             else:
                 line.append(text)

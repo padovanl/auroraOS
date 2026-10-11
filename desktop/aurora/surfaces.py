@@ -1,7 +1,7 @@
 """Aurora's surface colors in its own apps, following the style live.
 
-Windows, sidebars, header bars and popovers get a faint violet tint of the
-aurora instead of libadwaita's grey (data/gtk/gtk4-palette-dark.css and
+Windows, sidebars, header bars and popovers get a cool neutral palette
+(data/gtk/gtk4-palette-dark.css and
 -light.css). They're applied from inside each app, on the display, and
 swapped the moment the style changes: the user's gtk.css is read once when an
 app starts, so a palette there stayed dark in an app switched to light.
@@ -15,6 +15,9 @@ _provider = None
 
 
 def _load(manager):
+    if manager.get_high_contrast():
+        _provider.load_from_string("")
+        return
     mode = "dark" if manager.get_dark() else "light"
     try:
         with open(data_path("gtk", f"gtk4-palette-{mode}.css"), encoding="utf-8") as f:
@@ -32,6 +35,7 @@ def _install(display):
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
     manager = Adw.StyleManager.get_default()
     manager.connect("notify::dark", lambda m, _p: _load(m))
+    manager.connect("notify::high-contrast", lambda m, _p: _load(m))
     _load(manager)
 
 

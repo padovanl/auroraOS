@@ -17,7 +17,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from aurora import apps, settings
 from aurora.i18n import _
-from aurora.settingsapp.util import Page, combo_row, run, switch_row, toast
+from aurora.settingsapp.util import Page, apply_async, combo_row, run, switch_row, toast
 
 
 def admin(*args, stdin=None):
@@ -371,7 +371,8 @@ def human_users():
 
 def is_admin(user):
     try:
-        return user in grp.getgrnam("sudo").gr_mem
+        group = grp.getgrnam("sudo")
+        return user in group.gr_mem or pwd.getpwnam(user).pw_gid == group.gr_gid
     except KeyError:
         return False
 
@@ -382,6 +383,13 @@ def change_password(old, new, timeout=20):
     if pid == 0:
         os.environ["LC_ALL"] = "C"
         os.execvp("passwd", ["passwd"])
+    try:
+        return _password_conversation(pid, fd, old, new, timeout)
+    finally:
+        os.close(fd)
+
+
+def _password_conversation(pid, fd, old, new, timeout):
     out = b""
     answers = [old, new, new]
     deadline = time.monotonic() + timeout
@@ -643,9 +651,13 @@ class Users(Page):
         user = Adw.EntryRow(title=_("Username"))
         password = Adw.PasswordEntryRow(title=_("Password"))
         is_adm = Adw.SwitchRow(title=_("Administrator"))
+        suggested = [""]
 
         def suggest(*_a):
-            user.set_text(suggest_username(full.get_text()))
+            next_name = suggest_username(full.get_text())
+            if not user.get_text() or user.get_text() == suggested[0]:
+                user.set_text(next_name)
+            suggested[0] = next_name
 
         def check(*_a):
             name = user.get_text()
@@ -671,11 +683,11 @@ class Users(Page):
         def response(_d, resp):
             if resp != "add":
                 return
-            ok, err = admin("add-user", user.get_text(), clean_full_name(full.get_text()),
-                            "yes" if is_adm.get_active() else "no",
-                            stdin=password.get_text() + "\n")
-            toast(self, _("User added") if ok else (err or _("Could not add user")))
-            self._fill_users()
+            args = ("add-user", user.get_text(), clean_full_name(full.get_text()),
+                    "yes" if is_adm.get_active() else "no")
+            secret = password.get_text() + "\n"
+            password.set_text("")
+            self._account_action(args, _("User added"), stdin=secret)
         dialog.connect("response", response)
         dialog.present(self.get_root())
 
@@ -688,11 +700,21 @@ class Users(Page):
 
         def response(_d, resp):
             if resp == "remove":
-                ok, err = admin("delete-user", name)
-                toast(self, _("User removed") if ok else err)
-                self._fill_users()
+                self._account_action(("delete-user", name), _("User removed"))
         dialog.connect("response", response)
         dialog.present(self.get_root())
+
+    def _account_action(self, args, success, stdin=None):
+        def work():
+            ok, err = admin(*args, stdin=stdin)
+            if not ok:
+                raise RuntimeError(err or _("Could not update user"))
+
+        def finished(error):
+            toast(self, error or success)
+            self._fill_users()
+
+        apply_async(self, work, finished)
 
 
 # --------------------------------------------------------------- updates

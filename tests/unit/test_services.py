@@ -202,11 +202,15 @@ def test_password_change_timeout_kills_and_reaps_passwd(monkeypatch):
     times = iter((0.0, 2.0))
     killed, waited = [], []
     monkeypatch.setattr(system_page.pty, "fork", lambda: (123, 9))
+    closed = []
+    monkeypatch.setattr(system_page, "os", SimpleNamespace(
+        **{**vars(system_page.os), "close": closed.append}))
     monkeypatch.setattr(system_page.time, "monotonic", lambda: next(times))
     monkeypatch.setattr(system_page.os, "kill", lambda pid, sig: killed.append((pid, sig)))
     monkeypatch.setattr(system_page.os, "waitpid",
                         lambda pid, flags: (waited.append((pid, flags)) or (pid, 9)))
     assert system_page.change_password("old", "new", timeout=1) == (False, "")
+    assert closed == [9]
     assert killed == [(123, system_page.signal.SIGKILL)]
     assert waited == [(123, 0)]
 
