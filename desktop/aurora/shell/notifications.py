@@ -183,7 +183,7 @@ class NotificationServer:
     def __init__(self, shell):
         self.shell = shell
         self._next_id = 1
-        self._live = {}        # id -> (Notification, Card, timeout source)
+        self._live = {}        # id -> (Notification, optional Card, timeout source)
         self.history = []
         self._conn = None
         self.popups = Popups(shell)
@@ -212,8 +212,10 @@ class NotificationServer:
             invocation.return_value(GLib.Variant(
                 "(ssss)", ("Aurora Shell", "Aurora OS", VERSION, "1.2")))
         elif method == "CloseNotification":
-            self.close(params.unpack()[0], REASON_CLOSED)
-            invocation.return_value(None)
+            if self.close(params.unpack()[0], REASON_CLOSED):
+                invocation.return_value(None)
+            else:
+                invocation.return_dbus_error("org.freedesktop.Notifications.InvalidId", "")
         elif method == "Notify":
             nid = self.notify(*params.unpack())
             invocation.return_value(GLib.Variant("(u)", (nid,)))
@@ -234,6 +236,7 @@ class NotificationServer:
             self._next_id += 1
         note = Notification(nid, app_name, icon, summary, body, actions, hints, timeout)
         s = settings.get()
+        muted = False
         # Remember who sends notifications, so Settings can list them; muted apps
         # are dropped (critical ones still come through).
         if s is not None and app_name:
@@ -242,25 +245,26 @@ class NotificationServer:
                 s.set_strv("notifications-seen-apps", (seen + [app_name])[-60:])
             if app_name in s.get_strv("notifications-muted-apps") and \
                     note.urgency != URGENCY_CRITICAL:
-                return nid
+                muted = True
         self.history = [n for n in self.history if n.id != nid]
-        if not hints.get("transient"):
+        if not muted and not hints.get("transient"):
             self.history.insert(0, note)
             del self.history[HISTORY_LIMIT:]
-            self._refresh_history()
+        self._refresh_history()
 
-        dnd = s is not None and s.get_boolean("do-not-disturb")
+        dnd = muted or s is not None and s.get_boolean("do-not-disturb")
         if not dnd:
             sh = self.shell
             fullscreen = any(t.fullscreen and t.activated for t in sh.toplevels.toplevels)
             sharing = sh.recorder.recording or getattr(sh, "_vnc", None) is not None
             dnd = auto_dnd(s, GLib.DateTime.new_now_local().get_hour(), fullscreen,
                            sharing) is not None
-        if dnd and note.urgency != URGENCY_CRITICAL:
-            return nid
-
-        card = Card(self, note)
-        self.popups.box.prepend(card)
+        # DND suppresses presentation, not the notification's identity or timer.
+        # Clients must still be able to replace or close their active message.
+        card = None
+        if not dnd or note.urgency == URGENCY_CRITICAL:
+            card = Card(self, note)
+            self.popups.box.prepend(card)
         source = 0
         if note.urgency != URGENCY_CRITICAL and timeout != 0:
             ms = DEFAULT_TIMEOUT_MS if timeout < 0 else timeout
@@ -271,8 +275,9 @@ class NotificationServer:
 
     def _expire(self, nid):
         entry = self._live.get(nid)
-        if entry:
-            self._live[nid] = (entry[0], entry[1], 0)
+        if entry is None:
+            return GLib.SOURCE_REMOVE
+        self._live[nid] = (entry[0], entry[1], 0)
         self._remove_popup(nid)
         self._emit("NotificationClosed", GLib.Variant("(uu)", (nid, REASON_EXPIRED)))
         return GLib.SOURCE_REMOVE
@@ -284,12 +289,16 @@ class NotificationServer:
         _note, card, source = entry
         if source:
             GLib.source_remove(source)
-        self.popups.box.remove(card)
+        if card is not None:
+            self.popups.box.remove(card)
         self.popups.sync()
 
     def close(self, nid, reason):
+        if nid not in self._live:
+            return False
         self._remove_popup(nid)
         self._emit("NotificationClosed", GLib.Variant("(uu)", (nid, reason)))
+        return True
 
     def dismiss(self, nid, from_history=False):
         if from_history:

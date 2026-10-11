@@ -7,6 +7,8 @@ What's Using This?: the processes that have a file, or anything inside a
 folder, open (you can only see your own processes)."""
 
 import os
+import stat
+import tempfile
 
 from aurora.i18n import N_  # noqa: E402
 
@@ -39,7 +41,7 @@ def output_path(path, label, fmt=None, in_place=False):
         return stem + ext
     candidate = f"{stem} ({label}){ext}"
     n = 2
-    while os.path.exists(candidate):
+    while os.path.lexists(candidate):
         candidate = f"{stem} ({label} {n}){ext}"
         n += 1
     return candidate
@@ -47,7 +49,8 @@ def output_path(path, label, fmt=None, in_place=False):
 
 def resize(path, longest, label, fmt=None, in_place=False):
     """Resize one picture; returns the path written."""
-    from gi.repository import GdkPixbuf
+    from gi.repository import GdkPixbuf, Gio, GLib
+    before = os.stat(path)
     pix = GdkPixbuf.Pixbuf.new_from_file(path)
     pix = pix.apply_embedded_orientation() or pix
     w, h = fit(pix.get_width(), pix.get_height(), longest)
@@ -67,9 +70,36 @@ def resize(path, longest, label, fmt=None, in_place=False):
     if kind == "jpeg" and pix.get_has_alpha():
         pix = pix.composite_color_simple(w, h, GdkPixbuf.InterpType.BILINEAR, 255, 1,
                                          0xffffff, 0xffffff)
-    pix.savev(target, kind, *options)
-    if in_place and target != path:
-        os.remove(path)
+    if target != path and os.path.lexists(target):
+        raise FileExistsError(target)
+    # Encode beside the destination first: a failed encoder must not truncate
+    # an original, and conversions must not replace a different existing file.
+    fd, temporary = tempfile.mkstemp(prefix=".aurora-image-", dir=os.path.dirname(target) or ".")
+    os.close(fd)
+    try:
+        pix.savev(temporary, kind, *options)
+        os.chmod(temporary, stat.S_IMODE(before.st_mode))
+        if in_place:
+            current = os.stat(path)
+            if (current.st_ino, current.st_dev, current.st_size, current.st_mtime_ns,
+                    current.st_ctime_ns) != (before.st_ino, before.st_dev, before.st_size,
+                                            before.st_mtime_ns, before.st_ctime_ns):
+                raise OSError(f"Changed while resizing: {path}")
+        if target == path:
+            os.replace(temporary, target)
+        else:
+            try:
+                Gio.File.new_for_path(temporary).move(Gio.File.new_for_path(target),
+                                                       Gio.FileCopyFlags.NONE, None, None)
+            except GLib.Error as err:
+                if err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.EXISTS):
+                    raise FileExistsError(target) from err
+                raise
+            if in_place:
+                os.remove(path)
+    finally:
+        if os.path.lexists(temporary):
+            os.remove(temporary)
     return target
 
 

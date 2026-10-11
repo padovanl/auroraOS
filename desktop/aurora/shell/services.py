@@ -703,6 +703,12 @@ class Recorder(GObject.Object):
         self.available = shutil.which("wf-recorder") is not None
         self.proc = None
         self.path = None
+        self._stopping = False
+        self._watch_source = 0
+
+    @property
+    def stopping(self):
+        return getattr(self, "_stopping", False)
 
     @property
     def recording(self):
@@ -711,7 +717,7 @@ class Recorder(GObject.Object):
     def start(self, area=False, sound=False):
         """Record the whole screen, or an area chosen with the mouse; with
         sound, what the computer plays is recorded too."""
-        if self.recording or not self.available:
+        if self.recording or self.stopping or not self.available:
             return
         if area and self.shell is not None:
             if not self.shell.begin_selection():
@@ -746,18 +752,20 @@ class Recorder(GObject.Object):
         self._start(geometry, sound)
 
     def _start(self, geometry, sound):
+        if self.stopping or self.recording:
+            return
         videos = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_VIDEOS) \
             or os.path.expanduser("~/Videos")
         folder = os.path.join(videos, "Screencasts")
-        os.makedirs(folder, exist_ok=True)
-        self.path = unique_capture_path(folder, "Screencast", ".mp4")
-        cmd = ["wf-recorder", "-f", self.path]
-        if geometry:
-            cmd += ["-g", geometry]
-        if sound:
-            monitor = _run(["pactl", "get-default-sink"]).strip()
-            cmd += [f"--audio={monitor}.monitor"] if monitor else ["--audio"]
         try:
+            os.makedirs(folder, exist_ok=True)
+            self.path = unique_capture_path(folder, "Screencast", ".mp4")
+            cmd = ["wf-recorder", "-f", self.path]
+            if geometry:
+                cmd += ["-g", geometry]
+            if sound:
+                monitor = _run(["pactl", "get-default-sink"]).strip()
+                cmd += [f"--audio={monitor}.monitor"] if monitor else ["--audio"]
             self.proc = subprocess.Popen(apps.tied(cmd), stdout=subprocess.DEVNULL,
                                          stderr=subprocess.DEVNULL)
         except OSError:
@@ -765,43 +773,70 @@ class Recorder(GObject.Object):
             self.path = None
             self.emit("changed")
             return
+        self._watch_source = GLib.timeout_add(200, self._check_process)
         self.emit("changed")
 
-    def stop(self):
-        if self.proc is None:
+    def _check_process(self):
+        if self.proc is None or self.proc.poll() is not None:
+            self._watch_source = 0
+            self.stop()
+            return GLib.SOURCE_REMOVE
+        return GLib.SOURCE_CONTINUE
+
+    def stop(self, restart=None):
+        if self.proc is None or self.stopping:
             return
-        if self.proc.poll() is None:
+        process, path = self.proc, self.path
+        self._stopping = True
+        if getattr(self, "_watch_source", 0):
+            GLib.source_remove(self._watch_source)
+            self._watch_source = 0
+        if process.poll() is None:
             try:
-                self.proc.send_signal(signal.SIGINT)
+                process.send_signal(signal.SIGINT)
             except ProcessLookupError:
                 pass  # it exited between poll() and the signal
-            try:
-                self.proc.wait(10)
-            except subprocess.TimeoutExpired:
-                self.proc.kill()
-                # Reap it as well as killing it. Otherwise a stubborn recorder
-                # remains as a zombie until the shell exits.
-                self.proc.wait()
-        else:
-            self.proc.wait()
-        path = self.path
-        self.proc = None
-        self.path = None
         self.emit("changed")
-        try:
-            saved = bool(path and os.path.isfile(path) and os.path.getsize(path) > 0)
-        except OSError:
-            saved = False
-        if saved:
-            self.emit("saved", path)
+
+        def finished():
+            self.proc = None
+            self.path = None
+            self._stopping = False
+            self.emit("changed")
+            try:
+                saved = bool(path and os.path.isfile(path) and os.path.getsize(path) > 0)
+            except OSError:
+                saved = False
+            if saved:
+                self.emit("saved", path)
+            if restart is not None:
+                self.start(*restart)
+            return GLib.SOURCE_REMOVE
+
+        def reap():
+            try:
+                try:
+                    process.wait(10)
+                except subprocess.TimeoutExpired:
+                    try:
+                        process.kill()
+                    except ProcessLookupError:
+                        pass
+                    process.wait()
+            finally:
+                GLib.idle_add(finished)
+        threading.Thread(target=reap, daemon=True).start()
 
     def toggle(self, area=False, sound=False):
+        if self.stopping:
+            return
         if self.recording:
             self.stop()
         else:
             # Reap a recorder that died on its own before starting another.
             if self.proc is not None:
-                self.stop()
+                self.stop(restart=(area, sound))
+                return
             self.start(area, sound)
 
 

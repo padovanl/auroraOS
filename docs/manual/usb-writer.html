@@ -46,7 +46,9 @@ other system's.</p>
 and numbers a download page gives you. If the download came with one beside it
 (<span class="path">aurora-os-0.1-amd64.iso.sha256</span>, or a
 <span class="path">SHA256SUMS</span> naming it), it is filled in for you; otherwise paste it
-from the page. <em>Check</em> reads the file through and says whether it matches. Worth doing
+from the page. Named checksum records must match the complete image filename; GNU
+text/binary and BSD <code>SHA256 (filename) = hash</code> records are supported.
+<em>Check</em> reads the file through and says whether it matches. Worth doing
 before writing: a half-finished download makes an installer that fails in the middle, and the
 check is the only way to tell one from a good one by looking.</p>
 

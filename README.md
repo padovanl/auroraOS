@@ -1812,6 +1812,17 @@ Evidence and remaining limits are in
 [the follow-up audit](docs/audits/2026-10-11-followup.md). The corresponding native
 GTK regression checks are part of `tests/settings-system-interactions.sh`.
 
+The [12 October cross-component audit](docs/audits/2026-10-12.md) covers recording,
+notifications, clipboard history, Windows migration, USB checksum selection, image resizing and
+batch renaming. Recorder shutdown runs outside the shell thread, with a saving
+state and automatic cleanup when the process exits. Pinned text entries survive
+a full clipboard history, and watcher/UI edits share a lock. Windows migration
+preserves existing exports and destination links; USB checksum records match the
+complete image filename. Image encoding uses a temporary output before replacing
+an original, and batch renaming rejects paths outside the selected folder.
+Do Not Disturb preserves notification IDs and timers, so progress updates replace
+one history entry and a closed notification emits its closing signal only once.
+
 ### Testing
 - **Static:** syntax and shellcheck, desktop-file-validate, strict schema compilation,
   XML and YAML parsing, manifest consistency.

@@ -45,11 +45,11 @@ From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
   <dt>Summarize with Aurora, Ask Aurora About This File…</dt><dd>With Aurora AI on (Settings → AI → Files).</dd>
   <dt>Extract Here</dt><dd>For archives (zip, 7z, rar, tar.gz, tar.xz, tar.zst…): unpacks next to them.</dd>
   <dt>Compress…</dt><dd>Packs the selection into one archive: choose the name and the format — <strong>ZIP</strong> (opens everywhere, Windows included), <strong>7-Zip</strong> (smaller) or <strong>tar.xz</strong> (smallest, keeps Linux permissions).</dd>
-  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”.</dd>
+  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”. If converting an original would replace another existing file (for example photo.jpg → photo.png), that picture is left unchanged and counted as failed. Failed encoding also keeps the original; editing it in another app while it is resized cancels its replacement.</dd>
   <dt>What's Using This?</dt><dd>When a file or folder is “in use” and can't be moved, deleted or ejected: lists the programs of yours that have it (or anything in the folder) open, with <em>End Task</em> for each and <em>End All</em>.</dd>
   <dt>Copy Path</dt><dd>Copies the full paths of the selection, one per line (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>).</dd>
   <dt>Cut, Copy, Duplicate, Rename…</dt><dd>Pasting shows progress, can be cancelled, and offers to retry if something fails.</dd>
-  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. No file is ever overwritten.</dd>
+  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. Replacements must be file names: a slash or a result such as “..” is rejected. Files stay in their current folder, and existing names are preserved.</dd>
   <dt>Compare Folders</dt><dd>For two folders: what is only in one, and what differs.</dd>
   <dt>SHA-256 Checksums</dt><dd>Computes them in the background, to check a download.</dd>
   <dt>Move to Trash, Properties</dt><dd>Properties shows size, type, dates, location and permissions.</dd>

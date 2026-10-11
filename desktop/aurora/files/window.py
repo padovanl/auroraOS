@@ -1446,9 +1446,13 @@ class FilesWindow(Adw.ApplicationWindow):
             if not needle:
                 self.toast(_("Enter text to find"))
                 return
-            pairs = [(path, os.path.join(os.path.dirname(path),
-                      os.path.basename(path).replace(needle, replace.get_text())))
-                     for path in paths]
+            names = [os.path.basename(path).replace(needle, replace.get_text()) for path in paths]
+            if any(not name.strip() or name in (".", "..") or
+                   any(c in name for c in "/\n\r\0") for name in names):
+                self.toast(_("Enter a valid file name"))
+                return
+            pairs = [(path, os.path.join(os.path.dirname(path), name))
+                     for path, name in zip(paths, names)]
             pairs = [(src, dst) for src, dst in pairs if src != dst]
             targets = [dst for _src, dst in pairs]
             if len(targets) != len(set(targets)) or any(os.path.lexists(dst) for dst in targets):
@@ -1457,9 +1461,11 @@ class FilesWindow(Adw.ApplicationWindow):
             done = []
             try:
                 for src, dst in pairs:
-                    os.rename(src, dst)
+                    Gio.File.new_for_path(src).move(Gio.File.new_for_path(dst),
+                        Gio.FileCopyFlags.NOFOLLOW_SYMLINKS | Gio.FileCopyFlags.NO_FALLBACK_FOR_MOVE,
+                        None, None)
                     done.append((src, dst))
-            except OSError as err:
+            except (OSError, GLib.Error) as err:
                 self.toast(str(err))
             if done:
                 self.history.record("move", done)

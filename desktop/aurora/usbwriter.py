@@ -86,22 +86,34 @@ def save_prefs(values):
 SHA256 = re.compile(r"\b([0-9a-fA-F]{64})\b")
 
 
+def _checksum_for(text, name, allow_bare=False):
+    for line in (text or "").splitlines():
+        if allow_bare and re.fullmatch(r"[0-9a-fA-F]{64}", line.strip()):
+            return line.strip().lower()
+        # GNU text/binary and BSD tagged records refer to a whole filename.
+        found = re.fullmatch(r"([0-9a-fA-F]{64}) [ *](.+)", line)
+        if found and found.group(2) in (name, "./" + name):
+            return found.group(1).lower()
+        found = re.fullmatch(r"SHA256 \((.+)\) = ([0-9a-fA-F]{64})", line)
+        if found and found.group(1) in (name, "./" + name):
+            return found.group(2).lower()
+    return None
+
+
 def stated_checksum(image):
     """The SHA-256 the download came with: <image>.sha256, .sha256sum, or a
     line naming this file in a SHA256SUMS next to it. None when there is none."""
     directory, name = os.path.split(image)
     for candidate in (image + ".sha256", image + ".sha256sum", image + ".sha256.txt"):
         text = _read_text(candidate)
-        found = SHA256.search(text or "")
+        found = _checksum_for(text, name, allow_bare=True)
         if found:
-            return found.group(1).lower(), os.path.basename(candidate)
+            return found, os.path.basename(candidate)
     for listing in ("SHA256SUMS", "sha256sums.txt", "SHA256SUMS.txt"):
         text = _read_text(os.path.join(directory, listing))
-        for line in (text or "").splitlines():
-            if name in line:
-                found = SHA256.search(line)
-                if found:
-                    return found.group(1).lower(), listing
+        found = _checksum_for(text, name)
+        if found:
+            return found, listing
     return None
 
 

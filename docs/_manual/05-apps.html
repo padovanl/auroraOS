@@ -21,11 +21,11 @@ From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
   <dt>Summarize with Aurora, Ask Aurora About This File…</dt><dd>With Aurora AI on (Settings → AI → Files).</dd>
   <dt>Extract Here</dt><dd>For archives (zip, 7z, rar, tar.gz, tar.xz, tar.zst…): unpacks next to them.</dd>
   <dt>Compress…</dt><dd>Packs the selection into one archive: choose the name and the format — <strong>ZIP</strong> (opens everywhere, Windows included), <strong>7-Zip</strong> (smaller) or <strong>tar.xz</strong> (smallest, keeps Linux permissions).</dd>
-  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”.</dd>
+  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”. If converting an original would replace another existing file (for example photo.jpg → photo.png), that picture is left unchanged and counted as failed. Failed encoding also keeps the original; editing it in another app while it is resized cancels its replacement.</dd>
   <dt>What's Using This?</dt><dd>When a file or folder is “in use” and can't be moved, deleted or ejected: lists the programs of yours that have it (or anything in the folder) open, with <em>End Task</em> for each and <em>End All</em>.</dd>
   <dt>Copy Path</dt><dd>Copies the full paths of the selection, one per line (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>).</dd>
   <dt>Cut, Copy, Duplicate, Rename…</dt><dd>Pasting shows progress, can be cancelled, and offers to retry if something fails.</dd>
-  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. No file is ever overwritten.</dd>
+  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. Replacements must be file names: a slash or a result such as “..” is rejected. Files stay in their current folder, and existing names are preserved.</dd>
   <dt>Compare Folders</dt><dd>For two folders: what is only in one, and what differs.</dd>
   <dt>SHA-256 Checksums</dt><dd>Computes them in the background, to check a download.</dd>
   <dt>Move to Trash, Properties</dt><dd>Properties shows size, type, dates, location and permissions.</dd>
@@ -244,13 +244,16 @@ area…</em> (draw a rectangle) and <em>Record the computer's sound</em> (on or 
 <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> starts and stops from the keyboard,
 <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> records an area. Recordings are
 MP4 files in <span class="path">~/Videos/Screencasts</span>.
+After stopping, the tile briefly says <strong>Saving recording…</strong> while the video
+is finalized. The desktop remains usable; another recording can start when saving finishes.
 For more control (sound, webcam, streaming) install OBS Studio from App Center.</p>
 
 <!-- page: clipboard-emoji | Clipboard history and emoji | Everything you copied, pinned items, images, and the emoji picker -->
 <h2>Clipboard history</h2>
 <p><kbd>Super</kbd>+<kbd>V</kbd> shows what you copied lately, newest first, in Spotlight. Type
 to filter; <kbd>Enter</kbd> copies an entry again (then paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>).
-Copied images are kept too. Pinned entries stay until you unpin them; the others are forgotten
+Copied images are kept too. Up to 100 text entries are kept; pinned entries have priority
+when the history fills. Pinned entries stay until you unpin them; the others are forgotten
 after a while.</p>
 
 <h2>The Clipboard window</h2>
@@ -302,6 +305,9 @@ the computer that now has both, and for the old disk plugged in over USB.</p>
   <li><strong>Browser bookmarks</strong> from Edge, Chrome, Brave and Opera, written to <span class="path">~/Documents/Windows bookmarks.html</span> — the format every browser imports (Firefox: Bookmarks → Manage Bookmarks → Import and Backup → Import Bookmarks from HTML).</li>
   <li><strong>The desktop background</strong> Windows was using, copied to <span class="path">~/Pictures/Windows background.jpg</span>.</li>
 </ul>
+<p>If an exported bookmarks file or background already exists, the new one receives
+“(2)”, “(3)” and so on in its name. Existing files and links are preserved when copying
+the selected folders too.</p>
 <p>Nothing on the Windows side is ever written to, and nothing here is overwritten: a file that
 already exists is kept as it is and counted as kept at the end. That means the assistant can be
 run twice without harm — the second run brings only what was not there the first time.</p>
@@ -332,7 +338,9 @@ other system's.</p>
 and numbers a download page gives you. If the download came with one beside it
 (<span class="path">aurora-os-0.1-amd64.iso.sha256</span>, or a
 <span class="path">SHA256SUMS</span> naming it), it is filled in for you; otherwise paste it
-from the page. <em>Check</em> reads the file through and says whether it matches. Worth doing
+from the page. Named checksum records must match the complete image filename; GNU
+text/binary and BSD <code>SHA256 (filename) = hash</code> records are supported.
+<em>Check</em> reads the file through and says whether it matches. Worth doing
 before writing: a half-finished download makes an installer that fails in the middle, and the
 check is the only way to tell one from a good one by looking.</p>
 

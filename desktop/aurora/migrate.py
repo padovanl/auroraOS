@@ -28,6 +28,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 
 from aurora.i18n import _  # noqa: E402
+from aurora.files.operations import unique_destination  # noqa: E402
 
 # A Windows folder and the GLib user directory it belongs in here.
 FOLDERS = (
@@ -267,13 +268,18 @@ def copy_tree(source, destination, progress=None, stop=None, skipped=None):
             if name.lower() in ("desktop.ini", "thumbs.db") or name.startswith("~$"):
                 continue
             src, dst = os.path.join(base, name), os.path.join(here, name)
-            if os.path.exists(dst):
+            if os.path.lexists(dst):
                 if skipped is not None:
                     skipped.append(dst)
                 continue
             try:
-                shutil.copy2(src, dst)
+                Gio.File.new_for_path(src).copy(Gio.File.new_for_path(dst),
+                                                 Gio.FileCopyFlags.NOFOLLOW_SYMLINKS, None, None)
                 copied += 1
+            except GLib.Error as err:
+                if skipped is not None and err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.EXISTS):
+                    skipped.append(dst)
+                continue
             except (OSError, shutil.Error):
                 continue
             if progress is not None:
@@ -326,11 +332,16 @@ class Migration(threading.Thread):
                 sections[browser] = items
         if not sections:
             return
-        target = os.path.join(GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS)
-                              or GLib.get_home_dir(), "Windows bookmarks.html")
+        folder = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOCUMENTS) or GLib.get_home_dir()
         try:
-            with open(target, "w", encoding="utf-8") as stream:
-                stream.write(bookmarks_html(sections))
+            while True:
+                target = unique_destination(folder, "Windows bookmarks.html")
+                try:
+                    with open(target, "x", encoding="utf-8") as stream:
+                        stream.write(bookmarks_html(sections))
+                    break
+                except FileExistsError:
+                    continue
         except OSError as err:
             self.notes.append(str(err))
             return
@@ -345,10 +356,17 @@ class Migration(threading.Thread):
             return
         pictures = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) or \
             GLib.get_home_dir()
-        target = os.path.join(pictures, "Windows background.jpg")
         try:
-            shutil.copy2(source, target)
-        except (OSError, shutil.Error) as err:
+            while True:
+                target = unique_destination(pictures, "Windows background.jpg")
+                try:
+                    Gio.File.new_for_path(source).copy(Gio.File.new_for_path(target),
+                                                        Gio.FileCopyFlags.NONE, None, None)
+                    break
+                except GLib.Error as err:
+                    if not err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.EXISTS):
+                        raise
+        except (OSError, shutil.Error, GLib.Error) as err:
             self.notes.append(str(err))
             return
         self.notes.append(_("The background Windows was using is in {file}.").format(
