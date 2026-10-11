@@ -12,7 +12,13 @@ def is_move(target):
         selected = drag.get_selected_action()
         if selected:
             return selected == Gdk.DragAction.MOVE
-    return bool(drop.get_actions() & Gdk.DragAction.MOVE)
+    # A drag from another process has no local GdkDrag. Respect the modifier
+    # negotiated by this target rather than treating its offered mask as the
+    # selected action (COPY|MOVE does not mean MOVE when Ctrl is held).
+    decision = getattr(target, "_file_drop_action", None)
+    if decision is not None and decision[0] == drop:
+        return decision[1] == Gdk.DragAction.MOVE
+    return file_action(target) == Gdk.DragAction.MOVE
 
 
 def file_paths(value):
@@ -53,3 +59,24 @@ def preferred_action(target, wanted):
     if offered & Gdk.DragAction.COPY:
         return Gdk.DragAction.COPY
     return wanted
+
+
+def file_action(target, *_coordinates):
+    state = getattr(target, "get_current_event_state", lambda: 0)()
+    # Wayland DND motion events carry no keyboard modifiers. Read the seat's
+    # keyboard, then remember the negotiated action while async data arrives.
+    widget = getattr(target, "get_widget", lambda: None)()
+    if widget is not None:
+        seat = widget.get_display().get_default_seat()
+        keyboard = seat.get_keyboard() if seat is not None else None
+        if keyboard is not None:
+            state = keyboard.get_modifier_state()
+    copy = state & Gdk.ModifierType.CONTROL_MASK and not state & Gdk.ModifierType.SHIFT_MASK
+    action = preferred_action(target, Gdk.DragAction.COPY if copy else Gdk.DragAction.MOVE)
+    target._file_drop_action = (target.get_current_drop(), action)
+    return action
+
+
+def configure_file_drop(target):
+    target.connect("enter", file_action)
+    target.connect("motion", file_action)

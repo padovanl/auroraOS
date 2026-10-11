@@ -1,14 +1,15 @@
 """Small helpers shared by settings pages."""
 
 import subprocess
+import threading
 
 from gi.repository import Adw, GLib, Gtk
 
 
-def run(argv, check=False):
+def run(argv, check=False, timeout=10):
     """Run a command, returning stdout ('' on failure)."""
     try:
-        res = subprocess.run(argv, capture_output=True, text=True, timeout=10)
+        res = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
     except (OSError, subprocess.TimeoutExpired) as err:
         if check:
             raise RuntimeError(str(err)) from err
@@ -16,6 +17,31 @@ def run(argv, check=False):
     if check and res.returncode != 0:
         raise RuntimeError(res.stderr.strip() or f"{argv[0]} failed")
     return res.stdout
+
+
+def apply_async(control, work, completed):
+    """Keep GTK responsive during authorization; rollback callbacks stay guarded."""
+    if getattr(control, "_command_pending", False):
+        return
+    control._command_pending = True
+    control.set_sensitive(False)
+
+    def finish(error):
+        try:
+            completed(error)
+        finally:
+            control._command_pending = False
+            control.set_sensitive(True)
+        return GLib.SOURCE_REMOVE
+
+    def worker():
+        error = None
+        try:
+            work()
+        except (OSError, RuntimeError, subprocess.TimeoutExpired) as err:
+            error = str(err)
+        GLib.idle_add(finish, error)
+    threading.Thread(target=worker, daemon=True).start()
 
 
 def string_list(items):

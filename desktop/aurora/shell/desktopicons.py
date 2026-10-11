@@ -106,11 +106,13 @@ class DesktopIcon(Gtk.Button):
         if more:
             self.set_tooltip_text(_("Open the Desktop folder to see everything on it"))
         if self.gfile is not None and not more:
-            drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+            drag = Gtk.DragSource(actions=Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
             drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
             drag.connect("prepare", self._drag_files)
             self.add_controller(drag)
             drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            from aurora.dnd import configure_file_drop
+            configure_file_drop(drop)
             drop.connect("drop", self._on_drop)
             self.add_controller(drop)
 

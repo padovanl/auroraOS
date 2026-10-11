@@ -11,10 +11,10 @@ from dataclasses import dataclass, field
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from aurora.popovers import ContextMenu
 
-from aurora import activities, apps
+from aurora import activities, apps, dnd
 from aurora.files.icons import icon_for
 from aurora.files.history import History, trashed_uri
-from aurora.files import volumes
+from aurora.files import bookmarks, clipboard, volumes
 from aurora.files.operations import Job, unique_destination
 from aurora.i18n import _, ngettext
 
@@ -26,10 +26,6 @@ ATTRS = ",".join([
 ])
 
 TRASH_URI = "trash:///"
-
-# Shared by every window of the app: (mode, [Gio.File]).
-CLIPBOARD = {"mode": None, "files": []}
-
 
 @dataclass
 class FileTab:
@@ -46,6 +42,16 @@ def file_of(info):
 
 def is_dir(info):
     return info.get_file_type() == Gio.FileType.DIRECTORY
+
+
+def is_hidden(info):
+    return (info.get_is_hidden() if info.has_attribute("standard::is-hidden")
+            else info.get_name().startswith("."))
+
+
+def is_backup(info):
+    return (info.get_is_backup() if info.has_attribute("standard::is-backup")
+            else info.get_name().endswith("~"))
 
 
 def human_size(info):
@@ -84,11 +90,63 @@ class Sidebar(Gtk.ListBox):
         self.drop_callback = drop_callback
         self.connect("row-activated", self._on_row)
         self.volumes = Gio.VolumeMonitor.get()
-        for sig in ("mount-added", "mount-removed", "volume-added", "volume-removed"):
-            self.volumes.connect(sig, lambda *a: self.rebuild())
+        self._volume_handlers = []
+        self._bookmark_monitor = None
+        self._bookmark_handler = 0
+        self._refresh_source = 0
+        self.connect("realize", self._watch_places)
+        self.connect("unrealize", self._stop_watching)
         self.rebuild()
 
-    def _add(self, icon, label, file=None, volume=None, eject=None):
+    def _watch_places(self, *_args):
+        if self._volume_handlers:
+            return
+        for sig in ("mount-added", "mount-removed", "volume-added", "volume-removed"):
+            self._volume_handlers.append(self.volumes.connect(sig, self._places_changed))
+        file = Gio.File.new_for_path(bookmarks.path())
+        try:
+            try:
+                file.get_parent().make_directory_with_parents(None)
+            except GLib.Error as err:
+                if not err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.EXISTS):
+                    raise
+            self._bookmark_monitor = file.monitor_file(Gio.FileMonitorFlags.WATCH_MOVES, None)
+            self._bookmark_handler = self._bookmark_monitor.connect("changed", self._places_changed)
+        except GLib.Error:
+            # Favorites remain usable if this filesystem cannot be monitored.
+            pass
+        self.rebuild()
+
+    def _stop_watching(self, *_args):
+        for handler in self._volume_handlers:
+            self.volumes.disconnect(handler)
+        self._volume_handlers.clear()
+        if self._bookmark_monitor is not None:
+            self._bookmark_monitor.disconnect(self._bookmark_handler)
+            self._bookmark_handler = 0
+            self._bookmark_monitor.cancel()
+            self._bookmark_monitor = None
+        if self._refresh_source:
+            GLib.source_remove(self._refresh_source)
+            self._refresh_source = 0
+
+    def _places_changed(self, *_args):
+        if not self._refresh_source:
+            def refresh():
+                self._refresh_source = 0
+                self.rebuild()
+                return GLib.SOURCE_REMOVE
+            self._refresh_source = GLib.timeout_add(150, refresh)
+
+    def _bookmark_change(self, operation, location, label=None):
+        try:
+            getattr(bookmarks, operation)(location, *([label] if label is not None else []))
+        except (GLib.Error, ValueError) as err:
+            self._toast(str(err))
+            return
+        self._places_changed()
+
+    def _add(self, icon, label, file=None, volume=None, eject=None, bookmark=False):
         row = Gtk.ListBoxRow()
         box = Gtk.Box(spacing=12, margin_top=4, margin_bottom=4, margin_start=4, margin_end=4)
         # Set the size before the icon.  PyGObject applies constructor
@@ -111,12 +169,16 @@ class Sidebar(Gtk.ListBox):
         row.file = file
         row.volume = volume
         row.eject = eject
+        row.bookmark = bookmark
+        row.place_label = label
         right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
                                  propagation_phase=Gtk.PropagationPhase.CAPTURE)
         right.connect("pressed", self._on_context, row)
         row.add_controller(right)
-        if file is not None and file.get_path() is not None and os.path.isdir(file.get_path()):
+        if file is not None and (not file.is_native() or
+                                 file.get_path() is not None and os.path.isdir(file.get_path())):
             target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            dnd.configure_file_drop(target)
             target.connect("drop", lambda _t, value, _x, _y, dest=file:
                            self.drop_callback(value, dest, move=FilesWindow._drop_is_move(_t))
                            if self.drop_callback else False)
@@ -145,11 +207,19 @@ class Sidebar(Gtk.ListBox):
             action(_("New Window"), lambda: apps.spawn(["aurora-files", row.file.get_uri()]))
             box.append(Gtk.Separator())
             path = row.file.get_path()
-            if path and os.path.isdir(path):
+            if path and (not row.file.is_native() or os.path.isdir(path)):
                 action(_("Open in Terminal"), lambda: apps.spawn(
                     ["ptyxis", "--new-window", f"--working-directory={path}"]))
             action(_("Copy Path"), lambda: self.get_clipboard().set(
                 path or row.file.get_uri()))
+            if row.bookmark:
+                action(_("Rename Bookmark…"), lambda: window._ask_name(
+                    _("Rename Bookmark"), row.place_label, _("Rename"),
+                    lambda name: self._bookmark_change("rename", row.file, name), False,
+                    filename=False))
+                action(_("Remove from Sidebar"), lambda: self._bookmark_change("remove", row.file))
+            elif row.file.get_uri() != TRASH_URI:
+                action(_("Add to Sidebar"), lambda: self._bookmark_change("add", row.file))
             action(_("Properties"), lambda: self._properties(row.file))
         if row.eject is not None:
             box.append(Gtk.Separator())
@@ -182,6 +252,15 @@ class Sidebar(Gtk.ListBox):
             if path and path != home and os.path.isdir(path):
                 self._add(icon, os.path.basename(path), Gio.File.new_for_path(path))
         self._add("user-trash-symbolic", _("Trash"), Gio.File.new_for_uri(TRASH_URI))
+
+        try:
+            favorites = bookmarks.read()
+        except GLib.Error:
+            favorites = []
+        for location, label in favorites:
+            self._add("folder-remote-symbolic" if location.get_path() is None else "folder-symbolic",
+                      label or location.get_basename() or location.get_parse_name(),
+                      location, bookmark=True)
 
         mounted_volumes = set()
         for mount in self.volumes.get_mounts():
@@ -287,6 +366,12 @@ class FilesWindow(Adw.ApplicationWindow):
         self._job_queue = []
         self.history = History()
         self._history_busy = False
+        # Factory children otherwise lose their Python wrapper attributes when
+        # GTK is their only owner. Keep row identity until factory teardown.
+        self._item_rows = {}
+        self._navigation_serial = 0
+        self._navigation_cancel = None
+        self.connect("unrealize", self._cancel_navigation)
         self.tabs = []
         self.active_tab = -1
 
@@ -417,8 +502,17 @@ class FilesWindow(Adw.ApplicationWindow):
         click.connect("pressed", self._on_context_click, self.view_stack)
         self.view_stack.add_controller(click)
         drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+        dnd.configure_file_drop(drop)
         drop.connect("drop", self._drop_on_view)
         self.view_stack.add_controller(drop)
+        # Capture above GridView/ColumnView: their built-in selection gestures
+        # claim the sequence before a drag source on the view or an item.
+        drag = Gtk.DragSource(actions=Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+        drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        drag.connect("begin", self._file_drag_begin)
+        drag.connect("prepare", self._drag_from_view)
+        self._file_drag_source = drag
+        self.view_stack.add_controller(drag)
         for view in (self.grid, self.list):
             # Space previews the selection (Quick Look), before the view sees it.
             keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
@@ -490,6 +584,7 @@ class FilesWindow(Adw.ApplicationWindow):
             close.connect("clicked", lambda _b, i=index: self.close_tab(i))
             chip.append(close)
             target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            dnd.configure_file_drop(target)
             target.connect("drop", lambda _t, value, _x, _y, dest=state.location:
                            self._drop_on_location(value, dest, move=self._drop_is_move(_t)))
             chip.add_controller(target)
@@ -562,12 +657,10 @@ class FilesWindow(Adw.ApplicationWindow):
                                  ellipsize=Pango.EllipsizeMode.MIDDLE,
                                  justify=Gtk.Justification.CENTER, max_width_chars=14))
             item.set_child(box)
-            drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
-            drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-            drag.connect("prepare", self._drag_prepare, item)
-            box.add_controller(drag)
+            self._item_rows[box] = item
             folder_drop = Gtk.DropTarget.new(Gdk.FileList,
                                               Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+            dnd.configure_file_drop(folder_drop)
             folder_drop.connect("drop", self._drop_on_item, item)
             box.add_controller(folder_drop)
 
@@ -579,11 +672,12 @@ class FilesWindow(Adw.ApplicationWindow):
             changed = info.get_name() in getattr(self, "_git_changed", set())
             label.set_label(info.get_display_name() + ("  ●" if changed else ""))
             (label.add_css_class if changed else label.remove_css_class)("files-git-changed")
-            box.set_opacity(0.6 if info.get_is_hidden() else 1.0)
+            box.set_opacity(0.6 if is_hidden(info) else 1.0)
             box.position = item.get_position()
 
         f.connect("setup", setup)
         f.connect("bind", bind)
+        f.connect("teardown", lambda _f, item: self._item_rows.pop(item.get_child(), None))
         return f
 
     def _list_factory(self, kind):
@@ -597,13 +691,11 @@ class FilesWindow(Adw.ApplicationWindow):
                 item.set_child(box)
             else:
                 item.set_child(Gtk.Label(xalign=0, css_classes=["dim-label", "numeric"]))
+            self._item_rows[item.get_child()] = item
             if kind == "name":
-                drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
-                drag.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
-                drag.connect("prepare", self._drag_prepare, item)
-                item.get_child().add_controller(drag)
                 folder_drop = Gtk.DropTarget.new(Gdk.FileList,
                                                   Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+                dnd.configure_file_drop(folder_drop)
                 folder_drop.connect("drop", self._drop_on_item, item)
                 item.get_child().add_controller(folder_drop)
 
@@ -624,14 +716,29 @@ class FilesWindow(Adw.ApplicationWindow):
 
         f.connect("setup", setup)
         f.connect("bind", bind)
+        f.connect("teardown", lambda _f, item: self._item_rows.pop(item.get_child(), None))
         return f
 
-    def _drag_prepare(self, _source, _x, _y, item):
-        info = item.get_item()
-        if info is None or self.in_trash():
+    def _file_drag_begin(self, source, sequence):
+        _ok, x, y = source.get_point(sequence)
+        position = self._item_position(self.view_stack, x, y)
+        if position is None:
+            # Decline on this gesture's own press event, before recognition
+            # can prevent the child view's empty-space selection gesture.
+            source.set_sequence_state(sequence, Gtk.EventSequenceState.DENIED)
+
+    def _drag_from_view(self, source, x, y):
+        position = self._item_position(source.get_widget(), x, y)
+        if self.in_trash():
             return None
-        files = (self.selected_files() if self.selection.is_selected(item.get_position())
-                 else [file_of(info)])
+        if position is None:
+            # GridView's rubber-band overlay can already cover the press point
+            # when the drag threshold is crossed. Use the files hit on press.
+            files = getattr(self, "_drag_files_on_press", [])
+        else:
+            info = self.model.get_item(position)
+            files = (self.selected_files() if self.selection.is_selected(position)
+                     else [file_of(info)]) if info is not None else []
         files = [f for f in files if f is not None and f.get_path()]
         if not files:
             return None
@@ -652,7 +759,7 @@ class FilesWindow(Adw.ApplicationWindow):
         if not isinstance(value, Gdk.FileList) or destination is None:
             return False
         target = destination.get_path()
-        if target is None or not os.path.isdir(target):
+        if target is None or destination.is_native() and not os.path.isdir(target):
             return False
         paths = [f.get_path() for f in value.get_files() if f.get_path()]
         if not paths:
@@ -713,6 +820,7 @@ class FilesWindow(Adw.ApplicationWindow):
         add("resize-images", self.resize_images)
         add("file-users", self.file_users)
         add("copy-path", self.copy_paths, ["<Ctrl><Shift>c"])
+        add("bookmark", self.add_to_sidebar)
         add("extract-here", self.extract_here)
         add("connect-server", self.connect_to_server)
         add("checksums", self.checksums)
@@ -775,7 +883,7 @@ class FilesWindow(Adw.ApplicationWindow):
             error = ""
             try:
                 getattr(self.history, direction)()
-            except (OSError, shutil.Error) as err:
+            except (OSError, shutil.Error, GLib.Error) as err:
                 error = str(err)
 
             def finished():
@@ -794,15 +902,50 @@ class FilesWindow(Adw.ApplicationWindow):
     def open_location(self, gfile, record=True):
         if gfile is None:
             return
+        self._cancel_navigation()
+        serial = self._navigation_serial
+        if not gfile.is_native():
+            # An unreachable NAS can take a long time to answer. GIO performs
+            # the network request off GTK's main loop; newer navigation wins.
+            self._navigation_cancel = Gio.Cancellable()
+            self.view_stack.set_cursor_from_name("wait")
+
+            def queried(file, result):
+                if serial != self._navigation_serial:
+                    return
+                self._navigation_cancel = None
+                self.view_stack.set_cursor_from_name(None)
+                try:
+                    info = file.query_info_finish(result)
+                except GLib.Error as err:
+                    self._location_error(file, err)
+                    return
+                self._open_queried(file, info, record)
+            gfile.query_info_async("standard::type", Gio.FileQueryInfoFlags.NONE,
+                                  GLib.PRIORITY_DEFAULT, self._navigation_cancel, queried)
+            return
         info = None
         try:
             info = gfile.query_info("standard::type", Gio.FileQueryInfoFlags.NONE, None)
         except GLib.Error as err:
-            if err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.NOT_MOUNTED):
-                self.mount_and_open(gfile)
-                return
-            self.toast(err.message)
+            self._location_error(gfile, err)
             return
+        self._open_queried(gfile, info, record)
+
+    def _cancel_navigation(self, *_args):
+        self._navigation_serial += 1
+        if self._navigation_cancel is not None:
+            self._navigation_cancel.cancel()
+            self._navigation_cancel = None
+        self.view_stack.set_cursor_from_name(None)
+
+    def _location_error(self, gfile, error):
+        if error.matches(Gio.io_error_quark(), Gio.IOErrorEnum.NOT_MOUNTED):
+            self.mount_and_open(gfile)
+        elif not error.matches(Gio.io_error_quark(), Gio.IOErrorEnum.CANCELLED):
+            self.toast(error.message)
+
+    def _open_queried(self, gfile, info, record):
         if info.get_file_type() != Gio.FileType.DIRECTORY:
             self.launch(gfile)
             return
@@ -863,6 +1006,12 @@ class FilesWindow(Adw.ApplicationWindow):
         for f in reversed(crumbs):
             btn = Gtk.Button(label=self._display_name(f), css_classes=["flat"])
             btn.connect("clicked", lambda _b, target=f: self.open_location(target))
+            if f.get_path() is not None:
+                drop = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+                dnd.configure_file_drop(drop)
+                drop.connect("drop", lambda target, value, _x, _y, dest=f:
+                             self._drop_on_location(value, dest, move=self._drop_is_move(target)))
+                btn.add_controller(drop)
             self.pathbar.append(btn)
         last = self.pathbar.get_last_child()
         if last:
@@ -918,7 +1067,7 @@ class FilesWindow(Adw.ApplicationWindow):
         self._git_changed = set()
         self._git_generation = getattr(self, "_git_generation", 0) + 1
         generation = self._git_generation
-        if not path or not os.path.isdir(path):
+        if not path:
             return
 
         def work():
@@ -943,7 +1092,7 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def _filter_func(self, info):
         name = info.get_display_name()
-        if not self.show_hidden and (info.get_is_hidden() or info.get_is_backup()):
+        if not self.show_hidden and (is_hidden(info) or is_backup(info)):
             return False
         if self.search_text and self.search_text not in name.casefold():
             return False
@@ -1129,10 +1278,19 @@ class FilesWindow(Adw.ApplicationWindow):
 
     @staticmethod
     def _item_position(view, x, y):
+        rows = getattr(view.get_root(), "_item_rows", {})
+
+        def position(widget):
+            item = rows.get(widget)
+            if item is not None:
+                current = item.get_position()
+                return current if current != Gtk.INVALID_LIST_POSITION else None
+            return getattr(widget, "position", None)
+
         widget = view.pick(x, y, Gtk.PickFlags.DEFAULT)
         while widget is not None and widget is not view:
-            if hasattr(widget, "position"):
-                return widget.position
+            if widget in rows or hasattr(widget, "position"):
+                return position(widget)
             # The padding of GTK's internal item container belongs to the
             # item too, even when the custom factory child wasn't picked.
             if widget.get_css_name() in ("child", "row", "cell"):
@@ -1141,13 +1299,17 @@ class FilesWindow(Adw.ApplicationWindow):
                     child = pending.pop()
                     if child is None:
                         continue
-                    if hasattr(child, "position"):
-                        return child.position
+                    if child in rows or hasattr(child, "position"):
+                        return position(child)
                     pending.extend((child.get_first_child(), child.get_next_sibling()))
             widget = widget.get_parent()
         return None
 
     def _on_background_click(self, gesture, _n, x, y):
+        position = self._item_position(self.view_stack, x, y)
+        self._drag_files_on_press = (self.selected_files() if self.selection.is_selected(position)
+                                    else [file_of(self.model.get_item(position))]) \
+            if position is not None else []
         widget = self.view_stack.pick(x, y, Gtk.PickFlags.DEFAULT)
         if widget is not None and (widget.get_ancestor(Gtk.Popover) is not None or
                                    widget.get_ancestor(Gtk.Scrollbar) is not None):
@@ -1155,7 +1317,7 @@ class FilesWindow(Adw.ApplicationWindow):
         if gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
                                                 Gdk.ModifierType.SHIFT_MASK):
             return
-        if self._item_position(self.view_stack, x, y) is None:
+        if position is None:
             self.selection.unselect_all()
 
     def _on_context_click(self, gesture, _n, x, y, view):
@@ -1187,6 +1349,8 @@ class FilesWindow(Adw.ApplicationWindow):
                                      (_("Ask Aurora About This File…"), "ai-ask")])
             sections.append(s)
             if not trash:
+                if self.selection_has_dir() and all(is_dir(info) for info in self.selected_infos()):
+                    sections.append([(_("Add to Sidebar"), "bookmark")])
                 from aurora.files.archives import is_archive
                 paths = [f.get_path() for f in self.selected_files()]
                 if paths and all(p and is_archive(p) for p in paths):
@@ -1215,6 +1379,7 @@ class FilesWindow(Adw.ApplicationWindow):
                              [(_("Select All"), "select-all"),
                               (_("Open in Terminal"), "terminal-here"),
                               (_("Properties"), "properties")]])
+            sections.append([(_("Add to Sidebar"), "bookmark")])
             from aurora import ai
             if ai.enabled() and ai.feature("files"):
                 sections.append([(_("Summarize Git Changes…"), "ai-git-summary")])
@@ -1251,6 +1416,13 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def toast(self, msg, timeout=3):
         self.toast_overlay.add_toast(Adw.Toast(title=msg, timeout=timeout))
+
+    def add_to_sidebar(self):
+        infos = self.selected_infos()
+        locations = [file_of(info) for info in infos if is_dir(info)] if infos else [self.current]
+        for location in locations:
+            if location is not None and location.get_uri() != TRASH_URI:
+                self.sidebar._bookmark_change("add", location)
 
     def batch_rename(self):
         paths = [file.get_path() for file in self.selected_files()]
@@ -1388,9 +1560,8 @@ class FilesWindow(Adw.ApplicationWindow):
         files = self.selected_files()
         if not files:
             return
-        CLIPBOARD["mode"], CLIPBOARD["files"] = mode, files
-        filelist = Gdk.FileList.new_from_list(files)
-        self.get_clipboard().set(filelist)
+        if clipboard.publish(self.get_clipboard(), mode, files) is None:
+            return
         n = len(files)
         self.toast((ngettext("{n} item cut", "{n} items cut", n) if mode == "move" else
                     ngettext("{n} item copied", "{n} items copied", n)).format(n=n))
@@ -1399,22 +1570,20 @@ class FilesWindow(Adw.ApplicationWindow):
         target = self.current.get_path()
         if target is None:
             return
-        if CLIPBOARD["files"]:
-            self._run_job(CLIPBOARD["mode"], [f.get_path() for f in CLIPBOARD["files"]
-                                              if f.get_path()], target)
-            if CLIPBOARD["mode"] == "move":
-                CLIPBOARD["mode"], CLIPBOARD["files"] = None, []
-            return
+        clip = self.get_clipboard()
 
-        def got(clip, res):
-            try:
-                value = clip.read_value_finish(res)
-            except GLib.Error:
-                return
-            paths = [f.get_path() for f in value.get_files() if f.get_path()]
+        def got(mode, files, provider):
+            paths = [f.get_path() for f in files if f.get_path()]
             if paths:
-                self._run_job("copy", paths, target)
-        self.get_clipboard().read_value_async(Gdk.FileList, GLib.PRIORITY_DEFAULT, None, got)
+                completed = None
+                if mode == "move" and provider is not None:
+                    clipboard.STATE["pending"] = True
+                    def completed(job):
+                        nonlocal provider
+                        provider = clipboard.complete_move(
+                            clip, provider, {source for source, _dest in job.changes})
+                self._run_job(mode, paths, target, completed)
+        clipboard.read(clip, got)
 
     def duplicate_selected(self):
         if self.in_trash():
@@ -1425,7 +1594,7 @@ class FilesWindow(Adw.ApplicationWindow):
         paths = [f.get_path() for f in self.selected_files() if f.get_path()]
         self._run_job("copy", paths, target)
 
-    def _run_job(self, kind, paths, target):
+    def _run_job(self, kind, paths, target, completed=None):
         if not paths:
             return
         # Destination names are chosen by Job's worker. Starting two workers
@@ -1433,12 +1602,12 @@ class FilesWindow(Adw.ApplicationWindow):
         # Queue requests so rapid duplicate/paste gestures remain distinct and
         # their undo history has a deterministic order.
         if self.jobs:
-            self._job_queue.append((kind, list(paths), target))
+            self._job_queue.append((kind, list(paths), target, completed))
             self._update_history_actions()
             return
-        self._start_job(kind, paths, target)
+        self._start_job(kind, paths, target, completed)
 
-    def _start_job(self, kind, paths, target):
+    def _start_job(self, kind, paths, target, on_complete=None):
         self._retry_args = None
         self.retry_job_button.set_visible(False)
         self.cancel_job_button.set_visible(True)
@@ -1454,6 +1623,8 @@ class FilesWindow(Adw.ApplicationWindow):
 
         def finished(_j, error):
             self.jobs.remove(job)
+            if on_complete is not None:
+                on_complete(job)
             if job.history_entry is not None:
                 self.history.push(job.history_entry)
             self._update_history_actions()
@@ -1465,7 +1636,7 @@ class FilesWindow(Adw.ApplicationWindow):
             remaining = [path for path in paths if path not in completed and os.path.lexists(path)]
             # Retry only what can go differently a second time (a full disk, a
             # drive unplugged), not a cancel or a folder pasted into itself.
-            self._retry_args = (kind, remaining, target) if error and remaining and \
+            self._retry_args = (kind, remaining, target, on_complete) if error and remaining and \
                 error not in (_("Cancelled"), _("Cannot copy a folder into itself")) else None
             self.retry_job_button.set_visible(self._retry_args is not None)
             self.cancel_job_button.set_visible(bool(self.jobs))
@@ -1767,7 +1938,13 @@ class FilesWindow(Adw.ApplicationWindow):
 
     def mount_and_open(self, gfile):
         """Open a network location, asking for the password when it needs one."""
+        self._cancel_navigation()
+        serial = self._navigation_serial
+        self._navigation_cancel = Gio.Cancellable()
         def mounted(f, res):
+            if serial != self._navigation_serial:
+                return
+            self._navigation_cancel = None
             try:
                 f.mount_enclosing_volume_finish(res)
             except GLib.Error as err:
@@ -1776,9 +1953,9 @@ class FilesWindow(Adw.ApplicationWindow):
                     return
             self.open_location(f)
         gfile.mount_enclosing_volume(Gio.MountMountFlags.NONE, Gtk.MountOperation.new(self),
-                                     None, mounted)
+                                     self._navigation_cancel, mounted)
 
-    def _ask_name(self, heading, initial, action_label, callback, select_stem=True):
+    def _ask_name(self, heading, initial, action_label, callback, select_stem=True, filename=True):
         dialog = Adw.AlertDialog(heading=heading)
         entry = Gtk.Entry(text=initial, activates_default=True)
         dialog.set_extra_child(entry)
@@ -1787,9 +1964,17 @@ class FilesWindow(Adw.ApplicationWindow):
         dialog.set_default_response("ok")
         dialog.set_response_appearance("ok", Adw.ResponseAppearance.SUGGESTED)
 
+        def valid():
+            name = entry.get_text().strip()
+            return bool(name) and not any(c in name for c in "\n\r\0") and \
+                (not filename or "/" not in name and name not in (".", ".."))
+
+        entry.connect("changed", lambda *_args: dialog.set_response_enabled("ok", valid()))
+        dialog.set_response_enabled("ok", valid())
+
         def response(_d, resp):
             name = entry.get_text().strip()
-            if resp == "ok" and name and "/" not in name:
+            if resp == "ok" and valid():
                 callback(name)
         dialog.connect("response", response)
         dialog.present(self)

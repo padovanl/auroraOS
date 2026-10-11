@@ -48,7 +48,7 @@ def test_the_answer_to_a_drag_is_an_action_it_offered():
     # What we want, when it is on offer.
     assert dnd.preferred_action(FakeTarget(both), Gdk.DragAction.COPY) == Gdk.DragAction.COPY
     assert dnd.preferred_action(FakeTarget(both), Gdk.DragAction.MOVE) == Gdk.DragAction.MOVE
-    # The desktop and Files drag with MOVE alone: answering COPY would call the
+    # An external source can offer MOVE alone: answering COPY would call the
     # drop off, so a dock icon that opens files still says MOVE.
     assert dnd.preferred_action(FakeTarget(Gdk.DragAction.MOVE),
                                 Gdk.DragAction.COPY) == Gdk.DragAction.MOVE
@@ -71,3 +71,26 @@ def test_a_drop_on_the_trash_moves_the_files_there(home):
     assert kept.exists() and not gone.exists()
     trashed = home / ".local" / "share" / "Trash" / "files"
     assert os.path.exists(trashed / "gone.txt")
+
+
+def test_external_file_drop_respects_ctrl_copy_and_shift_move():
+    target = FakeTarget(Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+    target.get_current_event_state = lambda: Gdk.ModifierType.CONTROL_MASK
+    assert dnd.file_action(target) == Gdk.DragAction.COPY
+    assert not dnd.is_move(target)
+    target.get_current_event_state = lambda: Gdk.ModifierType.SHIFT_MASK
+    assert dnd.file_action(target) == Gdk.DragAction.MOVE and dnd.is_move(target)
+
+
+def test_copy_only_drag_source_cannot_be_negotiated_into_a_move():
+    target = FakeTarget(Gdk.DragAction.COPY)
+    target.get_current_event_state = lambda: Gdk.ModifierType.SHIFT_MASK
+    assert dnd.file_action(target) == Gdk.DragAction.COPY and not dnd.is_move(target)
+
+
+def test_external_drop_keeps_its_copy_action_while_data_arrives():
+    target = FakeTarget(Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
+    target.get_current_event_state = lambda: Gdk.ModifierType.CONTROL_MASK
+    assert dnd.file_action(target) == Gdk.DragAction.COPY
+    target.get_current_event_state = lambda: 0
+    assert not dnd.is_move(target)

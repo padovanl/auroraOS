@@ -31,9 +31,28 @@ From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
   <dt>Move to Trash, Properties</dt><dd>Properties shows size, type, dates, location and permissions.</dd>
 </dl>
 <p>On empty space: New Folder…, New File… (from templates in <span class="path">~/Templates</span>),
-Paste, Select All, Open in Terminal, Properties.</p>
+Paste, Add to Sidebar, Select All, Open in Terminal, Properties.</p>
 <p><strong>Undo and Redo</strong> (<kbd>Ctrl</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>)
 work for moves, renames, copies and moving to the Trash.</p>
+
+<h2>Favorite folders</h2>
+<p>Right-click a folder and choose <strong>Add to Sidebar</strong>. On empty space, this adds
+the current folder; it also works in a connected network folder. Right-click a favorite
+for <strong>Rename Bookmark…</strong> or <strong>Remove from Sidebar</strong>. Removing a
+favorite keeps the folder and its contents. Open Files windows update together, and
+compatible GTK file choosers share the same favorites.</p>
+
+<h2>Copy, cut and drag</h2>
+<p><kbd>Ctrl</kbd>+<kbd>C</kbd>, <kbd>Ctrl</kbd>+<kbd>X</kbd> and <kbd>Ctrl</kbd>+<kbd>V</kbd>
+use the system clipboard, including file selections from compatible file managers. Copying
+something else in another app replaces the old selection. A failed or cancelled cut keeps
+its remaining items available for another paste.</p>
+<p>Drag one or several local files onto a folder, an empty area, a sidebar place or a part
+of the path bar. Grid, list and desktop drags offer copy and move. Folder drops prefer moving when
+the source supports it; hold <kbd>Ctrl</kbd> to
+request a copy or <kbd>Shift</kbd> to request a move. The operation shows progress, cancellation
+and retry, and can be undone. A folder cannot be copied into itself through a symbolic
+link; copying a pipe or device returns an error without waiting indefinitely.</p>
 
 <h2>Trash</h2>
 <p>Items moved to the Trash can be restored to where they were (<em>Restore</em>) or deleted
@@ -55,7 +74,10 @@ Server…</strong> opens any address:</p>
 <tr><td><code>davs://server/remote.php/dav/files/user</code></td><td>WebDAV (Nextcloud, ownCloud)</td></tr>
 </tbody></table></div>
 <p>When a password is needed, Files asks, and can remember it in your keyring. Connected
-servers appear in the sidebar with ⏏ to disconnect.</p>
+servers appear in the sidebar with ⏏ to disconnect. Aurora includes the standard
+GVFS FUSE bridge so mounted shares work with regular apps and file operations. While a server is answering, a waiting
+pointer appears over the file view; you can still navigate elsewhere. A late response
+from the previous location cannot replace your newer choice.</p>
 
 <h2>Keyboard shortcuts in Files</h2>
 <!-- gen:files-shortcuts -->

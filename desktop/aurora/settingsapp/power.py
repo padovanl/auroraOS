@@ -9,7 +9,7 @@ from gi.repository import Adw
 
 from aurora import settings
 from aurora.i18n import N_, _, ngettext
-from aurora.settingsapp.util import Page, combo_row, run, switch_row, toast
+from aurora.settingsapp.util import Page, apply_async, combo_row, run, switch_row, toast
 
 LIMIT_FILE = "/etc/aurora/battery-limit"
 
@@ -102,15 +102,19 @@ class Power(Page):
         buttons = self.group(_("Power Button and Lid"))
         ids = [k for k, _l in POWER_KEY]
         cur = logind_value("HandlePowerKey", "poweroff")
-        buttons.add(combo_row(_("Power button"), [_(label) for _k, label in POWER_KEY],
-                              ids.index(cur) if cur in ids else 0,
-                              on_change=lambda i: self._logind("power-key", ids[i])))
+        self._power_index = ids.index(cur) if cur in ids else 0
+        self.power_row = combo_row(_("Power button"), [_(label) for _k, label in POWER_KEY],
+                                   self._power_index,
+                                   on_change=lambda i: self._logind("power-key", i))
+        buttons.add(self.power_row)
         if has_lid():
             lid_ids = [k for k, _l in LID]
             cur = logind_value("HandleLidSwitch", "suspend")
-            buttons.add(combo_row(_("Closing the lid"), [_(label) for _k, label in LID],
-                                  lid_ids.index(cur) if cur in lid_ids else 0,
-                                  on_change=lambda i: self._logind("lid", lid_ids[i])))
+            self._lid_index = lid_ids.index(cur) if cur in lid_ids else 0
+            self.lid_row = combo_row(_("Closing the lid"), [_(label) for _k, label in LID],
+                                     self._lid_index,
+                                     on_change=lambda i: self._logind("lid", i))
+            buttons.add(self.lid_row)
 
         if shutil.which("powerprofilesctl"):
             p = self.group(_("Power mode"))
@@ -142,15 +146,38 @@ class Power(Page):
             if health:
                 b.add(Adw.ActionRow(title=_("Battery health"), subtitle=health))
             if charge_limit_supported():
-                b.add(switch_row(_("Limit charging to 80%"), charge_limit_on(), self._set_limit,
+                self._limit_on = charge_limit_on()
+                self.limit_row = switch_row(_("Limit charging to 80%"), self._limit_on, self._set_limit,
                                  subtitle=_("Keeping a battery below full makes it last years "
-                                            "longer. Turn off before a trip for a full charge.")))
+                                            "longer. Turn off before a trip for a full charge."))
+                b.add(self.limit_row)
 
-    def _logind(self, what, value):
+    def _admin_change(self, control, what, value, completed):
         from aurora.settingsapp.system import admin
-        ok, err = admin(what, value)
-        if not ok:
-            toast(self, err)
+
+        def work():
+            ok, err = admin(what, value)
+            if not ok:
+                raise RuntimeError(err)
+
+        def finish(error):
+            completed(error)
+            if error:
+                toast(self, error)
+        apply_async(control, work, finish)
+
+    def _logind(self, what, index):
+        row, attr, choices = ((self.power_row, "_power_index", POWER_KEY) if what == "power-key"
+                              else (self.lid_row, "_lid_index", LID))
+        if getattr(row, "_command_pending", False) or index == getattr(self, attr):
+            return
+
+        def finish(error):
+            if error:
+                row.set_selected(getattr(self, attr))
+            else:
+                setattr(self, attr, index)
+        self._admin_change(row, what, choices[index][0], finish)
 
     def _health(self):
         out = run(["upower", "-i", "/org/freedesktop/UPower/devices/battery_BAT0"])
@@ -161,9 +188,16 @@ class Power(Page):
         return None
 
     def _set_limit(self, on):
-        from aurora.settingsapp.system import admin
-        ok, err = admin("battery-limit", "80" if on else "off")
-        toast(self, (_("Charging stops at 80%") if on else _("Charging to 100%")) if ok else err)
+        if getattr(self.limit_row, "_command_pending", False) or on == self._limit_on:
+            return
+
+        def finish(error):
+            if error:
+                self.limit_row.set_active(self._limit_on)
+            else:
+                self._limit_on = on
+                toast(self, _("Charging stops at 80%") if on else _("Charging to 100%"))
+        self._admin_change(self.limit_row, "battery-limit", "80" if on else "off", finish)
 
     def _battery(self):
         out = run(["upower", "-i", "/org/freedesktop/UPower/devices/DisplayDevice"])

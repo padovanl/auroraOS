@@ -2,9 +2,10 @@
 
 import os
 import shutil
+import stat
 import threading
 
-from gi.repository import GLib, GObject
+from gi.repository import Gio, GLib, GObject
 
 from aurora import activities
 from aurora.files.history import Entry
@@ -88,12 +89,20 @@ class Job(GObject.Object):
                 os.symlink(os.readlink(src), dst)
                 created = True
             else:
-                with open(src, "rb") as source, open(dst, "xb") as target:
-                    created = True
-                    while chunk := source.read(1024 * 1024):
-                        if self._is_cancelled():
-                            raise InterruptedError
-                        target.write(chunk)
+                if not stat.S_ISREG(os.lstat(src).st_mode):
+                    raise OSError(_("Cannot copy special file: {path}").format(path=src))
+                # A regular file can be replaced by a pipe/link after lstat.
+                # Never block opening it or follow the replacement link.
+                fd = os.open(src, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+                with os.fdopen(fd, "rb") as source:
+                    if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+                        raise OSError(_("Cannot copy special file: {path}").format(path=src))
+                    with open(dst, "xb") as target:
+                        created = True
+                        while chunk := source.read(1024 * 1024):
+                            if self._is_cancelled():
+                                raise InterruptedError
+                            target.write(chunk)
             shutil.copystat(src, dst, follow_symlinks=False)
         except (InterruptedError, OSError, shutil.Error):
             if created:
@@ -110,20 +119,26 @@ class Job(GObject.Object):
                 if self._is_cancelled():
                     raise InterruptedError
                 name = os.path.basename(src.rstrip("/"))
-                same_dir = os.path.dirname(os.path.abspath(src)) == os.path.abspath(self.target_dir)
+                same_dir = os.path.realpath(os.path.dirname(src)) == os.path.realpath(self.target_dir)
                 if self.kind == "move" and same_dir:
                     continue
                 dest = unique_destination(self.target_dir, name)
-                if os.path.abspath(dest).startswith(os.path.abspath(src) + os.sep):
+                if (os.path.isdir(src) and not os.path.islink(src) and
+                        os.path.commonpath((os.path.realpath(src), os.path.realpath(dest))) ==
+                        os.path.realpath(src)):
                     raise OSError(_("Cannot copy a folder into itself"))
                 if self.kind == "move":
                     try:
-                        os.rename(src, dest)
+                        Gio.File.new_for_path(src).move(Gio.File.new_for_path(dest),
+                            Gio.FileCopyFlags.NOFOLLOW_SYMLINKS | Gio.FileCopyFlags.NO_FALLBACK_FOR_MOVE,
+                            None, None)
                         self._tick(name)
                         self.changes.append((src, dest))
                         continue
-                    except OSError:
-                        pass  # different filesystem: copy then delete
+                    except GLib.Error as err:
+                        if not err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.NOT_SUPPORTED):
+                            raise OSError(err.message) from err
+                        # Different filesystem: use the cancellable copy below.
                 created_dir = False
                 try:
                     if os.path.isdir(src) and not os.path.islink(src):

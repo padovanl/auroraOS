@@ -64,10 +64,17 @@ ssh -L 5930:127.0.0.1:5930 user@server
 remote-viewer spice://127.0.0.1:5930</code></pre>
 
 <h2 id="windows-with-wsl-2"><a class="anchor" href="#windows-with-wsl-2" aria-hidden="true">#</a>Windows with WSL 2</h2>
-<p>WSL 2 supports nested virtualization, so the QEMU commands work in Ubuntu on WSL: check that
-<code>/dev/kvm</code> exists, install QEMU, add yourself to the <code>kvm</code> group
-(<code>sudo usermod -aG kvm $USER</code>, then <code>wsl --shutdown</code>), and start with
-<code>--software</code>.</p>
+<p>With WSLg, QEMU can display a window on the Windows desktop. Hardware acceleration
+requires an accessible <code>/dev/kvm</code>; it is not available on every WSL setup.
+Without it, use CPU emulation and one Full HD virtual monitor:</p>
+<pre><code>sudo apt install qemu-system-x86
+qemu-system-x86_64 -machine q35 -accel tcg,thread=multi -cpu max -smp 4 -m 4G \
+  -cdrom /mnt/c/Users/YOUR-NAME/Downloads/aurora-os-VERSION-amd64.iso -boot order=d \
+  -vga none -device VGA,xres=1920,yres=1080 -display gtk \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet</code></pre>
+<p>Replace the ISO path with yours. CPU emulation is slower than KVM. If
+<code>/dev/kvm</code> is accessible, replace <code>-accel tcg,thread=multi -cpu max</code>
+with <code>-enable-kvm -cpu host</code>.</p>
 
 <h2 id="virtualbox-and-vmware"><a class="anchor" href="#virtualbox-and-vmware" aria-hidden="true">#</a>VirtualBox and VMware</h2>
 <p>Create a <em>Debian 64-bit</em> VM, enable EFI for UEFI, give it 128 MB of video memory and

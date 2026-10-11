@@ -70,12 +70,20 @@ def _size(n):
 def fetch(item, dest, progress=None, cancelled=None, opener=urllib.request.urlopen):
     """Download item {url, size, sha256} to dest. progress(done, total) is called
     as bytes arrive; cancelled() returning True stops (the .part is kept)."""
-    if is_complete(item, dest):
+    if is_complete(item, dest) and sha256_of(dest) == item["sha256"]:
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     part = dest + ".part"
     have = os.path.getsize(part) if os.path.exists(part) else 0
-    if have > item["size"]:
+    if have == item["size"]:
+        if sha256_of(part) == item["sha256"]:
+            os.replace(part, dest)
+            if progress:
+                progress(have, item["size"])
+            return dest
+        os.remove(part)
+        have = 0
+    elif have > item["size"]:
         os.remove(part)
         have = 0
     check_space(item, dest, have)
@@ -88,6 +96,7 @@ def fetch(item, dest, progress=None, cancelled=None, opener=urllib.request.urlop
         raise DownloadError(str(e)) from e
     with resp:
         if have and getattr(resp, "status", 206) != 206:
+            check_space(item, dest)
             have = 0                      # the server ignored Range: start over
         with open(part, "ab" if have else "wb") as f:
             done = have
@@ -110,6 +119,9 @@ def fetch(item, dest, progress=None, cancelled=None, opener=urllib.request.urlop
                 done += len(block)
                 if progress:
                     progress(done, item["size"])
+    if os.path.getsize(part) < item["size"]:
+        raise DownloadError(_("Download of {name} is incomplete; try again to resume").format(
+            name=os.path.basename(dest)))
     if os.path.getsize(part) != item["size"] or sha256_of(part) != item["sha256"]:
         os.remove(part)
         raise DownloadError(_("{name} is damaged (checksum mismatch); try again").format(name=os.path.basename(dest)))

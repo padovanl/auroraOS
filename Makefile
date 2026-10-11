@@ -14,7 +14,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
 	test-newfeatures test-wallpapers test-system-native test-startup-menus test-sharing \
-	test-shortcut-edges test-files-shortcuts \
+	test-shortcut-edges test-files-shortcuts test-files-drag test-network-files test-admin-concurrency \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
 all: iso
@@ -67,8 +67,12 @@ test-smoke: dev-image
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
 
 # GTK unit checks, authorization rollback, two displays, Files and Assistant.
-test-system-native: dev-image
+test-system-native: dev-image test-admin-concurrency
 	AURORA_HEADLESS_OUTPUTS=2 desktop/dev/run-headless.sh tests/settings-system-interactions.sh $(CURDIR)/work/system-native-tests
+
+# A disposable container keeps the logind fixture away from the host's config.
+test-admin-concurrency: dev-image
+	$(DEV_RUN) env AURORA_ADMIN_TEST_CONTAINER=1 bash tests/admin-concurrency.sh
 
 test-wallpapers: dev-image
 	desktop/dev/run-headless.sh tests/animated-wallpapers.sh $(CURDIR)/work/wallpaper-tests
@@ -137,6 +141,14 @@ test-shortcut-edges:
 test-files-shortcuts:
 	python3 tests/interact/files_shortcuts.py $(ISO) --out work/files-shortcut-test
 	python3 tests/interact/files_shortcut_edges.py $(ISO) --out work/files-shortcut-edge-test
+
+# Actual modifier drags, empty-space selection and both file views.
+test-files-drag:
+	python3 tests/interact/files_drag.py $(ISO) --out work/files-drag-test
+
+# A dedicated SFTP server lives inside the disposable test VM.
+test-network-files:
+	python3 tests/interact/network_files.py $(ISO) --out work/network-files-test
 
 # Installs the ISO onto an empty virtual disk with the real installer (driven by
 # key presses), then boots the installed system and checks it (~20 min each).

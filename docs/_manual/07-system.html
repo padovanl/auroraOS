@@ -274,6 +274,10 @@ chose Power Saver yourself, it is left alone.</p>
 <p>Desktop Profiles (Settings → Desktop Profiles) switch several of these together: <em>Battery</em>
 uses Power Saver, hides the dock and turns animations off.</p>
 
+<p>Changing power-button, lid or charge-limit settings may ask for administrator
+authorization. The affected control waits for the result while the interface remains
+responsive; cancelling restores its previous value.</p>
+
 <!-- page: accessibility | Accessibility | Seeing, hearing, typing and pointing: zoom, screen reader, high contrast, screen keyboard and more -->
 <p>Settings → Accessibility.</p>
 <h2>Seeing</h2>
@@ -329,5 +333,9 @@ choice is kept in <span class="path">~/.config/aurora/input-methods</span> and
 <span class="path">~/.config/fcitx5/profile</span>; Fcitx runs only when an input method is on.</p>
 <h2>Date and time</h2>
 <p>Settings → Date &amp; Time: <em>Automatic date &amp; time</em> (from the internet), the
-time zone and the 24-hour clock. Seconds in the top bar clock are in Settings → Desktop &amp;
-Dock → Top Bar.</p>
+time zone and the 24-hour clock. To set the clock yourself, turn off automatic time,
+choose a date from the calendar, set hours and minutes in 24-hour format, and click
+<strong>Apply Date and Time</strong>. The chosen time uses the selected time zone.
+Administrator authorization may be required. While it is pending, the rest of the app
+remains responsive; cancelling restores the previous automatic-time or time-zone choice.
+Seconds in the top bar clock are in Settings → Desktop &amp; Dock → Top Bar.</p>

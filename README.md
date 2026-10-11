@@ -404,11 +404,22 @@ remote-viewer spice://127.0.0.1:5930    # virt-viewer; on Windows from virt-mana
 `--vnc 1` does the same with VNC on port 5901, for any VNC viewer. The port only
 listens on the server's loopback, so it is reachable through the tunnel only.
 
-**On Windows 11 with WSL 2**: WSL runs Linux with nested virtualization and shows its
-windows on the Windows desktop, so the QEMU commands above work there. In Ubuntu on WSL,
-check that `/dev/kvm` exists, `sudo apt install qemu-system-x86 qemu-utils ovmf`, add
-yourself to the `kvm` group (`sudo usermod -aG kvm $USER`, then `wsl --shutdown` in
-PowerShell), and start the VM with `--software` (WSLg's window has no OpenGL for QEMU).
+**On Windows 11 with WSL 2 and WSLg**, QEMU can show a window on the Windows desktop.
+KVM availability depends on your WSL kernel and host: check `/dev/kvm` before using
+`-enable-kvm`. When it is absent, this command uses CPU emulation and one Full HD
+virtual monitor, without GPU acceleration:
+
+```sh
+sudo apt install qemu-system-x86
+qemu-system-x86_64 -machine q35 -accel tcg,thread=multi -cpu max -smp 4 -m 4G \
+  -cdrom aurora-os-VERSION-amd64.iso -boot order=d \
+  -vga none -device VGA,xres=1920,yres=1080 -display gtk \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet
+```
+
+Replace the ISO name with its path (Windows drives are under `/mnt/c/` in WSL).
+CPU emulation is slower than KVM. If `/dev/kvm` exists and your user can access it,
+replace `-accel tcg,thread=multi -cpu max` with `-enable-kvm -cpu host`.
 
 **Prefer a window to a command?** GNOME Boxes and Virtual Machine Manager (virt-manager)
 open the ISO directly: choose "Debian 13" as the operating system, give it 4 GB of memory
@@ -1354,7 +1365,10 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   **Daylight series** changes pictures at dawn, day, dusk and night. **Load a File…**
   imports a personal image, MP4, WebM, M4V or MOV; **Play animation** switches playback off to show its static poster.
 - **How:** `shell/livingwallpaper.py` uses GTK's GStreamer media backend for silent,
-  continuous playback. Bundled videos use H.264 at 30 fps, retaining 3840×2160 for available 4K sources and 1920×1080 otherwise. Thumbnails
+  continuous playback. Bundled videos use H.264 at 30 fps, retaining 3840×2160 when the available 4K export fits the **48 MiB per-file limit**;
+  larger videos are exported at 1920×1080, preserving their playback duration. The
+  importer enforces this limit and `tests/static.sh` checks all bundled videos,
+  keeping them below GitHub's recommended 50 MB and hard 100 MB limits. Thumbnails
   use PNG posters, so the grid opens only the selected video's decoder. The lock
   screen and wallpaper-derived accent use the poster too.
 - **Power:** playback pauses while a maximized or fullscreen window covers the desktop,
@@ -1751,6 +1765,53 @@ set up a feature, and every place it appears has its own switch.
   and mkosi are capable, but they add a configuration language on top of what are
   ultimately the same steps.
 
+### Everyday file and settings reliability
+
+The image includes `gvfs-fuse` alongside GVFS and its network backends, so mounted
+shares expose paths usable by ordinary apps and the existing file-operation worker.
+The image gate checks that this dependency is installed.
+
+Files lets you **Add to Sidebar** from a folder's context menu, from empty space
+for the current folder, or from an existing place's menu. Favorite folders have
+**Rename Bookmark…** and **Remove from Sidebar**; removing a favorite keeps its
+files. Favorites use GTK's shared `~/.config/gtk-3.0/bookmarks` format, support
+network URIs, and update across open windows and compatible file choosers.
+
+Grid, list and desktop file drags offer both copy and move. Files accepts multiple
+files dropped onto folders, empty space, sidebar places and path segments. Folder
+drops prefer moving when the source permits it. The
+negotiated action decides whether to copy or move; hold Ctrl to request copy or
+Shift to request move. Network navigation uses cancellable asynchronous GIO requests,
+so an unresponsive server does not freeze GTK or override a later navigation.
+Transfers keep their progress, cancellation, retry and undo
+history. Copying into a folder's own subtree through a symlink is rejected; special
+files such as named pipes fail promptly instead of hanging the operation. Moves
+preserve a destination created by another process while the name was being chosen.
+
+Drag gesture capture happens above the built-in selection controls, and the files
+hit on the initial press remain the source when GTK draws its selection overlay.
+Dragging empty space still draws a rectangle to select multiple files.
+Wayland modifiers come from the seat keyboard and the negotiated action survives
+asynchronous payload reads.
+
+File clipboard ownership follows the system clipboard: copying text or files in
+another app replaces the previous Files selection. The standard GTK file list and
+GNOME `x-special/gnome-copied-files` format support copy/cut interoperability.
+A failed or cancelled cut in Files retains the remaining files for another paste;
+a successful move clears that cut without replacing a newer clipboard selection.
+
+Settings → Date & Time adds a calendar, hour and minute controls, and **Apply Date
+and Time** when automatic time is off. Clock, timezone, power-button, lid and battery
+charge-limit changes wait for authorization in a worker; GTK remains responsive,
+repeat requests are blocked while pending, and cancellation restores the previous
+selection. AI component downloads retain interrupted partial files for resumption,
+verify an existing download's checksum, and finalize an already complete partial
+file without an unnecessary network request.
+
+Evidence and remaining limits are in
+[the follow-up audit](docs/audits/2026-10-11-followup.md). The corresponding native
+GTK regression checks are part of `tests/settings-system-interactions.sh`.
+
 ### Testing
 - **Static:** syntax and shellcheck, desktop-file-validate, strict schema compilation,
   XML and YAML parsing, manifest consistency.
@@ -1892,7 +1953,7 @@ never fails before it is published. To publish: `make debs && make repo`, commit
 (`~/.config/aurora-os/archive-gnupg`); its public half is
 `config/keys/aurora-archive-keyring.gpg`.
 
-## Testing
+### Testing
 
 The [11 October 2026 audit](docs/audits/2026-10-11.md) records fixes, results and the limits of the checks.
 
@@ -1902,7 +1963,7 @@ The [11 October 2026 audit](docs/audits/2026-10-11.md) records fixes, results an
 | `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol, sunrise/sunset, conversions, clipboard history, OCR language choice, weather parsing, Spotlight providers, Night Light schedule, verified and resumable downloads, the AI catalog's pins, streaming from an OpenAI-compatible server, the reasoning filter, search by meaning, answer and dictation languages, touchpad gestures, disk health parsing, Wi-Fi QR codes. |
 | `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, tries conversions, emoji, clipboard history and project search, previews code, a PDF and a picture with Quick Look, opens the overview, streams an answer in the Assistant and opens Writing Tools (against a fake AI server), opens Game Hub and the AI and System Health pages, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
 | `make test` | Docker | All three above. |
-| `make test-system-native` | Docker | GTK unit checks, administrative authorization and cancellation, Lock now, two-monitor positioning with keep/revert/timeout and persistence, Files operations, Assistant streaming and local-only attachments. |
+| `make test-system-native` | Docker | GTK unit checks, administrative authorization and cancellation, concurrent power-button/lid configuration edits, Lock now, two-monitor positioning with keep/revert/timeout and persistence, Files operations, favorite folders, file clipboard interoperability and cut retry, grid/list drag actions and breadcrumb drops, network navigation cancellation, manual date/time and power authorization rollback, Assistant streaming and local-only attachments. |
 | `make test-startup-menus` | ISO + QEMU/KVM | Opens a deliberately slow app through desktop clicks, checks immediate feedback and repeated-launch deduplication, then dismisses context menus with Esc and an outside click, including reduced motion. |
 | `make test-sharing` | ISO + QEMU/KVM | Activates SSH, checks its real firewall profile and handshake, then stops service/socket while preserving independent rules. |
 | `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
@@ -1910,6 +1971,9 @@ The [11 October 2026 audit](docs/audits/2026-10-11.md) records fixes, results an
 | `make test-interact` | ISO + QEMU/KVM | **Uses the live desktop like a person**: a USB tablet and QMP move the pointer, click, double-click and type, and the shell reports which windows exist and their state (`aurora-shell windows`). It checks that desktop icons select and clear, that a file and a folder open from the desktop, that Install Aurora OS opens the installer, brings it forward and reopens it after closing, that <kbd>Super</kbd>+<kbd>Return</kbd>, <kbd>Super</kbd>+<kbd>M</kbd> and restore work, that <kbd>Esc</kbd> closes the Control Center and gives the keyboard back, that hot corners fire, that Files' context menu and every Settings page open without errors, that no text is lost to markup, and that the shell comes back by itself after being killed. `--push` tries the checkout's code without rebuilding the ISO. Screenshots are kept in `work/interact-test/`; `tests/interact/serve.py` and `do.py` drive the same VM step by step by hand. |
 | `make test-newfeatures` | ISO + QEMU/KVM | This release's new work on the real system, in the Aurora session: the five icon styles one after another (each must redraw the dock), Launchpad's pages and a folder made from two apps, the moving background and that *Still* really is still, window previews in the overview with the setting on and off, and that Clipboard, USB Stick Writer and Migrate from Windows each open a window. Every check is a measurement on a screenshot or a question to the shell, not a look. |
 | `make test-files-shortcuts` | ISO + QEMU/KVM | Drives Files with the documented keyboard shortcuts and stresses focus, rapid duplicate requests and asynchronous trash/undo edges; checks Quick Look, rename, trash, permanent-delete cancellation, full-path copying, navigation, tabs, views, search, chained undo/redo, exceptions and GTK criticals. |
+| `make test-files-drag` | ISO + QEMU/KVM | Sends actual mouse drags and Ctrl/Shift keys in grid/list view, checks copies preserve their sources, moves and Undo restore the expected files, and checks empty-space selection can copy multiple files. |
+| `make test-network-files` | ISO + QEMU/KVM | Starts a dedicated SFTP server inside the test VM, mounts it with GVFS, and checks network-folder navigation, copy/cut, Undo/Redo, drops and favorites with GIO criticals treated as fatal. Requires `gvfs-fuse` to be included in the ISO. |
+| `make test-admin-concurrency` | Docker | Applies 80 simultaneous power-button/lid pairs in a disposable container and verifies that neither setting loses the other change. |
 | `make test-install` | ISO + QEMU/KVM + OVMF | **Installs Aurora for real**, once with BIOS and once with UEFI. It boots the ISO with an empty 24 GB disk, starts the installer and drives it with key presses sent through QEMU, just like a person at the keyboard: welcome, location, keyboard, "Erase disk" on btrfs, a user with a strong password, Install. Then it boots the installed disk alone and checks the user, the login screen, the live user and live-only files being gone, the btrfs subvolumes and compression, Timeshift's configuration, the "Fresh install" snapshot, a "Before: apt" snapshot after installing a package, and the snapshots entry in the boot menu. Screenshots of every installer step, and of GRUB's snapshot menu, are kept in `work/install-test/`. |
 
 Run `make test && make iso && make test-image && make test-boot && make test-interact && make test-install` before
