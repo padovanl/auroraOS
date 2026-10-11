@@ -3,6 +3,7 @@
 import os
 
 from gi.repository import Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora import apps, settings
 from aurora.i18n import N_, _
@@ -109,7 +110,7 @@ class Clock(Gtk.MenuButton):
         self._label = Gtk.Label()
         self.set_child(self._label)
 
-        pop = Gtk.Popover(has_arrow=False)
+        pop = ContextMenu(has_arrow=False)
         pop.add_css_class("aurora-calendar")
         box = Gtk.Box(spacing=12, margin_top=12, margin_bottom=12,
                       margin_start=12, margin_end=12)
@@ -173,7 +174,7 @@ class ActivityCenter(Gtk.MenuButton):
     def __init__(self):
         super().__init__(icon_name="view-list-symbolic", css_classes=["flat", "panel-button"],
                          tooltip_text=_("Activities"))
-        self.pop = Gtk.Popover(has_arrow=False)
+        self.pop = ContextMenu(has_arrow=False)
         self.pop.add_css_class("aurora-context-menu")
         self.rows = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
                             margin_top=12, margin_bottom=12,
@@ -320,7 +321,7 @@ class AuroraMenu(Gtk.MenuButton):
         self.shell = shell
         self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16,
                                  css_classes=["panel-logo-icon"]))
-        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-menu"])
+        pop = ContextMenu(has_arrow=False, css_classes=["aurora-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.set_size_request(300, -1)
 
@@ -535,7 +536,7 @@ class Panel(LayerWindow):
 
     def _window_context_menu(self, gesture, _n, x, y, active, button):
         """Window-specific right-click actions on its stable top-bar button."""
-        pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+        pop = ContextMenu(has_arrow=False, halign=Gtk.Align.START,
                           css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
                       margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)

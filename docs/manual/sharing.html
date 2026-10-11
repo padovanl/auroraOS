@@ -36,7 +36,10 @@ from another computer with Remmina, TigerVNC or RealVNC to the address and with 
 shown.</p>
 <h2 id="remote-login"><a class="anchor" href="#remote-login" aria-hidden="true">#</a>Remote login</h2>
 <p><em>Remote Login (SSH)</em> lets you log in to this computer from another one with
-<code>ssh user@address</code>. Off by default.</p>
+<code>ssh user@address</code>. Off by default. Turning it on starts SSH and opens its port
+in Aurora's firewall; turning it off stops the service and socket and removes Aurora's
+firewall rule. Rules you added yourself are left alone. Authorization runs in the background:
+if you cancel it, the switch goes back to its previous state.</p>
 <h2 id="your-phone"><a class="anchor" href="#your-phone" aria-hidden="true">#</a>Your phone</h2>
 <ol class="steps">
   <li>Install <strong>KDE Connect</strong> on your Android phone (Play Store or F-Droid) or iPhone (App Store).</li>

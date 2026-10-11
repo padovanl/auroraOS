@@ -31,6 +31,7 @@
 <tr><td><code>make test-static</code></td><td>Syntax, shellcheck, desktop files, schemas, XML, installer configuration, translations, the website and this documentation being up to date.</td></tr>
 <tr><td><code>make test-unit</code></td><td>pytest unit tests in <span class="path">tests/unit/</span>.</td></tr>
 <tr><td><code>make test-smoke</code></td><td>Starts the shell headless and opens every app and Settings page.</td></tr>
+<tr><td><code>make test-system-native</code></td><td>Runs the GTK unit checks with a real display, cancellation of administrative toggles, the Lock now action, two-monitor positioning with confirmation and rollback, Files operations and Assistant streaming/attachment checks.</td></tr>
 <tr><td><code>make test-image</code></td><td>Inspects a built ISO: apps, themes, services, boot records.</td></tr>
 <tr><td><code>make test-boot</code></td><td>Boots the ISO with BIOS and UEFI, checks the session and starts every default app marked <code>yes</code> in <span class="path">config/apps.manifest</span>. Transmission is marked <code>no</code>: a BitTorrent client joining its network from a test VM triggers company firewalls' P2P alerts (the VM's traffic leaves with the host's address).</td></tr>
 <tr><td><code>make test-interact</code></td><td>Uses the live desktop like a person: clicks, keys, windows.</td></tr>

@@ -28,14 +28,16 @@
       <h2 id="displays"><a class="anchor" href="#displays" aria-hidden="true">#</a>Displays</h2>
 <p>Settings → Displays lists each connected monitor with: on or off, resolution and refresh
 rate (★ marks the monitor's preferred mode), scale (100–200 %, for high-resolution screens) and
-orientation. As on Windows, a change must be confirmed: <em>Keep Changes</em>, or
+orientation. <em>Position</em> sets X (left/right) and Y (up/down) in logical pixels; press
+<em>Move</em> to apply. For a 1920×1080 monitor at 100 % scale, X=1920, Y=0 places the
+next monitor to its right; at 200 % scale its logical width is 960. Negative X places a
+monitor to the left. As on Windows, a change must be confirmed: <em>Keep Changes</em>, or
 <em>Revert</em>, which also happens by itself after 15 seconds, so a mode the screen can't show
 never leaves you with a black screen.</p>
 <p>Kept choices are saved in <span class="path">~/.config/aurora/displays.sh</span> and applied
 at login; in the Aurora session they also go into Wayfire's configuration, so they stay when it
-is reloaded. Monitors are placed side by side automatically; arranging them by hand and choosing
-the primary one aren't in Settings yet (<code>wlr-randr --output NAME --pos X,Y</code> does it for
-the session). Desktop widgets keep their places, as fractions of the screen, and move just
+is reloaded. Monitors are placed side by side automatically unless you set their position.
+Choosing the primary monitor is not in Settings yet. Desktop widgets keep their places, as fractions of the screen, and move just
 enough not to overlap on a smaller screen or a larger scale.</p>
 <h2 id="bluetooth"><a class="anchor" href="#bluetooth" aria-hidden="true">#</a>Bluetooth</h2>
 <p>Settings → Bluetooth: turn it on, make the computer visible, pair new devices (keyboards,

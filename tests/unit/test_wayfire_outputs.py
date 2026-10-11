@@ -24,6 +24,14 @@ def test_turning_an_output_back_on():
     assert display_outputs("wlr-randr --output X --bogus\nnot a command\n") == {"X": {}}
 
 
+def test_display_positions_support_negative_coordinates_and_reject_injection():
+    assert display_outputs("wlr-randr --output DP-1 --pos -1920,80\n") == {
+        "DP-1": {"position": "-1920,80"}}
+    for value in ("bad", "1,2,3", "0,0\\n[core]", "1.5,0"):
+        assert "position" not in display_outputs(
+            f"wlr-randr --output DP-1 --pos '{value}'\n")["DP-1"]
+
+
 def test_always_on_top_binding_is_translated_for_wayfire(tmp_path, monkeypatch):
     data = Path(__file__).parents[2] / "desktop" / "data"
     monkeypatch.setattr(wayfireconf, "data_path",

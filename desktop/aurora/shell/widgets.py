@@ -24,6 +24,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gdk, GLib, Gtk, Pango  # noqa: E402
+from aurora.popovers import ContextMenu
 
 from aurora import apps, settings  # noqa: E402
 from aurora.i18n import N_, _  # noqa: E402
@@ -1421,7 +1422,7 @@ class WidgetLayer:
     def show_menu(self, widget, x, y):
         if self._menu is not None:
             self._menu.unparent()
-        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-context-menu"])
+        pop = ContextMenu(has_arrow=False, css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1, margin_top=3,
                       margin_bottom=3, margin_start=3, margin_end=3)
         entries = [(_("Edit Widgets…"), lambda: self.set_editing(True))]
@@ -1445,7 +1446,7 @@ class WidgetLayer:
 
     def customize(self, widget):
         """A popover with the widget's own options, applied as they change."""
-        pop = Gtk.Popover(css_classes=["widget-customize"])
+        pop = ContextMenu(css_classes=["widget-customize"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10, margin_top=12,
                       margin_bottom=12, margin_start=14, margin_end=14)
         box.append(Gtk.Label(label=kinds()[widget.kind][0], xalign=0,
@@ -1502,7 +1503,7 @@ class WidgetLayer:
             button.set_label(datetime.date.fromisoformat(iso).strftime("%x"))
             button.popdown()
         calendar.connect("day-selected", picked)
-        button.set_popover(Gtk.Popover(child=calendar))
+        button.set_popover(ContextMenu(child=calendar))
         return button
 
     def _pick_folder(self, widget, key, button):

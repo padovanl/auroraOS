@@ -9,6 +9,7 @@ import threading
 from dataclasses import dataclass, field
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
+from aurora.popovers import ContextMenu
 
 from aurora import activities, apps
 from aurora.files.icons import icon_for
@@ -126,7 +127,7 @@ class Sidebar(Gtk.ListBox):
         window = self.get_root()
         if not isinstance(window, FilesWindow):
             return
-        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-context-menu"])
+        pop = ContextMenu(has_arrow=False, css_classes=["aurora-context-menu"])
         pop.set_parent(row)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2,
@@ -424,7 +425,7 @@ class FilesWindow(Adw.ApplicationWindow):
             keys.connect("key-pressed", self._on_view_key)
             view.add_controller(keys)
         self.quicklook = None
-        self.context_menu = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+        self.context_menu = ContextMenu(has_arrow=False, halign=Gtk.Align.START,
                                         css_classes=["aurora-context-menu"])
         self.context_menu.set_parent(self.view_stack)
 

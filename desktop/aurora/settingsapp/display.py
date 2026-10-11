@@ -31,7 +31,9 @@ def outputs():
 def previous_args(o):
     """wlr-randr arguments that put each of an output's options back as it is
     now, by option (--mode, --scale, --transform, --off)."""
-    undo = {"--scale": ["--scale", str(o.get("scale", 1.0))],
+    position = o.get("position") or {}
+    undo = {"--pos": ["--pos", f"{position.get('x', 0)},{position.get('y', 0)}"],
+            "--scale": ["--scale", str(o.get("scale", 1.0))],
             "--transform": ["--transform", o.get("transform", "normal")],
             "--off": ["--on"]}
     current = next((m for m in o.get("modes", []) if m.get("current")), None)
@@ -49,12 +51,14 @@ class Displays(Page):
     def build(self):
         self._groups = []
         self._previous = {}
+        self.position_controls = {}
         self.refresh()
 
     def refresh(self):
         for g in self._groups:
             self.remove(g)
         self._groups = []
+        self.position_controls = {}
         outs = outputs()
         if not outs:
             g = self.group(_("No displays found"),
@@ -101,6 +105,26 @@ class Displays(Page):
         g.add(combo_row(_("Orientation"), [t[1] for t in TRANSFORMS],
                         tr_ids.index(tr) if tr in tr_ids else 0,
                         on_change=lambda i: self._apply(name, ["--transform", tr_ids[i]])))
+        position = o.get("position") or {}
+        place = Adw.ActionRow(title=_("Position"),
+                             subtitle=_("X moves the screen left or right; Y moves it up or down. "
+                                        "Coordinates use logical pixels."))
+        coordinates = Gtk.Box(spacing=6, valign=Gtk.Align.CENTER)
+        x, y = Gtk.SpinButton.new_with_range(-32768, 32768, 1), Gtk.SpinButton.new_with_range(-32768, 32768, 1)
+        for label, spin, value, tooltip in (("X", x, position.get("x", 0), _("Horizontal position")),
+                                           ("Y", y, position.get("y", 0), _("Vertical position"))):
+            spin.set_value(value)
+            spin.set_width_chars(5)
+            spin.set_tooltip_text(tooltip)
+            coordinates.append(Gtk.Label(label=label))
+            coordinates.append(spin)
+        move = Gtk.Button(label=_("Move"), valign=Gtk.Align.CENTER)
+        move.connect("clicked", lambda *_: self._apply(
+            name, ["--pos", f"{x.get_value_as_int()},{y.get_value_as_int()}"]))
+        coordinates.append(move)
+        place.add_suffix(coordinates)
+        g.add(place)
+        self.position_controls[name] = (x, y, move)
         return g
 
     def _apply(self, output, args):
@@ -145,7 +169,10 @@ class Displays(Page):
             if response == "keep":
                 self._keep(output, args)
             else:
-                run(["wlr-randr", "--output", output] + undo)
+                try:
+                    run(["wlr-randr", "--output", output] + undo, check=True)
+                except RuntimeError as err:
+                    toast(self, _("Could not change display: {err}").format(err=err))
             self.refresh()
 
         body()

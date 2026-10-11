@@ -154,7 +154,9 @@ class Shell(Adw.Application):
         self.wallpapers = PerMonitor(lambda m: Wallpaper(self, m))
         self.panels = PerMonitor(lambda m: Panel(self, m))
         self.docks = PerMonitor(lambda m: Dock(self, m))
-        self._startup_cursor_source = 0
+        from aurora.shell.launchfeedback import LaunchFeedback
+        self.launch_feedback = LaunchFeedback(self)
+        apps.set_launch_handler(self.launch_feedback.launch)
         from aurora.shell.hotcorners import HotCorners
         from aurora.shell.screencorners import ScreenCorners
         from aurora.shell.overview import Overview
@@ -407,22 +409,7 @@ class Shell(Adw.Application):
         self._dyn_css.load_from_string(css)
 
     def launch_app(self, app, action=None, files=None):
-        surfaces = (self.wallpapers.windows() + self.panels.windows() +
-                    self.docks.windows() + [self.launcher])
-        for surface in surfaces:
-            surface.set_cursor_from_name("progress")
-        if self._startup_cursor_source:
-            GLib.source_remove(self._startup_cursor_source)
-
-        def clear():
-            self._startup_cursor_source = 0
-            for surface in surfaces:
-                if surface.get_native() is not None:
-                    surface.set_cursor(None)
-            return GLib.SOURCE_REMOVE
-
-        self._startup_cursor_source = GLib.timeout_add(2200, clear)
-        return apps.launch(app, files=files, action=action)
+        return self.launch_feedback.launch(app, files=files, action=action)
 
     def _load_css(self):
         path = data_path("style", "shell.css")

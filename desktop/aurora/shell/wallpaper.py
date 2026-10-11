@@ -1,6 +1,7 @@
 """Desktop background, one surface per monitor, with a right-click menu."""
 
 from gi.repository import Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
@@ -207,7 +208,7 @@ class Wallpaper(LayerWindow):
             create.connect("activate", self._new_item, folder)
             actions.add_action(create)
         parent.insert_action_group("desktop", actions)
-        popover = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+        popover = ContextMenu(has_arrow=False, halign=Gtk.Align.START,
                               css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1,
                       margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)

@@ -11,6 +11,7 @@ mkdir -p "$out" "$repo/work/dev-cache"
 docker build -q -t aurora-os-dev "$repo/desktop/dev" >/dev/null
 
 args=(--rm -v "$repo:/src:ro" -v "$out:/out" -v "$repo/work/dev-cache:/cache")
+args+=(-e "AURORA_HEADLESS_OUTPUTS=${AURORA_HEADLESS_OUTPUTS:-1}")
 inner_scenario=""
 if [ -n "$scenario" ]; then
     # Copy next to the output: the docker daemon may not see private tmp dirs.

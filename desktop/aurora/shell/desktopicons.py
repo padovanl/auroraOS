@@ -5,6 +5,7 @@ import re
 import json
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
+from aurora.popovers import ContextMenu
 
 from aurora import apps, settings
 from aurora.files.icons import icon_for
@@ -42,6 +43,9 @@ def open_file(gfile):
     except GLib.Error:
         return False
     if info.get_file_type() == Gio.FileType.DIRECTORY:
+        folder_app = Gio.AppInfo.get_default_for_type("inode/directory", False)
+        if folder_app is not None:
+            return apps.launch(folder_app, files=[path])
         return apps.spawn(["aurora-files", path])
     app = Gio.AppInfo.get_default_for_type(info.get_content_type(), False)
     if app is not None:
@@ -156,7 +160,7 @@ class DesktopIcon(Gtk.Button):
     def show_menu(self, x, y):
         if self.gfile is None:
             return
-        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop = ContextMenu(has_arrow=True, css_classes=["aurora-context-menu"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,

@@ -163,12 +163,25 @@ def launch_check(agent, name, desktop_id):
 
 
 def monitor(path, command):
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    s.connect(path)
-    s.recv(4096)
-    s.sendall(command.encode() + b"\n")
-    time.sleep(1.5)
-    s.close()
+    # Wait for QEMU's acknowledgement, rather than assuming a screenshot was
+    # written within a fixed sleep (not true on slow Windows bind mounts).
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+        s.settimeout(60)
+        s.connect(path)
+        def prompt():
+            data = b""
+            while b"(qemu)" not in data:
+                chunk = s.recv(65536)
+                if not chunk:
+                    raise ConnectionError("QEMU monitor closed before acknowledging the command")
+                data += chunk
+            return data.decode(errors="replace")
+        prompt()
+        s.sendall(command.encode() + b"\n")
+        reply = prompt()
+        if "Error" in reply or "Could not" in reply or "No such file" in reply:
+            raise RuntimeError(reply)
+        return reply
 
 
 def screenshot(mon, dest):

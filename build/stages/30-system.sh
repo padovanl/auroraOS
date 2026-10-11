@@ -3,7 +3,7 @@
 . "$(dirname "$0")/../lib.sh"
 
 log "applying overlay"
-rsync -a --no-owner --no-group "$SRC/overlay/" "$ROOTFS/"
+bash "$SRC/build/install-overlay.sh" "$SRC/overlay" "$ROOTFS"
 
 # Take over files owned by base-files so upgrades don't restore Debian branding.
 for f in /usr/lib/os-release /etc/issue /etc/issue.net; do

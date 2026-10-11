@@ -32,6 +32,31 @@ def admin(*args, stdin=None):
     return res.returncode == 0, res.stderr.strip()
 
 
+def admin_toggle(page, row, command, on, success, on_success=None):
+    """Keep Settings responsive during authorization and restore cancelled toggles."""
+    if getattr(row, "_admin_pending", False):
+        return
+    row._admin_pending = True
+    row.set_sensitive(False)
+
+    def finished(ok, err):
+        if ok:
+            if on_success:
+                on_success()
+        else:
+            # The resulting notify::active must not start another request.
+            row.set_active(not on)
+        row._admin_pending = False
+        row.set_sensitive(True)
+        toast(page, success if ok else err)
+        return GLib.SOURCE_REMOVE
+
+    def work():
+        ok, err = admin(command, "on" if on else "off")
+        GLib.idle_add(finished, ok, err)
+    threading.Thread(target=work, daemon=True).start()
+
+
 USERNAME_RE = re.compile(r"^[a-z_][a-z0-9_-]{0,31}$")
 
 
@@ -84,7 +109,9 @@ class Privacy(Page):
             lock.add(switch_row(_("Lock automatically"), aurora.get_boolean("idle-lock"),
                                 lambda v: aurora.set_boolean("idle-lock", v),
                                 subtitle=_("When the screen turns off or the computer sleeps")))
-        lock.add(Adw.ActionRow(title=_("Lock now"), subtitle="Super + L"))
+        lock_now = Adw.ButtonRow(title=_("Lock now"))
+        lock_now.connect("activated", lambda *_: apps.spawn(["aurora-lock"]))
+        lock.add(lock_now)
 
         history = self.group(_("File History"))
         if privacy:
@@ -125,7 +152,8 @@ class Privacy(Page):
                 conf_on = "ENABLED=yes" in f.read()
         except OSError:
             pass
-        fw.add(switch_row(_("Firewall"), status and conf_on, self._set_firewall))
+        self.firewall_row = switch_row(_("Firewall"), status and conf_on, self._set_firewall)
+        fw.add(self.firewall_row)
 
         trash = self.group(_("Trash"))
         if privacy:
@@ -151,8 +179,8 @@ class Privacy(Page):
             toast(self, str(err))
 
     def _set_firewall(self, on):
-        ok, err = admin("firewall", "on" if on else "off")
-        toast(self, (_("Firewall enabled") if on else _("Firewall disabled")) if ok else err)
+        admin_toggle(self, self.firewall_row, "firewall", on,
+                     _("Firewall enabled") if on else _("Firewall disabled"))
 
 
 class Permissions(Page):
@@ -242,7 +270,8 @@ class Sharing(Page):
             g.add(Adw.ActionRow(title=_("OpenSSH server is not installed")))
             return
         on = service_active("ssh")
-        g.add(switch_row(_("Secure Shell (SSH)"), on, self._set_ssh))
+        self.ssh_row = switch_row(_("Secure Shell (SSH)"), on, self._set_ssh)
+        g.add(self.ssh_row)
         host = GLib.get_host_name()
         addr = self._address()
         user = GLib.get_user_name()
@@ -259,8 +288,9 @@ class Sharing(Page):
             g.add(Adw.ActionRow(title=_("wayvnc is not installed")))
             return
         aurora = settings.get()
-        g.add(switch_row(_("Share this screen"), aurora.get_boolean("screen-sharing"),
-                         self._set_screen))
+        self.screen_row = switch_row(_("Share this screen"), aurora.get_boolean("screen-sharing"),
+                                     self._set_screen)
+        g.add(self.screen_row)
         from aurora import screenshare
         addr = self._address()
         g.add(Adw.ActionRow(title=_("Connect to"), subtitle=f"{addr or GLib.get_host_name()}:5900",
@@ -274,12 +304,9 @@ class Sharing(Page):
         g.add(self.vnc_pw)
 
     def _set_screen(self, on):
-        ok, err = admin("vnc", "on" if on else "off")
-        if not ok:
-            toast(self, err)
-            return
-        settings.get().set_boolean("screen-sharing", on)
-        toast(self, _("Screen sharing is on") if on else _("Screen sharing is off"))
+        admin_toggle(self, self.screen_row, "vnc", on,
+                     _("Screen sharing is on") if on else _("Screen sharing is off"),
+                     on_success=lambda: settings.get().set_boolean("screen-sharing", on))
 
     def _nearby_group(self):
         g = self.group(_("Nearby Sharing"),
@@ -290,14 +317,14 @@ class Sharing(Page):
         if not shutil.which("localsend_app"):
             g.add(Adw.ActionRow(title=_("LocalSend is not installed")))
             return
-        g.add(switch_row(_("Let nearby devices find this computer"),
-                         os.path.exists("/etc/aurora/nearby-allowed"), self._set_nearby,
-                         subtitle=_("Opens port 53317 in the firewall")))
+        self.nearby_row = switch_row(_("Let nearby devices find this computer"),
+                                    os.path.exists("/etc/aurora/nearby-allowed"), self._set_nearby,
+                                    subtitle=_("Opens port 53317 in the firewall"))
+        g.add(self.nearby_row)
 
     def _set_nearby(self, on):
-        ok, err = admin("nearby", "on" if on else "off")
-        toast(self, (_("Nearby devices can find this computer") if on else
-                     _("Nearby sharing blocked")) if ok else err)
+        admin_toggle(self, self.nearby_row, "nearby", on,
+                     _("Nearby devices can find this computer") if on else _("Nearby sharing blocked"))
 
     def _phone_group(self):
         g = self.group(_("Phone"),
@@ -310,8 +337,9 @@ class Sharing(Page):
             g.add(Adw.ActionRow(title=_("KDE Connect is not installed")))
             return
         allowed = os.path.exists("/etc/aurora/phone-allowed")
-        g.add(switch_row(_("Allow phones to connect"), allowed, self._set_phone,
-                         subtitle=_("Opens the KDE Connect ports (1714–1764) in the firewall")))
+        self.phone_row = switch_row(_("Allow phones to connect"), allowed, self._set_phone,
+                                   subtitle=_("Opens the KDE Connect ports (1714–1764) in the firewall"))
+        g.add(self.phone_row)
         row = Adw.ActionRow(title=_("Paired devices"), activatable=True,
                             subtitle=_("Pair, browse the phone’s files, ring it, send files"))
         row.add_suffix(Gtk.Image(icon_name="go-next-symbolic"))
@@ -319,21 +347,19 @@ class Sharing(Page):
         g.add(row)
 
     def _set_phone(self, on):
-        ok, err = admin("phone", "on" if on else "off")
-        toast(self, (_("Phones can connect") if on else _("Phone connections blocked"))
-              if ok else err)
+        admin_toggle(self, self.phone_row, "phone", on,
+                     _("Phones can connect") if on else _("Phone connections blocked"))
 
     def _address(self):
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("192.0.2.1", 9))  # no packet is sent for UDP connect
-            return s.getsockname()[0]
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                s.connect(("192.0.2.1", 9))  # no packet is sent for UDP connect
+                return s.getsockname()[0]
         except OSError:
             return ""
 
     def _set_ssh(self, on):
-        ok, err = admin("ssh", "on" if on else "off")
-        toast(self, (_("SSH enabled") if on else _("SSH disabled")) if ok else err)
+        admin_toggle(self, self.ssh_row, "ssh", on, _("SSH enabled") if on else _("SSH disabled"))
 
 
 # ----------------------------------------------------------------- users

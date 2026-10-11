@@ -89,7 +89,8 @@ class VM:
         self._qmp = self._qmp_connect()
         # No screen blanking or welcome window while testing.
         self.user("gsettings set org.aurora.desktop idle-dim-minutes 0; pkill -x swayidle; "
-                  "wlopm --on '*'; pkill -f [a]urora-welcome")
+                  "wlopm --on '*'; pkill -f [a]urora-welcome; "
+                  "gsettings set org.aurora.desktop wallpaper-animation off")
         self.move(W - 200, H // 2)
         time.sleep(1)
 

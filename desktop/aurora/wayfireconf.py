@@ -84,6 +84,8 @@ def display_outputs(text):
             options["scale"] = value
         elif flag == "--transform" and value in ("normal", "90", "180", "270"):
             options["transform"] = value
+        elif flag == "--pos" and re.fullmatch(r"-?\d+,-?\d+", value):
+            options["position"] = value
     return outputs
 
 

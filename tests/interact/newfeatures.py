@@ -42,9 +42,6 @@ def difference(a, b, box=None):
     return sum(ImageStat.Stat(ImageChops.difference(first, second)).mean) / 3
 
 
-DOCK = (420, 840, 1240, 960)       # the dock's strip, inside the smallest screen used
-
-
 def icon_styles(vm):
     """Each style redraws every icon, while the session runs."""
     shots = {}
@@ -57,8 +54,12 @@ def icon_styles(vm):
         check(f"icon style {style} sets its theme",
               expected in theme, f"theme={theme}")
     pairs = list(shots.items())
+    from PIL import Image
+    with Image.open(pairs[0][1]) as image:
+        width, height = image.size
+    dock = (width // 6, max(0, height - 140), width * 5 // 6, height)
     for (one, first), (two, second) in zip(pairs, pairs[1:]):
-        changed = difference(first, second, DOCK)
+        changed = difference(first, second, dock)
         check(f"the dock is redrawn going from {one} to {two}", changed > 0.5,
               f"difference={changed:.2f}")
     vm.user("gsettings set org.aurora.desktop icon-style galaxy")
@@ -77,14 +78,21 @@ def launchpad_pages(vm):
     folder = vm.shot("launchpad-folder")
     check("a folder changes the grid", difference(pages, folder) > 0.2,
           f"difference={difference(pages, folder):.2f}")
-    vm.user("aurora-shell launcher")          # closed, whatever it was showing
+    vm.keys("esc")                         # dismiss either launcher mode
     time.sleep(2)
     vm.user("gsettings set org.aurora.desktop launchpad-folders '[]'")
 
 
 def moving_background(vm):
-    """The aurora moves, and stops when it cannot be seen."""
-    vm.user("gsettings set org.aurora.desktop wallpaper-animation aurora")
+    """A bundled MP4 moves; disabling playback freezes its poster."""
+    code, out = vm.user("test -s /usr/share/backgrounds/aurora/animated/nordic-aurora.mp4")
+    check("a bundled animated wallpaper is installed", code == 0, out)
+    vm.user("gsettings set org.aurora.desktop wallpaper-dynamic false; "
+            "gsettings set org.aurora.desktop wallpaper-slideshow false; "
+            "gsettings set org.aurora.desktop wallpaper-daily ''; "
+            "gsettings set org.aurora.desktop wallpaper "
+            "/usr/share/backgrounds/aurora/animated/nordic-aurora.mp4; "
+            "gsettings set org.aurora.desktop wallpaper-animation auto")
     time.sleep(4)
     one = vm.shot("background-1")
     time.sleep(4)
@@ -102,7 +110,7 @@ def moving_background(vm):
     check("still means still", stays < 0.04, f"difference={stays:.2f}")
     check("moving differs from still", moved > stays * 3,
           f"moving={moved:.2f} still={stays:.2f}")
-    vm.user("gsettings set org.aurora.desktop wallpaper-animation aurora")
+    vm.user("gsettings set org.aurora.desktop wallpaper-animation auto")
 
 
 def window_previews(vm):
@@ -171,10 +179,14 @@ def main():
                         help="the VM's display. bochs-display has no render node, "
                              "which is what makes Aurora run Wayfire in software; "
                              "virtio-vga makes it run labwc, as it does on a real VM.")
+    parser.add_argument("--push", action="store_true", help="Test the checkout in the isolated VM")
     args = parser.parse_args()
     os.makedirs(args.out, exist_ok=True)
     vm = VM(args.iso, args.out, vga=args.vga)
     try:
+        if args.push:
+            vm.push_desktop(os.path.join(os.path.dirname(__file__), "..", ".."))
+            vm.restart_shell()
         for step in (icon_styles, launchpad_pages, moving_background, window_previews,
                      new_apps):
             try:

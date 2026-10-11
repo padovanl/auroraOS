@@ -20,7 +20,7 @@ all:
 
 install: protocols translations wallpapers sounds
 	install -d $(LIBDIR) $(BINDIR) $(DATADIR)
-	rsync -a --delete --exclude __pycache__ aurora/ $(LIBDIR)/aurora/
+	rsync -a --delete --chmod=D755,F644 --exclude __pycache__ aurora/ $(LIBDIR)/aurora/
 	cp -r build/protocols $(LIBDIR)/aurora/protocols
 	install -m 755 $$(find bin -maxdepth 1 -type f) $(BINDIR)/
 	install -d $(DESTDIR)$(PREFIX)/libexec

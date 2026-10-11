@@ -7,6 +7,7 @@ import gi
 
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora import apps, settings
 from aurora.i18n import _
@@ -72,7 +73,7 @@ class AppTile(Gtk.FlowBoxChild):
         return True
 
     def _show_menu(self, _gesture, _n, x, y):
-        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop = ContextMenu(has_arrow=True, css_classes=["aurora-context-menu"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
@@ -167,7 +168,7 @@ class FolderTile(Gtk.FlowBoxChild):
 
     def open_folder(self):
         """The apps inside, where the folder is, with its name editable."""
-        pop = Gtk.Popover(has_arrow=True, css_classes=["launcher-folder-open"])
+        pop = ContextMenu(has_arrow=True, css_classes=["launcher-folder-open"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10,
@@ -243,7 +244,7 @@ class ResultRow(Gtk.ListBoxRow):
     def _show_menu(self, gesture, n, x, y):
         if self.app is not None:
             return AppTile._show_menu(self, gesture, n, x, y)
-        pop = Gtk.Popover(has_arrow=True, css_classes=["aurora-context-menu"])
+        pop = ContextMenu(has_arrow=True, css_classes=["aurora-context-menu"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,

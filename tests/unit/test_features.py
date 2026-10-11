@@ -212,6 +212,17 @@ def test_spotlight_emoji_and_units():
     assert conv and "6.213712 mi" in conv[0].title
 
 
+def test_emoji_shortcut_opens_choices_without_a_search_term(monkeypatch):
+    from aurora.shell import search
+    copied = []
+    monkeypatch.setattr(search, "_copy", copied.append)
+    results = search.search(":", lambda *_: None)
+    assert len(results) == 24 and results[0].title.startswith("😀")
+    assert all(result.icon == "face-smile-symbolic" for result in results)
+    results[0].activate()
+    assert copied == ["😀"]
+
+
 def test_spotlight_clipboard(data_home):
     from aurora.shell import search
     clipboard.store(io.StringIO("git push origin main"), env={})

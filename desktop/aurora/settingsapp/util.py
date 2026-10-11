@@ -9,7 +9,9 @@ def run(argv, check=False):
     """Run a command, returning stdout ('' on failure)."""
     try:
         res = subprocess.run(argv, capture_output=True, text=True, timeout=10)
-    except (OSError, subprocess.TimeoutExpired):
+    except (OSError, subprocess.TimeoutExpired) as err:
+        if check:
+            raise RuntimeError(str(err)) from err
         return ""
     if check and res.returncode != 0:
         raise RuntimeError(res.stderr.strip() or f"{argv[0]} failed")

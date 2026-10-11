@@ -1,6 +1,9 @@
 """What a dropped file list means: its paths, the chosen action, the trash."""
 
 import os
+import subprocess
+import sys
+from pathlib import Path
 
 from gi.repository import Gdk, Gio
 
@@ -58,7 +61,13 @@ def test_a_drop_on_the_trash_moves_the_files_there(home):
     kept, gone = home / "kept.txt", home / "gone.txt"
     kept.write_text("here")
     gone.write_text("away")
-    assert dnd.to_trash([str(gone), str(home / "never-existed")]) == 1
+    # GTK can cache GLib's home/data directories before the home fixture runs.
+    # A fresh process keeps this real GIO trash operation inside the test home.
+    env = dict(os.environ, XDG_DATA_HOME=str(home / ".local/share"),
+               PYTHONPATH=str(Path(__file__).parents[2] / "desktop"))
+    subprocess.run([sys.executable, "-c", "from aurora import dnd; import sys; "
+                    "assert dnd.to_trash(sys.argv[1:]) == 1", str(gone),
+                    str(home / "never-existed")], env=env, check=True)
     assert kept.exists() and not gone.exists()
     trashed = home / ".local" / "share" / "Trash" / "files"
     assert os.path.exists(trashed / "gone.txt")

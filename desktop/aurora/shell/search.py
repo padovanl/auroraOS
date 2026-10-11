@@ -250,13 +250,17 @@ def _emoji_table():
 
 def search_emoji(query):
     q = query[1:].strip().lower()
+    table = _emoji_table()
     if not q:
-        return []
+        names = dict(table)
+        table = [(char, names[char]) for char in
+                 "😀 😊 😂 🙂 😍 👍 👏 🙏 ❤ 🎉 ✨ 🌟 🔥 🚀 💡 ✅ 🎯 💻 🌍 ☀ 🌈 🌙 🐱 🐝".split()
+                 if char in names]
     out = []
-    for char, name in _emoji_table():
+    for char, name in table:
         words = name.split()
-        if q in name:
-            score = 150 if q in words else 140 if any(w.startswith(q) for w in words) else 120
+        if not q or q in name:
+            score = 150 if not q or q in words else 140 if any(w.startswith(q) for w in words) else 120
             out.append(Result(f"{char}  {name.title()}", _("Emoji · Press Enter to copy"),
                               "face-smile-symbolic", lambda c=char: _copy(c), score))
     out.sort(key=lambda r: -r.score)
@@ -664,7 +668,7 @@ def search(query, open_settings, refresh=None):
         return fallback_results(query)
     if stripped.lower().startswith(CLIPBOARD_PREFIX):
         return search_clipboard(stripped)
-    if stripped.startswith(":") and len(stripped) > 1:
+    if stripped.startswith(":"):
         return search_emoji(stripped)
     if stripped.startswith("?"):
         return search_ai(stripped)

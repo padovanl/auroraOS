@@ -100,9 +100,9 @@ def ensure(kind, wait=180):
 
 def stop(kind):
     try:
-        with open(_pidfile(kind)) as f:
-            pid = int(f.read())
-        os.kill(pid, signal.SIGTERM)
+        pid = _owned_pid(_pidfile(kind), [components.server_binary(), "--port", str(PORTS[kind])])
+        if pid is not None:
+            os.kill(pid, signal.SIGTERM)
     except (OSError, ValueError):
         pass
     try:
@@ -113,21 +113,38 @@ def stop(kind):
 
 def running(kind):
     try:
-        with open(_pidfile(kind)) as f:
-            os.kill(int(f.read()), 0)
-        return True
+        return _owned_pid(_pidfile(kind),
+                          [components.server_binary(), "--port", str(PORTS[kind])]) is not None
     except (OSError, ValueError):
         return False
 
 
-def _start_reaper():
-    lock = os.path.join(state_dir(), "reaper.pid")
+def _owned_pid(path, arguments):
+    """A stale or damaged PID file must never target another process/group."""
     try:
-        with open(lock) as f:
-            os.kill(int(f.read()), 0)
-        return                             # already watching
+        with open(path) as f:
+            pid = int(f.read())
+        if pid <= 1 or pid == os.getpid() or any(arg is None for arg in arguments):
+            return None
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            command = f.read().decode(errors="replace").rstrip("\0").split("\0")
+        for start in range(len(command) - len(arguments) + 1):
+            if command[start:start + len(arguments)] == arguments:
+                return pid
+        # The server has model/host flags between its binary and --port.
+        if len(arguments) == 3 and command[0] == arguments[0]:
+            for start in range(1, len(command) - 1):
+                if command[start:start + 2] == arguments[1:]:
+                    return pid
     except (OSError, ValueError):
         pass
+    return None
+
+
+def _start_reaper():
+    lock = os.path.join(state_dir(), "reaper.pid")
+    if _owned_pid(lock, [sys.executable, "-m", "aurora.ai.server", "reap"]) is not None:
+        return                             # already watching
     env = dict(os.environ)
     env["PYTHONPATH"] = os.path.dirname(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__)))) + os.pathsep + env.get("PYTHONPATH", "")

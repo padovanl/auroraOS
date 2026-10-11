@@ -11,6 +11,7 @@ import os
 
 import cairo
 from gi.repository import Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora import apps, dnd, settings
 from aurora.i18n import _
@@ -218,7 +219,7 @@ class DockItem(Gtk.Button):
         self._peek_source = 0
         if len(self.windows) < 2:
             return GLib.SOURCE_REMOVE
-        pop = Gtk.Popover(has_arrow=True, autohide=False, position=self.dock.popover_side,
+        pop = ContextMenu(has_arrow=True, autohide=False, position=self.dock.popover_side,
                           css_classes=["dock-peek"])
         pop.set_parent(self)
         box = Gtk.Box(spacing=8, orientation=Gtk.Orientation.VERTICAL if self.dock.vertical
@@ -329,7 +330,7 @@ class DockItem(Gtk.Button):
         entries = self.menu_entries()
         if not entries:
             return
-        pop = Gtk.Popover(has_arrow=True, position=self.dock.popover_side,
+        pop = ContextMenu(has_arrow=True, position=self.dock.popover_side,
                           css_classes=["aurora-context-menu"])
         pop.set_parent(self)
         pop.connect("closed", lambda p: GLib.idle_add(p.unparent))

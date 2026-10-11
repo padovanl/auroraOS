@@ -26,6 +26,22 @@ SETTLE_MS = 700         # after the focus lands: let the window finish drawing
 MIN_GAP = 1.5           # seconds between two captures of the same window
 
 
+def visible_geometry(geometry, screens):
+    """Intersect a window with the outputs, including monitors left of zero."""
+    x, y, w, h = (int(geometry[k]) for k in ("x", "y", "width", "height"))
+    parts = []
+    for screen in screens:
+        left, top = max(x, screen.x), max(y, screen.y)
+        right = min(x + w, screen.x + screen.width)
+        bottom = min(y + h, screen.y + screen.height)
+        if right > left and bottom > top:
+            parts.append((left, top, right, bottom))
+    if not parts:
+        return None
+    left, top = min(p[0] for p in parts), min(p[1] for p in parts)
+    return left, top, max(p[2] for p in parts) - left, max(p[3] for p in parts) - top
+
+
 def available():
     """Previews need Wayfire's IPC (for the geometry) and grim (for the pixels)."""
     return (compositor.is_wayfire() and bool(os.environ.get("WAYFIRE_SOCKET"))
@@ -133,13 +149,22 @@ class Previews:
 
     def _grab(self, key, geometry):
         try:
-            x, y, w, h = (int(geometry[k]) for k in ("x", "y", "width", "height"))
+            display = Gdk.Display.get_default()
+            if display is None:
+                return
+            monitors = display.get_monitors()
+            screens = [monitors.get_item(i).get_geometry()
+                       for i in range(monitors.get_n_items())]
+            visible = visible_geometry(geometry, screens)
+            if visible is None:
+                return
+            x, y, w, h = visible
         except (KeyError, TypeError, ValueError):
             return
         if w < 80 or h < 60:
             return
-        # A window can hang off the screen; grim refuses a region that does.
-        x, y = max(0, x), max(0, y)
+        # The crop now describes only visible pixels; grim rejects regions
+        # past an output edge, while negative output coordinates are valid.
         scale = min(1.0, SHOT_WIDTH / float(w))
         argv = ["grim", "-l", "0", "-t", "png", "-s", f"{scale:.3f}",
                 "-g", f"{x},{y} {w}x{h}", "-"]

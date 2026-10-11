@@ -6,6 +6,13 @@ import stat
 from gi.repository import Gdk, Gio, GLib
 
 _by_wmclass = None
+_launch_handler = None
+
+
+def set_launch_handler(handler):
+    """Let the shell provide startup feedback for every launch in its process."""
+    global _launch_handler
+    _launch_handler = handler
 
 
 def all_apps():
@@ -63,6 +70,12 @@ def app_by_id(desktop_id):
 
 
 def launch(app, files=None, action=None):
+    if _launch_handler is not None:
+        return _launch_handler(app, files=files, action=action)
+    return launch_direct(app, files=files, action=action)
+
+
+def launch_direct(app, files=None, action=None):
     display = Gdk.Display.get_default()
     ctx = display.get_app_launch_context() if display else None
     try:

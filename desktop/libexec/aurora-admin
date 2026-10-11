@@ -55,9 +55,18 @@ case "$cmd" in
         /usr/libexec/aurora-snapshot now ;;
     ssh)
         case "${1:-}" in
-            on) systemctl enable --now ssh.service ;;
+            on) ufw allow "Aurora SSH"
+                if ! systemctl enable --now ssh.service; then
+                    ufw --force delete allow "Aurora SSH" >/dev/null 2>&1 || true
+                    exit 1
+                fi ;;
             off) systemctl disable --now ssh.service >/dev/null 2>&1 || true
-                 systemctl disable --now ssh.socket >/dev/null 2>&1 || true ;;
+                 systemctl disable --now ssh.socket >/dev/null 2>&1 || true
+                 if systemctl is-active --quiet ssh.service || systemctl is-active --quiet ssh.socket; then
+                     echo "Could not stop remote login" >&2
+                     exit 1
+                 fi
+                 ufw --force delete allow "Aurora SSH" >/dev/null 2>&1 || true ;;
             *) exit 2 ;;
         esac ;;
     auto-updates)

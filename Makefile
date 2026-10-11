@@ -13,7 +13,7 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
-	test-newfeatures test-wallpapers \
+	test-newfeatures test-wallpapers test-system-native test-startup-menus test-sharing \
 	test-shortcut-edges test-files-shortcuts \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
@@ -66,6 +66,10 @@ test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
 
+# GTK unit checks, authorization rollback, two displays, Files and Assistant.
+test-system-native: dev-image
+	AURORA_HEADLESS_OUTPUTS=2 desktop/dev/run-headless.sh tests/settings-system-interactions.sh $(CURDIR)/work/system-native-tests
+
 test-wallpapers: dev-image
 	desktop/dev/run-headless.sh tests/animated-wallpapers.sh $(CURDIR)/work/wallpaper-tests
 
@@ -112,6 +116,14 @@ test-interact:
 # pages and folders, the moving background, window previews, the new apps.
 test-newfeatures:
 	python3 tests/interact/newfeatures.py $(ISO) --out work/newfeatures
+
+# Slow application launch, repeated desktop clicks and context-menu dismissal.
+test-startup-menus:
+	python3 tests/interact/startup_menus.py $(ISO) --out work/startup-menu-test
+
+# Checks SSH and firewall rule ownership in an isolated live guest.
+test-sharing:
+	python3 tests/interact/sharing.py $(ISO) --out work/sharing-test
 
 # Drives the system-wide combinations listed in the keyboard-shortcuts manual.
 test-shortcuts:
