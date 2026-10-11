@@ -1,0 +1,229 @@
+#!/usr/bin/python3
+"""Write an image to a USB stick, or read one back, as root.
+
+Run through pkexec (policy: org.aurora.usb-write) by the USB Stick Writer.
+The checks live here, not in the app: a program asking for a disk to be
+overwritten cannot be trusted to have asked the right questions.
+
+    aurora-usb-write write  /dev/sdX          stdin  -> the device
+    aurora-usb-write read   /dev/sdX COUNT    device -> stdout (COUNT bytes)
+    aurora-usb-write format /dev/sdX FS NAME  one partition, empty, named NAME
+                                              (FS: exfat, fat32 or ext4)
+
+Refused: anything that is not a whole removable or USB disk, the disk this
+system is running from, the medium a live session booted from, and any device
+with a filesystem mounted somewhere the system needs. Partitions of the target
+that are merely mounted (a stick that was plugged in) are unmounted first.
+"""
+
+import os
+import re
+import subprocess
+import sys
+import time
+
+BLOCK = 4 * 1024 * 1024
+WHOLE_DISK = re.compile(r"^/dev/(sd[a-z]+|mmcblk\d+|nvme\d+n\d+)$")
+# Mount points that mean "this is the running system, not a spare stick".
+SYSTEM_PATHS = ("/", "/boot", "/boot/efi", "/efi", "/usr", "/var", "/home",
+                "/run/live/medium", "/run/live/rootfs", "/lib/live/mount/medium")
+
+
+def die(message):
+    print(f"aurora-usb-write: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def sysfs_name(device):
+    return os.path.basename(device)
+
+
+def read_sysfs(name, *parts):
+    try:
+        with open(os.path.join("/sys/block", name, *parts), encoding="utf-8") as stream:
+            return stream.read().strip()
+    except OSError:
+        return ""
+
+
+def is_usb(name):
+    """True when the disk hangs off a USB or MMC controller."""
+    try:
+        link = os.readlink(os.path.join("/sys/block", name))
+    except OSError:
+        return False
+    return "/usb" in link or "/mmc_host/" in link
+
+
+def mounted_filesystems(text=None):
+    """[(device, mount point)] from the kernel, not from a configuration file."""
+    if text is None:
+        try:
+            with open("/proc/self/mountinfo", encoding="utf-8") as stream:
+                text = stream.read()
+        except OSError:
+            return []
+    out = []
+    for line in text.splitlines():
+        fields = line.split()
+        if " - " not in line or len(fields) < 10:
+            continue
+        point = fields[4].replace("\\040", " ")
+        source = line.split(" - ", 1)[1].split()[1]
+        out.append((source, point))
+    return out
+
+
+def belongs_to(source, device):
+    """Is this mount source the device itself or one of its partitions?"""
+    if not source.startswith("/dev/"):
+        return False
+    try:
+        source = os.path.realpath(source)
+    except OSError:
+        pass
+    return source == device or source.startswith(device)
+
+
+def check(device):
+    if not WHOLE_DISK.match(device):
+        die(f"{device} is not a whole disk")
+    if not os.path.exists(device):
+        die(f"{device} does not exist")
+    device = os.path.realpath(device)
+    name = sysfs_name(device)
+    if not os.path.isdir(os.path.join("/sys/block", name)):
+        die(f"{device} is not a disk")
+    if read_sysfs(name, "removable") != "1" and not is_usb(name):
+        die(f"{device} is not a removable or USB disk")
+    if read_sysfs(name, "ro") == "1":
+        die(f"{device} is write-protected")
+    for source, point in mounted_filesystems():
+        if belongs_to(source, device) and point in SYSTEM_PATHS:
+            die(f"{device} holds {point}: this system is running from it")
+    return device
+
+
+def unmount(device):
+    """Let go of the stick's own filesystems before overwriting them."""
+    for source, point in mounted_filesystems():
+        if belongs_to(source, device):
+            subprocess.run(["umount", point], check=False,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def write(device):
+    unmount(device)
+    written = 0
+    # O_SYNC would be slower than the progress is worth; one fsync at the end
+    # (plus the kernel's own flushing) is what makes the stick safe to pull.
+    fd = os.open(device, os.O_WRONLY)
+    try:
+        while True:
+            chunk = sys.stdin.buffer.read(BLOCK)
+            if not chunk:
+                break
+            view = memoryview(chunk)
+            while view:
+                view = view[os.write(fd, view):]
+            written += len(chunk)
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    # The partition table changed under the kernel's feet.
+    subprocess.run(["blockdev", "--rereadpt", device], check=False,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print(written)
+    return 0
+
+
+def partition_of(device):
+    """The first partition's node: /dev/sdb -> /dev/sdb1, /dev/mmcblk0 -> p1."""
+    return device + ("p1" if device[-1].isdigit() else "1")
+
+
+def format_stick(device, filesystem, name):
+    """One partition over the whole stick, empty, in a format other computers
+    read. A stick that has carried an installer is otherwise unusable for
+    files: this is the way back."""
+    if filesystem not in FILESYSTEMS:
+        die(f"unknown filesystem {filesystem}")
+    # A name a FAT volume can hold: upper case, no punctuation, 11 characters.
+    label = re.sub(r"[^A-Za-z0-9 _-]", "", name).strip()[:11].upper() or "USB"
+    unmount(device)
+    run(["wipefs", "-a", device])
+    # A DOS partition table, one partition: what every computer can read, and
+    # what a stick is expected to look like.
+    kind = "7" if filesystem == "exfat" else ("c" if filesystem == "fat32" else "83")
+    run(["sfdisk", "--quiet", "--wipe", "always", "--label", "dos", device],
+        text=f"2048,,{kind},*\n")
+    run(["partprobe", device], check=False)
+    target = partition_of(device)
+    for _ in range(50):                      # udev takes a moment to make it
+        if os.path.exists(target):
+            break
+        time.sleep(0.1)
+    if not os.path.exists(target):
+        die(f"{target} did not appear")
+    run(FILESYSTEMS[filesystem](target, label))
+    run(["sync"], check=False)
+    print(target)
+    return 0
+
+
+def run(argv, text=None, check=True):
+    result = subprocess.run(argv, input=text, text=text is not None,
+                            capture_output=True)
+    if check and result.returncode != 0:
+        message = (result.stderr if isinstance(result.stderr, str)
+                   else result.stderr.decode(errors="replace")).strip()
+        die(f"{argv[0]}: {message or 'failed'}")
+    return result
+
+
+FILESYSTEMS = {
+    "exfat": lambda target, label: ["mkfs.exfat", "-n", label, target],
+    "fat32": lambda target, label: ["mkfs.fat", "-F", "32", "-n", label, target],
+    "ext4": lambda target, label: ["mkfs.ext4", "-q", "-L", label, target],
+}
+
+
+def read(device, count):
+    left = count
+    with open(device, "rb", buffering=0) as disk:
+        while left > 0:
+            chunk = disk.read(min(BLOCK, left))
+            if not chunk:
+                break
+            sys.stdout.buffer.write(chunk)
+            left -= len(chunk)
+    sys.stdout.buffer.flush()
+    return 0
+
+
+def main(argv):
+    if len(argv) < 3:
+        print(__doc__.strip(), file=sys.stderr)
+        return 2
+    command, device = argv[1], argv[2]
+    device = check(device)
+    if command == "write":
+        return write(device)
+    if command == "read":
+        try:
+            count = int(argv[3])
+        except (IndexError, ValueError):
+            die("read needs a byte count")
+        if count < 0:
+            die("read needs a byte count")
+        return read(device, count)
+    if command == "format":
+        if len(argv) < 4:
+            die("format needs a filesystem")
+        return format_stick(device, argv[3], argv[4] if len(argv) > 4 else "USB")
+    print(__doc__.strip(), file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

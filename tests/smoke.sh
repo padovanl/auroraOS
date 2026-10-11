@@ -53,11 +53,15 @@ else
 fi
 launch welcome aurora-welcome
 launch settings aurora-settings
-for page in network bluetooth display sound power appearance desktop multitasking \
-            notifications apps mouse keyboard printers accessibility privacy sharing \
-            users language datetime updates ai health about; do
-    timeout 15 aurora-settings --page "$page" >>"$out/smoke/settings.log" 2>&1 ||
-        echo "timeout or error opening page $page" >>"$out/smoke/settings.log"
+pages=$(PYTHONPATH=/src/desktop python3 -c \
+    'from aurora.settingsapp.app import PAGES; print(" ".join(p.page_id for p in PAGES))') || {
+    echo "FAILED: cannot enumerate Settings pages"; exit 1;
+}
+for page in $pages; do
+    if ! timeout 15 aurora-settings --page "$page" >>"$out/smoke/settings.log" 2>&1; then
+        echo "FAILED: timeout or error opening page $page" | tee -a "$out/smoke/settings.log"
+        fail=1
+    fi
     sleep 1.5
     grim "$out/smoke/settings-$page.png"
 done

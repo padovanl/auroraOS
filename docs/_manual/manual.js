@@ -4,6 +4,41 @@
   "use strict";
   var root = document.documentElement;
 
+  // Native details keep screenshots optional and usable without JavaScript.
+  // Animate the whole disclosure, reserving image space with width/height attrs.
+  document.querySelectorAll("details.screenshots").forEach(function (details) {
+    var summary = details.querySelector("summary");
+    var animation = null;
+    var targetOpen = details.open;
+    summary.addEventListener("click", function (event) {
+      if (!details.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        if (animation) animation.cancel();
+        animation = null;
+        details.open = targetOpen;
+        details.style.height = "";
+        details.style.overflow = "";
+        targetOpen = !details.open;
+        return;
+      }
+      event.preventDefault();
+      var start = details.getBoundingClientRect().height;
+      if (animation) animation.cancel();
+      targetOpen = !targetOpen;
+      details.style.height = "";
+      details.open = targetOpen;
+      var end = details.getBoundingClientRect().height;
+      details.open = true;
+      details.style.overflow = "hidden";
+      animation = details.animate([{height: start + "px"}, {height: end + "px"}],
+                                  {duration: 200, easing: "ease-out"});
+      animation.onfinish = function () {
+        details.open = targetOpen;
+        details.style.overflow = "";
+        animation = null;
+      };
+    });
+  });
+
   fetch("https://api.github.com/repos/padovanl/auroraOS/releases/latest")
     .then(function (response) {
       if (!response.ok) throw new Error("GitHub returned " + response.status);

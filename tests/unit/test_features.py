@@ -5,6 +5,7 @@ import datetime
 import io
 import json
 import os
+import time
 import zoneinfo
 
 import pytest
@@ -140,6 +141,35 @@ def test_clipboard_limit_and_clear(data_home):
     assert clipboard.load() == []
 
 
+def test_clipboard_entries_carry_their_pin_and_time(data_home):
+    for text in ("one", "two"):
+        clipboard.store(io.StringIO(text), env={})
+    clipboard.pin("one")
+    entries = dict(clipboard.entries())
+    assert entries["one"]["pinned"] and not entries["two"]["pinned"]
+    assert entries["two"]["time"] > 0
+    # Pinned entries come first, which is the order the window shows.
+    assert [text for text, _info in clipboard.entries()][0] == "one"
+    assert clipboard.info("never copied") == {"pinned": False, "time": 0}
+
+
+# --- the Clipboard window ------------------------------------------------
+
+def test_clipboard_window_reads_ages_and_code():
+    from aurora import clipboardapp
+    now = time.time()
+    assert clipboardapp.when(now) == "just now"
+    assert clipboardapp.when(now - 600).startswith("10")
+    assert clipboardapp.when(now - 7200).startswith("2")
+    assert clipboardapp.when(now - 40 * 3600) == "yesterday"
+    assert clipboardapp.when(0) == ""
+    assert clipboardapp.looks_like_code("def hello():\n    return 1")
+    assert clipboardapp.looks_like_code("/etc/fstab")
+    assert clipboardapp.looks_like_code("https://example.com/x")
+    assert not clipboardapp.looks_like_code("remember to buy bread")
+    assert not clipboardapp.looks_like_code("una frase normale\ne un'altra riga")
+
+
 # --- OCR helpers ---------------------------------------------------------
 
 def test_ocr_language_choice(monkeypatch):
@@ -180,6 +210,17 @@ def test_spotlight_emoji_and_units():
     assert results and results[0].title.startswith("🚀")
     conv = search.search_convert("10 km in mi")
     assert conv and "6.213712 mi" in conv[0].title
+
+
+def test_emoji_shortcut_opens_choices_without_a_search_term(monkeypatch):
+    from aurora.shell import search
+    copied = []
+    monkeypatch.setattr(search, "_copy", copied.append)
+    results = search.search(":", lambda *_: None)
+    assert len(results) == 24 and results[0].title.startswith("😀")
+    assert all(result.icon == "face-smile-symbolic" for result in results)
+    results[0].activate()
+    assert copied == ["😀"]
 
 
 def test_spotlight_clipboard(data_home):
@@ -270,6 +311,37 @@ def test_background_recent_row_and_memory(tmp_path):
     assert row == [pics[5], pics[2], pics[3], pics[0]]
     assert b.pretty_name("/x/my-nice_wall.jpg") == "my nice wall"
     assert b.find_wallpapers([str(tmp_path)]) == sorted(pics)
+
+
+def test_background_gallery_filters_and_finds_linked_install(tmp_path, monkeypatch):
+    from aurora.settingsapp import backgrounds as b
+    target = tmp_path / "artwork"
+    target.mkdir()
+    photo, video, poster = [target / name for name in ("landscape.jpg", "orbit.mp4", "orbit.png")]
+    for path in (photo, video, poster):
+        path.touch()
+    root = tmp_path / "backgrounds"
+    root.mkdir()
+    bundled = root / "aurora"
+    bundled.symlink_to(target, target_is_directory=True)
+    monkeypatch.setattr(b, "WALLPAPER_DIRS", [str(root)])
+    monkeypatch.setattr(b.wallpapers, "BACKGROUNDS", str(bundled))
+    assert b.find_wallpapers([str(root)], videos=False) == [str(bundled / photo.name)]
+    assert b.find_wallpapers([str(root)], videos=True) == [str(bundled / video.name)]
+    # A directory installed without links must not be listed twice either.
+    assert len(b.find_wallpapers([str(target), str(target)])) == 2
+
+
+def test_background_mode_distinguishes_paused_video_from_static_image():
+    from aurora.settingsapp import backgrounds as b
+    fake = FakeSettings(**{"wallpaper-dynamic": False, "wallpaper-slideshow": False,
+                           "wallpaper-daily": "", "wallpaper": "/backgrounds/orbit.mp4",
+                           "wallpaper-animation": "off"})
+    assert b.mode_of(fake) == "animated"
+    fake.values["wallpaper"] = "/backgrounds/landscape.png"
+    assert b.mode_of(fake) == "picture"
+    fake.values["wallpaper-dynamic"] = True
+    assert b.mode_of(fake) == "dynamic"
 
 
 def test_verification_codes_in_notifications():

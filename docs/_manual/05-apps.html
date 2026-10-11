@@ -5,6 +5,7 @@
 From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
 
 <h2>The window</h2>
+<p>New to file management? See <a href="everyday-files.html">Organize, move and recover files</a>.</p>
 <dl>
   <dt>Sidebar</dt><dd>Home, Desktop, Documents, Downloads, Music, Pictures, Videos, Trash, plugged-in drives (click to mount, ⏏ to eject), Computer (<code>/</code>), <strong>Network</strong> and <strong>Connect to Server…</strong>. Right-click a place for New Tab, New Window, Open in Terminal, Copy Path and Properties. The place you're in is highlighted, also deeper inside it (Desktop for a folder on the desktop). A Windows partition opens read-only when Windows wasn't fully shut down (see <a href="troubleshooting.html">Troubleshooting</a>).</dd>
   <dt>Path bar</dt><dd>Click a part of the path to go there; <kbd>Ctrl</kbd>+<kbd>L</kbd> to type a location (also <code>smb://</code>, <code>sftp://</code>, <code>trash:///</code>).</dd>
@@ -21,19 +22,38 @@ From a terminal: <code>aurora-files [FOLDER or LOCATION]</code>.</p>
   <dt>Summarize with Aurora, Ask Aurora About This File…</dt><dd>With Aurora AI on (Settings → AI → Files).</dd>
   <dt>Extract Here</dt><dd>For archives (zip, 7z, rar, tar.gz, tar.xz, tar.zst…): unpacks next to them.</dd>
   <dt>Compress…</dt><dd>Packs the selection into one archive: choose the name and the format — <strong>ZIP</strong> (opens everywhere, Windows included), <strong>7-Zip</strong> (smaller) or <strong>tar.xz</strong> (smallest, keeps Linux permissions).</dd>
-  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”.</dd>
+  <dt>Resize Images…</dt><dd>For pictures: smaller copies at Small (854 px), Medium (1366 px), Large (1920 px) or Phone (1080 px) on the longer side, keeping the proportions; optionally as JPEG or PNG, or resizing the originals instead. Copies are named “photo (Medium).jpg”. If converting an original would replace another existing file (for example photo.jpg → photo.png), that picture is left unchanged and counted as failed. Failed encoding also keeps the original; editing it in another app while it is resized cancels its replacement.</dd>
   <dt>What's Using This?</dt><dd>When a file or folder is “in use” and can't be moved, deleted or ejected: lists the programs of yours that have it (or anything in the folder) open, with <em>End Task</em> for each and <em>End All</em>.</dd>
   <dt>Copy Path</dt><dd>Copies the full paths of the selection, one per line (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd>).</dd>
   <dt>Cut, Copy, Duplicate, Rename…</dt><dd>Pasting shows progress, can be cancelled, and offers to retry if something fails.</dd>
-  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. No file is ever overwritten.</dd>
+  <dt>Rename Multiple…</dt><dd>For several files: replace a piece of text in all their names at once. Replacements must be file names: a slash or a result such as “..” is rejected. Files stay in their current folder, and existing names are preserved.</dd>
   <dt>Compare Folders</dt><dd>For two folders: what is only in one, and what differs.</dd>
   <dt>SHA-256 Checksums</dt><dd>Computes them in the background, to check a download.</dd>
   <dt>Move to Trash, Properties</dt><dd>Properties shows size, type, dates, location and permissions.</dd>
 </dl>
 <p>On empty space: New Folder…, New File… (from templates in <span class="path">~/Templates</span>),
-Paste, Select All, Open in Terminal, Properties.</p>
+Paste, Add to Sidebar, Select All, Open in Terminal, Properties.</p>
 <p><strong>Undo and Redo</strong> (<kbd>Ctrl</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>)
 work for moves, renames, copies and moving to the Trash.</p>
+
+<h2>Favorite folders</h2>
+<p>Right-click a folder and choose <strong>Add to Sidebar</strong>. On empty space, this adds
+the current folder; it also works in a connected network folder. Right-click a favorite
+for <strong>Rename Bookmark…</strong> or <strong>Remove from Sidebar</strong>. Removing a
+favorite keeps the folder and its contents. Open Files windows update together, and
+compatible GTK file choosers share the same favorites.</p>
+
+<h2>Copy, cut and drag</h2>
+<p><kbd>Ctrl</kbd>+<kbd>C</kbd>, <kbd>Ctrl</kbd>+<kbd>X</kbd> and <kbd>Ctrl</kbd>+<kbd>V</kbd>
+use the system clipboard, including file selections from compatible file managers. Copying
+something else in another app replaces the old selection. A failed or cancelled cut keeps
+its remaining items available for another paste.</p>
+<p>Drag one or several local files onto a folder, an empty area, a sidebar place or a part
+of the path bar. Grid, list and desktop drags offer copy and move. Folder drops prefer moving when
+the source supports it; hold <kbd>Ctrl</kbd> to
+request a copy or <kbd>Shift</kbd> to request a move. The operation shows progress, cancellation
+and retry, and can be undone. A folder cannot be copied into itself through a symbolic
+link; copying a pipe or device returns an error without waiting indefinitely.</p>
 
 <h2>Trash</h2>
 <p>Items moved to the Trash can be restored to where they were (<em>Restore</em>) or deleted
@@ -55,10 +75,22 @@ Server…</strong> opens any address:</p>
 <tr><td><code>davs://server/remote.php/dav/files/user</code></td><td>WebDAV (Nextcloud, ownCloud)</td></tr>
 </tbody></table></div>
 <p>When a password is needed, Files asks, and can remember it in your keyring. Connected
-servers appear in the sidebar with ⏏ to disconnect.</p>
+servers appear in the sidebar with ⏏ to disconnect. Aurora includes the standard
+GVFS FUSE bridge so mounted shares work with regular apps and file operations. While a server is answering, a waiting
+pointer appears over the file view; you can still navigate elsewhere. A late response
+from the previous location cannot replace your newer choice.</p>
 
 <h2>Keyboard shortcuts in Files</h2>
 <!-- gen:files-shortcuts -->
+
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/files.png"><img src="../screenshots/files.webp" alt="Files in light style: places, navigation and your home folder." width="1040" height="680" loading="lazy" decoding="async"></a><figcaption>Files in light style: places, navigation and your home folder.</figcaption></figure>
+<figure><a href="../screenshots/files-dark.png"><img src="../screenshots/files-dark.webp" alt="The same Files window in dark style." width="1040" height="680" loading="lazy" decoding="async"></a><figcaption>The same Files window in dark style.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
 
 <!-- page: task-manager | Task Manager | Processes grouped by app, performance graphs, startup apps and services -->
 <p>Open it with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>, from the Aurora menu, from
@@ -100,6 +132,15 @@ changed.</p>
 box. <strong>Start</strong>, <strong>Stop</strong> and <strong>Restart</strong>: your own services
 directly, system services after the administrator password.</p>
 
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/task-manager.png"><img src="../screenshots/task-manager.webp" alt="Task Manager: processes and resource usage." width="940" height="680" loading="lazy" decoding="async"></a><figcaption>Task Manager: processes and resource usage.</figcaption></figure>
+<figure><a href="../screenshots/task-manager-dark.png"><img src="../screenshots/task-manager-dark.webp" alt="Task Manager in dark style." width="940" height="680" loading="lazy" decoding="async"></a><figcaption>Task Manager in dark style.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
+
 <!-- page: settings-app | The Settings app | Finding your way around Settings; every page is in the Settings reference -->
 <p>Open Settings with <kbd>Super</kbd>+<kbd>I</kbd>, from the Aurora menu, from the Control
 Center, or by typing a setting's name in Spotlight. The sidebar groups pages like Ubuntu's
@@ -107,6 +148,15 @@ Settings: connectivity, look and feel, devices and input, security, AI, and the 
 <p>Open a page directly from a terminal or a script:</p>
 <!-- gen:settings-list -->
 <p>Every option of every page is listed in the <a href="settings-reference.html">Settings reference</a>.</p>
+
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/settings-users.png"><img src="../screenshots/settings-users.webp" alt="Settings sidebar and Users page in light style." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Settings sidebar and Users page in light style.</figcaption></figure>
+<figure><a href="../screenshots/settings-users-dark.png"><img src="../screenshots/settings-users-dark.webp" alt="Settings in dark style, using the same navigation." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Settings in dark style, using the same navigation.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
 
 <!-- page: app-center | App Center | Installing and updating apps from Debian and Flathub -->
 <p>App Center (GNOME Software) installs, updates and removes apps from two sources:</p>
@@ -125,9 +175,22 @@ Permissions.</p>
 
 <!-- page: dev-hub | Dev Hub | One-click installers for editors, languages, cloud tools, databases, containers and more, and project workspaces -->
 <p>Dev Hub installs developer tools from their official sources, so they are always current.
-Each install runs in a progress window with an embedded terminal: it shows every command,
-keeps the log visible if something fails, and asks for the administrator password there when
-needed. Installed tools show a check mark.</p>
+Installed tools show a check mark.</p>
+<p>An install opens a window with the tool's own icon and name, a progress bar, and one line
+saying what is happening at this moment — <em>Unpacking code…</em>, <em>Setting up…</em> — taken
+from the install's own output. The terminal it comes from is behind <strong>Show
+Details</strong>, in case you want it; it opens by itself when something fails, which is the one
+time it is worth reading. When a tool needs the administrator password, it is asked for once at
+the start, with the terminal already open for it, instead of somewhere in the middle of a wall
+of text.</p>
+<p>When a tool comes from its own apt repository, Dev Hub keeps one definition of it and one
+signing key, in <span class="path">/etc/apt/keyrings</span>. Any other copy of the same
+repository — left by the vendor's own package, by an earlier attempt, or by a how-to followed
+by hand — is moved aside with a <span class="path">.aurora-disabled</span> suffix and named in
+the log. Two definitions of one repository with different key paths make apt refuse every
+update, system updates included (<em>Conflicting values set for option Signed-By</em>), so
+installing the tool again from Dev Hub is also the way to repair a machine already in that
+state.</p>
 <h2>Project Workspaces</h2>
 <p>For each repository or folder, a workspace opens your editor, a terminal and Files together;
 in the Aurora session it can also remember where those windows were and put them back.
@@ -209,18 +272,34 @@ area…</em> (draw a rectangle) and <em>Record the computer's sound</em> (on or 
 <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> starts and stops from the keyboard,
 <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> records an area. Recordings are
 MP4 files in <span class="path">~/Videos/Screencasts</span>.
+After stopping, the tile briefly says <strong>Saving recording…</strong> while the video
+is finalized. The desktop remains usable; another recording can start when saving finishes.
 For more control (sound, webcam, streaming) install OBS Studio from App Center.</p>
 
 <!-- page: clipboard-emoji | Clipboard history and emoji | Everything you copied, pinned items, images, and the emoji picker -->
 <h2>Clipboard history</h2>
 <p><kbd>Super</kbd>+<kbd>V</kbd> shows what you copied lately, newest first, in Spotlight. Type
 to filter; <kbd>Enter</kbd> copies an entry again (then paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>).
-Copied images are kept too. Pinned entries stay until you unpin them; the others are forgotten
+Copied images are kept too. Up to 100 text entries are kept; pinned entries have priority
+when the history fills. Pinned entries stay until you unpin them; the others are forgotten
 after a while.</p>
-<p>Settings → Privacy &amp; Security → Clipboard History turns it off (<em>Remember copied
-text</em>), clears it, and <em>Manage Clipboard History…</em> pins and deletes entries. The
-history stays on this computer. The <em>Clipboard</em> widget shows the latest entries on the
-desktop.</p>
+
+<h2>The Clipboard window</h2>
+<p><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>, or <strong>Clipboard</strong> in Launchpad,
+opens the whole history in a window — the room with the light on, where Spotlight is the quick
+look.</p>
+<ul>
+  <li>Everything you copied, newest first, with pinned entries at the top and the pictures among them. Each entry says how long ago it arrived and how many lines it has; code and paths are shown in a monospace font.</li>
+  <li>Search at the top; <kbd>Enter</kbd> takes the first match.</li>
+  <li>Click an entry to copy it — the window closes and you paste with <kbd>Ctrl</kbd>+<kbd>V</kbd>. The text is handed to the system clipboard properly, so it survives the window closing.</li>
+  <li>The pin keeps an entry at the top for good; the bin removes one (<kbd>Delete</kbd> on the selected entry does the same). The menu empties the whole history, after asking.</li>
+  <li>It follows the history as you copy: leave it open and new entries appear.</li>
+  <li><kbd>Esc</kbd> closes it, <kbd>Ctrl</kbd>+<kbd>F</kbd> returns to the search field.</li>
+</ul>
+<p>Settings → Privacy &amp; Security → Clipboard History turns the history off (<em>Remember
+copied text</em>), clears it, and <em>Open Clipboard…</em> opens this window. The history stays
+on this computer; passwords copied from password managers are never recorded. The
+<em>Clipboard</em> widget shows the latest entries on the desktop.</p>
 
 <h2>Emoji</h2>
 <p><kbd>Super</kbd>+<kbd>.</kbd> opens the emoji picker; type a word (<code>heart</code>,
@@ -238,6 +317,78 @@ desktop.</p>
 <p><kbd>←</kbd> and <kbd>→</kbd> move to the previous and next file; <kbd>Space</kbd> or
 <kbd>Esc</kbd> closes; <em>Open</em> opens the file in its app. From a terminal:
 <code>aurora-quicklook FILE</code>.</p>
+
+<!-- page: migrate | Migrate from Windows | Bringing your files, bookmarks and background over from a Windows installation -->
+<p><strong>Migrate from Windows</strong> (Launchpad, or the button on the Welcome screen when
+there is a Windows disk in the computer) brings what you had on Windows over here. It is for
+the computer that now has both, and for the old disk plugged in over USB.</p>
+<ol>
+  <li><strong>The disk.</strong> Every NTFS filesystem in the computer is listed with its name, size and whether it is removable. Choosing one opens it <em>read-only</em> and checks that Windows is really installed on it — an NTFS disk full of files is not a Windows installation, and it says so rather than showing you an empty list of accounts.</li>
+  <li><strong>The account.</strong> The real accounts in <span class="path">C:\Users</span>, without the ones Windows keeps for itself (Public, Default, the Defender sandbox account).</li>
+  <li><strong>What to bring.</strong> Desktop, Documents, Downloads, Pictures, Music and Videos, each with how many files it holds and how much room they take — measured while you read, and giving up with an honest "at least" on a folder too big to count quickly. An empty folder is greyed out.</li>
+  <li><strong>The copying</strong>, folder by folder, into the matching folders here.</li>
+</ol>
+<p>Two things people look for afterwards and rarely find come too:</p>
+<ul>
+  <li><strong>Browser bookmarks</strong> from Edge, Chrome, Brave and Opera, written to <span class="path">~/Documents/Windows bookmarks.html</span> — the format every browser imports (Firefox: Bookmarks → Manage Bookmarks → Import and Backup → Import Bookmarks from HTML).</li>
+  <li><strong>The desktop background</strong> Windows was using, copied to <span class="path">~/Pictures/Windows background.jpg</span>.</li>
+</ul>
+<p>If an exported bookmarks file or background already exists, the new one receives
+“(2)”, “(3)” and so on in its name. Existing files and links are preserved when copying
+the selected folders too.</p>
+<p>Nothing on the Windows side is ever written to, and nothing here is overwritten: a file that
+already exists is kept as it is and counted as kept at the end. That means the assistant can be
+run twice without harm — the second run brings only what was not there the first time.</p>
+<p>Windows must be shut down properly, not left hibernated or in fast startup: a hibernated
+Windows leaves its disk in a state Linux will only open read-only at best, and the assistant
+says it could not open the disk. Turn off fast startup in Windows, or shut it down with
+<em>Shift</em> held while clicking Shut down.</p>
+
+<!-- page: usb-writer | USB Stick Writer | Writing a disk image to a USB stick, and checking that it arrived -->
+<p><strong>USB Stick Writer</strong> (Launchpad, or right-click an image in Files →
+<em>Open With</em>) puts a disk image on a USB stick — an Aurora ISO to install from, or any
+other system's.</p>
+<ol>
+  <li><strong>Choose the image</strong>: an <span class="path">.iso</span> or
+  <span class="path">.img</span>. Compressed downloads work as they are
+  (<span class="path">.gz</span>, <span class="path">.xz</span>, <span class="path">.bz2</span>,
+  <span class="path">.zst</span>, and a <span class="path">.zip</span> holding a single image):
+  they are unpacked while they are written, so there is no need to unpack a five-gigabyte
+  download first.</li>
+  <li><strong>Choose the stick.</strong> Only removable and USB disks are listed, and the disk
+  this system is running from is never among them — nor, on a live session, the stick you
+  booted from. A disk that is mounted says where, and is unmounted for you.</li>
+  <li><strong>Erase and Write.</strong> The dialog names the stick, its size and the image;
+  everything on the stick is replaced.</li>
+</ol>
+<h2>Checking the download first</h2>
+<p><em>Check the download</em> compares the file with its SHA-256 — the long line of letters
+and numbers a download page gives you. If the download came with one beside it
+(<span class="path">aurora-os-0.1-amd64.iso.sha256</span>, or a
+<span class="path">SHA256SUMS</span> naming it), it is filled in for you; otherwise paste it
+from the page. Named checksum records must match the complete image filename; GNU
+text/binary and BSD <code>SHA256 (filename) = hash</code> records are supported.
+<em>Check</em> reads the file through and says whether it matches. Worth doing
+before writing: a half-finished download makes an installer that fails in the middle, and the
+check is the only way to tell one from a good one by looking.</p>
+
+<h2>Options</h2>
+<dl>
+  <dt>Check the stick afterwards</dt><dd>On by default. Reads the stick back when the write is done and compares it with the image, byte for byte. Worth the extra minute: a stick that quietly drops writes is the usual reason a freshly made installer won't boot, and a counterfeit stick that claims more space than it has is caught here rather than halfway through an installation.</dd>
+  <dt>Eject when finished</dt><dd>On by default. Flushes the stick and powers it down, so it can be pulled out as soon as the window says so.</dd>
+</dl>
+<p>Both are remembered for next time.</p>
+
+<h2>Giving a stick its life back</h2>
+<p>A stick that has carried an installer is no use for files: it holds a read-only image, and
+Windows offers to format it. The menu's <strong>Erase the Stick…</strong> makes it one empty
+disk again, with a name you choose and a format: <strong>exFAT</strong> (the default — Windows
+and macOS read it too, and it holds files larger than 4 GB), <strong>FAT32</strong> (what the
+oldest things read) or <strong>Ext4</strong> (Linux only, with permissions).</p>
+<p>Writing asks for your password, because overwriting a disk needs it. The checks above are
+made again by the part that runs with those privileges
+(<span class="path">/usr/libexec/aurora-usb-write</span>), so a mistake or a misbehaving program
+cannot talk it into writing over the system's own disk.</p>
 
 <!-- page: included-apps | Included apps | Every app installed by default -->
 <p>Aurora includes the everyday apps Ubuntu ships (GTK 4 versions where they exist), plus its

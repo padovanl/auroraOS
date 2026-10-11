@@ -1,16 +1,16 @@
 """Settings → Appearance → Background, laid out like Windows' Personalize page.
 
-A preview of the desktop on top; "Personalize your background" picks what
-fills it: the dynamic Aurora landscape, a picture, a slideshow or a solid
-color. For a picture: the ones chosen lately in one row, Browse photos… and
-All wallpapers…, a gallery in its own window that only draws the thumbnails
-in sight (so a thousand pictures stay quick), with search. Thumbnails are
-made in the background and cached.
+Visible type buttons separate static images, looping videos, daylight series,
+daily pictures, slideshows and solid colours. One inline searchable picker
+shows included and personal wallpapers for the selected type. Thumbnail
+work is bounded, cached and coalesced.
 """
 
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
 import os
 import shutil
+import subprocess
 import threading
 import uuid
 
@@ -18,13 +18,27 @@ from gi.repository import Adw, Gdk, GdkPixbuf, Gio, GLib, Gtk, Pango
 
 from aurora import settings, sun, wallpapers
 from aurora.i18n import N_, _
-from aurora.settingsapp.util import combo_row, switch_row
+from aurora.settingsapp.util import combo_row, switch_row, toast
+from aurora.shell.livingwallpaper import LivingWallpaper, MOTIONS as SUPPORTED_MOTIONS
 
 WALLPAPER_DIRS = ["/usr/share/backgrounds", "~/.local/share/backgrounds", "~/Pictures/Wallpapers"]
-IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg")
-MODES = ("dynamic", "picture", "daily", "slideshow", "color")
-MODE_LABELS = (N_("Dynamic (follows the sun)"), N_("Picture"), N_("Picture of the day"),
+IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp", ".svg", ".bmp", ".tif", ".tiff")
+MODES = ("picture", "animated", "dynamic", "daily", "slideshow", "color")
+MODE_LABELS = (N_("Static image"), N_("Animated wallpaper"), N_("Daylight series"), N_("Picture of the day"),
                N_("Slideshow"), N_("Solid color"))
+MODE_DESCRIPTIONS = (N_("A still photo or illustration"), N_("A video that plays in a loop"),
+                     N_("Changes at dawn, day, dusk and night"), N_("A new image from the internet each day"),
+                     N_("Rotates pictures from a folder"), N_("One uniform colour"))
+MODE_ICONS = ("image-x-generic-symbolic", "media-playback-start-symbolic", "weather-clear-symbolic",
+              "view-refresh-symbolic", "folder-pictures-symbolic", "applications-graphics-symbolic")
+# Legacy effects remain supported by the renderer/schema; the picker offers
+# static images and video playback directly instead of mixing these effects.
+MOTION_LABELS = {"auto": N_("Automatic (matches the scene)"),
+                 "aurora": N_("Aurora over the sky"), "zoom": N_("Slow zoom"),
+                 "stars": N_("Twinkling stars"), "clouds": N_("Drifting clouds"),
+                 "shimmer": N_("Water reflections"), "off": N_("Still")}
+MOTIONS = ("auto", "aurora", "stars", "clouds", "shimmer", "zoom", "off")
+assert set(MOTIONS) == set(SUPPORTED_MOTIONS)
 DAILY_SOURCES = ("bing", "nasa", "wikimedia")
 COLORS = ("#1e1b2e", "#2d1b4e", "#0f2a43", "#12372a", "#3b1f2b", "#4a2c0f",
           "#6d28d9", "#be185d", "#0e7490", "#15803d", "#b45309", "#475569")
@@ -34,6 +48,42 @@ INTERVALS = (15, 60, 360, 1440)
 
 # --- pure helpers (tested) -------------------------------------------------------
 
+def personal_dir():
+    base = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    return os.path.join(base, "backgrounds")
+
+
+def import_wallpaper(path):
+    """Keep a validated personal copy and a still companion for video files.
+
+    Run off the GTK thread. A failed import leaves no partial gallery entries
+    and never touches the original file.
+    """
+    if not path.lower().endswith(IMAGE_EXT + wallpapers.VIDEO_EXT):
+        raise ValueError("Unsupported wallpaper format")
+    os.makedirs(personal_dir(), exist_ok=True)
+    name, extension = os.path.splitext(os.path.basename(path))
+    dest = os.path.join(personal_dir(), f"{name}-{uuid.uuid4().hex[:8]}{extension.lower()}")
+    try:
+        shutil.copyfile(path, dest)
+        if wallpapers.is_video(dest):
+            subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                            "-i", dest, "-map", "0:v:0", "-frames:v", "1",
+                            "-vf", "scale=1920:-2:force_original_aspect_ratio=decrease",
+                            "-update", "1", wallpapers.poster_path(dest)],
+                           check=True, timeout=60, stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
+        # Actually decode the image, including a video's poster, before use.
+        GdkPixbuf.Pixbuf.new_from_file_at_scale(wallpapers.poster_path(dest), 64, 64, True)
+    except Exception:
+        for file in {dest, wallpapers.poster_path(dest)}:
+            try:
+                os.unlink(file)
+            except OSError:
+                pass
+        raise
+    return dest
+
 def natural_key(path):
     """Sort "photo 2" before "photo 10"."""
     import re
@@ -41,17 +91,33 @@ def natural_key(path):
             for part in re.split(r"(\d+)", os.path.basename(path))]
 
 
-def find_wallpapers(dirs=None):
+def find_wallpapers(dirs=None, videos=None):
     found = []
-    for d in dirs or WALLPAPER_DIRS:
+    seen = set()
+    search_dirs = dirs if dirs is not None else [WALLPAPER_DIRS[0], personal_dir(), WALLPAPER_DIRS[2]]
+    # The installed Aurora directory may itself be a symlink. Walk that root
+    # explicitly rather than following arbitrary links/cycles in user folders.
+    if WALLPAPER_DIRS[0] in search_dirs:
+        search_dirs = [wallpapers.BACKGROUNDS] + list(search_dirs)
+    for d in search_dirs:
         for root, _dirs, files in os.walk(os.path.expanduser(d)):
             for f in sorted(files, key=natural_key):
-                if f.lower().endswith(IMAGE_EXT) and not f.startswith("aurora-dynamic-"):
-                    found.append(os.path.join(root, f))
+                path = os.path.join(root, f)
+                companion = os.path.splitext(path)[0]
+                is_poster = f.lower().endswith(".png") and any(
+                    os.path.isfile(companion + ext) for ext in wallpapers.VIDEO_EXT)
+                if f.lower().endswith(IMAGE_EXT + wallpapers.VIDEO_EXT) \
+                        and (videos is None or wallpapers.is_video(path) == videos) \
+                        and not f.startswith("aurora-dynamic-") and not is_poster:
+                    if path not in seen:
+                        found.append(path)
+                        seen.add(path)
     return found
 
 
 PHASE_NAMES = {"dawn": N_("Dawn"), "day": N_("Day"), "dusk": N_("Dusk"), "night": N_("Night")}
+# The single pictures, as they are called in Settings and the gallery.
+SCENE_NAMES = dict(wallpapers.SCENES + wallpapers.STATIC + wallpapers.ANIMATED)
 
 
 def pretty_name(path):
@@ -61,6 +127,10 @@ def pretty_name(path):
     if len(parts) == 3 and parts[0] == "aurora" and parts[1] in series \
             and parts[2] in PHASE_NAMES:
         return f"{_(series[parts[1]])} · {_(PHASE_NAMES[parts[2]])}"
+    if name.startswith("aurora-") and name[len("aurora-"):] in SCENE_NAMES:
+        return _(SCENE_NAMES[name[len("aurora-"):]])
+    if wallpapers.is_video(path) and name in SCENE_NAMES:
+        return _(SCENE_NAMES[name])
     return name.replace("-", " ").replace("_", " ")
 
 
@@ -92,7 +162,7 @@ def mode_of(s):
         return "dynamic"
     if os.path.dirname(s.get_string("wallpaper")) == solid_dir():
         return "color"
-    return "picture"
+    return "animated" if wallpapers.is_video(s.get_string("wallpaper")) else "picture"
 
 
 def solid_dir():
@@ -126,28 +196,43 @@ def _thumb_path(path, width):
     return os.path.join(base, "aurora", "thumbnails", key + ".png")
 
 
-_pool = threading.BoundedSemaphore(3)
+_pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix="wallpaper-thumbnail")
+_pending_thumbs = {}
+_thumb_lock = threading.Lock()
 
 
 def load_thumbnail(path, width, callback):
     """Call callback(texture or None) on the main loop with a small copy of the
     picture, made once and kept in ~/.cache/aurora/thumbnails."""
+    cached = _thumb_path(path, width)
+    with _thumb_lock:
+        if cached in _pending_thumbs:
+            _pending_thumbs[cached].append(callback)
+            return
+        _pending_thumbs[cached] = [callback]
+
+    def delivered(texture):
+        with _thumb_lock:
+            callbacks = _pending_thumbs.pop(cached, [])
+        for done in callbacks:
+            done(texture)
+        return GLib.SOURCE_REMOVE
+
     def work():
-        with _pool:
-            cached = _thumb_path(path, width)
-            texture = None
-            try:
-                if os.path.exists(cached):
-                    texture = Gdk.Texture.new_from_filename(cached)
-                else:
-                    pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(path, width * 2, -1, True)
-                    os.makedirs(os.path.dirname(cached), exist_ok=True)
-                    pix.savev(cached, "png", [], [])
-                    texture = Gdk.Texture.new_for_pixbuf(pix)
-            except (GLib.Error, OSError):
-                texture = None
-        GLib.idle_add(lambda: (callback(texture), False)[1])
-    threading.Thread(target=work, daemon=True).start()
+        texture = None
+        try:
+            if os.path.exists(cached):
+                texture = Gdk.Texture.new_from_filename(cached)
+            else:
+                pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                    wallpapers.poster_path(path), width * 2, -1, True)
+                os.makedirs(os.path.dirname(cached), exist_ok=True)
+                pix.savev(cached, "png", [], [])
+                texture = Gdk.Texture.new_for_pixbuf(pix)
+        except (GLib.Error, OSError):
+            pass
+        GLib.idle_add(delivered, texture)
+    _pool.submit(work)
 
 
 def thumb(path, width=150, height=92, css=("wallpaper-thumb-pic",)):
@@ -163,30 +248,88 @@ class BackgroundSection:
     def __init__(self, page):
         self.page = page
         self.s = settings.get()
-        bg = page.group(_("Background"))
+        self._importing = False
+        self._syncing = False
+        self._refresh_source = 0
+        self._preview_path = None
+        bg = page.group(_("Background"), _("Choose a type, then click a wallpaper to apply it."))
         self.group = bg
 
         # The desktop, in small: the picture, a top bar and a dock.
         self.preview = Gtk.Picture(content_fit=Gtk.ContentFit.COVER, can_shrink=True,
                                    css_classes=["background-preview"])
-        self.preview.set_size_request(480, 270)
-        screen = Gtk.Overlay(child=self.preview, halign=Gtk.Align.CENTER,
+        self.preview.set_size_request(128, 72)
+        screen = Gtk.Overlay(child=self.preview, halign=Gtk.Align.END,
                              css_classes=["background-screen"])
+        self.live_preview = LivingWallpaper(activity=self._preview_activity)
+        screen.add_overlay(self.live_preview)
         screen.add_overlay(Gtk.Box(css_classes=["preview-topbar"], valign=Gtk.Align.START,
                                    can_target=False))
         screen.add_overlay(Gtk.Box(css_classes=["preview-dock"], valign=Gtk.Align.END,
                                    halign=Gtk.Align.CENTER, can_target=False))
-        self.caption = Gtk.Label(css_classes=["dim-label"], margin_top=8, wrap=True,
-                                 max_width_chars=60, justify=Gtk.Justification.CENTER)
-        top = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin_top=6, margin_bottom=16)
+        self.caption = Gtk.Label(wrap=True, xalign=0, max_width_chars=36,
+                                 justify=Gtk.Justification.LEFT)
+        current = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                          hexpand=True, valign=Gtk.Align.CENTER)
+        current.append(Gtk.Label(label=_("Current wallpaper"), xalign=0,
+                                 css_classes=["dim-label", "caption"]))
+        current.append(self.caption)
+        self.import_button = Gtk.Button(label=_("Load a File…"), halign=Gtk.Align.START,
+                                       tooltip_text=_("Choose a photo or video from your computer"))
+        self.import_button.connect("clicked", lambda *_a: self._browse())
+        current.append(self.import_button)
+        top = Gtk.Box(spacing=16, margin_top=6, margin_bottom=6)
+        top.append(current)
         top.append(screen)
-        top.append(self.caption)
         bg.add(top)
 
         rows = Adw.PreferencesGroup()
-        self.mode_row = combo_row(_("Personalize your background"), [_(m) for m in MODE_LABELS],
-                                  MODES.index(mode_of(self.s)), on_change=self._set_mode)
-        rows.add(self.mode_row)
+        types = Gtk.FlowBox(selection_mode=Gtk.SelectionMode.NONE,
+                            min_children_per_line=2, max_children_per_line=3,
+                            column_spacing=6, row_spacing=6, homogeneous=True,
+                            css_classes=["background-types"])
+        self.mode_buttons = {}
+        first = None
+        for index, (mode, title, description, icon) in enumerate(
+                zip(MODES, MODE_LABELS, MODE_DESCRIPTIONS, MODE_ICONS)):
+            button = Gtk.ToggleButton(css_classes=["background-mode", "layout-card"],
+                                      tooltip_text=_(description))
+            if first is not None:
+                button.set_group(first)
+            else:
+                first = button
+            heading = Gtk.Box(spacing=6)
+            heading.append(Gtk.Image(icon_name=icon, pixel_size=16))
+            heading.append(Gtk.Label(label=_(title), xalign=0, wrap=True,
+                                     max_width_chars=18,
+                                     css_classes=["heading"]))
+            button.set_child(heading)
+            button.connect("toggled", lambda b, i=index: b.get_active() and self._set_mode(i))
+            self.mode_buttons[mode] = button
+            types.append(button)
+        type_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        type_box.append(types)
+        self.mode_description = Gtk.Label(xalign=0, wrap=True,
+                                         margin_start=4, margin_bottom=6,
+                                         css_classes=["dim-label", "caption"])
+        type_box.append(self.mode_description)
+        rows.add(Adw.PreferencesRow(child=type_box, activatable=False))
+
+        # Static images stay still. Video playback has its own explicit control.
+        if self.s is not None:
+            current = self.s.get_string("wallpaper-animation")
+            self.video_motion_row = switch_row(
+                _("Play animation"), current != "off",
+                on_change=lambda active: self.s.set_string(
+                    "wallpaper-animation", "auto" if active else "off")
+                if not self._syncing and (self.s.get_string("wallpaper-animation") != "off") != active else None)
+            self.video_motion_row.set_tooltip_text(
+                _("Slow, silent movement. Pauses when the desktop is covered or in power saver."))
+            rows.add(self.video_motion_row)
+
+        # One searchable, virtualized picker for bundled and imported files.
+        self.picker = WallpaperPicker(self)
+        rows.add(self.picker)
 
         # Dynamic: which series follows the sun.
         self.series_box = Gtk.Box(spacing=10, margin_top=10, margin_bottom=10,
@@ -201,28 +344,11 @@ class BackgroundSection:
             button.connect("clicked", lambda _b, k=key: self._set_series(k))
             self.series_box.append(button)
             self.series_buttons[key] = button
-        self.series_expander = Adw.ExpanderRow(
-            title=_("Series"), subtitle=_("The same landscape at dawn, day, dusk and night"),
-            expanded=True)
-        self.series_expander.add_row(Adw.PreferencesRow(child=self.series_box,
-                                                        activatable=False))
-        rows.add(self.series_expander)
-
-        # Picture: the recent ones and the ways to find more.
-        self.recent_box = Gtk.Box(spacing=8, margin_top=10, margin_bottom=10)
-        picture = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, css_classes=["background-picker"])
-        picture.append(self.recent_box)
-        buttons = Gtk.Box(spacing=8, margin_bottom=4)
-        browse = Gtk.Button(label=_("Browse Photos…"), css_classes=["pill"])
-        browse.connect("clicked", lambda *_a: self._browse())
-        gallery = Gtk.Button(label=_("All Wallpapers…"), css_classes=["pill", "suggested-action"])
-        gallery.connect("clicked", lambda *_a: WallpaperGallery(self).present(page))
-        buttons.append(browse)
-        buttons.append(gallery)
-        picture.append(buttons)
-        self.picture_expander = Adw.ExpanderRow(title=_("Recent images"), expanded=True)
-        self.picture_expander.add_row(Adw.PreferencesRow(child=picture, activatable=False))
-        rows.add(self.picture_expander)
+        self.series_row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        self.series_row.append(Gtk.Label(label=_("Choose a daylight series"), xalign=0,
+                                        css_classes=["heading"]))
+        self.series_row.append(self.series_box)
+        rows.add(self.series_row)
 
         # Picture of the day: where from.
         self.daily_rows = []
@@ -275,16 +401,20 @@ class BackgroundSection:
         custom.connect("notify::rgba", lambda b, _p: self._set_color(
             "#%02x%02x%02x" % tuple(int(v * 255) for v in (b.get_rgba().red, b.get_rgba().green,
                                                             b.get_rgba().blue))))
-        self.color_expander = Adw.ExpanderRow(title=_("Choose a color"), expanded=True)
-        self.color_expander.add_row(Adw.PreferencesRow(child=swatches, activatable=False))
-        rows.add(self.color_expander)
-        self.color_expander.add_suffix(custom)
+        self.color_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_top=12)
+        self.color_box.append(Gtk.Label(label=_("Choose a color"), xalign=0, css_classes=["heading"]))
+        colors = Gtk.Box(spacing=8)
+        colors.append(swatches)
+        colors.append(custom)
+        self.color_box.append(colors)
+        rows.add(self.color_box)
         page.add(rows)
 
         if self.s is not None:
             for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-dynamic-series",
-                        "wallpaper-slideshow", "wallpaper-slideshow-folder", "wallpaper-daily"):
-                self.s.connect(f"changed::{key}", lambda *_a: self.refresh())
+                        "wallpaper-slideshow", "wallpaper-slideshow-folder", "wallpaper-daily",
+                        "wallpaper-animation"):
+                self.s.connect(f"changed::{key}", lambda *_a: self._queue_refresh())
             # The shell downloads today's picture: show it when it arrives.
             from aurora import dailypicture
             os.makedirs(dailypicture.folder(), exist_ok=True)
@@ -296,7 +426,23 @@ class BackgroundSection:
 
     # --- state ---------------------------------------------------------------------
 
+    def _queue_refresh(self):
+        # One choice updates several settings; render only the resulting state.
+        if not self._refresh_source:
+            self._refresh_source = GLib.idle_add(self.refresh, priority=GLib.PRIORITY_DEFAULT)
+
     def refresh(self):
+        if self._refresh_source:
+            GLib.source_remove(self._refresh_source)
+            self._refresh_source = 0
+        self._syncing = True
+        try:
+            self._refresh()
+        finally:
+            self._syncing = False
+        return GLib.SOURCE_REMOVE
+
+    def _refresh(self):
         mode = mode_of(self.s)
         current = self.s.get_string("wallpaper") if self.s else ""
         series = wallpapers.chosen_series(self.s)
@@ -310,21 +456,39 @@ class BackgroundSection:
             link = os.path.join(os.environ.get("XDG_CACHE_HOME")
                                 or os.path.expanduser("~/.cache"), "aurora", "wallpaper")
             shown = os.path.realpath(link) if os.path.exists(link) else current
-        if shown and os.path.isfile(shown):
-            load_thumbnail(shown, 480, lambda t: t is not None and self.preview.set_paintable(t))
+        if shown and os.path.isfile(shown) and shown != self._preview_path:
+            self._preview_path = shown
+
+            def loaded(texture):
+                if self._preview_path == shown and texture is not None:
+                    self.preview.set_paintable(texture)
+                    self.live_preview.set_picture(shown)
+            load_thumbnail(shown, 480, loaded)
+        elif not shown or not os.path.isfile(shown):
+            self._preview_path = ""
+            self.preview.set_paintable(None)
+            self.live_preview.set_picture("")
+        if self.s is not None:
+            motion = self.s.get_string("wallpaper-animation")
+            video_selected = mode == "animated"
+            self.video_motion_row.set_visible(video_selected)
+            self.video_motion_row.set_active(motion != "off")
         self.caption.set_label({
-            "dynamic": _("Dawn, day, dusk and night follow the sun where you are"),
+            "dynamic": pretty_name(shown),
             "picture": pretty_name(current),
+            "animated": pretty_name(current),
             "daily": (" · ".join(x for x in (daily.get("title"), daily.get("credit")) if x)
                       if daily else _("Today's picture is on its way…")),
-            "slideshow": _("A new picture every so often"),
+            "slideshow": pretty_name(shown) if shown else _("A new picture every so often"),
             "color": _("A calm, solid color"),
         }[mode])
-        self.picture_expander.set_visible(mode == "picture")
-        self.series_expander.set_visible(mode == "dynamic")
+        self.picker.set_visible(mode in ("picture", "animated"))
+        if mode in ("picture", "animated"):
+            self.picker.set_kind(mode == "animated")
+        self.series_row.set_visible(mode == "dynamic")
         for key, button in self.series_buttons.items():
             (button.add_css_class if key == series else button.remove_css_class)("current")
-        self.color_expander.set_visible(mode == "color")
+        self.color_box.set_visible(mode == "color")
         for row in self.slide_rows:
             row.set_visible(mode == "slideshow")
         for row in self.daily_rows:
@@ -333,38 +497,37 @@ class BackgroundSection:
             folder = self.s.get_string("wallpaper-slideshow-folder")
             self.folder_button.set_label(os.path.basename(folder) if folder
                                          else _("Included wallpapers"))
-        if self.mode_row.get_selected() != MODES.index(mode):
-            self.mode_row.set_selected(MODES.index(mode))
-        self._fill_recent(current if mode == "picture" else "")
-
-    def _fill_recent(self, current):
-        while (child := self.recent_box.get_first_child()) is not None:
-            self.recent_box.remove(child)
-        recent = list(self.s.get_strv("wallpaper-recent")) if self.s else []
-        included = find_wallpapers(["/usr/share/backgrounds"])
-        for path in recent_row(recent, current, included):
-            b = Gtk.Button(css_classes=["background-recent"], tooltip_text=pretty_name(path))
-            b.set_child(thumb(path, 112, 70))
-            if path == current:
-                b.add_css_class("current")
-            b.connect("clicked", lambda _b, p=path: self.choose(p))
-            self.recent_box.append(b)
+        self.mode_buttons[mode].set_active(True)
+        self.mode_description.set_label(_(MODE_DESCRIPTIONS[MODES.index(mode)]))
 
     # --- choices -------------------------------------------------------------------
 
+    def _preview_activity(self, running):
+        from aurora.shell.livingwallpaper import style
+        (self.preview.add_css_class if style() == "zoom" and
+         not wallpapers.is_video(self.live_preview.path) else
+         self.preview.remove_css_class)("wallpaper-drift")
+        (self.preview.remove_css_class if running else
+         self.preview.add_css_class)("wallpaper-paused")
+
     def _set_mode(self, index):
-        if self.s is None or MODES[index] == mode_of(self.s):
+        if self._syncing or self.s is None or MODES[index] == mode_of(self.s):
             return
         mode = MODES[index]
+        if mode in ("picture", "animated"):
+            video = mode == "animated"
+            current = self.s.get_string("wallpaper")
+            recent = [p for p in self.s.get_strv("wallpaper-recent") if os.path.isfile(p)
+                      and wallpapers.is_video(p) == video and os.path.dirname(p) != solid_dir()]
+            included = find_wallpapers(["/usr/share/backgrounds"], videos=video)
+            pick = current if current in recent + included else next(iter(recent + included), "")
+            if pick:
+                self.choose(pick)
+            return
         self.s.set_boolean("wallpaper-slideshow", mode == "slideshow")
         self.s.set_boolean("wallpaper-dynamic", mode == "dynamic")
         self.s.set_string("wallpaper-daily", "bing" if mode == "daily" else "")
-        if mode == "picture" and os.path.dirname(self.s.get_string("wallpaper")) == solid_dir():
-            recent = [p for p in self.s.get_strv("wallpaper-recent") if os.path.isfile(p)]
-            included = find_wallpapers(["/usr/share/backgrounds"])
-            pick = (recent or included or [""])[0]
-            if pick:
-                self.s.set_string("wallpaper", pick)
+        self.s.set_string("wallpaper-animation", "off")
         if mode == "color":
             self._set_color(COLORS[0])
         self.refresh()
@@ -372,11 +535,15 @@ class BackgroundSection:
     def _set_series(self, key):
         if self.s is not None:
             self.s.set_string("wallpaper-dynamic-series", key)
+            self.s.set_boolean("wallpaper-slideshow", False)
+            self.s.set_string("wallpaper-daily", "")
+            self.s.set_string("wallpaper-animation", "off")
             self.s.set_boolean("wallpaper-dynamic", True)
 
     def choose(self, path):
         if self.s is None:
             return
+        self.s.set_string("wallpaper-animation", "auto" if wallpapers.is_video(path) else "off")
         self.s.set_boolean("wallpaper-slideshow", False)
         self.s.set_boolean("wallpaper-dynamic", False)
         self.s.set_string("wallpaper-daily", "")
@@ -387,15 +554,20 @@ class BackgroundSection:
     def _set_color(self, color):
         if self.s is None:
             return
+        self.s.set_string("wallpaper-animation", "off")
         self.s.set_boolean("wallpaper-slideshow", False)
         self.s.set_boolean("wallpaper-dynamic", False)
         self.s.set_string("wallpaper-daily", "")
         self.s.set_string("wallpaper", solid_picture(color))
 
     def _browse(self):
+        if self._importing:
+            return
         dialog = Gtk.FileDialog(title=_("Choose a Background"))
-        filt = Gtk.FileFilter(name=_("Images"))
-        filt.add_mime_type("image/*")
+        filt = Gtk.FileFilter(name=_("Pictures and videos"))
+        for extension in IMAGE_EXT + wallpapers.VIDEO_EXT:
+            filt.add_pattern("*" + extension)
+            filt.add_pattern("*" + extension.upper())
         store = Gio.ListStore.new(Gtk.FileFilter)
         store.append(filt)
         dialog.set_filters(store)
@@ -408,18 +580,35 @@ class BackgroundSection:
             path = f.get_path() if f else None
             if not path or not os.path.isfile(path):
                 return
-            # A copy, so the background stays if the original moves.
-            dest_dir = os.path.expanduser("~/.local/share/backgrounds")
-            os.makedirs(dest_dir, exist_ok=True)
-            name, extension = os.path.splitext(os.path.basename(path))
-            dest = os.path.join(dest_dir, f"{name}-{uuid.uuid4().hex[:8]}{extension}")
-            try:
-                shutil.copyfile(path, dest)
-            except OSError as err:
-                print(f"aurora: cannot add wallpaper: {err}")
-                return
-            self.choose(dest)
+            self._import_personal(path)
         dialog.open(self.page.get_root(), None, done)
+
+    def _import_personal(self, path):
+        if self._importing:
+            return
+        self._importing = True
+        self.import_button.set_sensitive(False)
+        toast(self.page, _("Adding wallpaper…"))
+
+        def finished(dest):
+            self._importing = False
+            self.import_button.set_sensitive(True)
+            if dest is None:
+                toast(self.page, _("Could not add wallpaper. Choose a readable picture or video."))
+            else:
+                self.picker.search.set_text("")
+                self.choose(dest)
+                toast(self.page, _("Wallpaper added"))
+            return False
+
+        def work():
+            try:
+                dest = import_wallpaper(path)
+            except (OSError, GLib.Error, ValueError, subprocess.SubprocessError) as err:
+                print(f"aurora: cannot add wallpaper: {err}")
+                dest = None
+            GLib.idle_add(finished, dest)
+        threading.Thread(target=work, daemon=True).start()
 
     def _pick_folder(self):
         dialog = Gtk.FileDialog(title=_("Pictures for the Slideshow"))
@@ -434,41 +623,75 @@ class BackgroundSection:
         dialog.select_folder(self.page.get_root(), None, done)
 
 
-class WallpaperGallery(Adw.Dialog):
-    """Every wallpaper as a grid that only makes the thumbnails in sight."""
+class WallpaperPicker(Gtk.Box):
+    """The page's single gallery, with a bounded viewport and lazy thumbnails."""
 
     def __init__(self, section):
-        super().__init__(title=_("All Wallpapers"), content_width=820, content_height=600)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                         margin_top=12, margin_bottom=12)
         self.section = section
-        toolbar = Adw.ToolbarView()
-        header = Adw.HeaderBar()
-        self.search = Gtk.SearchEntry(placeholder_text=_("Search wallpapers"), width_chars=24)
-        header.set_title_widget(self.search)
-        toolbar.add_top_bar(header)
+        self.videos = None
+        self._paths = ()
+        self.title = Gtk.Label(label=_("Choose a wallpaper"), xalign=0, css_classes=["heading"])
+        self.title.set_wrap(True)
+        self.search = Gtk.SearchEntry(placeholder_text=_("Search wallpapers"), hexpand=True)
+        toolbar = Gtk.Box(spacing=12)
+        toolbar.append(self.title)
+        toolbar.append(self.search)
+        self.append(toolbar)
 
         self.store = Gio.ListStore.new(Gtk.StringObject)
-        paths = find_wallpapers()
-        for path in paths:
-            self.store.append(Gtk.StringObject.new(path))
         self.filter = Gtk.CustomFilter.new(self._match)
-        filtered = Gtk.FilterListModel(model=self.store, filter=self.filter)
-        selection = Gtk.NoSelection(model=filtered)
+        self.filtered = Gtk.FilterListModel(model=self.store, filter=self.filter)
+        self.selection = Gtk.SingleSelection(model=self.filtered, autoselect=False, can_unselect=True)
         factory = Gtk.SignalListItemFactory()
         factory.connect("setup", self._setup)
         factory.connect("bind", self._bind)
-        grid = Gtk.GridView(model=selection, factory=factory, max_columns=6, min_columns=2,
+        self.grid = Gtk.GridView(model=self.selection, factory=factory, max_columns=3, min_columns=2,
                             single_click_activate=True, css_classes=["wallpaper-grid"])
-        grid.connect("activate", lambda _g, pos: self._pick(filtered.get_item(pos).get_string()))
-        self.search.connect("search-changed",
-                            lambda *_a: self.filter.changed(Gtk.FilterChange.DIFFERENT))
-        scroller = Gtk.ScrolledWindow(child=grid, vexpand=True)
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        count = Gtk.Label(label=_("{n} pictures").format(n=len(paths)),
-                          css_classes=["dim-label", "caption"], margin_top=6, margin_bottom=6)
-        box.append(scroller)
-        box.append(count)
-        toolbar.set_content(box)
-        self.set_child(toolbar)
+        self.grid.connect("activate", lambda _g, pos: self._pick(self.filtered.get_item(pos).get_string()))
+        self.search.connect("search-changed", self._search_changed)
+        self.scroller = Gtk.ScrolledWindow(child=self.grid, hscrollbar_policy=Gtk.PolicyType.NEVER,
+                                          vscrollbar_policy=Gtk.PolicyType.AUTOMATIC,
+                                          css_classes=["wallpaper-picker-scroll"])
+        self.scroller.set_size_request(-1, 196)
+        self.append(self.scroller)
+        self.count = Gtk.Label(xalign=0, css_classes=["dim-label", "caption"])
+        self.append(self.count)
+
+    def set_kind(self, videos):
+        changed = self.videos != videos
+        paths = tuple(find_wallpapers(videos=videos))
+        if changed:
+            self.videos = videos
+            # Leave room for video playback controls in a normal-sized window.
+            self.scroller.set_size_request(-1, 140 if videos else 196)
+            self.search.set_text("")
+            self.title.set_label(_("Choose an animated wallpaper") if videos else _("Choose a static wallpaper"))
+        if changed or paths != self._paths:
+            self._paths = paths
+            self.store.remove_all()
+            for path in paths:
+                self.store.append(Gtk.StringObject.new(path))
+        self.sync_selection()
+
+    def _search_changed(self, *_args):
+        self.filter.changed(Gtk.FilterChange.DIFFERENT)
+        self.sync_selection()
+
+    def sync_selection(self):
+        current = self.section.s.get_string("wallpaper") if self.section.s else ""
+        selected = Gtk.INVALID_LIST_POSITION
+        for index in range(self.filtered.get_n_items()):
+            if self.filtered.get_item(index).get_string() == current:
+                selected = index
+                break
+        changed = self.selection.get_selected() != selected
+        self.selection.set_selected(selected)
+        if changed and selected != Gtk.INVALID_LIST_POSITION:
+            self.grid.scroll_to(selected, Gtk.ListScrollFlags.NONE, None)
+        count = self.filtered.get_n_items()
+        self.count.set_label(_("{n} wallpapers").format(n=count) if count else _("No wallpapers found"))
 
     def _match(self, item):
         q = self.search.get_text().strip().lower()
@@ -479,7 +702,7 @@ class WallpaperGallery(Adw.Dialog):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, css_classes=["wallpaper-cell"])
         pic = Gtk.Picture(content_fit=Gtk.ContentFit.COVER, can_shrink=True,
                           css_classes=["wallpaper-thumb-pic"])
-        pic.set_size_request(168, 104)
+        pic.set_size_request(168, 94)
         label = Gtk.Label(ellipsize=Pango.EllipsizeMode.END, max_width_chars=20,
                           css_classes=["caption"])
         box.append(pic)
@@ -499,12 +722,9 @@ class WallpaperGallery(Adw.Dialog):
             if getattr(box, "path", None) == path and texture is not None:
                 pic.set_paintable(texture)
         load_thumbnail(path, 168, loaded)
-        current = self.section.s.get_string("wallpaper") if self.section.s else ""
-        (box.add_css_class if path == current else box.remove_css_class)("current")
 
     def _pick(self, path):
         self.section.choose(path)
-        self.close()
 
 
 __all__ = ["BackgroundSection", "find_wallpapers"]

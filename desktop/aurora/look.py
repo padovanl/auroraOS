@@ -68,6 +68,32 @@ def is_dark():
     return iface is None or iface.get_string("color-scheme") == "prefer-dark"
 
 
+# Settings → Appearance → Icon style. Each style is a whole icon theme of its
+# own (branding/icons/generate.py); the plain "Aurora" theme is the default
+# one, and the rest inherit it, so only their app icons differ.
+ICON_STYLES = {"galaxy": "Aurora", "ribbon": "Aurora-Ribbon", "glass": "Aurora-Glass",
+               "clay": "Aurora-Clay", "bolt": "Aurora-Bolt"}
+
+
+def apply_icon_style():
+    """Put the chosen style in place, whatever was set before. Choosing a style
+    is choosing a theme: it must take even on a system left on Adwaita."""
+    iface = settings.interface()
+    if iface is None:
+        return
+    wanted = icon_theme()
+    if iface.get_string("icon-theme") != wanted:
+        iface.set_string("icon-theme", wanted)
+
+
+def icon_theme():
+    """The icon theme to use: the chosen style, in the right light or dark twin."""
+    s = settings.get()
+    style = s.get_string("icon-style") if s is not None else "galaxy"
+    base = ICON_STYLES.get(style, "Aurora")
+    return base + ("-Dark" if is_dark() else "")
+
+
 def sync_gtk_theme():
     """Make GTK 3 and plain GTK 4 apps follow the style and accent libadwaita apps use."""
     iface = settings.interface()
@@ -81,14 +107,15 @@ def sync_gtk_theme():
     if os.path.isdir(os.path.join("/usr/share/themes", theme)) and \
             iface.get_string("gtk-theme") != theme:
         iface.set_string("gtk-theme", theme)
-    # Aurora and Papirus have light and dark variants; keep them in step with the style.
+    # Aurora and Papirus have light and dark variants; keep them in step with
+    # the style, and keep Aurora's on the icon style chosen in Settings.
     icons = iface.get_string("icon-theme")
-    variants = {"Aurora": ("Aurora", "Aurora-Dark"),
-                "Papirus": ("Papirus", "Papirus-Dark")}
-    family = "Aurora" if icons.startswith("Aurora") else \
-        "Papirus" if icons.startswith("Papirus") else None
-    if family:
-        wanted = variants[family][1 if is_dark() else 0]
+    if icons.startswith("Aurora"):
+        wanted = icon_theme()
+        if icons != wanted:
+            iface.set_string("icon-theme", wanted)
+    elif icons.startswith("Papirus"):
+        wanted = "Papirus-Dark" if is_dark() else "Papirus"
         if icons != wanted:
             iface.set_string("icon-theme", wanted)
     accent = "#000000" if high_contrast else accent_hex()

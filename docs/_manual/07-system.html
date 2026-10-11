@@ -156,7 +156,25 @@ clipboard history, online services (weather) and the firewall.</p>
 peer network on (see <a href="included-apps.html#torrents">Torrents</a>).</p>
 
 <h2>Other users</h2>
+<p>See <a href="manage-accounts.html">Add users and change sessions</a> for a guided walkthrough.</p>
 <p>Settings → Users → <strong>Add User</strong>: a full name, a username (suggested from the first name, accents dropped: <em>Lùca</em> → <code>luca</code>), a password and whether they're an administrator. <strong>Add</strong> stays off until the username is valid (lowercase letters, digits, <code>-</code> and <code>_</code>, starting with a letter) and free, and the password isn't empty. Removing a user deletes their home folder; if the computer logged them in automatically, it shows the login screen again instead.</p>
+<p>A username you edit manually stays unchanged when you update the full name.
+Account creation and removal run in the background during authorization; the Users
+page prevents duplicate requests and becomes available again after success or cancellation.</p>
+<p>Each account has its own preferences, clipboard and activity journal. Log out
+to return to the login screen and choose another account. The login screen clears
+the previous password when you select a different account. There is currently no
+graphical fast-user-switching control, and two simultaneous graphical desktops
+for the same account share application identities on the user bus; that configuration
+is not supported. Use distinct accounts for concurrent graphical sessions.</p>
+
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/settings-users.png"><img src="../screenshots/settings-users.webp" alt="Users: your profile, password and online accounts." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Users: your profile, password and online accounts.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
 
 <!-- page: networking | Networking | Wi-Fi, wired, VPNs, hotspot, sharing Wi-Fi with a QR code, proxies and network tools -->
 <h2>Wi-Fi and wired</h2>
@@ -198,7 +216,10 @@ from another computer with Remmina, TigerVNC or RealVNC to the address and with 
 shown.</p>
 <h2>Remote login</h2>
 <p><em>Remote Login (SSH)</em> lets you log in to this computer from another one with
-<code>ssh user@address</code>. Off by default.</p>
+<code>ssh user@address</code>. Off by default. Turning it on starts SSH and opens its port
+in Aurora's firewall; turning it off stops the service and socket and removes Aurora's
+firewall rule. Rules you added yourself are left alone. Authorization runs in the background:
+if you cancel it, the switch goes back to its previous state.</p>
 <h2>Your phone</h2>
 <ol class="steps">
   <li>Install <strong>KDE Connect</strong> on your Android phone (Play Store or F-Droid) or iPhone (App Store).</li>
@@ -214,14 +235,16 @@ clipboard, control music and use the phone as a touchpad.</p>
 <h2>Displays</h2>
 <p>Settings → Displays lists each connected monitor with: on or off, resolution and refresh
 rate (★ marks the monitor's preferred mode), scale (100–200 %, for high-resolution screens) and
-orientation. As on Windows, a change must be confirmed: <em>Keep Changes</em>, or
+orientation. <em>Position</em> sets X (left/right) and Y (up/down) in logical pixels; press
+<em>Move</em> to apply. For a 1920×1080 monitor at 100 % scale, X=1920, Y=0 places the
+next monitor to its right; at 200 % scale its logical width is 960. Negative X places a
+monitor to the left. As on Windows, a change must be confirmed: <em>Keep Changes</em>, or
 <em>Revert</em>, which also happens by itself after 15 seconds, so a mode the screen can't show
 never leaves you with a black screen.</p>
 <p>Kept choices are saved in <span class="path">~/.config/aurora/displays.sh</span> and applied
 at login; in the Aurora session they also go into Wayfire's configuration, so they stay when it
-is reloaded. Monitors are placed side by side automatically; arranging them by hand and choosing
-the primary one aren't in Settings yet (<code>wlr-randr --output NAME --pos X,Y</code> does it for
-the session). Desktop widgets keep their places, as fractions of the screen, and move just
+is reloaded. Monitors are placed side by side automatically unless you set their position.
+Choosing the primary monitor is not in Settings yet. Desktop widgets keep their places, as fractions of the screen, and move just
 enough not to overlap on a smaller screen or a larger scale.</p>
 <h2>Bluetooth</h2>
 <p>Settings → Bluetooth: turn it on, make the computer visible, pair new devices (keyboards,
@@ -269,6 +292,18 @@ chose Power Saver yourself, it is left alone.</p>
 <p>Desktop Profiles (Settings → Desktop Profiles) switch several of these together: <em>Battery</em>
 uses Power Saver, hides the dock and turns animations off.</p>
 
+<p>Changing power-button, lid or charge-limit settings may ask for administrator
+authorization. The affected control waits for the result while the interface remains
+responsive; cancelling restores its previous value.</p>
+
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/settings-power.png"><img src="../screenshots/settings-power.webp" alt="Power settings and available battery controls." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Power settings and available battery controls.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
+
 <!-- page: accessibility | Accessibility | Seeing, hearing, typing and pointing: zoom, screen reader, high contrast, screen keyboard and more -->
 <p>Settings → Accessibility.</p>
 <h2>Seeing</h2>
@@ -288,6 +323,14 @@ uses Power Saver, hides the dock and turns animations off.</p>
 </ul>
 <h2>Pointing and clicking</h2>
 <p><strong>Double-click delay</strong>; mouse speed and left-handed mode in Settings → Mouse &amp; Touchpad.</p>
+
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/settings-accessibility.png"><img src="../screenshots/settings-accessibility.webp" alt="Accessibility options for seeing, hearing, typing and pointing." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Accessibility options for seeing, hearing, typing and pointing.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>
 
 <!-- page: languages | Languages and keyboards | Changing the language, formats, keyboard layouts and switching between them -->
 <h2>Language</h2>
@@ -324,5 +367,16 @@ choice is kept in <span class="path">~/.config/aurora/input-methods</span> and
 <span class="path">~/.config/fcitx5/profile</span>; Fcitx runs only when an input method is on.</p>
 <h2>Date and time</h2>
 <p>Settings → Date &amp; Time: <em>Automatic date &amp; time</em> (from the internet), the
-time zone and the 24-hour clock. Seconds in the top bar clock are in Settings → Desktop &amp;
-Dock → Top Bar.</p>
+time zone and the 24-hour clock. To set the clock yourself, turn off automatic time,
+choose a date from the calendar, set hours and minutes in 24-hour format, and click
+<strong>Apply Date and Time</strong>. The chosen time uses the selected time zone.
+Administrator authorization may be required. While it is pending, the rest of the app
+remains responsive; cancelling restores the previous automatic-time or time-zone choice.
+Seconds in the top bar clock are in Settings → Desktop &amp; Dock → Top Bar.</p>
+<details class="screenshots">
+<summary>Show screenshots</summary>
+<div class="screenshot-content">
+<figure><a href="../screenshots/settings-keyboard.png"><img src="../screenshots/settings-keyboard.webp" alt="Keyboard layouts, typing preferences and shortcut settings." width="1020" height="720" loading="lazy" decoding="async"></a><figcaption>Keyboard layouts, typing preferences and shortcut settings.</figcaption></figure>
+<p>Click an image to view it at full size.</p>
+</div>
+</details>

@@ -120,6 +120,19 @@ class Welcome(Adw.ApplicationWindow):
             install.connect("clicked", lambda *_: (apps.launch(apps.app_by_id("aurora-installer.desktop")),
                                                    self._finish()))
             box.append(install)
+        # Someone who has just installed Aurora beside Windows is exactly who
+        # wants this, and exactly who would never go looking for it.
+        try:
+            from aurora.migrate import ntfs_partitions
+            has_windows = bool(ntfs_partitions())
+        except Exception:
+            has_windows = False
+        if has_windows and apps.app_by_id("org.aurora.Migrate.desktop"):
+            migrate_btn = Gtk.Button(label=_("Bring My Files from Windows…"),
+                                     css_classes=["pill"])
+            migrate_btn.connect("clicked", lambda *_: (subprocess.Popen(["aurora-migrate"]),
+                                                       self._finish()))
+            box.append(migrate_btn)
         settings_btn = Gtk.Button(label=_("Open Settings"), css_classes=["pill"])
         settings_btn.connect("clicked", lambda *_: (subprocess.Popen(["aurora-settings"]),
                                                     self._finish()))

@@ -4,8 +4,11 @@ Super+W, a hot corner or the dock opens it. It shows a card per window over a
 blurred picture of the screen; type to filter, arrows and Enter to pick,
 middle-click or the × to close a window. "Show Desktop" minimizes everything.
 
-labwc doesn't expose window contents to other clients yet, so cards show the
-app icon and title rather than live thumbnails.
+A card shows the window as you last saw it (shell/previews.py keeps a picture
+of each one, taken while it was in front) with its app's icon in the corner.
+Where there is no picture — the compatibility session, which has no interface
+for asking where a window is, or a window never yet brought forward — the card
+shows the app icon alone, as it always did.
 """
 
 import os
@@ -16,6 +19,9 @@ from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
 from aurora import apps
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
+
+SHOT_WIDTH = 236       # a window's picture on a card
+SHOT_HEIGHT = 140
 
 
 def blurred_screenshot(path, width=1920):
@@ -51,7 +57,27 @@ class WindowCard(Gtk.FlowBoxChild):
             icon.set_from_gicon(app.get_icon())
         else:
             icon.set_from_icon_name("application-x-executable")
-        over.set_child(icon)
+        # The window as it last looked, when there is a picture of it; the app's
+        # icon, big and alone, when there isn't (see shell/previews.py).
+        shot = overview.shell.previews.get(toplevel)
+        if shot is not None:
+            picture = Gtk.Picture(paintable=shot, content_fit=Gtk.ContentFit.COVER,
+                                  can_shrink=True, width_request=SHOT_WIDTH,
+                                  height_request=SHOT_HEIGHT)
+            # The rounded corners only clip the picture if the box does the
+            # clipping: CSS alone doesn't cut a paintable.
+            framed = Gtk.Box(css_classes=["overview-shot"], overflow=Gtk.Overflow.HIDDEN)
+            framed.append(picture)
+            badge = Gtk.Image(pixel_size=32, halign=Gtk.Align.START, valign=Gtk.Align.END,
+                              margin_start=6, margin_bottom=6, css_classes=["overview-badge"])
+            if app and app.get_icon():
+                badge.set_from_gicon(app.get_icon())
+            else:
+                badge.set_from_icon_name("application-x-executable")
+            over.set_child(framed)
+            over.add_overlay(badge)
+        else:
+            over.set_child(icon)
         over.add_overlay(top)
         box.append(over)
         box.append(Gtk.Label(label=toplevel.title or self.app_name, ellipsize=Pango.EllipsizeMode.END,

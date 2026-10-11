@@ -100,15 +100,14 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     (root / "Desktop/a.txt").write_text("a")
     (root / "Desktop/b.txt").write_text("b")
     icons = desktopicons.DesktopIcons()
-    icons.reorder("b.txt", "a.txt")
-    assert icons._load_order().index("b.txt") < icons._load_order().index("a.txt")
-    buttons = []
-    child = icons.get_first_child()
-    while child is not None:
-        buttons.append(child.get_child())
-        child = child.get_next_sibling()
-    a_icon = next(button for button in buttons if button.gfile and
-                  button.gfile.get_basename() == "a.txt")
+    icon_window = Gtk.Window(child=icons, default_width=900, default_height=700)
+    icon_window.present()
+    settle(lambda: icons.get_width() >= 850)
+    assert icons.place("b.txt", 300, 180)
+    assert icons._load_positions()["b.txt"] == [300, 180]
+    icons.reload()
+    assert icons._positions["b.txt"] == [300, 180]
+    a_icon = icons._icons["a.txt"]
     controls = a_icon.observe_controllers()
     assert any(isinstance(controls.get_item(i), Gtk.DragSource)
                for i in range(controls.get_n_items()))
@@ -117,17 +116,10 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     icons.transfer([str(root / "Desktop/a.txt")], str(root / "Desktop/New folder"), move=True)
     settle(lambda: (root / "Desktop/New folder/a.txt").exists())
     assert not (root / "Desktop/a.txt").exists()
-    print("ok: desktop icon reordering and move into folder")
-    icon_window = Gtk.Window(child=icons, default_width=450, default_height=300)
-    icon_window.present()
-    settle(lambda: icon_window.get_width() > 0)
-    child = icons.get_first_child()
-    while child is not None and (child.get_child().gfile is None or
-                                  child.get_child().gfile.get_basename() != "b.txt"):
-        child = child.get_next_sibling()
-    assert child is not None
-    child.get_child().show_menu(8, 8)
-    pop = child.get_child().get_last_child()
+    print("ok: desktop icon positioning and move into folder")
+    icon = icons._icons["b.txt"]
+    icon.show_menu(8, 8)
+    pop = icon.get_last_child()
     assert isinstance(pop, Gtk.Popover)
     labels = []
     button = pop.get_child().get_first_child()
@@ -236,11 +228,14 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     settle(lambda: moved.exists() and not (empty / "move.txt").exists())
     print("ok: dropped file move and undo")
     win._on_context_click(None, 1, 100, 100, win.view_stack)
-    menu = win.context_menu.get_menu_model()
-    section = menu.get_item_link(0, "section")
-    actions = [section.get_item_attribute_value(i, "action", None).get_string()
-               for i in range(section.get_n_items())]
-    assert "win.new-file" in actions
+    menu_box = win.context_menu.get_child().get_child().get_child()
+    labels = []
+    child = menu_box.get_first_child()
+    while child is not None:
+        if isinstance(child, Gtk.Button):
+            labels.append(child.get_label())
+        child = child.get_next_sibling()
+    assert "New File…" in labels
     print("ok: empty folder context menu contains New File")
     win.context_menu.popdown()
     settle()
@@ -252,4 +247,5 @@ with tempfile.TemporaryDirectory(prefix="aurora-files-check-") as directory:
     print("ok: context menu opens upward and has usable width")
     win.context_menu.popdown()
     win.close()
+    settle(lambda: not win.get_visible())
 print("ALL FILE INTERACTION CHECKS PASSED")

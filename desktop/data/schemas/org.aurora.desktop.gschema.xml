@@ -144,6 +144,21 @@
       <default>[]</default>
       <summary>Background pictures chosen lately, newest first</summary>
     </key>
+    <key name="shell-blur" type="b">
+      <default>false</default>
+      <summary>Blur the picture behind the top bar, the dock and Spotlight</summary>
+      <description>Real frosted glass, drawn by the compositor (Wayfire's blur plugin).
+      Needs a graphics card and the Aurora session: it does nothing in the compatibility
+      session, and on software rendering — a virtual machine — it is either slow or has no
+      effect at all, which is why it starts off.</description>
+    </key>
+    <key name="interface-density" type="s">
+      <choices><choice value="comfortable"/><choice value="compact"/></choices>
+      <default>'comfortable'</default>
+      <summary>How much room the desktop's own furniture takes</summary>
+      <description>compact: a shorter top bar and tighter menus, Control Center, notifications
+      and dock, for small screens or for fitting more on one.</description>
+    </key>
     <key name="reduce-transparency" type="b">
       <default>false</default>
       <summary>Make the desktop's glass solid</summary>
@@ -319,6 +334,53 @@
       <summary>Rounded corners of the screen itself, in pixels (0: square)</summary>
       <description>Four small surfaces paint the corners of every monitor black outside
       a quarter circle, the way a modern screen is shaped. They take no pointer input.</description>
+    </key>
+    <key name="wallpaper-animation" type="s">
+      <choices><choice value="off"/><choice value="auto"/><choice value="zoom"/>
+      <choice value="aurora"/><choice value="stars"/><choice value="clouds"/>
+      <choice value="shimmer"/></choices>
+      <default>'auto'</default>
+      <summary>What moves in the background picture</summary>
+      <description>Auto chooses moving light to suit each included scene: aurora,
+      stars, water reflections, clouds, nebula glow, sun rays or ring glints.
+      Unknown pictures stay still in Auto. Individual effects can also be selected.
+      Zoom is a ninety-second drift into the picture and back. Animation pauses
+      while a maximized or fullscreen window covers the desktop or the computer
+      is saving power. Off leaves the picture still.</description>
+    </key>
+    <key name="launchpad-layout" type="s">
+      <choices><choice value="pages"/><choice value="sections"/></choices>
+      <default>'pages'</default>
+      <summary>How Launchpad lays out the apps</summary>
+      <description>Pages: every app on pages you move through sideways, with folders
+      you make by dropping one app on another. Sections: one list, grouped by what the
+      apps are for, which was how Launchpad always looked.</description>
+    </key>
+    <key name="launchpad-folders" type="s">
+      <default>'[]'</default>
+      <summary>Launchpad's folders</summary>
+      <description>The folders made in Launchpad, as JSON: a name and the desktop ids
+      inside it. An app that is uninstalled is remembered here, so reinstalling it puts
+      it back in its folder.</description>
+    </key>
+    <key name="icon-style" type="s">
+      <choices>
+        <choice value="galaxy"/><choice value="ribbon"/><choice value="glass"/>
+        <choice value="clay"/><choice value="bolt"/>
+      </choices>
+      <default>'galaxy'</default>
+      <summary>How Aurora's app icons are drawn</summary>
+      <description>Galaxy: a deep sky with a lit core and fixed stars. Ribbon: an
+      aurora sweeping the bottom of a dark plate. Glass: dark glass with the colour
+      lit inside it. Clay: bright, solid and plainest to read. Bolt: an electric
+      discharge crawling in from a corner. Each is a whole icon theme.</description>
+    </key>
+    <key name="window-previews" type="b">
+      <default>true</default>
+      <summary>Show a picture of each window in the overview, the dock and Snap Assist</summary>
+      <description>A picture of a window is a crop of the screen, taken while that
+      window was in front; it needs the Aurora session, which can say where each
+      window is. Off: the cards show the app's icon.</description>
     </key>
     <key name="window-gaps" type="i">
       <range min="0" max="24"/>

@@ -20,11 +20,11 @@ all:
 
 install: protocols translations wallpapers sounds
 	install -d $(LIBDIR) $(BINDIR) $(DATADIR)
-	rsync -a --delete --exclude __pycache__ aurora/ $(LIBDIR)/aurora/
+	rsync -a --delete --chmod=D755,F644 --exclude __pycache__ aurora/ $(LIBDIR)/aurora/
 	cp -r build/protocols $(LIBDIR)/aurora/protocols
 	install -m 755 $$(find bin -maxdepth 1 -type f) $(BINDIR)/
 	install -d $(DESTDIR)$(PREFIX)/libexec
-	install -m 755 libexec/* $(DESTDIR)$(PREFIX)/libexec/
+	install -m 755 $$(find libexec -maxdepth 1 -type f) $(DESTDIR)$(PREFIX)/libexec/
 	install -d $(DATADIR)/labwc $(DATADIR)/greeter $(DATADIR)/wayfire $(DATADIR)/style $(DATADIR)/gtk
 	install -m 644 data/gtk/* $(DATADIR)/gtk/
 	install -m 644 data/labwc/* $(DATADIR)/labwc/
@@ -45,11 +45,19 @@ install: protocols translations wallpapers sounds
 	install -m 644 data/portals/*.conf $(SHAREDIR)/xdg-desktop-portal/
 	install -d $(SHAREDIR)/glib-2.0/schemas
 	install -m 644 data/schemas/* $(SHAREDIR)/glib-2.0/schemas/
-	install -d $(SHAREDIR)/icons/hicolor/scalable/apps $(SHAREDIR)/icons/hicolor/symbolic/apps
-	install -m 644 data/icons/scalable/apps/* $(SHAREDIR)/icons/hicolor/scalable/apps/
+	# The app icons themselves are generated above, into the Aurora themes and
+	# into hicolor for anything not using one of them; only the symbolic marks
+	# (the window buttons, the panel's logo) are drawn by hand.
+	install -d $(SHAREDIR)/icons/hicolor/symbolic/apps
 	install -m 644 data/icons/symbolic/apps/* $(SHAREDIR)/icons/hicolor/symbolic/apps/
 	install -d $(SHAREDIR)/backgrounds/aurora
 	install -m 644 build/wallpapers/*.png $(SHAREDIR)/backgrounds/aurora/
+	install -m 644 $(BRANDING)/wallpapers/scenes/CREDITS.txt $(SHAREDIR)/backgrounds/aurora/STATIC-CREDITS.txt
+	install -m 644 $(BRANDING)/wallpapers/scenes/sources.json $(SHAREDIR)/backgrounds/aurora/static-sources.json
+	install -d $(SHAREDIR)/backgrounds/aurora/animated
+	install -m 644 $(BRANDING)/wallpapers/animated/*.mp4 $(BRANDING)/wallpapers/animated/*.png \
+		$(BRANDING)/wallpapers/animated/sources.json $(BRANDING)/wallpapers/animated/CREDITS.txt \
+		$(SHAREDIR)/backgrounds/aurora/animated/
 	for phase in dawn day dusk night; do \
 		ln -sf aurora-$(DEFAULT_SERIES)-$$phase.png \
 			$(SHAREDIR)/backgrounds/aurora/aurora-dynamic-$$phase.png; \
@@ -76,16 +84,21 @@ translations:
 	$(PYTHON) po/gtklock-catalogs.py po/gtklock.json build/locale
 
 # Three series of four pictures (dawn, day, dusk, night) in
-# branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png.
+# branding/wallpapers/SERIES/, installed as aurora-SERIES-PHASE.png, and the
+# single pictures in branding/wallpapers/scenes/ as aurora-NAME.png.
 wallpapers: build/wallpapers/.stamp
 
 build/wallpapers/.stamp: $(wildcard $(BRANDING)/wallpapers/*/*.png)
 	rm -rf build/wallpapers && mkdir -p build/wallpapers
 	for dir in $(BRANDING)/wallpapers/*/; do \
 		series=$$(basename $$dir); \
+		case "$$series" in scenes|animated) continue ;; esac; \
 		for picture in $$dir*.png; do \
 			cp $$picture build/wallpapers/aurora-$$series-$$(basename $$picture); \
 		done; \
+	done
+	for picture in $(BRANDING)/wallpapers/scenes/*.png; do \
+		cp $$picture build/wallpapers/aurora-$$(basename $$picture); \
 	done
 	touch $@
 

@@ -24,7 +24,8 @@ export AURORA_PREFIX=/opt/aurora AURORA_LIBDIR=/opt/aurora/lib/aurora
 export XDG_DATA_DIRS="/opt/aurora/share:/usr/local/share:/usr/share"
 export GSETTINGS_SCHEMA_DIR=/opt/aurora/share/glib-2.0/schemas
 export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p -m 700 $XDG_RUNTIME_DIR
-export WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LIBINPUT_NO_DEVICES=1 WLR_HEADLESS_OUTPUTS=1
+export WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LIBINPUT_NO_DEVICES=1
+export WLR_HEADLESS_OUTPUTS=${AURORA_HEADLESS_OUTPUTS:-1}
 export GSK_RENDERER=cairo
 export XDG_CURRENT_DESKTOP=Aurora:wlroots
 # No portal service in the container: tell libadwaita the scheme directly.
@@ -93,7 +94,9 @@ EOF
         labwc -C /tmp/labwc -s "bash /tmp/second.sh"
     ' > "$out/labwc.log" 2>&1 || true
 else
-    timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || true
+    compositor_status=0
+    timeout 600 dbus-run-session -- labwc -C /tmp/labwc -s "bash /tmp/inner.sh" > "$out/labwc.log" 2>&1 || compositor_status=$?
+    echo "$compositor_status" > "$out/compositor-result"
 fi
 echo "screenshot: $out/screen.png"
 if [ -n "$scenario" ]; then

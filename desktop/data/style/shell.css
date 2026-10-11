@@ -11,6 +11,16 @@
 @define-color shell_hover rgba(255, 255, 255, 0.09);
 @define-color shell_active rgba(255, 255, 255, 0.16);
 
+/* The grain of the glass: a 128x128 tile of very faint light and shadow laid
+   over the panes, so a large one doesn't read as flat paint. @noise@ is the
+   installed path, filled in when the shell loads this file. */
+.panel-bar, .panel-island, .dock-box, .dock-island,
+.aurora-launcher.mode-spotlight .launcher-root {
+  background-image: url("@noise@");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
 window.aurora-layer {
   background: transparent;
   color: @shell_fg;
@@ -323,9 +333,11 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 /* Starting: the icon bounces once a second until the window is there, the
    way a dock has said "working on it" since forever. */
 @keyframes dock-bounce {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateY(-9px); }
   45% { transform: translateY(-3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .dock-item.launching image {
   opacity: 0.75;
@@ -334,15 +346,19 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .aurora-dock.dock-left .dock-item.launching image,
 .aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side; }
 @keyframes dock-bounce-side {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateX(9px); }
   45% { transform: translateX(3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .aurora-dock.dock-right .dock-item.launching image { animation-name: dock-bounce-side-left; }
 @keyframes dock-bounce-side-left {
-  0%, 60%, 100% { transform: none; }
+  0% { transform: none; }
   30% { transform: translateX(-9px); }
   45% { transform: translateX(-3px); }
+  60% { transform: none; }
+  100% { transform: none; }
 }
 .dock-launchpad image { color: @shell_fg; }
 
@@ -367,6 +383,11 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
 .dock-peek-card { padding: 10px 12px; border-radius: 12px; }
 .dock-peek-card.active { background-color: alpha(@shell_fg, 0.1); }
 .dock-peek-card label { font-size: 0.9em; }
+.dock-peek-shot {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(10, 8, 18, 0.5);
+}
 .dock-bottom .dock-dots { min-height: 6px; }
 .dock-left .dock-dots, .dock-right .dock-dots { min-width: 6px; }
 
@@ -455,7 +476,8 @@ button.qs-power:hover, .qs-power > button:hover { background-color: #e5484d; col
   box-shadow: inset 0 0 0 1px alpha(@aurora_violet, 0.45);
 }
 
-.result-title { font-weight: 600; font-size: 11pt; }
+/* The letters you typed are the bold ones, so the rest can be lighter. */
+.result-title { font-weight: 500; font-size: 11pt; }
 
 /* ---- Notifications ---- */
 
@@ -557,6 +579,16 @@ window.aurora-overview { background: rgba(0, 0, 0, 0.3); }
 }
 .overview-card.current { border-color: alpha(@accent_color, 0.55); }
 .overview-card.minimized { opacity: 0.6; }
+/* The window's own picture: cut to rounded corners by the box around it
+   (overflow hidden), with a hairline so a pale window keeps an edge. */
+.overview-shot {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(10, 8, 18, 0.5);
+}
+.overview-badge {
+  -gtk-icon-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
 .overview-card .overview-title { font-weight: 600; }
 .overview-card .overview-close { opacity: 0; min-width: 24px; min-height: 24px; padding: 0; }
 .overview-card:hover .overview-close { opacity: 1; }
@@ -613,6 +645,11 @@ window.aurora-snap { background: transparent; }
 .snap-window:hover, .snap-window:focus {
   background-color: alpha(@accent_color, 0.35);
   box-shadow: 0 0 0 2px alpha(@accent_color, 0.9);
+}
+.snap-window-shot {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background-color: rgba(10, 8, 18, 0.5);
 }
 .snap-skip { color: #fff; background-color: rgba(255, 255, 255, 0.12); }
 
@@ -1128,3 +1165,29 @@ window.osk-theme-mechanical button.osk-shift, window.osk-theme-typewriter button
 window.osk-theme-typewriter button.osk-backspace, window.osk-theme-typewriter button.osk-shift,
 window.osk-theme-pixel button.osk-return, window.osk-theme-pixel button.osk-backspace,
 window.osk-theme-pixel button.osk-shift { font-family: sans-serif; font-size: 20px; }
+
+/* Launchpad's folders: a tile that holds other tiles. */
+.launcher-folder-preview {
+  padding: 10px;
+  border-radius: 16px;
+  background-color: alpha(@shell_fg, 0.12);
+  border: 1px solid alpha(@shell_fg, 0.12);
+}
+.launcher-tile.tile-drop-target .launcher-folder-preview,
+.launcher-tile.tile-drop-target image { background-color: alpha(@aurora_violet, 0.35); }
+.launcher-tile.tile-drop-target { background-color: alpha(@aurora_violet, 0.28); border-radius: 18px; }
+.launcher-folder-open > contents { padding: 6px; border-radius: 22px; }
+.launcher-folder-name { font-weight: 700; }
+
+/* Background → Movement → Slow zoom: ninety seconds in, ninety back out.
+   GTK animates the transform itself, so this costs the shell nothing. */
+@keyframes wallpaper-drift {
+  0% { transform: scale(1.0); }
+  100% { transform: scale(1.09); }
+}
+.aurora-wallpaper picture.wallpaper-drift {
+  animation: wallpaper-drift 90s ease-in-out infinite alternate;
+}
+.aurora-wallpaper picture.wallpaper-paused {
+  animation-play-state: paused;
+}

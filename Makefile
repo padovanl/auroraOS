@@ -13,7 +13,8 @@ DOCKER_RUN = docker run --rm --privileged -e AURORA_PKG_VERSION=$(PKG_VERSION) \
 
 .PHONY: all builder iso stage shell run run-uefi desktop-dev clean distclean \
 	test test-static test-unit test-smoke test-image test-boot test-interact test-shortcuts \
-	test-shortcut-edges test-files-shortcuts \
+	test-newfeatures test-wallpapers test-system-native test-startup-menus test-sharing \
+	test-shortcut-edges test-files-shortcuts test-files-drag test-network-files test-admin-concurrency \
 	test-install dev-image screenshots site manual vm-screenshots debs repo
 
 all: iso
@@ -65,6 +66,17 @@ test-smoke: dev-image
 	desktop/dev/run-headless.sh tests/smoke.sh $(CURDIR)/work/smoke-out
 	@test "$$(cat work/smoke-out/smoke/result)" = 0 && echo "SMOKE TEST PASSED"
 
+# GTK unit checks, authorization rollback, two displays, Files and Assistant.
+test-system-native: dev-image test-admin-concurrency
+	AURORA_HEADLESS_OUTPUTS=2 desktop/dev/run-headless.sh tests/settings-system-interactions.sh $(CURDIR)/work/system-native-tests
+
+# A disposable container keeps the logind fixture away from the host's config.
+test-admin-concurrency: dev-image
+	$(DEV_RUN) env AURORA_ADMIN_TEST_CONTAINER=1 bash tests/admin-concurrency.sh
+
+test-wallpapers: dev-image
+	desktop/dev/run-headless.sh tests/animated-wallpapers.sh $(CURDIR)/work/wallpaper-tests
+
 # Screenshots for the website/README from the real ISO in QEMU.
 vm-screenshots:
 	python3 tools/vm-screenshots.py $(ISO) --out docs/screenshots
@@ -104,6 +116,19 @@ test-boot:
 test-interact:
 	python3 tests/interact/scenarios.py $(ISO) --out work/interact-test
 
+# This release's new work, on the real system: the icon styles, Launchpad's
+# pages and folders, the moving background, window previews, the new apps.
+test-newfeatures:
+	python3 tests/interact/newfeatures.py $(ISO) --out work/newfeatures
+
+# Slow application launch, repeated desktop clicks and context-menu dismissal.
+test-startup-menus:
+	python3 tests/interact/startup_menus.py $(ISO) --out work/startup-menu-test
+
+# Checks SSH and firewall rule ownership in an isolated live guest.
+test-sharing:
+	python3 tests/interact/sharing.py $(ISO) --out work/sharing-test
+
 # Drives the system-wide combinations listed in the keyboard-shortcuts manual.
 test-shortcuts:
 	python3 tests/interact/shortcuts.py $(ISO) --out work/shortcut-test
@@ -116,6 +141,14 @@ test-shortcut-edges:
 test-files-shortcuts:
 	python3 tests/interact/files_shortcuts.py $(ISO) --out work/files-shortcut-test
 	python3 tests/interact/files_shortcut_edges.py $(ISO) --out work/files-shortcut-edge-test
+
+# Actual modifier drags, empty-space selection and both file views.
+test-files-drag:
+	python3 tests/interact/files_drag.py $(ISO) --out work/files-drag-test
+
+# A dedicated SFTP server lives inside the disposable test VM.
+test-network-files:
+	python3 tests/interact/network_files.py $(ISO) --out work/network-files-test
 
 # Installs the ISO onto an empty virtual disk with the real installer (driven by
 # key presses), then boots the installed system and checks it (~20 min each).

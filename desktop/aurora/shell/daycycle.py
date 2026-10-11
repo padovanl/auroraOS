@@ -72,6 +72,7 @@ class DayCycle(GObject.Object):
         self._night_args = None
         self._slide_started = time.monotonic()
         self._slide_index = 0
+        self._wallpaper_source = 0
         s = settings.get()
         if s:
             for key in ("wallpaper", "wallpaper-dynamic", "wallpaper-dynamic-series",
@@ -148,11 +149,20 @@ class DayCycle(GObject.Object):
         return found
 
     def _wallpaper_changed(self):
+        # Settings updates the mode and path together. Avoid opening a video
+        # decoder for each intermediate state during a wallpaper change.
+        if not self._wallpaper_source:
+            self._wallpaper_source = GLib.idle_add(self._apply_wallpaper_change,
+                                                  priority=GLib.PRIORITY_DEFAULT)
+
+    def _apply_wallpaper_change(self):
+        self._wallpaper_source = 0
         self._update_link()
         self.emit("wallpaper-changed")
+        return GLib.SOURCE_REMOVE
 
     def _update_link(self):
-        path, link = self.wallpaper(), cache_link()
+        path, link = wallpapers.poster_path(self.wallpaper()), cache_link()
         if path is None:
             return
         try:

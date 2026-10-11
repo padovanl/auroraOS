@@ -6,6 +6,11 @@ window {
   background-size: cover;
   background-position: center;
   color: #ffffff;
+  /* A scrim at the top and the bottom, as a phone's lock screen has: the
+     clock and the password field read on a bright picture without a card
+     being drawn around them. */
+  box-shadow: inset 0 170px 190px -130px rgba(0, 0, 0, 0.75),
+              inset 0 -210px 230px -150px rgba(0, 0, 0, 0.8);
 }
 
 /* Everything must fit the shortest screens (1280×720 at 150 %: 480 px):
@@ -17,18 +22,105 @@ window {
 
 #clock-label {
   font-family: Inter;
-  font-size: 72pt;
-  font-weight: 600;
+  font-size: 86pt;
+  font-weight: 500;
+  letter-spacing: -4px;
   color: #ffffff;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
 }
 
 #date-label {
   font-family: Inter;
-  font-size: 17pt;
+  font-size: 15pt;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.88);
+  margin-top: 2px;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* The chips under the date: the weather and the battery, as a phone shows
+   them, on the picture with no card around them. */
+#chips {
+  margin-top: 16px;
+}
+
+#chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.30);
+}
+
+#chip-text {
+  font-family: Inter;
+  font-size: 11pt;
+  font-weight: 500;
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+#chip-icon {
+  color: #ffffff;
+  -gtk-icon-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* Music, when something is playing (gtklock's playerctl module): the same
+   glass as the chips, with the cover rounded like everything else. */
+#playerctl-box {
+  /* The module hangs its card from the top of the screen, where the clock is:
+     this pushes it under the clock, the date and the chips. */
+  margin-top: 268px;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+#album-art {
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* The module's own buttons are plain GTK ones: round them, empty them and
+   leave only the glyph, like every other control Aurora draws. */
+#playerctl-box button {
+  min-width: 36px;
+  min-height: 36px;
+  margin: 0 3px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+  text-shadow: none;
+  color: #ffffff;
+}
+
+#playerctl-box button:hover { background-color: rgba(255, 255, 255, 0.26); }
+#playerctl-box button:active { background-color: rgba(255, 255, 255, 0.36); }
+
+#playerctl-box button image {
+  color: #ffffff;
+  -gtk-icon-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+#title-label {
+  font-family: Inter;
+  font-size: 11.5pt;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+#artist-label,
+#album-label {
+  font-family: Inter;
+  font-size: 10pt;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 #body-grid {
@@ -63,7 +155,7 @@ window {
 }
 
 #input-field {
-  min-height: 46px;
+  min-height: 50px;
   border-radius: 999px 0 0 999px;
   padding: 0 8px 0 20px;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -83,8 +175,8 @@ window {
 /* The arrow: Aurora's gradient, see-through like the field, closing the
    pill on the right; a soft highlight on top and a glow around it. */
 #unlock-button {
-  min-width: 58px;
-  min-height: 46px;
+  min-width: 62px;
+  min-height: 50px;
   padding: 0;
   border-radius: 0 999px 999px 0;
   border: 1px solid rgba(255, 255, 255, 0.35);

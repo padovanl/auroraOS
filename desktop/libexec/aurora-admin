@@ -55,9 +55,18 @@ case "$cmd" in
         /usr/libexec/aurora-snapshot now ;;
     ssh)
         case "${1:-}" in
-            on) systemctl enable --now ssh.service ;;
+            on) ufw allow "Aurora SSH"
+                if ! systemctl enable --now ssh.service; then
+                    ufw --force delete allow "Aurora SSH" >/dev/null 2>&1 || true
+                    exit 1
+                fi ;;
             off) systemctl disable --now ssh.service >/dev/null 2>&1 || true
-                 systemctl disable --now ssh.socket >/dev/null 2>&1 || true ;;
+                 systemctl disable --now ssh.socket >/dev/null 2>&1 || true
+                 if systemctl is-active --quiet ssh.service || systemctl is-active --quiet ssh.socket; then
+                     echo "Could not stop remote login" >&2
+                     exit 1
+                 fi
+                 ufw --force delete allow "Aurora SSH" >/dev/null 2>&1 || true ;;
             *) exit 2 ;;
         esac ;;
     auto-updates)
@@ -117,6 +126,11 @@ EOF
         case "${1:-}" in suspend|poweroff|hibernate|ignore|lock) ;; *) exit 2 ;; esac
         key=HandlePowerKey
         [ "$cmd" = lid ] && key=HandleLidSwitch
+        # Settings applies these independently in workers. Serialize the
+        # read/edit/write sequence so one change cannot erase another.
+        mkdir -p /run/aurora-admin
+        exec 9>/run/aurora-admin/logind.lock
+        flock -x 9
         conf=/etc/systemd/logind.conf.d/50-aurora.conf
         mkdir -p "${conf%/*}"
         touch "$conf"

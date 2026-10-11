@@ -1,6 +1,7 @@
 """Desktop background, one surface per monitor, with a right-click menu."""
 
 from gi.repository import Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora.i18n import _
 from aurora.shell.layer import Keyboard, Layer, LayerWindow
@@ -26,6 +27,14 @@ class Wallpaper(LayerWindow):
         self._current = None
         overlay = Gtk.Overlay(child=self._stack)
         self.set_child(overlay)
+        # The aurora moving over the picture, under everything else.
+        from aurora.shell.livingwallpaper import LivingWallpaper
+        self.living = LivingWallpaper(app, activity=self._motion_activity)
+        overlay.add_overlay(self.living)
+        # The slow drift into the picture is a CSS animation on the pictures
+        # themselves: GTK does the work, so it costs us nothing to run.
+        self._set_drift(False)
+
         # Files from ~/Desktop, on the primary monitor only.
         self._icons = None
         if monitor == app.get_primary_monitor():
@@ -67,6 +76,17 @@ class Wallpaper(LayerWindow):
         self._handler = app.daycycle.connect("wallpaper-changed", lambda *a: self.reload())
         self.connect("destroy", lambda *a: app.daycycle.disconnect(self._handler))
         self.reload()
+
+    def _set_drift(self, on):
+        for picture in self._pictures:
+            (picture.add_css_class if on else picture.remove_css_class)("wallpaper-drift")
+
+    def _motion_activity(self, running):
+        from aurora.shell.livingwallpaper import style
+        from aurora import wallpapers
+        self._set_drift(style() == "zoom" and not wallpapers.is_video(self.living.path))
+        for picture in self._pictures:
+            (picture.remove_css_class if running else picture.add_css_class)("wallpaper-paused")
 
     def _on_background_click(self, _gesture, _n, x, y):
         if _gesture.get_current_event_state() & (Gdk.ModifierType.CONTROL_MASK |
@@ -175,8 +195,11 @@ class Wallpaper(LayerWindow):
         self._current = path
         visible = self._stack.get_visible_child()
         target = self._pictures[1] if visible is self._pictures[0] else self._pictures[0]
-        target.set_file(Gio.File.new_for_path(path) if path else None)
+        from aurora import wallpapers
+        poster = wallpapers.poster_path(path)
+        target.set_file(Gio.File.new_for_path(poster) if poster else None)
         self._stack.set_visible_child(target)
+        self.living.set_picture(path)
 
     def _build_menu(self, parent):
         actions = Gio.SimpleActionGroup()
@@ -185,7 +208,7 @@ class Wallpaper(LayerWindow):
             create.connect("activate", self._new_item, folder)
             actions.add_action(create)
         parent.insert_action_group("desktop", actions)
-        popover = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+        popover = ContextMenu(has_arrow=False, halign=Gtk.Align.START,
                               css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1,
                       margin_top=3, margin_bottom=3, margin_start=3, margin_end=3)

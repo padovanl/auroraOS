@@ -79,6 +79,15 @@ assert not hidden & set(ids), f"manifest apps are hidden: {hidden & set(ids)}"
 print(f"{len(ids)} default apps")
 PY
 
+step "Bundled videos fit GitHub's file size limit"
+check python3 - <<'PY'
+from pathlib import Path
+files = list(Path('branding/wallpapers/animated').glob('*.mp4'))
+large = [str(path) for path in files if path.stat().st_size > 48 * 1024 ** 2]
+assert not large, 'Videos above 48 MiB: ' + ', '.join(large)
+print(f'{len(files)} videos below 48 MiB')
+PY
+
 step "Website technical page matches README"
 check python3 tools/build-site.py --check
 check python3 tools/check-site-links.py

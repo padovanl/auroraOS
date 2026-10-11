@@ -26,6 +26,10 @@ def test_lock_layout_keeps_gtklock_contract():
     assert signals.count("window_pw_check") == 2
     assert signals.count("window_pw_toggle_vis") == 1
     script = (ROOT / "desktop/bin/aurora-lock").read_text()
-    assert 'style_dir=/usr/share/aurora/style' in script and '--layout "$run/lock.ui"' in script
+    # The layout and the style come from where Aurora is installed: /usr on a
+    # real system, the session's own tree when the desktop is run from one.
+    assert 'prefix=${AURORA_PREFIX:-/usr}' in script
+    assert 'style_dir="$prefix/share/aurora/style"' in script
+    assert '--layout "$run/lock.ui"' in script
     text = path.read_text()
     assert "@NAME@" in text and "@INITIAL@" in text

@@ -78,9 +78,11 @@ def main():
         editing = vm.shot("location-editing")
         vm.keys("esc", pause=0.5)
         cancelled = vm.shot("location-after-escape")
+        location = (700, 245, 1410, 280)  # Files' actual breadcrumb/entry header
         check("Escape leaves Ctrl+L location editing",
-              difference(baseline, cancelled, (700, 190, 1410, 245)) < 0.5,
-              f"difference={difference(baseline, cancelled, (700, 190, 1410, 245)):.2f}")
+              difference(baseline, editing, location) > .5 and
+              difference(baseline, cancelled, location) < .5,
+              f"difference={difference(baseline, cancelled, location):.2f}")
 
         # Ctrl+A must belong to the rename entry while the dialog has focus.
         vm.click(*FILE_A)

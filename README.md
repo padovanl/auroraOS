@@ -130,17 +130,19 @@ learning was the point. — *Luca Padovan*
 | | |
 |---|---|
 | **Menu bar** | Aurora menu (who you are and the computer's name; About, Settings, App Center, Dev Hub, System Health, Force Quit with their shortcuts; Lock; Sleep, Restart, Shut Down and Log Out as round buttons), the focused app's name (with the number of its windows when there are several; a click lists them, numbered, to switch, plus New Window, Minimize, Close and Quit), an icon for each minimized window (click to bring it back), the Aurora Assistant button, Spotlight, an optional **system monitor** (processor and memory at a glance; its popover adds temperature, download and upload speed, free disk space; Settings → Desktop & Dock → Top Bar), status icons, clock. Menus opened with a shortcut close with <kbd>Esc</kbd>. |
-| **Dock** | Pinned and running apps with one mark per open window (up to three; the window you're in is a short bar in the accent color), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Rest the pointer on an app with several windows to see them and pick one; a minimized one is listed as such and one click brings it back. Apps that are only open can be left out entirely, so the top bar's window buttons are the single list of what is running. Magnification, bottom/left/right, and it gets out of the way the way other docks do: by default it keeps no strip of screen, so a maximized window uses the whole display and the dock slides away until the pointer reaches the edge (or never, or always). Three styles: one floating shelf, islands of glass (Launchpad, the apps and the Trash each on their own pill, like the top bar's floating style) or a full-width taskbar. |
+| **Dock** | Pinned and running apps with one mark per open window (up to three; the window you're in is a short bar in the accent color), drag-to-reorder pinned apps, right-click menus (windows, New Window, app actions, keep/remove), Launchpad, Trash with "Empty Trash". Drop files on an app's icon to open them with it (the icon lights up when it can take them; one that accepts no file stays inert) or on the Trash to move them there — with the dock hidden, carrying files to the screen's edge brings it up. Rest the pointer on an app with several windows to see them and pick one; a minimized one is listed as such and one click brings it back. Apps that are only open can be left out entirely, so the top bar's window buttons are the single list of what is running. Magnification, bottom/left/right, and it gets out of the way the way other docks do: by default it keeps no strip of screen, so a maximized window uses the whole display and the dock slides away until the pointer reaches the edge (or never, or always). Three styles: one floating shelf, islands of glass (Launchpad, the apps and the Trash each on their own pill, like the top bar's floating style) or a full-width taskbar. |
+| **Launchpad** | Every app on **pages** you move through sideways, as many to a page as the screen holds, with dots underneath. **Drop one app on another and they become a folder**, named after what they are for, standing where the first one was and showing the four icons inside it; click to open it in place, type over its name, drop more apps in, or take everything out. A folder remembers an app that is uninstalled and gives it back when it returns. Settings → Desktop & Dock → Super Key switches back to one list grouped by kind. |
 | **Spotlight** (tap <kbd>Super</kbd>) | One search for apps, settings pages, recent files, git projects, a calculator (`12*(3+4)`), unit and currency conversion (`10 km in mi`, `100 usd in eur`), emoji (`:rocket`), clipboard history (`clip:` or <kbd>Super</kbd>+<kbd>V</kbd>), questions for the AI (`? …`), documents by meaning (when turned on), commands (`> htop`), system actions (`restart`, `lock`, `empty trash`, `task manager`…), the time anywhere (`time in Tokyo`), paths (`~/Doc…`, `/etc`), web addresses (`github.com`) and the web. |
 | **Rounded screen corners** | The display is shaped like modern hardware: four small surfaces round the corners of every monitor, without taking a single click. 0 to 24 px in Settings → Desktop & Dock. |
+| **Lock screen** | Clock, date, a chip with the weather and one with the battery, and the music that is playing with its cover and controls (gtklock and its playerctl module). The picture darkens at the top and the bottom so everything reads on any wallpaper, and the account picture, the unlock arrow and the focused field take your accent color. |
 | **Launchpad** | Full-screen grid of every app, in sections: Frequently Used (what Screen Time counted over the last week), then Internet, Office, Photos, Music & Video, Games, Development and Utilities, each alphabetical. Type to search instead. |
-| **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop: type to filter, click to switch, × or middle-click to close, "Show Desktop". |
+| **Overview** (<kbd>Super</kbd>+<kbd>W</kbd>) | Every open window as a card over a blurred desktop, each showing the window as you last saw it with its app's icon in the corner: type to filter, click to switch, × or middle-click to close, "Show Desktop". The same pictures appear in the dock's window lists and in Snap Assist; they need the Aurora session and can be turned off. |
 | **Touchpad gestures** | Three fingers up for all windows, down for the desktop, sideways to change workspace; pinch with four fingers for Launchpad. |
 | **Hot corners** | Push the pointer into a corner to show all windows, Launchpad, the desktop, Control Center, notifications, lock or turn off the screen. Bottom left shows all windows and bottom right the desktop by default; change them in Settings → Multitasking. |
 | **Desktop widgets** | Twenty-three glanceable cards on the desktop, in five groups. Everyday: clock (analog or digital), calendar, weather, world clock, sun & moon (sunrise, sunset, daylight and the moon's phase), photo frame, now playing. Productivity: to-do list, notes, countdown to a date (with its own colors), focus timer, progress of the day, week, month or year, recent files, clipboard. System: gauges for processor, memory, disk and temperature that turn from your accent color to amber and red as they fill, network speed, battery. Developers: Git projects, local dev servers (click to open in the browser), containers. Gamers: Steam games, GPU, power profile. Drag them anywhere (a guide shows where they land and they line up with their neighbours), right-click for **Customize…**, and **Edit Widgets…** on the desktop's menu: open windows step aside until you're done, and a compact gallery with one tab per group adds widgets in the first free spot. They follow the accent color, light or dark style, clock format and units, and keep their place and proportions when the resolution changes. |
 | **Quick Look** | Select a file in Files and press <kbd>Space</kbd>: pictures, video and audio, PDF pages, source code with syntax highlighting, folders. Arrows move to the next file. |
 | **Dynamic wallpaper** | The Aurora landscape changes through the day (dawn, day, dusk, night) and crossfades from one to the next, in three series to choose from: Starfall, Veil and Horizon. The login and lock screens follow it. |
-| **Backgrounds** | Settings → Appearance works like Windows' Personalize page: a preview of the desktop, then **Dynamic** (follows the sun), **Picture** (the ones used lately, Browse Photos…, and All Wallpapers…, a searchable gallery that stays quick with thousands of pictures), **Picture of the day** (Bing, NASA's APOD or Wikimedia Commons, with title and credit), **Slideshow** (any folder, every 15 minutes to 24 hours, shuffled if you like) or a **Solid color**. The lock screen follows the active picture. |
+| **Backgrounds** | Settings → Appearance has a compact preview and six visible choices: **Static image**, **Animated wallpaper**, **Daylight series**, **Picture of the day**, **Slideshow** and **Solid color**. Static and animated wallpapers have an inline searchable thumbnail picker. **Load a File…** imports your image or video; **Play animation** controls video playback. The lock screen follows the active picture or video poster. |
 | **Automatic dark style** | "Auto" in Settings → Appearance switches to dark at sunset and back at sunrise. |
 | **Night Light** | Warmer colors from sunset to sunrise, on a schedule you set, or all the time. Where the graphics driver can't change the screen's colors (virtual machines), it says so instead of doing nothing. |
 | **Screenshots** | <kbd>Print</kbd>, <kbd>Shift</kbd>+<kbd>Print</kbd> for an area. The notification offers **Pin to Screen** (the screenshot floats above every window; drag it, scroll to resize, double-click to unpin; also <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> for an area), **Annotate** (arrows, text, highlighter, blur) and **Copy Text**. Screen recording covers the whole screen or an area, with or without the computer's sound (<kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd>, <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> for an area). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> copies the text inside any area of the screen (offline OCR in 18 languages). <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> is a **color picker**: click any pixel and its hex code is copied. |
@@ -151,7 +153,8 @@ learning was the point. — *Luca Padovan*
 | **System tray** | StatusNotifierItem icons (Discord, Slack, Steam, Dropbox, Nextcloud…) in the top bar, with their menus. |
 | **Desktop icons** | Files in the Desktop folder appear on the background: click or draw a selection rectangle to select several, Ctrl-click to add or remove, double-click to open, or drag an icon to any free position. Positions persist between sessions. New icons fill columns from the top left or right, folders first; app launchers (`.desktop` files) show their app name and icon. |
 | **Windows** | Wayfire manages the default **Aurora** session, with snapping to halves and quarters, workspaces and a window switcher. **Snap Layouts** (<kbd>Super</kbd>+<kbd>Z</kbd>) as in Windows 11: six layouts (halves, two thirds, thirds, half and quarters, quarters, a wide middle), a preview where the window will go, then **Snap Assist** offers the other windows for the empty spaces; snapping to a half with <kbd>Super</kbd>+<kbd>←</kbd>/<kbd>→</kbd> offers the other half the same way. **Always on Top** with <kbd>Super</kbd>+<kbd>T</kbd>. On Hyper-V's display, which has no 3D, Wayfire draws with software rendering and llvmpipe runs without worker threads, so every frame is complete when Hyper-V's driver copies it to the screen. `labwc` in `~/.config/aurora/compositor` switches to labwc. **Aurora Compatibility** always uses labwc, and labwc also takes over if Wayfire cannot start, leaving a startup report in System Health. GTK apps keep Aurora's styled title bars. |
-| **Animations** | Wayfire animates opening, closing, minimization and restoration of windows. Settings → Appearance can turn the compositor effects and GTK/Files transitions off together. The labwc fallback has GTK/Files transitions only. |
+| **Animations** | Wayfire animates opening, closing, minimization and restoration of windows. Aurora's context menus fade and scale gently on opening and closing, including dismissal with Esc or an outside click. Settings → Appearance turns compositor effects and GTK/menu transitions off together. The labwc fallback retains GTK/menu transitions. |
+| **Application startup** | A progress cursor and a brief “Opening…” message appear immediately when an app is opened from the dock, launcher, search or desktop. Repeated clicks on the same pending launch are ignored until its window appears or the bounded wait expires. Different documents and explicit New Window actions remain independent. |
 | **Aurora icons** | Aurora's own icon theme: apps, folders (violet, with an emblem for Home, Downloads, Music…), drives and file types (a page with a glyph and a label: PDF, PY, ZIP, DOC…), all drawn by code. Well-known brands (Firefox, LibreOffice, Steam, VS Code…) keep their own icons. |
 | **Login** | Graphical greeter on greetd, optional automatic login, lock screen, idle screen-off. |
 | **Boot** | Branded GRUB menu and an animated Plymouth splash (the logo draws itself). |
@@ -160,7 +163,7 @@ learning was the point. — *Luca Padovan*
 ### Apps written for Aurora
 - **Settings**: everything Ubuntu's Settings has, and more:
   - **Network** (share Wi-Fi with a QR code, VPNs), **Bluetooth**, **Displays** (resolution
-    and refresh rate, scale, rotation).
+    and refresh rate, scale, rotation, position with confirmation and automatic rollback).
   - **Sound**: devices, volume, left/right balance, over-amplification, session sounds, and a
     **Volume Mixer** with each app's own volume (also in the Control Center).
   - **Power**: screen blank, automatic suspend on battery and when plugged in, what the
@@ -206,6 +209,40 @@ learning was the point. — *Luca Padovan*
   Minimize it to a small bar like a chat on a web page (a dot shows a new reply), expand
   it for long answers, close it with × when you're done. And
   **Writing Tools** for selected text anywhere (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>W</kbd>).
+- **Migrate from Windows**: for the computer that now has both. It lists the NTFS
+  filesystems in the machine, opens the one you pick **read-only**, checks that Windows is
+  really installed on it, and offers the real accounts in `C:\Users` (not Public or Default).
+  Then Desktop, Documents, Downloads, Pictures, Music and Videos, each measured while you read
+  — honestly saying "at least" when a folder is too big to count quickly — and copied into the
+  matching folders here. Nothing on the Windows side is written to and nothing here is
+  overwritten: a file that already exists is kept and counted as kept, so running it twice
+  brings only what was missing. It also writes the **bookmarks** of Edge, Chrome, Brave and
+  Opera into one `Windows bookmarks.html` that any browser imports, and copies the **desktop
+  background** Windows was using. The Welcome screen offers it when it sees a Windows disk,
+  which is the one moment someone would think of it.
+- **USB Stick Writer**: a disk image onto a USB stick, like Rufus or Etcher. Compressed
+  downloads (`.gz`, `.xz`, `.bz2`, `.zst`, a `.zip` holding one image) are unpacked while they
+  are written, so a 5 GB download needn't be unpacked first. Only removable and USB disks are
+  offered and the disk the system runs from is never among them — nor, in a live session, the
+  medium it booted from. When the write is done the stick is read back and compared byte for
+  byte with what was sent, which catches the worn-out and counterfeit sticks that are the usual
+  reason a freshly written installer won't boot. It also does the two things people go looking
+  for next: **checking the download** against its SHA-256 (the `.sha256` or `SHA256SUMS` beside
+  it is filled in automatically, otherwise paste the one from the download page), and
+  **erasing a stick back to a plain empty disk** — exFAT, FAT32 or ext4, with a name — because
+  a stick that has carried an installer is otherwise no use for files. *Eject when finished*
+  powers it down so it can be pulled straight out, and both switches are remembered. The
+  writing itself is done by
+  `/usr/libexec/aurora-usb-write` through pkexec, and that helper makes every one of those
+  checks again on its own side: a program asking for a disk to be overwritten cannot be trusted
+  to have asked the right questions.
+- **Clipboard** (<kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>): everything you have copied in
+  a window — pinned entries first, then the rest newest first, pictures among them, each with
+  its age and line count and code in a monospace font. Search, click to copy (the window
+  closes and the text stays on the clipboard, because it is handed to `wl-copy` rather than
+  held by a window that is about to close), pin what you keep reaching for, delete one entry
+  or empty the lot. It follows the history live, so leaving it open shows new copies as they
+  happen. Spotlight's <kbd>Super</kbd>+<kbd>V</kbd> remains the quick look at the same history.
 - **Task Manager** (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd>): apps (what has a window,
   with its processes folded underneath), background and system processes with CPU, memory
   and disk, End Task and Kill; performance graphs; startup apps with a switch each; system
@@ -367,11 +404,22 @@ remote-viewer spice://127.0.0.1:5930    # virt-viewer; on Windows from virt-mana
 `--vnc 1` does the same with VNC on port 5901, for any VNC viewer. The port only
 listens on the server's loopback, so it is reachable through the tunnel only.
 
-**On Windows 11 with WSL 2**: WSL runs Linux with nested virtualization and shows its
-windows on the Windows desktop, so the QEMU commands above work there. In Ubuntu on WSL,
-check that `/dev/kvm` exists, `sudo apt install qemu-system-x86 qemu-utils ovmf`, add
-yourself to the `kvm` group (`sudo usermod -aG kvm $USER`, then `wsl --shutdown` in
-PowerShell), and start the VM with `--software` (WSLg's window has no OpenGL for QEMU).
+**On Windows 11 with WSL 2 and WSLg**, QEMU can show a window on the Windows desktop.
+KVM availability depends on your WSL kernel and host: check `/dev/kvm` before using
+`-enable-kvm`. When it is absent, this command uses CPU emulation and one Full HD
+virtual monitor, without GPU acceleration:
+
+```sh
+sudo apt install qemu-system-x86
+qemu-system-x86_64 -machine q35 -accel tcg,thread=multi -cpu max -smp 4 -m 4G \
+  -cdrom aurora-os-VERSION-amd64.iso -boot order=d \
+  -vga none -device VGA,xres=1920,yres=1080 -display gtk \
+  -nic user,model=virtio-net-pci -usb -device usb-tablet
+```
+
+Replace the ISO name with its path (Windows drives are under `/mnt/c/` in WSL).
+CPU emulation is slower than KVM. If `/dev/kvm` exists and your user can access it,
+replace `-accel tcg,thread=multi -cpu max` with `-enable-kvm -cpu host`.
 
 **Prefer a window to a command?** GNOME Boxes and Virtual Machine Manager (virt-manager)
 open the ISO directly: choose "Debian 13" as the operating system, give it 4 GB of memory
@@ -453,6 +501,7 @@ already enabled).
 | <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> | Pin an area of the screen |
 | <kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd> | Start or stop screen recording (add <kbd>Shift</kbd> for an area) |
 | <kbd>Super</kbd>+<kbd>V</kbd> | Clipboard history |
+| <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> | Clipboard: the whole history in a window |
 | <kbd>Super</kbd>+<kbd>.</kbd> | Emoji |
 | <kbd>Super</kbd>+<kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd> | Terminal |
 | <kbd>Super</kbd>+<kbd>E</kbd> | Files |
@@ -534,9 +583,13 @@ make 2>&1 | why                                 # explains the error and the fix
 Right-click an app, recent file or project in Spotlight for quick actions. Apps can be
 pinned to the dock or desktop; files can be opened in Files, copied by path or handed to
 the Assistant; projects can launch a configured workspace. Settings → System Health →
-Guided Diagnostics creates a local report for installation, boot/login or app problems.
-The default report excludes raw logs; including them is opt-in, and you can edit the
-preview before saving. Nothing is uploaded automatically.
+Guided Diagnostics creates a local report for installation, boot/login, app problems or
+hardware (screen, sound, another device): every report opens with the machine itself —
+model, processor, memory, kernel, Aurora version, session and renderer — and the hardware
+one adds `lspci`, the disks and the kernel's warnings. The default report excludes raw
+logs; including them is opt-in, and you can edit the preview before saving. Home paths,
+e-mail addresses, machine and disk ids, serial numbers and anything shaped like a password
+are redacted first. Nothing is uploaded automatically.
 
 ### Sharing
 - **Files with nearby devices:** right-click a file in Files → *Send to Nearby Device…*
@@ -779,7 +832,7 @@ This is the part most people find mysterious. The ISO contains:
 ```
 
 1. **squashfs.** `mksquashfs` packs the root file system into one compressed, read-only
-   file, a fraction of its size (the whole ISO is about 2.3 GB).
+   file, a fraction of its size. Its size depends on the bundled packages and artwork.
 2. **grub.cfg.** Written by the stage: entries for Try, Install, safe graphics
    (`aurora.safegraphics nouveau.noaccel=1`: software rendering and labwc, keeping the kernel's display driver; plain `nomodeset` would leave Debian's kernel, which has no `simpledrm`, with only a text console), a submenu with 20 languages (it passes `aurora.lang=` and
    `aurora.kbd=` to the kernel), boot from disk, and UEFI firmware settings. All entries
@@ -1254,8 +1307,15 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   readable only by you. Password managers mark their copies as sensitive and wl-paste
   passes that on, so passwords are never stored. cliphist would work too, but it adds a
   Go binary for what is about 60 lines of Python, and it doesn't skip sensitive entries.
-  CopyQ and GPaste bring their own UIs, and ours is Spotlight. Turn it off or clear it in
-  Settings → Privacy.
+  CopyQ and GPaste bring their own UIs; ours are Spotlight, for the quick look, and the
+  **Clipboard** window (`aurora/clipboardapp.py`, `aurora-clipboard show`,
+  <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd>) for the whole history: search, ages, line
+  counts, monospace for code, pins, delete, and the pictures `wl-paste --type image/png`
+  stored alongside the text. Copying from it runs `wl-copy`, which keeps serving the
+  selection after the window closes — a Wayland client owns its selection only while it
+  lives, and this window exists to be closed. Settings → Privacy has the same history: the
+  switch, Clear, and a button that opens this window rather than a second small list of its
+  own.
 
 #### Quick Look: GTK widgets per file type
 - **Alternatives:** GNOME Sushi (needs Nautilus and GJS), opening the default app.
@@ -1290,14 +1350,70 @@ their official source on request) or, rarely, pinned with a checksum at build ti
   login screen computes the same phase. "Auto" dark style flips the system color scheme
   at sunset and sunrise. Choosing Dark Style by hand in the Control Center turns Auto off.
 
+#### The pictures that come with it
+- **What:** three series of four (Starfall, Veil, Horizon — dawn, day, dusk and night, the
+  ones the dynamic background moves between), and six single pictures: Northern Lights, Wave,
+  Nebula, Milky Way, Sunrise and Ringed Planet. All of them are in
+  `branding/wallpapers/`; the series go to `aurora-SERIES-PHASE.png` and the single ones to
+  `aurora-NAME.png`, and Settings gives each a readable name rather than its file name.
+
+#### Animated video wallpapers
+- **What:** Settings → Appearance → Background → **Animated wallpaper** offers the bundled
+  Full HD and 4K clips: auroras, nature, planets, space and abstract loops. Selecting a
+  thumbnail starts the video on the desktop and in the preview. **Static image** shows the included still images directly,
+  in the same inline searchable picker; choosing one leaves it still. Visible type buttons and a short explanation distinguish the modes.
+  **Daylight series** changes pictures at dawn, day, dusk and night. **Load a File…**
+  imports a personal image, MP4, WebM, M4V or MOV; **Play animation** switches playback off to show its static poster.
+- **How:** `shell/livingwallpaper.py` uses GTK's GStreamer media backend for silent,
+  continuous playback. Bundled videos use H.264 at 30 fps, retaining 3840×2160 when the available 4K export fits the **48 MiB per-file limit**;
+  larger videos are exported at 1920×1080, preserving their playback duration. The
+  importer enforces this limit and `tests/static.sh` checks all bundled videos,
+  keeping them below GitHub's recommended 50 MB and hard 100 MB limits. Thumbnails
+  use PNG posters, so the grid opens only the selected video's decoder. The lock
+  screen and wallpaper-derived accent use the poster too.
+- **Power:** playback pauses while a maximized or fullscreen window covers the desktop,
+  or the active power profile is power-saver. Minimized windows allow it to resume.
+  Unmapping a preview or monitor surface closes its decoder and signal subscriptions.
+- **Sources:** the downloaded works and their posters retain their source licenses. `branding/wallpapers/animated/CREDITS.txt` lists authors, source pages,
+  licenses and adaptations, and ships with the artwork package. The importer in
+  `tools/import-wallpaper-videos.py` converts source clips without their audio;
+  clips are slowed with frame blending; excerpts use a short dissolve across the loop boundary.
+  The source catalog keeps the downloaded candidates available for selecting the final collection.
+- **Validation:** `make test-wallpapers` selects all bundled Settings buttons, checks
+  decoding and pause/resume, verifies the lock-screen poster, measures actual changing
+  desktop pixels, and checks that Still stops movement.
+
+#### Icons: one generator, five styles
+- **Alternatives:** shipping a drawn icon set, or using Papirus as-is.
+- **Why:** every icon Aurora draws — apps, folders, file types, devices — is written by
+  `branding/icons/generate.py` on a 128 px grid, so the set stays consistent by construction
+  instead of by discipline. The app icons are one plate plus one glyph, which means the plate
+  can be swapped: Settings → Appearance → **Icon style** picks between **Galaxy** (the
+  default: a deep sky with a lit core and stars), **Aurora ribbon**, **Glass**, **Clay** and
+  **Lightning**, and every app icon in the system changes at once. Each style is a whole icon
+  theme with a dark twin; the four beside the default hold only their app icons and inherit
+  Aurora for folders, file types and devices, so a style costs about 230 KB. The stars of a
+  galaxy icon and the filaments of a lightning one are computed from the icon's place in the
+  set, never from a random number, so a given icon is the same picture on every machine and
+  in every build. Aurora's own four marks used to be hand-drawn SVGs on a different plate
+  from everything else; they are generated like the rest now, and also written into `hicolor`
+  for anything not using an Aurora theme.
+
 #### Overview and hot corners
 - **Alternatives:** labwc's built-in window switcher only, a GNOME-style overview with
   live thumbnails.
 - **Why:** the overview (`shell/overview.py`) is a full-screen layer with a card per
   window from the foreign-toplevel list, over a blurred screenshot of the desktop (grim at
-  half scale, shrunk and scaled back up: a cheap blur with no GPU code). labwc 0.8 doesn't
-  let other programs capture single windows yet, so cards show the app icon and title
-  instead of live thumbnails. Hot corners (`shell/hotcorners.py`) are 2×2-pixel
+  half scale, shrunk and scaled back up: a cheap blur with no GPU code). A card shows the
+  window itself: no protocol here hands one client another client's window (wlr-screencopy
+  copies a whole output and per-window capture arrived in wlroots after the version Debian
+  13 carries), so `shell/previews.py` keeps a picture of each window, cropped out of the
+  screen with grim while that window was in front — which is when its pixels really are on
+  screen — and shows it later, as the big desktops do. Wayfire says where the focused
+  window is (`window-rules/get-focused-view`); the compatibility session has no such
+  interface, so there the cards keep their app icons, as they always did. The same pictures
+  appear in the dock's window lists and in Snap Assist, and Settings → Desktop & Dock →
+  Windows → Window previews turns them off. Hot corners (`shell/hotcorners.py`) are 2×2-pixel
   transparent layer surfaces in the corners. The pointer must rest there for 120 ms,
   which avoids triggers on fast passes, and there is a short cooldown afterwards.
 - **Quarters and thirds** are labwc snap regions defined in `rc.xml`, so they work with
@@ -1456,6 +1572,13 @@ set up a feature, and every place it appears has its own switch.
   (which have a light card of their own). Before, everything the shell drew by hand was dark
   but the parts it drew with libadwaita were not, so choosing Light hung a white Control
   Center off a black top bar.
+- **Density** (Settings → Appearance → Style): *Comfortable* or *Compact*. Compact shortens
+  the top bar from 30 to 25 px and tightens menus, the Control Center, notifications,
+  Spotlight and the dock's row, the way every system offers a density control now.
+- **The glass has grain:** frosted glass scatters light, and the eye reads that as a very
+  fine texture. `tools/glass-noise.py` draws a 128×128 tile of light and shadow at a few
+  percent of opacity, laid over the top bar, the dock and Spotlight: too faint to see as
+  texture, enough to stop a large pane from looking like a rectangle of paint.
 - **Reduce transparency** (Settings → Accessibility → Seeing) makes every glass surface
   solid in one switch, for anyone who reads better without a picture behind the text.
 - **The chrome can take the accent** (Settings → Desktop & Dock → Top Bar → *Tint with the accent color*): the top bar's and the dock's glass is mixed with the accent instead of a neutral dark violet. Together with the wallpaper accent below, the desktop's own furniture follows the picture behind it.
@@ -1466,6 +1589,11 @@ set up a feature, and every place it appears has its own switch.
   down further than blues), so no picture can produce an accent you can't read. It follows
   the dynamic background through the day — blue at noon, rose at dusk — and a picture with
   no real color leaves the chosen accent in place.
+- **Blur behind** (Settings → Desktop & Dock → Top Bar, off by default) hands the job to
+  Wayfire's `blur` plugin, which blurs what is behind the shell's surfaces for real. It
+  needs a GPU and the Aurora session; under the software rendering Aurora falls back to
+  in virtual machines it is slow or has no visible effect, so the glass below is still
+  what most installations see.
 - **Glass without a blur:** nothing blurs what is behind a surface — that needs the GPU, and
   Aurora runs on software rendering in virtual machines. So the shell's glass is graded by
   what can end up underneath: the top bar and the dock own their strip of screen and keep
@@ -1481,6 +1609,9 @@ set up a feature, and every place it appears has its own switch.
   cards lift under the pointer. All of it is CSS, so GTK drops every bit of it when
   animations are turned off. GTK and Files retain their own content transitions
   (`gtk4-animations.css`). The Window animations switch controls both layers.
+  Context menus share `aurora.popovers.ContextMenu`: 150 ms entrance and 110 ms
+  exit transitions. Native Wayland outside dismissal releases its input grab
+  immediately; a noninteractive picture completes the remaining exit animation.
 - **Rendering in virtual machines:** labwc uses wlroots' **pixman** renderer and GTK's
   **cairo** renderer without a GPU. Wayfire 0.9 requires GLES, so Aurora uses Mesa's
   software GL in those VMs with wlroots' software-rendering opt-in and retains labwc
@@ -1573,8 +1704,21 @@ set up a feature, and every place it appears has its own switch.
 - **Why these and not more:** they are what nearly every developer uses in their first
   hour. Anything heavier or more personal (IDEs, language toolchains, cloud CLIs,
   databases) goes through **Dev Hub**. It installs from the official source, so versions
-  are always current and don't age with Debian's release, and it shows every command in
-  a terminal.
+  are always current and don't age with Debian's release. An install shows the tool's icon, a
+  progress bar and the line its output is on right now; the terminal itself is behind *Show
+  Details* and opens by itself when something fails. A recipe that needs the administrator
+  password asks for it once at the start (`sudo -v`, with the terminal on screen for it), not
+  somewhere in the middle of a wall of text.
+- **One definition per third-party repository.** Two copies of the same apt repository with
+  different `Signed-By` key paths make apt refuse *every* update, system updates included
+  (`E: Conflicting values set for option Signed-By`). A vendor package's own postinst, an
+  earlier Dev Hub attempt or a how-to followed by hand all leave such a copy — Microsoft's
+  `code` package is the classic one. So `add_repo` keeps one definition and one key in
+  `/etc/apt/keyrings`, and moves every other copy of the same URI aside with a
+  `.aurora-disabled` suffix (apt ignores that suffix, and the log says what moved);
+  recipes whose package re-adds its repository while installing call `keep_one_source`
+  afterwards to do it again. Installing the tool from Dev Hub therefore also repairs a
+  machine already stuck in that state.
 - **Containers two ways:** Docker for compatibility with the ecosystem, and Podman plus
   distrobox for rootless containers and "any distro in a terminal" (like Fedora's
   Toolbox). Ptyxis integrates with both.
@@ -1593,8 +1737,8 @@ set up a feature, and every place it appears has its own switch.
 
 ### Aurora's own packages and repository
 - **Choice:** `build/package-desktop.sh` builds two `.deb`s with `dpkg-deb`:
-  `aurora-desktop` (everything that changes often, about 160 KB) and `aurora-artwork`
-  (wallpapers and sounds, about 20 MB, rarely changes). `tools/publish-apt.sh` makes a
+  `aurora-desktop` (the shell, apps and desktop data) and `aurora-artwork`
+  (wallpapers and sounds, including the Full HD and 4K videos). `tools/publish-apt.sh` makes a
   signed apt repository (`apt-ftparchive`, `InRelease` and `Release.gpg` with an Ed25519
   key) for GitHub Pages.
 - **Alternatives:** a Launchpad PPA or OBS (tied to other distributions' infrastructure),
@@ -1620,6 +1764,78 @@ set up a feature, and every place it appears has its own switch.
   manifest, hidden and renamed launchers, third-party packages with checksums. live-build
   and mkosi are capable, but they add a configuration language on top of what are
   ultimately the same steps.
+
+### Everyday file and settings reliability
+
+The image includes `gvfs-fuse` alongside GVFS and its network backends, so mounted
+shares expose paths usable by ordinary apps and the existing file-operation worker.
+The image gate checks that this dependency is installed.
+
+Files lets you **Add to Sidebar** from a folder's context menu, from empty space
+for the current folder, or from an existing place's menu. Favorite folders have
+**Rename Bookmark…** and **Remove from Sidebar**; removing a favorite keeps its
+files. Favorites use GTK's shared `~/.config/gtk-3.0/bookmarks` format, support
+network URIs, and update across open windows and compatible file choosers.
+
+Grid, list and desktop file drags offer both copy and move. Files accepts multiple
+files dropped onto folders, empty space, sidebar places and path segments. Folder
+drops prefer moving when the source permits it. The
+negotiated action decides whether to copy or move; hold Ctrl to request copy or
+Shift to request move. Network navigation uses cancellable asynchronous GIO requests,
+so an unresponsive server does not freeze GTK or override a later navigation.
+Transfers keep their progress, cancellation, retry and undo
+history. Copying into a folder's own subtree through a symlink is rejected; special
+files such as named pipes fail promptly instead of hanging the operation. Moves
+preserve a destination created by another process while the name was being chosen.
+
+Drag gesture capture happens above the built-in selection controls, and the files
+hit on the initial press remain the source when GTK draws its selection overlay.
+Dragging empty space still draws a rectangle to select multiple files.
+Wayland modifiers come from the seat keyboard and the negotiated action survives
+asynchronous payload reads.
+
+File clipboard ownership follows the system clipboard: copying text or files in
+another app replaces the previous Files selection. The standard GTK file list and
+GNOME `x-special/gnome-copied-files` format support copy/cut interoperability.
+A failed or cancelled cut in Files retains the remaining files for another paste;
+a successful move clears that cut without replacing a newer clipboard selection.
+
+Settings → Date & Time adds a calendar, hour and minute controls, and **Apply Date
+and Time** when automatic time is off. Clock, timezone, power-button, lid and battery
+charge-limit changes wait for authorization in a worker; GTK remains responsive,
+repeat requests are blocked while pending, and cancellation restores the previous
+selection. AI component downloads retain interrupted partial files for resumption,
+verify an existing download's checksum, and finalize an already complete partial
+file without an unnecessary network request.
+
+Evidence and remaining limits are in
+[the follow-up audit](docs/audits/2026-10-11-followup.md). The corresponding native
+GTK regression checks are part of `tests/settings-system-interactions.sh`.
+
+The [12 October cross-component audit](docs/audits/2026-10-12.md) covers recording,
+notifications, clipboard history, Windows migration, USB checksum selection, image resizing and
+batch renaming. Recorder shutdown runs outside the shell thread, with a saving
+state and automatic cleanup when the process exits. Pinned text entries survive
+a full clipboard history, and watcher/UI edits share a lock. Windows migration
+preserves existing exports and destination links; USB checksum records match the
+complete image filename. Image encoding uses a temporary output before replacing
+an original, and batch renaming rejects paths outside the selected folder.
+Do Not Disturb preserves notification IDs and timers, so progress updates replace
+one history entry and a closed notification emits its closing signal only once.
+
+The [activity and account/session audit](docs/audits/2026-10-12-activity-sessions.md)
+adds a scrollable complete activity history, active jobs first, cancellation
+feedback and Clear completed. Abandoned jobs become Interrupted and malformed
+records are ignored. Creating/removing accounts keeps Settings responsive,
+manual usernames survive full-name edits, password-change PTYs close on every
+exit, and the greeter clears passwords on account changes and closes its IPC
+connections. Native multi-user and logout/relogin checks accompany the real
+greetd/PAM/logind QEMU scenario in `tests/interact/users_sessions.py`.
+The shared GTK window style now uses cool neutral light/dark surfaces, lighter
+card edges and shadows, clear selection/focus cues and a tidier Settings sidebar.
+Corner-radius preferences still override the shared defaults. The live surface
+palette yields to high contrast. `tests/window-style-preview.sh` captures Settings,
+Files and Task Manager in both schemes, including narrow Settings layouts.
 
 ### Testing
 - **Static:** syntax and shellcheck, desktop-file-validate, strict schema compilation,
@@ -1659,12 +1875,19 @@ set up a feature, and every place it appears has its own switch.
     so Calamares couldn't copy the system to the disk.
 
 ### Bugs we found and how we fixed them
+The October audit also corrected delayed shortcut delivery, the empty emoji picker,
+SSH host-key generation order, and permissions copied from Windows checkouts.
+
 Real bugs met while building Aurora, most of them by using the system the way a person
 does (on real hardware, in QEMU and on Hyper-V). Each fix has a test that would catch it
 coming back.
 
 | Symptom | Cause | Fix |
 |---|---|---|
+| Some app launches showed no progress cursor, inviting repeated clicks. | Only the dock's launch path provided feedback and cleared it after a fixed delay. | All shell launch paths share deferred GIO startup, immediate progress feedback, matching-window completion and bounded deduplication. |
+| Context menus disappeared abruptly and could close again after a rapid reopen. | GTK hid their native surfaces immediately; delayed dismissal did not account for reopening. | Shared entrance/exit transitions, cancellation on reopen, and an inert exit picture after native outside dismissal. |
+| A partially offscreen window had no overview preview. | The screenshot region extended beyond monitor bounds and negative positions were discarded. | Intersect the capture with visible output rectangles, retaining negative coordinates. |
+| A damaged or stale local AI PID file could target an unrelated process. | PID files were trusted without checking process identity. | Reject reserved/invalid PIDs and verify the server/reaper command line before tracking or terminating it. |
 | On Hyper-V, after installing, the VM skipped the disk and tried the network (PXE). | Boot entries written by the guest into the VM's firmware are unreliable on Hyper-V ([Debian #949751](https://bugs.debian.org/949751)), and the disk's fallback path held shim without the GRUB and config it loads (Debian's signed GRUB always reads `\EFI\debian\grub.cfg`). | The installer uses Debian's `--force-extra-removable` (the full signed chain in `\EFI\debian` and `\EFI\BOOT`, no `fbx64.efi`), writes no firmware entry on Hyper-V and removes the one the bootloader step made. The install test boots the disk with an empty NVRAM, like a fresh Hyper-V VM. |
 | Wayfire flickered on Hyper-V. | Hyper-V's display driver copies each frame to the host's video memory when the compositor commits it, right after `glFlush()`, while Mesa's software renderer can still be drawing it in background threads. | On Hyper-V, llvmpipe runs without worker threads (`LP_NUM_THREADS=0`): each frame is complete before it is copied. |
 | On Hyper-V, the live ISO didn't start with Secure Boot on (PXE). | The live ISO's boot loader isn't signed. | The Hyper-V script and guide turn Secure Boot off for the ISO; installed systems start GRUB directly there (the signed shim chain on other machines). |
@@ -1701,6 +1924,12 @@ coming back.
 | After the shell restarted, every copy appeared twice in the clipboard history. | Its helpers (clipboard watchers, night light, gestures, screen sharing, recording) outlived it and were started again. | They're started with `setpriv --pdeathsig`: they end with the shell. |
 | Recovery mode only said "the root account is locked". | Aurora has no root password (administrators use sudo). | Rescue and emergency mode open a root shell, as on Ubuntu. |
 | A custom shortcut with `#` in its command (a link's #anchor) ran cut short in the Aurora session. | Wayfire's config reader treats an unescaped `#` as a comment. | The command is written with `\#`, checked against wf-config itself. |
+
+| Settings froze during firewall/sharing authorization and kept a cancelled switch on. | Privileged actions ran in the GTK thread; failure did not restore state. | Authorization runs in a worker, disables the pending row, and restores it on cancellation without another request. |
+| Remote Login was on but unreachable with the default firewall. | Enabling SSH did not open port 22. | An Aurora-owned ufw profile follows the service and socket; enabling failures undo its rule. |
+| Privacy → Lock now did nothing. | It was an inactive row without a callback. | An actionable button launches aurora-lock. |
+| Settings could silently save a failed display change. | Missing commands and timeouts returned empty output even for checked mutations. | Checked mutations raise an error; display rollback failures are reported. |
+| Secondary monitors could only be positioned from a terminal. | Displays exposed mode, scale and rotation but not position. | X/Y position is available with keep/revert/timeout, persistence, and Wayfire output configuration. |
 
 ### Website
 - **Choice:** hand-written HTML, CSS and plain JavaScript in `docs/`, served by GitHub
@@ -1749,7 +1978,9 @@ never fails before it is published. To publish: `make debs && make repo`, commit
 (`~/.config/aurora-os/archive-gnupg`); its public half is
 `config/keys/aurora-archive-keyring.gpg`.
 
-## Testing
+### Testing
+
+The [11 October 2026 audit](docs/audits/2026-10-11.md) records fixes, results and the limits of the checks.
 
 | Command | Needs | What it checks |
 |---|---|---|
@@ -1757,10 +1988,17 @@ never fails before it is published. To publish: `make debs && make repo`, commit
 | `make test-unit` | Docker | pytest unit tests (`tests/unit/`): calculator safety, search, notification markup sanitizing, copy/move operations, labwc config editing, GTK stylesheet management, autostart filtering, greetd protocol, sunrise/sunset, conversions, clipboard history, OCR language choice, weather parsing, Spotlight providers, Night Light schedule, verified and resumable downloads, the AI catalog's pins, streaming from an OpenAI-compatible server, the reasoning filter, search by meaning, answer and dictation languages, touchpad gestures, disk health parsing, Wi-Fi QR codes. |
 | `make test-smoke` | Docker | Starts the shell in a headless Wayland session, opens every Aurora app and every Settings page, opens Spotlight and Launchpad, tries conversions, emoji, clipboard history and project search, previews code, a PDF and a picture with Quick Look, opens the overview, streams an answer in the Assistant and opens Writing Tools (against a fake AI server), opens Game Hub and the AI and System Health pages, fails on any Python exception, and saves screenshots to `work/smoke-out/smoke/`. |
 | `make test` | Docker | All three above. |
+| `make test-system-native` | Docker | GTK unit checks, administrative authorization and cancellation, concurrent power-button/lid configuration edits, Lock now, two-monitor positioning with keep/revert/timeout and persistence, Files operations, favorite folders, file clipboard interoperability and cut retry, grid/list drag actions and breadcrumb drops, network navigation cancellation, manual date/time and power authorization rollback, Assistant streaming and local-only attachments. |
+| `make test-startup-menus` | ISO + QEMU/KVM | Opens a deliberately slow app through desktop clicks, checks immediate feedback and repeated-launch deduplication, then dismisses context menus with Esc and an outside click, including reduced motion. |
+| `make test-sharing` | ISO + QEMU/KVM | Activates SSH, checks its real firewall profile and handshake, then stops service/socket while preserving independent rules. |
 | `make test-image` | a built ISO | Every app in `config/apps.manifest` installed, visible and executable; themes; identity, required programs, enabled/disabled services, desktop files, installer branding and modules, no leftovers (policy-rc.d, machine id, live user), BIOS and UEFI boot records, ISO contents, GRUB entries, offline pool. The new features too: the dynamic wallpaper set, session sounds, OCR data, Quick Look previewers, grub-btrfs (installed but off until a btrfs install), the fingerprint PAM scope, the KDE Connect firewall profile, the snapshot hook, and the installer's btrfs layout. |
-| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, labwc and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. (Transmission is not started: a BitTorrent client joining its network from the test VM would trip company firewalls' P2P alerts.) Logs and screenshots are kept in `work/boot-test/`. |
+| `make test-boot` | ISO + QEMU/KVM + OVMF | Boots the ISO **through its real GRUB**, once with BIOS and once with UEFI. Through the QEMU guest agent it checks that the live medium is mounted, that the graphical target is reached with no failed units, and that greetd, the live user, the compositor and Aurora Shell are up with no exceptions. It also checks that the network is connected, the firewall is active, the Plymouth theme is set and the installer is present, that the theme loads without CSS errors, and that apps started by the shell don't inherit its GTK 4 preload. It then takes a screenshot and checks that the desktop is visible. Finally it **starts every default app** marked in `config/apps.manifest`, with the real session environment, and checks that each one keeps running. (Transmission is not started: a BitTorrent client joining its network from the test VM would trip company firewalls' P2P alerts.) Logs and screenshots are kept in `work/boot-test/`. |
 | `make test-interact` | ISO + QEMU/KVM | **Uses the live desktop like a person**: a USB tablet and QMP move the pointer, click, double-click and type, and the shell reports which windows exist and their state (`aurora-shell windows`). It checks that desktop icons select and clear, that a file and a folder open from the desktop, that Install Aurora OS opens the installer, brings it forward and reopens it after closing, that <kbd>Super</kbd>+<kbd>Return</kbd>, <kbd>Super</kbd>+<kbd>M</kbd> and restore work, that <kbd>Esc</kbd> closes the Control Center and gives the keyboard back, that hot corners fire, that Files' context menu and every Settings page open without errors, that no text is lost to markup, and that the shell comes back by itself after being killed. `--push` tries the checkout's code without rebuilding the ISO. Screenshots are kept in `work/interact-test/`; `tests/interact/serve.py` and `do.py` drive the same VM step by step by hand. |
+| `make test-newfeatures` | ISO + QEMU/KVM | This release's new work on the real system, in the Aurora session: the five icon styles one after another (each must redraw the dock), Launchpad's pages and a folder made from two apps, the moving background and that *Still* really is still, window previews in the overview with the setting on and off, and that Clipboard, USB Stick Writer and Migrate from Windows each open a window. Every check is a measurement on a screenshot or a question to the shell, not a look. |
 | `make test-files-shortcuts` | ISO + QEMU/KVM | Drives Files with the documented keyboard shortcuts and stresses focus, rapid duplicate requests and asynchronous trash/undo edges; checks Quick Look, rename, trash, permanent-delete cancellation, full-path copying, navigation, tabs, views, search, chained undo/redo, exceptions and GTK criticals. |
+| `make test-files-drag` | ISO + QEMU/KVM | Sends actual mouse drags and Ctrl/Shift keys in grid/list view, checks copies preserve their sources, moves and Undo restore the expected files, and checks empty-space selection can copy multiple files. |
+| `make test-network-files` | ISO + QEMU/KVM | Starts a dedicated SFTP server inside the test VM, mounts it with GVFS, and checks network-folder navigation, copy/cut, Undo/Redo, drops and favorites with GIO criticals treated as fatal. Requires `gvfs-fuse` to be included in the ISO. |
+| `make test-admin-concurrency` | Docker | Applies 80 simultaneous power-button/lid pairs in a disposable container and verifies that neither setting loses the other change. |
 | `make test-install` | ISO + QEMU/KVM + OVMF | **Installs Aurora for real**, once with BIOS and once with UEFI. It boots the ISO with an empty 24 GB disk, starts the installer and drives it with key presses sent through QEMU, just like a person at the keyboard: welcome, location, keyboard, "Erase disk" on btrfs, a user with a strong password, Install. Then it boots the installed disk alone and checks the user, the login screen, the live user and live-only files being gone, the btrfs subvolumes and compression, Timeshift's configuration, the "Fresh install" snapshot, a "Before: apt" snapshot after installing a package, and the snapshots entry in the boot menu. Screenshots of every installer step, and of GRUB's snapshot menu, are kept in `work/install-test/`. |
 
 Run `make test && make iso && make test-image && make test-boot && make test-interact && make test-install` before
@@ -1886,9 +2124,11 @@ screenshots, features, download and the install guide.
   subscriptions in the providers' own apps, so Aurora AI uses API keys (billed per use)
   and Dev Hub installs Claude Code and Codex for subscription users. *Idea:* an Aurora MCP
   server so those assistants can act on the desktop.
-- **Overview thumbnails.** labwc 0.8 doesn't let other programs capture single windows,
-  so the overview shows app icons and titles. *Planned:* live thumbnails once labwc
-  supports the `ext-image-capture-source` protocol.
+- **Live window thumbnails.** No compositor here lets one program capture another's
+  window, so a preview is the window as it last looked, cropped out of the screen while it
+  was in front (see Overview above). *Planned:* real live thumbnails once wlroots'
+  `ext-image-copy-capture` protocol reaches Debian; in the compatibility session, which has
+  no interface for asking where a window is, the cards stay app icons.
 - **Snapshots need btrfs.** On ext4 or xfs installs there is no automatic snapshot or
   boot-menu rollback (Timeshift can still make rsync copies).
 - **Fingerprint** unlocks sudo and admin prompts, not the login or lock screen (on
@@ -1908,3 +2148,7 @@ Aurora uses no Apple assets, fonts or icons.
 Aurora stands on the work of the Debian project and of the upstream projects listed in
 [Under the hood](#under-the-hood-every-technical-choice). Each keeps its own
 license. [portop](https://github.com/padovanl/portop) is MIT-licensed.
+
+Downloaded still and animated wallpapers retain their source licenses; the catalogs and
+`CREDITS.txt` under `branding/wallpapers/` describe their authors, sources and adaptations.
+They are separate from Aurora’s original generated artwork.

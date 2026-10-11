@@ -3,6 +3,7 @@
 import os
 
 from gi.repository import Gdk, Gio, GLib, Gtk
+from aurora.popovers import ContextMenu
 
 from aurora import apps, settings
 from aurora.i18n import N_, _
@@ -109,7 +110,7 @@ class Clock(Gtk.MenuButton):
         self._label = Gtk.Label()
         self.set_child(self._label)
 
-        pop = Gtk.Popover(has_arrow=False)
+        pop = ContextMenu(has_arrow=False)
         pop.add_css_class("aurora-calendar")
         box = Gtk.Box(spacing=12, margin_top=12, margin_bottom=12,
                       margin_start=12, margin_end=12)
@@ -173,13 +174,15 @@ class ActivityCenter(Gtk.MenuButton):
     def __init__(self):
         super().__init__(icon_name="view-list-symbolic", css_classes=["flat", "panel-button"],
                          tooltip_text=_("Activities"))
-        self.pop = Gtk.Popover(has_arrow=False)
+        self.pop = ContextMenu(has_arrow=False)
         self.pop.add_css_class("aurora-context-menu")
         self.rows = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
                             margin_top=12, margin_bottom=12,
                             margin_start=12, margin_end=12)
         self.rows.set_size_request(320, -1)
-        self.pop.set_child(self.rows)
+        self.pop.set_child(Gtk.ScrolledWindow(child=self.rows,
+            hscrollbar_policy=Gtk.PolicyType.NEVER, max_content_height=480,
+            propagate_natural_height=True))
         self.pop.connect("show", lambda *_: self.refresh())
         self.set_popover(self.pop)
         GLib.timeout_add_seconds(2, self._tick)
@@ -187,8 +190,7 @@ class ActivityCenter(Gtk.MenuButton):
 
     def _tick(self):
         from aurora import activities
-        items = activities.list_recent()
-        self.set_visible(bool(items))
+        items = activities.list_recent(limit=None)
         self.set_tooltip_text(_("Activities ({n} running)").format(
             n=sum(item.get("status") == "running" for item in items)))
         if self.pop.get_visible():
@@ -198,27 +200,38 @@ class ActivityCenter(Gtk.MenuButton):
     def refresh(self, items=None):
         from aurora import activities
         if items is None:
-            items = activities.list_recent()
+            items = activities.list_recent(limit=None)
         while (child := self.rows.get_first_child()) is not None:
             self.rows.remove(child)
-        self.rows.append(Gtk.Label(label=_("Activities"), xalign=0,
-                                   css_classes=["heading"]))
+        header = Gtk.Box(spacing=8)
+        header.append(Gtk.Label(label=_("Activities"), xalign=0, hexpand=True,
+                                css_classes=["heading"]))
+        clear = Gtk.Button(label=_("Clear completed"), css_classes=["flat"],
+                           sensitive=any(i.get("status") != "running" for i in items))
+        clear.connect("clicked", lambda *_: (activities.clear_finished(), self.refresh()))
+        header.append(clear)
+        self.rows.append(header)
         if not items:
             self.rows.append(Gtk.Label(label=_("No recent activities"), xalign=0,
                                        css_classes=["dim-label"]))
-        for item in items[:8]:
+        for item in items:
             line = Gtk.Box(spacing=8)
             text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3, hexpand=True)
-            text.append(Gtk.Label(label=item.get("label", ""), xalign=0, ellipsize=3))
+            text.append(Gtk.Label(label=item.get("label", ""), xalign=0, ellipsize=3,
+                                  tooltip_text=item.get("label", "")))
             state = item.get("status")
             detail = item.get("item") or ""
             if state == "failed":
-                detail = item.get("error") or _("Failed")
+                detail = (_("Interrupted") if item.get("interrupted") else
+                          item.get("error") or _("Failed"))
             elif state == "cancelled":
                 detail = _("Cancelled")
             elif state == "finished":
                 detail = _("Finished")
-            text.append(Gtk.Label(label=detail, xalign=0, ellipsize=3,
+            cancelling = state == "running" and activities.cancelled(item["id"])
+            if cancelling:
+                detail = _("Cancelling…")
+            text.append(Gtk.Label(label=detail, xalign=0, ellipsize=3, tooltip_text=detail,
                                   css_classes=["dim-label", "caption"]))
             if state == "running":
                 progress = item.get("progress", 0)
@@ -229,8 +242,10 @@ class ActivityCenter(Gtk.MenuButton):
                 line.append(text)
                 if item.get("cancellable", True):
                     cancel = Gtk.Button(icon_name="process-stop-symbolic",
+                                        sensitive=not cancelling,
                                         tooltip_text=_("Cancel transfer"))
-                    cancel.connect("clicked", lambda _b, ident=item["id"]: activities.cancel(ident))
+                    cancel.connect("clicked", lambda _b, ident=item["id"]:
+                                   (activities.cancel(ident), self.refresh()))
                     line.append(cancel)
             else:
                 line.append(text)
@@ -320,7 +335,7 @@ class AuroraMenu(Gtk.MenuButton):
         self.shell = shell
         self.set_child(Gtk.Image(icon_name="aurora-logo-symbolic", pixel_size=16,
                                  css_classes=["panel-logo-icon"]))
-        pop = Gtk.Popover(has_arrow=False, css_classes=["aurora-menu"])
+        pop = ContextMenu(has_arrow=False, css_classes=["aurora-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         box.set_size_request(300, -1)
 
@@ -386,12 +401,14 @@ class AuroraMenu(Gtk.MenuButton):
 
 
 class Panel(LayerWindow):
-    HEIGHT = 30
+    HEIGHT = 30             # comfortable; see Settings → Appearance → Density
+    COMPACT_HEIGHT = 25
     FLOAT_MARGIN = 10       # room around the floating islands
 
     def __init__(self, shell, monitor):
         s = settings.get()
         edge = s.get_string("panel-position") if s else "top"
+        compact = s is not None and s.get_string("interface-density") == "compact"
         super().__init__(shell, "aurora-panel", layer=Layer.TOP,
                          anchors=(edge, "left", "right"), monitor=monitor,
                          exclusive=True, keyboard=Keyboard.ON_DEMAND)
@@ -402,7 +419,8 @@ class Panel(LayerWindow):
         # the screen's edge.
         floating = s is not None and s.get_string("panel-style") == "floating"
         self.add_css_class("panel-floating" if floating else "panel-bar-style")
-        height = self.HEIGHT + (self.FLOAT_MARGIN if floating else 0)
+        bar_height = self.COMPACT_HEIGHT if compact else self.HEIGHT
+        height = bar_height + (self.FLOAT_MARGIN if floating else 0)
         self.shell = shell
         self.set_default_size(-1, height)
 
@@ -522,7 +540,7 @@ class Panel(LayerWindow):
             if t.minimized:
                 classes.append("minimized")
             b = Gtk.Button(child=content, css_classes=classes, tooltip_text=t.title or name)
-            b.connect("clicked", lambda _b, t=t: t.activate())
+            b.connect("clicked", lambda _b, t=t: t.toggle())
             right = Gtk.GestureClick(button=Gdk.BUTTON_SECONDARY,
                                      propagation_phase=Gtk.PropagationPhase.CAPTURE)
             right.connect("pressed", self._window_context_menu, t, b)
@@ -532,7 +550,7 @@ class Panel(LayerWindow):
 
     def _window_context_menu(self, gesture, _n, x, y, active, button):
         """Window-specific right-click actions on its stable top-bar button."""
-        pop = Gtk.Popover(has_arrow=False, halign=Gtk.Align.START,
+        pop = ContextMenu(has_arrow=False, halign=Gtk.Align.START,
                           css_classes=["aurora-context-menu"])
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3,
                       margin_top=5, margin_bottom=5, margin_start=5, margin_end=5)

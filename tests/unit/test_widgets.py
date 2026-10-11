@@ -141,9 +141,9 @@ def test_widget_customize_can_be_closed(monkeypatch):
     if not widgets.Gtk.init_check() or widgets.Gdk.Display.get_default() is None:
         pytest.skip("GTK display unavailable")
 
-    def settle():
+    def settle(delay=60):
         loop = widgets.GLib.MainLoop()
-        widgets.GLib.timeout_add(60, lambda: (loop.quit(), False)[1])
+        widgets.GLib.timeout_add(delay, lambda: (loop.quit(), False)[1])
         loop.run()
 
     layer = widgets.WidgetLayer.__new__(widgets.WidgetLayer)
@@ -170,7 +170,7 @@ def test_widget_customize_can_be_closed(monkeypatch):
             choice.set_selected(1)
             assert widget.option("style") == "digital"
             box.get_last_child().emit("clicked")
-            settle()
+            settle(200)
             assert not popover.get_visible()
             assert popover.get_parent() is None
         assert saved == [True]

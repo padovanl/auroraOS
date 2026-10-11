@@ -25,6 +25,8 @@ for bin in labwc greetd aurora-shell aurora-session aurora-settings aurora-files
 done
 
 echo "== services"
+expect "system configuration and desktop libraries have safe permissions" bash -c \
+    'test -z "$(find "$1/etc" "$1/usr/lib/aurora" \( -type f -o -type d \) -perm /022 -print -quit)"' -- "$ROOTFS"
 for unit in greetd NetworkManager ufw aurora-live-setup; do
     expect "$unit enabled" chroot "$ROOTFS" systemctl is-enabled "$unit"
 done
@@ -40,6 +42,7 @@ expect "light window theme" test -f "$ROOTFS/usr/share/themes/Aurora-Light/openb
 expect "GTK3 theme (adw-gtk3)" test -f "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-3.0/gtk.css"
 expect "no adw-gtk3 GTK 4 CSS" test ! -e "$ROOTFS/usr/share/themes/adw-gtk3-dark/gtk-4.0"
 expect "Qt follows GNOME settings" chroot "$ROOTFS" dpkg -s qgnomeplatform-qt6
+expect "network folders have paths usable by apps and file operations" chroot "$ROOTFS" dpkg -s gvfs-fuse
 expect "plymouth hand-over for greetd" test -f "$ROOTFS/etc/systemd/system/greetd.service.d/aurora-plymouth.conf"
 expect "wallpaper series" test -s "$ROOTFS/usr/share/backgrounds/aurora/aurora-veil-day.png"
 expect "shell imports" chroot "$ROOTFS" env PYTHONDONTWRITEBYTECODE=1 python3 -c "import sys; sys.path.insert(0,'/usr/lib/aurora'); import aurora.shell.dock, aurora.settingsapp.app, aurora.files.app, aurora.devhub.app"
@@ -105,7 +108,8 @@ expect "Terminal actions keep their own names" \
 
 echo "== installer"
 expect "signed GRUB uses Debian EFI vendor directory" grep -qx 'efiBootloaderId: "debian"' "$ROOTFS/etc/calamares/modules/bootloader.conf"
-expect "UEFI fallback installation enabled" grep -qx 'installEFIFallback: true' "$ROOTFS/etc/calamares/modules/bootloader.conf"
+expect "Calamares leaves fallback ownership to Aurora's EFI helper" grep -qx 'installEFIFallback: false' "$ROOTFS/etc/calamares/modules/bootloader.conf"
+expect "Aurora EFI helper is installed" test -x "$ROOTFS/usr/local/lib/aurora/efi-install"
 expect "EFI repair helper installed" test -s "$ROOTFS/usr/local/lib/aurora/efi-install"
 expect "GRUB image for Hyper-V's direct start" test -s "$ROOTFS/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi"
 expect "EFI helper installs Debian's extra removable path" grep -q -- '--force-extra-removable' "$ROOTFS/usr/local/lib/aurora/efi-install"

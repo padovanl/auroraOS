@@ -206,7 +206,10 @@ SITE_ICONS = {
              "system-file-manager", "preferences-system", "org.gnome.SystemMonitor",
              "org.gnome.baobab", "org.gnome.seahorse.Application", "org.gnome.Characters",
              "org.gnome.font-viewer", "timeshift", "org.gnome.DejaDup", "org.gnome.Firmware",
-             "org.gnome.TextEditor", "org.gnome.Papers", "org.gnome.SoundRecorder"],
+             "org.gnome.TextEditor", "org.gnome.Papers", "org.gnome.SoundRecorder",
+             "aurora-logo", "aurora-assistant", "aurora-devhub", "aurora-gamehub",
+             "org.aurora.Files", "org.aurora.TaskManager", "org.aurora.QuickLook",
+             "org.aurora.Clipboard", "org.aurora.UsbWriter", "portop"],
     "places": ["folder", "user-home", "folder-download", "folder-music", "folder-pictures",
                "folder-videos", "folder-documents", "folder-development", "user-trash"],
     "mimetypes": ["application-pdf", "text-x-python", "image-x-generic", "package-x-generic",
@@ -236,9 +239,7 @@ def write_icons():
     import subprocess
     subprocess.run([sys.executable, os.path.join(ROOT, "branding", "logo.py"), "webp",
                     os.path.join(ROOT, "docs", "assets", "aurora-logo.webp"), "480"], check=True)
-    for name in ("aurora-devhub", "aurora-gamehub", "aurora-assistant", "aurora-logo"):
-        shutil.copyfile(os.path.join(ROOT, "desktop", "data", "icons", "scalable", "apps",
-                                     name + ".svg"), os.path.join(dest, name + ".svg"))
+
 
 
 # "Under the hood" is split into one page per chapter (### in the README), like

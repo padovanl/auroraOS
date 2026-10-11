@@ -3,6 +3,23 @@ import ctypes.util
 import os
 import sys
 
+# Commands addressed to an existing shell need GIO, not the rendering stack.
+# Importing all GTK/shell modules and re-executing with the layer-shell preload
+# delayed rapid shortcuts enough for their commands to arrive out of order.
+if len(sys.argv) > 1 and not sys.argv[1].startswith("--"):
+    from gi.repository import Gio, GLib
+    sender = Gio.Application(application_id="org.aurora.Shell",
+                             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
+    try:
+        sender.register(None)
+    except GLib.Error as error:
+        print(f"aurora-shell: {error.message}", file=sys.stderr)
+        sys.exit(1)
+    if not sender.get_is_remote():
+        print("aurora-shell: shell is not running", file=sys.stderr)
+        sys.exit(1)
+    sys.exit(sender.run(sys.argv))
+
 # gtk4-layer-shell must be loaded before libwayland-client: re-exec once with it
 # preloaded, then drop it from the environment again. Every app the shell
 # starts inherits its environment, and GTK 3 apps (Firefox, LibreOffice…)

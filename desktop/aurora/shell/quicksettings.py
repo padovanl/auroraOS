@@ -570,7 +570,8 @@ class QuickSettings(Gtk.Popover):
         self.t_osk.set_state(getattr(sh, "_osk", None) is not None and sh.osk.showing)
         toggles.append(self.t_osk)
         if sh.recorder.available:
-            self.t_rec.set_state(sh.recorder.recording,
+            self.t_rec.set_state(sh.recorder.recording or sh.recorder.stopping,
+                                 _("Saving recording…") if sh.recorder.stopping else
                                  _("Recording…") if sh.recorder.recording else None)
             toggles.append(self.t_rec)
         groups = (

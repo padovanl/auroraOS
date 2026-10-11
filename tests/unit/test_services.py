@@ -46,6 +46,15 @@ def test_a_failing_service_becomes_unavailable():
     assert s.icon_name == "audio-volume-muted-symbolic"
 
 
+def finish_recording(recorder):
+    from gi.repository import GLib
+    deadline = time.monotonic() + 2
+    while recorder.proc is not None and time.monotonic() < deadline:
+        GLib.MainContext.default().iteration(False)
+        time.sleep(.01)
+    assert recorder.proc is None
+
+
 def test_a_stubborn_recorder_is_killed_and_reaped():
     class Process:
         def __init__(self):
@@ -73,6 +82,7 @@ def test_a_stubborn_recorder_is_killed_and_reaped():
     recorder.proc, recorder.path = Process(), "/nonexistent/recording.mp4"
     process = recorder.proc
     recorder.stop()
+    finish_recording(recorder)
     assert process.signals == [services.signal.SIGINT]
     assert process.killed and process.waits == 2
     assert recorder.proc is None and recorder.path is None
@@ -93,6 +103,7 @@ def test_a_recorder_that_exits_during_stop_is_reaped():
     services.GObject.Object.__init__(recorder)
     recorder.proc, recorder.path = Process(), "/nonexistent/recording.mp4"
     recorder.stop()
+    finish_recording(recorder)
     assert recorder.proc is None and recorder.path is None
 
 
@@ -191,11 +202,15 @@ def test_password_change_timeout_kills_and_reaps_passwd(monkeypatch):
     times = iter((0.0, 2.0))
     killed, waited = [], []
     monkeypatch.setattr(system_page.pty, "fork", lambda: (123, 9))
+    closed = []
+    monkeypatch.setattr(system_page, "os", SimpleNamespace(
+        **{**vars(system_page.os), "close": closed.append}))
     monkeypatch.setattr(system_page.time, "monotonic", lambda: next(times))
     monkeypatch.setattr(system_page.os, "kill", lambda pid, sig: killed.append((pid, sig)))
     monkeypatch.setattr(system_page.os, "waitpid",
                         lambda pid, flags: (waited.append((pid, flags)) or (pid, 9)))
     assert system_page.change_password("old", "new", timeout=1) == (False, "")
+    assert closed == [9]
     assert killed == [(123, system_page.signal.SIGKILL)]
     assert waited == [(123, 0)]
 
@@ -287,3 +302,95 @@ def test_lock_closes_keyboard_overlays_before_starting_lock_screen():
     )
     Shell.lock(shell)
     assert events == ["close", "lock"]
+
+
+def test_stopping_recording_keeps_the_shell_responsive(tmp_path, monkeypatch):
+    import threading
+    from gi.repository import GLib
+    release, waiting = threading.Event(), threading.Event()
+    main = threading.current_thread()
+    class Process:
+        ended = False
+        signals = 0
+        def poll(self):
+            return 0 if self.ended else None
+        def send_signal(self, _value):
+            self.signals += 1
+        def wait(self, timeout=None):
+            assert threading.current_thread() is not main, 'Recorder.stop waits on the shell thread'
+            waiting.set()
+            assert release.wait(2)
+            self.ended = True
+            return 0
+    recorder = services.Recorder()
+    recorder.available = True
+    recorder.proc = process = Process()
+    path = tmp_path / 'capture.mp4'
+    path.write_bytes(b'finalized recording')
+    recorder.path = str(path)
+    saved, heartbeat = [], []
+    recorder.connect('saved', lambda _r, value: saved.append(value))
+    monkeypatch.setattr(services.subprocess, 'Popen', lambda *_a, **_kw: (_ for _ in ()).throw(
+        AssertionError('A new recording started while the previous one was finalizing')))
+    try:
+        recorder.stop()
+        recorder.stop()
+        recorder.start()
+        GLib.idle_add(lambda: heartbeat.append(True) and False)
+        deadline = time.monotonic() + 1
+        while not heartbeat and time.monotonic() < deadline:
+            GLib.MainContext.default().iteration(False)
+        assert heartbeat and waiting.wait(1) and process.signals == 1
+    finally:
+        release.set()
+    deadline = time.monotonic() + 2
+    while recorder.proc is not None and time.monotonic() < deadline:
+        GLib.MainContext.default().iteration(False)
+        time.sleep(.01)
+    assert recorder.proc is None and saved == [str(path)]
+
+
+def test_recorder_detects_spontaneous_exit_and_publishes_saved_file(tmp_path, monkeypatch):
+    from gi.repository import GLib
+    class Process:
+        def poll(self):
+            return 0
+        def wait(self, timeout=None):
+            return 0
+    monkeypatch.setattr(GLib, 'get_user_special_dir', lambda _kind: str(tmp_path))
+    def launch(cmd, **_kwargs):
+        from pathlib import Path
+        Path(cmd[cmd.index('-f') + 1]).write_bytes(b'video')
+        return Process()
+    monkeypatch.setattr(services.subprocess, 'Popen', launch)
+    recorder = services.Recorder()
+    recorder.available = True
+    saved = []
+    recorder.connect('saved', lambda _r, path: saved.append(path))
+    recorder._start(None, False)
+    finish_recording(recorder)
+    assert len(saved) == 1 and recorder._watch_source == 0
+
+
+def test_unwritable_recording_folder_does_not_raise_in_the_shell(monkeypatch):
+    def failed(*_args, **_kwargs):
+        raise PermissionError('Videos is not writable')
+    monkeypatch.setattr(services.os, 'makedirs', failed)
+    recorder = services.Recorder()
+    recorder._start(None, False)
+    assert recorder.proc is None and recorder.path is None
+
+
+def test_toggle_restarts_after_reaping_a_recorder_that_already_exited(monkeypatch):
+    class Process:
+        def poll(self):
+            return 1
+        def wait(self, timeout=None):
+            return 1
+    recorder = services.Recorder()
+    recorder.proc, recorder.path = Process(), '/nonexistent.mp4'
+    starts = []
+    monkeypatch.setattr(recorder, 'start', lambda area, sound: starts.append((area, sound)))
+    recorder.toggle(area=True, sound=True)
+    finish_recording(recorder)
+    assert starts == [(True, True)]

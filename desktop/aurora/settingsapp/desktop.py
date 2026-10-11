@@ -52,7 +52,8 @@ PRESETS = {
     },
 }
 
-LOOK_KEYS = {"window-buttons", "window-button-style", "window-corner-radius", "window-gaps"}
+LOOK_KEYS = {"window-buttons", "window-button-style", "window-corner-radius", "window-gaps",
+             "shell-blur"}     # the compositor's configuration is written again
 
 
 class DesktopProfiles(Page):
@@ -158,6 +159,8 @@ class Desktop(Page):
                     [("right", _("Right")), ("center", _("Center"))])
         self._scale(bar, _("Opacity"), "panel-opacity", 0.3, 1.0, 0.05, double=True)
         self._switch(bar, _("Tint with the accent color"), "chrome-tint")
+        self._switch(bar, _("Blur behind"), "shell-blur",
+                     _("Needs a graphics card and the Aurora session"))
         self._switch(bar, _("Show seconds"), "clock-show-seconds")
         self._switch(bar, _("System monitor"), "panel-system-monitor")
         self._switch(bar, _("Show Desktop button"), "show-desktop-button")
@@ -195,6 +198,9 @@ class Desktop(Page):
                     [("traffic", _("Colored circles")), ("symbolic", _("Monochrome icons"))])
         self._scale(win, _("Corner radius"), "window-corner-radius", 0, 18, 1)
         self._scale(win, _("Gaps around snapped windows"), "window-gaps", 0, 24, 1)
+        self._switch(win, _("Window previews"), "window-previews",
+                     _("Show each window as you last saw it in the overview, the dock's "
+                       "window lists and Snap Assist. Needs the Aurora session"))
 
         desk = self.group(_("Desktop"))
         self._scale(desk, _("Rounded screen corners"), "screen-corner-radius", 0, 24, 1)
@@ -205,6 +211,8 @@ class Desktop(Page):
         search = self.group(_("Super Key"))
         self._combo(search, _("Super opens"), "launcher-style",
                     [("spotlight", _("Spotlight search")), ("grid", _("Launchpad (all apps)"))])
+        self._combo(search, _("Launchpad layout"), "launchpad-layout",
+                    [("pages", _("Pages with folders")), ("sections", _("One list by kind"))])
 
         results = self.group(_("Search Results"), _("What Spotlight shows as you type."))
         for key, title in (("apps", _("Apps")), ("files", _("Recent files")),
@@ -243,11 +251,11 @@ class Desktop(Page):
                         on_change=changed)
         group.add(row)
 
-    def _switch(self, group, title, key):
+    def _switch(self, group, title, key, subtitle=None):
         def changed(v):
             self.s.set_boolean(key, v)
             self._changed(key)
-        group.add(switch_row(title, self.s.get_boolean(key), changed))
+        group.add(switch_row(title, self.s.get_boolean(key), changed, subtitle))
 
     def _scale(self, group, title, key, lo, hi, step, double=False):
         row = Adw.ActionRow(title=title)

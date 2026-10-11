@@ -8,6 +8,7 @@ wl-paste passes that on in CLIPBOARD_STATE. The history lives in
 
     aurora-clipboard store     read a new entry from stdin
     aurora-clipboard list      print the history, newest first
+    aurora-clipboard show      open the Clipboard window (clipboardapp.py)
     aurora-clipboard clear     forget everything
 """
 
@@ -17,6 +18,7 @@ import json
 import os
 import sys
 import time
+from contextlib import contextmanager
 
 LIMIT = 100                 # entries kept
 MAX_BYTES = 64 * 1024       # larger copies are not remembered
@@ -35,6 +37,16 @@ def _meta_path():
 
 def _image_dir():
     return os.path.join(os.path.dirname(history_path()), "clipboard-images")
+
+
+@contextmanager
+def _locked():
+    """Text-history writers share the watcher's lock, including UI actions."""
+    path = history_path() + ".lock"
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        yield
 
 
 def image_paths():
@@ -99,25 +111,40 @@ def pinned(text):
     return bool(_meta().get(_key(text), {}).get("pinned"))
 
 
-def pin(text, value=True):
-    if text not in load():
-        return False
+def info(text, meta=None):
+    """What is known about one entry: whether it is pinned and when it arrived.
+    Pass meta from _meta() when asking about a whole list, to read it once."""
+    entry = (meta if meta is not None else _meta()).get(_key(text), {})
+    return {"pinned": bool(entry.get("pinned")), "time": entry.get("time", 0)}
+
+
+def entries():
+    """The history as (text, info) pairs, in the order load() gives them."""
     meta = _meta()
-    key = _key(text)
-    entry = meta.get(key, {})
-    entry["pinned"] = bool(value)
-    entry["time"] = time.time()
-    meta[key] = entry
-    _save_meta(meta)
+    return [(text, info(text, meta)) for text in load()]
+
+
+def pin(text, value=True):
+    with _locked():
+        if text not in load():
+            return False
+        meta = _meta()
+        key = _key(text)
+        entry = meta.get(key, {})
+        entry["pinned"] = bool(value)
+        entry["time"] = time.time()
+        meta[key] = entry
+        _save_meta(meta)
     return True
 
 
 def delete(text):
-    items = [item for item in load() if item != text]
-    _save(items)
-    meta = _meta()
-    meta.pop(_key(text), None)
-    _save_meta(meta)
+    with _locked():
+        items = [item for item in load() if item != text]
+        _save(items)
+        meta = _meta()
+        meta.pop(_key(text), None)
+        _save_meta(meta)
 
 
 def load():
@@ -150,6 +177,8 @@ def add(text, items=None):
     if not text.strip() or len(text.encode()) > MAX_BYTES:
         return items
     items = [text] + [i for i in items if i != text]
+    meta = _meta()
+    items.sort(key=lambda item: not meta.get(_key(item), {}).get("pinned", False))
     return items[:LIMIT]
 
 
@@ -159,23 +188,26 @@ def store(stdin=sys.stdin, env=os.environ):
     data = stdin.buffer.read(MAX_BYTES + 1) if hasattr(stdin, "buffer") else stdin.read()
     if isinstance(data, bytes):
         data = data.decode("utf-8", errors="replace")
-    lock_path = history_path() + ".lock"
-    os.makedirs(os.path.dirname(lock_path), exist_ok=True)
-    with open(lock_path, "w") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
-        _save(add(data))
+    if not data.strip() or len(data.encode()) > MAX_BYTES:
+        return
+    with _locked():
+        items = add(data)
+        _save(items)
         meta = _meta()
         meta[_key(data)] = {"time": time.time(),
                             "pinned": bool(meta.get(_key(data), {}).get("pinned"))}
+        keys = {_key(item) for item in items}
+        meta = {key: value for key, value in meta.items() if key in keys}
         _save_meta(meta)
 
 
 def clear():
-    for path in (history_path(), _meta_path()):
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
+    with _locked():
+        for path in (history_path(), _meta_path()):
+            try:
+                os.remove(path)
+            except FileNotFoundError:
+                pass
     try:
         for name in os.listdir(_image_dir()):
             if name.endswith(".png"):
@@ -193,6 +225,9 @@ def main():
     elif cmd == "list":
         for item in load():
             print(item.replace("\n", "⏎"))
+    elif cmd == "show":
+        from aurora.clipboardapp import main as window
+        return window()
     elif cmd == "clear":
         clear()
     else:

@@ -4,6 +4,46 @@ const VERSION = "latest";
 
 const releasePage = `${REPO}/releases/latest`;
 
+// Shared mobile navigation on every website page.
+const siteHeader = document.querySelector("header.nav");
+if (siteHeader) {
+  const navigation = siteHeader.querySelector("nav");
+  const toggle = document.createElement("button");
+  navigation.id = "site-navigation";
+  navigation.setAttribute("aria-label", "Main navigation");
+  toggle.type = "button";
+  toggle.className = "nav-toggle";
+  toggle.setAttribute("aria-label", "Open navigation menu");
+  toggle.setAttribute("aria-controls", navigation.id);
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.innerHTML = '<span></span><span></span><span></span>';
+  siteHeader.append(toggle);
+  const close = () => {
+    siteHeader.classList.remove("mobile-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open navigation menu");
+  };
+  toggle.addEventListener("click", () => {
+    const open = siteHeader.classList.toggle("mobile-open");
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+    if (open) navigation.querySelector("a")?.focus();
+  });
+  navigation.addEventListener("click", (event) => {
+    if (event.target.closest("a")) close();
+  });
+  document.addEventListener("click", (event) => {
+    if (!siteHeader.contains(event.target)) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && siteHeader.classList.contains("mobile-open")) {
+      close();
+      toggle.focus();
+    }
+  });
+  window.matchMedia("(min-width: 1181px)").addEventListener("change", close);
+}
+
 // Links that point into the repository and its releases.
 document.querySelectorAll("[data-repo-link]").forEach((a) => {
   a.href = REPO + (a.dataset.path || "");
